@@ -1,0 +1,10 @@
+engine: localhost:9076
+app: testapp.qvf
+script: ./script.qvs
+connections:
+  myconnection:
+    type: testconnector
+    username: gwe
+    password: ${PASS}
+    settings:
+      host: qli-test-connector

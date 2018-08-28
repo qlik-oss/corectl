@@ -1,0 +1,1 @@
+Empty directory mounted into docker

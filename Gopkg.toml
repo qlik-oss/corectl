@@ -1,0 +1,19 @@
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[[constraint]]
+  name = "github.com/qlik-oss/enigma-go"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/buger/goterm"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.2"

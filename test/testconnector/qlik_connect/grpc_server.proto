@@ -1,0 +1,166 @@
+syntax = "proto3";
+
+package qlik.connect;
+
+message ConnectionInfo
+{
+    string connectionString = 1;
+    string user = 2;
+    string password = 3;
+}
+
+message SessionInfo
+{
+    string user = 1;
+    string sessionId = 2;
+    string docId = 3;
+}
+
+message Parameter {
+    string name = 1;
+    string value = 2;
+}
+
+message DataInfo
+{
+    string statement = 1;
+    repeated Parameter parameters = 2;
+}
+
+message DataRequest
+{
+    ConnectionInfo connection = 1;
+    SessionInfo sessionInfo = 2;
+    DataInfo parameters = 3;
+}
+
+
+/**
+    A structure for streaming field values.
+
+    This message conatins two parts. A value bucket part and a code part.
+
+    Every transferred value have a string code and one or two numeric codes.
+    These codes can be negative to inicate special things. -1 indicates null for example.
+
+    Otherwise they can index into the value buckets.
+    A value with a null string and a null number is a null value in the Qlik Engine.
+
+    Number code have a special mechanism to escape an integer value inline with -2.
+
+    Each chunk starts anywhere in any row and continues for an arbitary length and may wrap to
+    another row. A DataChunk will typically transfer many rows.
+
+    Each DataChunk must be equal or less in size to the default Grpc message size limit. This is
+    currently 4 MB.
+
+    64 KB or slightly less is the optimal size for bandwith performance. But anything from
+    20 to 120 KB will give good performance if used with the hint option when
+    writing.
+
+    Very large strings can be sent in many DataChunk messages by using the -3 escape sequence.
+*/
+message DataChunk
+{
+    // Value buckets
+    repeated string stringBucket = 1;    /// Strings the chunk
+    repeated double doubleBucket = 2;    /// Doubles in the chunk.
+
+    // Code arrays
+    repeated sint32 stringCodes = 3;     ///  0 or greater is an index into stringBucket.
+                                         /// -1 for a missning string. (null string) (no string value entry required).
+                                         /// -2 for an empty string. (no string value entry required).
+                                         ///
+                                         ///    A connector dont have to use the -2 optimization. Its perfectly
+                                         ///    fine to send an empty string as all other strings.
+
+    repeated sint64 numberCodes = 4;     ///  0 or greater is an index into doubleBucket.
+                                         /// -1 for a null number.
+                                         /// -2 followed by an integer value. In this case there is no index into doubleValues.
+                                         ///    Instead -2 is followed by an actual field value number. This is a variable
+                                         ///    length encoded integer and will take up less space than a full double in most cases.
+                                         ///
+                                         ///    A connector dont have to use the -2 optimization. Its perfectly fine to transfer
+                                         ///    all numbers in the double bucket.
+                                         ///
+                                         /// -3 is partial message special case.
+                                         ///    The string code of this value will be 0 or greater. That string will be appended to
+                                         ///    the previous value. One string value can be transferred in many chunks this way.
+                                         ///    The number value is always the transferred atomicly the first time.
+                                         ///
+                                         ///    A connector dont have to use the -3 special case. A much simpler solution (if its
+                                         ///    acceptable) is to cap all strings to 3 MB or less so that they can be sent within
+                                         ///    the 4 MB limit.
+}
+
+
+/** How to interpret the data.
+    If dates or times are already in the Qlik Engine format (fractional day since 1899-12-30), then the fastest way
+    to import is to use SemanticType=DEFAULT. And transferr the date as a double and set FieldAttributes::Type = DATE.
+    If the dates are in "days since 1904-01-01" format the best way is to add 1462 to them and send as
+    1899-12-30 dates.
+*/
+enum SemanticType {
+    DEFAULT = 0;                     /** The normal value. */
+    UNIX_SECONDS_SINCE_1970_UTC = 1; /** Transfered as double or integer. */
+    ISO_8601 = 2;                    /** Date and time format. Transfered as string. */
+}
+
+/** Direct copy of FieldAttrType in Qlik Engine. How to display the data. */
+enum FieldAttrType {
+    UNKNOWN = 0;
+    TEXT = 1;
+    REAL = 2;
+    DATE = 3;
+    TIME = 4;
+    TIMESTAMP = 5;
+    INTERVAL = 6;
+    INTEGER = 10;
+    FIX = 11;
+    MONEY = 12;
+}
+
+/** Subset of classic Qlik Engine number format */
+message FieldAttributes
+{
+    FieldAttrType Type = 1;
+}
+
+message FieldInfo
+{
+    string name = 1;
+    SemanticType semanticType = 2;
+    FieldAttributes fieldAttributes = 3;
+    repeated string tags = 4;             /** Optional field description. Examples: key, text, ASCII. */
+}
+
+/** Transferred as initial metadata with the name "x-qlik-getdata-bin". */
+message GetDataResponse {
+    repeated FieldInfo fieldInfo = 1;
+    string tableName = 2;
+}
+
+
+/**
+    Usefull for debugging.
+*/
+message MetaInfo {
+    string name = 1;                     /// Example: "AbcDb connector"
+    string version = 2;                  /// Version number in any format.
+                                         ///     Example: "1.0.0.0" or "1.23 Beta" or "Buildnumber: 1234" or "2018-Feb-06"
+    string developer = 3;                /// Example: "Qlik"
+}
+
+message MetaInfoRequest {
+    // Empty
+}
+
+service Connector
+{
+    /** The standard way to send data.
+        First send GetDataResponse as initial meta data.
+        Then send DataChunk stream.
+    */
+    rpc GetData(DataRequest) returns(stream DataChunk) {}
+    rpc GetMetaInfo(MetaInfoRequest) returns(MetaInfo) {}
+}
