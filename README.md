@@ -1,5 +1,5 @@
 # Core CLI (Experimental)
-Core CLI is a command line tool to peform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
+Core CLI is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 
 ---
