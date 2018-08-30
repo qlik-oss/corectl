@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/qlik-oss/core-cli
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run:
+          name: Install toolchain
+          command: |
+            go get -u github.com/golang/dep/cmd/dep
+            go get -u github.com/golang/lint/golint
+      - restore_cache:
+          key: dependency-cache-{{ checksum "Gopkg.lock" }}
+      - run:
+          name: Install dependencies
+          command: dep ensure
+      - save_cache:
+          key: dependency-cache-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+      - run:
+          name: Linting
+          command: golint -set_exit_status
+      - run:
+          name: Build
+          command: go build
+      - run:
+          name: Test
+          command: go test -v -race ./...
+    - run:
+        name: Login to Docker
+        command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+    - run:
+        name: Start QIX Engine
+        command: ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
+    - run:
+        name: Check that QIX Engine is up and running
+        command: |
+            set +e
+            # Check that Engine is running
+            ENGINE_ID=$(docker ps -aqf "name=engine")
+            echo "Engine container id is $ENGINE_ID"
+            RETRIES=0
+            while [[ "$ENGINE_STATUS" != "running" && $RETRIES -le 30 ]]; do
+                ENGINE_STATUS=$(docker inspect -f '{{.State.Status}}' "$ENGINE_ID")
+                echo "Engine status is $ENGINE_STATUS"
+                sleep 2
+                RETRIES=$[$RETRIES+1]
+            done
+            if [[ "$ENGINE_STATUS" != "running"  ]]; then
+                echo "QIX Engine did not start up properly"
+                exit 1
+            fi
+    - run:
+        name: Integration Test
+        command: ./test/test.sh
