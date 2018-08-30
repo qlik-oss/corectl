@@ -26,6 +26,7 @@ jobs:
       - run:
           name: Test
           command: go test -v -race ./...
+      - setup_remote_docker
       - run:
           name: Login to Docker
           command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
