@@ -18,14 +18,14 @@ jobs:
           paths:
             - vendor
       # - run:
-      #   name: Linting
-      #   command: golint -set_exit_status
-      # - run:
-      #   name: Build
-      #   command: go build
-      # - run:
-      #   name: Test
-      #   command: go test -v -race ./...
+      #     name: Linting
+      #     command: golint -set_exit_status
+      - run:
+          name: Build
+          command: go build
+      - run:
+          name: Test
+          command: go test -v -race ./...
       # - run:
       #   name: Login to Docker
       #   command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
