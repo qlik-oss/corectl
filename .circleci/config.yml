@@ -10,13 +10,12 @@ jobs:
       - run: go get -u github.com/golang/lint/golint
       - restore_cache:
         key: dependency-cache-{{ checksum "Gopkg.lock" }}
-      - run:
-        name: Install dependencies
-        command: dep ensure
-      - save_cache:
-        key: dependency-cache-{{ checksum "Gopkg.lock" }}
-        paths:
-          - vendor
+
+      - run: dep ensure
+      # - save_cache:
+      #   key: dependency-cache-{{ checksum "Gopkg.lock" }}
+      #   paths:
+      #     - vendor
       # - run:
       #   name: Linting
       #   command: golint -set_exit_status
