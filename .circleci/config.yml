@@ -9,7 +9,7 @@ jobs:
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: go get -u github.com/golang/lint/golint
       - restore_cache:
-        key: dependency-cache-{{ checksum "Gopkg.lock" }}
+          key: dependency-cache-{{ checksum "Gopkg.lock" }}
       - run: dep ensure
       # - save_cache:
       #   key: dependency-cache-{{ checksum "Gopkg.lock" }}
