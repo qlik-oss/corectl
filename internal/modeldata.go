@@ -39,7 +39,13 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyO
 		os.Exit(1)
 	}
 	systemTableObject := createSystemTableHypercube(ctx, doc)
-	systemTableLayout, _ := systemTableObject.GetLayout(ctx)
+	systemTableLayout, err := systemTableObject.GetLayout(ctx)
+
+	if err != nil {
+		fmt.Println("Error when fetching system table:", err)
+		os.Exit(1)
+	}
+
 	fieldsInTable := tableRecordsToMap(tables)
 
 	fieldInTableDataByNames := tableRecordsToMapMap(tables)
