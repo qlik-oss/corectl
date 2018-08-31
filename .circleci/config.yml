@@ -53,4 +53,12 @@ jobs:
               fi
       - run:
           name: Integration Test
-          command: ./test/test.sh
+          working_directory: /go
+          command: |
+              set +e
+              ENGINE_CONTAINER_ID=$(docker ps -aqf "name=engine")
+              TEST_CONTAINER_ID=$(docker run -d golang:1.9-alpine tail -f /dev/null)
+              docker cp . $TEST_CONTAINER_ID:/go
+              docker exec $TEST_CONTAINER_ID /bin/sh -c 'apk update && apk add --no-cache socat bash'
+              docker exec -d $TEST_CONTAINER_ID /bin/bash -c "socat TCP-LISTEN:9076,fork TCP:$ENGINE_IP:9076"
+              docker exec $TEST_CONTAINER_ID /bin/bash -c '/go/src/github.com/qlik-oss/core-cli/test/test.sh'
