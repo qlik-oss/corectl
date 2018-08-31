@@ -76,6 +76,22 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:3108ec0946181c60040ff51b811908f89d03e521e2b4ade5ef5c65b3c0e911ae"
+  name = "github.com/kr/pretty"
+  packages = ["."]
+  pruneopts = ""
+  revision = "73f6ac0b30a98e433b289500d779f50c1a6f0712"
+
+[[projects]]
+  digest = "1:11b056b4421396ab14e384ab8ab8c2079b03f1e51aa5eb4d9b81f9e0d1aa8fbf"
+  name = "github.com/kr/text"
+  packages = ["."]
+  pruneopts = ""
+  revision = "e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f"
+  version = "v0.1.0"
+
+[[projects]]
   digest = "1:961dc3b1d11f969370533390fdf203813162980c858e1dabe827b60940c909a5"
   name = "github.com/magiconair/properties"
   packages = [
@@ -291,6 +307,7 @@
   input-imports = [
     "github.com/buger/goterm",
     "github.com/golang/protobuf/proto",
+    "github.com/kr/pretty",
     "github.com/magiconair/properties/assert",
     "github.com/qlik-oss/enigma-go",
     "github.com/spf13/cobra",
