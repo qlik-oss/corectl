@@ -61,4 +61,4 @@ jobs:
               docker cp . $TEST_CONTAINER_ID:/go
               docker exec $TEST_CONTAINER_ID /bin/sh -c 'apk update && apk add --no-cache socat bash'
               docker exec -d $TEST_CONTAINER_ID /bin/bash -c "socat TCP-LISTEN:9076,fork TCP:$ENGINE_IP:9076"
-              docker exec $TEST_CONTAINER_ID /bin/bash -c "go test ./... -tags=integration"
+              docker exec $TEST_CONTAINER_ID /bin/bash -c "go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go"
