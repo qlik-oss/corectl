@@ -3,9 +3,11 @@ package internal
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+
 	tm "github.com/buger/goterm"
 	"github.com/qlik-oss/enigma-go"
-	"strings"
 )
 
 func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
@@ -25,7 +27,19 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	})
 	fmt.Println("---------- " + strings.Join(args, " ") + " ----------")
 	grid := tm.NewTable(0, 10, 3, ' ', 0)
-	layout, _ := object.GetLayout(ctx)
+	layout, err := object.GetLayout(ctx)
+
+	if err != nil {
+		fmt.Println("Failed to get hypercube layout: ", err)
+		os.Exit(1)
+	}
+
+	// If the dimension info contains an error element the expression failed to evaluate
+	if layout.HyperCube.DimensionInfo[0].Error != nil {
+		fmt.Println("Failed to evaluate expression with error code:", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
+		os.Exit(1)
+	}
+
 	fmt.Print(grid, strings.Join(dims, "\t"))
 	fmt.Print(grid, "\t")
 	fmt.Println(grid, strings.Join(measures, "\t"))
