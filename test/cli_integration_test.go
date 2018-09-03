@@ -19,6 +19,8 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
+var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
+
 const binaryName = "cli"
 
 var binaryPath string
@@ -67,16 +69,17 @@ func (tf *testFile) load() string {
 }
 
 func TestCLI(t *testing.T) {
+	connectToEngine := "--engine=" + *engineIP
 	tests := []struct {
 		name   string
 		args   []string
 		golden string
 	}{
-		{"reload project1", []string{"--config=test/project1/qli.yml ", "reload"}, "project1-reload.golden"},
-		{"fields project 1", []string{"--config=test/project1/qli.yml ", "fields"}, "project1-fields.golden"},
-		{"field numbers project 1", []string{"--config=test/project2/qli.yml ", "field", "numbers"}, "project1-field-numbers.golden"},
-		{"reload project 2", []string{"--config=test/project2/qli.yml ", "reload"}, "project2-reload.golden"},
-		{"fields project 2", []string{"--config=test/project2/qli.yml ", "fields"}, "project2-fields.golden"},
+		{"reload project1", []string{"--config=test/project1/qli.yml", connectToEngine, "reload"}, "project1-reload.golden"},
+		{"fields project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
+		{"field numbers project 1", []string{"--config=test/project2/qli.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
+		{"reload project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
+		{"fields project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
 	}
 
 	for _, tt := range tests {
