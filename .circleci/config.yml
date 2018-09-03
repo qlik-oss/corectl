@@ -32,7 +32,7 @@ jobs:
           working_directory: /go
           command: |
             # Spin up environment
-            ACCEPT_EULA=yes docker-compose -f go/src/github.com/qlik-oss/core-cli/test/docker-compose.yml up -d
+            ACCEPT_EULA=yes docker-compose -f /go/src/github.com/qlik-oss/core-cli/test/docker-compose.yml up -d
             CONTAINER_ID=$(docker ps -aqf "name=engine")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$CONTAINER_ID")
             # Start a container for test execution
@@ -46,30 +46,6 @@ jobs:
             # Bring down the docker-compose and test container
             docker-compose -f test/docker-compose.yml down
             docker kill $TEST_CONTAINER
-      # - run:
-      #     name: Login to Docker
-      #     command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-      # - run:
-      #     name: Start QIX Engine
-      #     command: ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
-      # - run:
-      #     name: Check that QIX Engine is up and running
-      #     command: |
-      #         set +e
-      #         # Check that Engine is running
-      #         ENGINE_ID=$(docker ps -aqf "name=engine")
-      #         echo "Engine container id is $ENGINE_ID"
-      #         RETRIES=0
-      #         while [[ "$ENGINE_STATUS" != "running" && $RETRIES -le 30 ]]; do
-      #           ENGINE_STATUS=$(docker inspect -f '{{.State.Status}}' "$ENGINE_ID")
-      #           echo "Engine status is $ENGINE_STATUS"
-      #           sleep 2
-      #           RETRIES=$[$RETRIES+1]
-      #         done
-      #         if [[ "$ENGINE_STATUS" != "running"  ]]; then
-      #           echo "QIX Engine did not start up properly"
-      #           exit 1
-      #         fi
       # - run:
       #     name: Integration Test
       #     working_directory: /go
