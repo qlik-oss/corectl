@@ -39,9 +39,9 @@ jobs:
             # Install packages
             docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache make'
             # Copy code into container
-            docker cp /go/src/github.com/qlik-oss/core-cli/ $TEST_CONTAINER:/go/src/qlik-oss/core-cli/
+            docker cp /go/src/github.com/qlik-oss/core-cli/ $TEST_CONTAINER:/go/src/github.com/qlik-oss/core-cli/
             # Execute tests
-            docker exec $TEST_CONTAINER sh -c 'go test -timeout 30s /go/src/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076"'
+            docker exec $TEST_CONTAINER sh -c 'go test -timeout 30s /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076"'
             # Bring down the docker-compose and test container
             docker-compose -f test/docker-compose.yml down
             docker kill $TEST_CONTAINER
