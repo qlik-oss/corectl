@@ -37,11 +37,11 @@ jobs:
             # Start a container for test execution
             TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.9-alpine tail -f /dev/null)
             # Install packages
-            docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache make'
+            docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash make'
             # Copy code into container
-            docker cp /go/src/github.com/qlik-oss/core-cli/ $TEST_CONTAINER:/go/src/core-cli/
+            docker cp . $TEST_CONTAINER:/go
             # Execute tests
-            docker exec $TEST_CONTAINER sh -c 'go test -timeout 30s /go/src/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
+            docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
             # Bring down the docker-compose and test container
             docker-compose -f test/docker-compose.yml down
             docker kill $TEST_CONTAINER
