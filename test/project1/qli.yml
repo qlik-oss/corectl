@@ -5,6 +5,5 @@ connections:
   myconnection:
     type: testconnector
     username: gwe
-    password: ${PASS}
     settings:
       host: qli-test-connector
