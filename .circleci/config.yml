@@ -29,6 +29,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Run Integration Test
+          working_directory: /go
           command: |
             # Spin up environment
             ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
