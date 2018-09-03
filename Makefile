@@ -2,6 +2,6 @@ test:
 	go test ./...
 
 build:
-	go build -o ./cli main.go
+	go build -o cli -v
 
 .DEFAULT_GOAL := build
