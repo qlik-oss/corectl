@@ -32,7 +32,7 @@ jobs:
           working_directory: /go
           command: |
             # Spin up environment
-            ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
+            ACCEPT_EULA=yes docker-compose -f go/src/github.com/qlik-oss/core-cli/test/docker-compose.yml up -d
             CONTAINER_ID=$(docker ps -aqf "name=engine")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$CONTAINER_ID")
             # Start a container for test execution
