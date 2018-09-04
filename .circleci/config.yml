@@ -42,6 +42,7 @@ jobs:
             # Copy code into container
             docker cp . $TEST_CONTAINER:/go
             # Copy apps and data into engine container
+            chmod -R 777 src/github.com/qlik-oss/core-cli/test/
             docker cp src/github.com/qlik-oss/core-cli/test/apps/. $CONTAINER_ID:/home/nobody/apps/
             docker cp src/github.com/qlik-oss/core-cli/test/data/. $CONTAINER_ID:/home/nobody/data/
             # Execute tests
