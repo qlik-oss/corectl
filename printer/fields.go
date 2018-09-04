@@ -47,7 +47,7 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 			fmt.Fprintf(fieldList, "\t%s", formatBytes(table.Byte_size))
 		}
 	}
-	fmt.Print(fieldList)
+	fmt.Print(fieldList, "\n\n")
 }
 
 func uniqueAndTotal(field *internal.FieldMetadata) string {

@@ -26,9 +26,22 @@ Print the metadata with reload
 qli --app myapp.qvf meta
 ```
 
-Evaluate expressions. Note the "by" keyword. The format is <expressions> by <dimensions>.
+Evaluate expressions. Note the "by" keyword. The format is `<expressions> by <dimensions>`.
+
 ```bash
-qli --app myapp.qvf evaluate "sum(Z)" by X Y
+qli --app myapp.qvf eval "sum(Z)" by X Y
+```
+
+or iterate over all dimensions:
+
+```bash
+qli --app myapp.qvf eval "sum(Z)" by "*"
+```
+
+The `eval` command can also be used for calculated dimensions:
+
+```bash
+qli --app myapp.qvf eval "=A+B+C"
 ```
 
 Specify what Qlik Associative Engine to use with the --engine parameter
