@@ -48,20 +48,5 @@ jobs:
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
             # Bring down the docker-compose and test container
-            docker-compose -f src/github.com/qlik-oss/core-cli/docker-compose.yml down
+            docker-compose -f src/github.com/qlik-oss/core-cli/test/docker-compose.yml down
             docker kill $TEST_CONTAINER
-      # - run:
-      #     name: Integration Test
-      #     working_directory: /go
-      #     command: |
-      #         set +e
-      #         ENGINE_CONTAINER_ID=$(docker ps -aqf "name=engine")
-      #         TEST_CONTAINER_ID=$(docker run -d golang:1.9-alpine tail -f /dev/null)
-      #         ENGINE_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $ENGINE_CONTAINER_ID)
-      #         docker cp /go/src/github.com/qlik-oss/core-cli/test/apps/ $ENGINE_CONTAINER_ID:/apps
-      #         docker cp /go/src/github.com/qlik-oss/core-cli/test/data/ $ENGINE_CONTAINER_ID:/data
-      #         echo "Engine Container IP is $ENGINE_IP"
-      #         docker cp . $TEST_CONTAINER_ID:/go
-      #         docker exec $TEST_CONTAINER_ID /bin/sh -c 'apk update && apk add --no-cache socat bash make'
-      #         docker exec -d $TEST_CONTAINER_ID /bin/bash -c "socat TCP-LISTEN:9076,fork TCP:$ENGINE_IP:9076"
-      #         docker exec $TEST_CONTAINER_ID /bin/bash -c "go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $ENGINE_IP:9076"
