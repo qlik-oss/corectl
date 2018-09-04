@@ -42,12 +42,12 @@ jobs:
             # Copy code into container
             docker cp . $TEST_CONTAINER:/go
             # Copy apps and data into engine container
-            docker cp src/github.com/qlik-oss/core-cli/test/apps/ $CONTAINER_ID:/apps
-            docker cp src/github.com/qlik-oss/core-cli/test/data/ $CONTAINER_ID:/data
+            docker cp src/github.com/qlik-oss/core-cli/test/apps/ $CONTAINER_ID:/
+            docker cp src/github.com/qlik-oss/core-cli/test/data/ $CONTAINER_ID:/
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
             # Bring down the docker-compose and test container
-            docker-compose -f test/docker-compose.yml down
+            docker-compose -f src/github.com/qlik-oss/core-cli/docker-compose.yml down
             docker kill $TEST_CONTAINER
       # - run:
       #     name: Integration Test
