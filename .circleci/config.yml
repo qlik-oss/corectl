@@ -47,6 +47,3 @@ jobs:
             docker cp src/github.com/qlik-oss/core-cli/test/data/ $CONTAINER_ID:/
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
-            # Bring down the docker-compose and test container
-            docker-compose -f src/github.com/qlik-oss/core-cli/test/docker-compose.yml down
-            docker kill $TEST_CONTAINER
