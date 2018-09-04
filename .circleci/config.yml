@@ -32,7 +32,7 @@ jobs:
           working_directory: /go
           command: |
             # Spin up environment
-            ACCEPT_EULA=yes docker-compose -f /go/src/github.com/qlik-oss/core-cli/test/docker-compose.yml up -d
+            ACCEPT_EULA=yes docker-compose -f src/github.com/qlik-oss/core-cli/test/docker-compose.yml up -d
             CONTAINER_ID=$(docker ps -aqf "name=engine")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$CONTAINER_ID")
             # Start a container for test execution
@@ -42,8 +42,8 @@ jobs:
             # Copy code into container
             docker cp . $TEST_CONTAINER:/go
             # Copy apps and data into engine container
-            docker cp /go/src/github.com/qlik-oss/core-cli/test/apps/ $CONTAINER_ID:/apps
-            docker cp /go/src/github.com/qlik-oss/core-cli/test/data/ $CONTAINER_ID:/data
+            docker cp src/github.com/qlik-oss/core-cli/test/apps/ $CONTAINER_ID:/apps
+            docker cp src/github.com/qlik-oss/core-cli/test/data/ $CONTAINER_ID:/data
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/core-cli/test/cli_integration_test.go --engineIP $TEST_HOST:9076'
             # Bring down the docker-compose and test container
