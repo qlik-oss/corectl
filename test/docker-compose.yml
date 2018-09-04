@@ -5,10 +5,10 @@ services:
     image: qlikcore/engine:12.215.0
     ports:
       - 9076:9076
-    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=./apps -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="testconnector,qli-test-connector:50051"
+    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/home/nobody/apps -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="testconnector,qli-test-connector:50051"
     volumes:
-      - ./apps:./apps
-      - ./data:./data
+      - ./apps:/home/nobody/apps
+      - ./data:/home/nobody/data
   qli-test-connector:
     container_name: qli-test-connector
     build: testconnector
