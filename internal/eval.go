@@ -40,9 +40,10 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Print(grid, strings.Join(dims, "\t"))
-	fmt.Print(grid, "\t")
-	fmt.Println(grid, strings.Join(measures, "\t"))
+	fmt.Fprintf(grid, strings.Join(dims, "\t"))
+	fmt.Fprintf(grid, "\t")
+	fmt.Fprintf(grid, strings.Join(measures, "\t"))
+	fmt.Fprintf(grid, "\n")
 	// Get hypercube layout
 	for _, page := range layout.HyperCube.DataPages {
 		for _, row := range page.Matrix {
