@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tm "github.com/buger/goterm"
-	"github.com/qlik-oss/core-cli/internal"
+	"github.com/qlik-oss/core-corectl/internal"
 )
 
 func PrintAssociations(data *internal.ModelMetadata) {

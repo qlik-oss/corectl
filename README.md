@@ -1,5 +1,5 @@
-# Core CLI (Experimental)
-Core CLI is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
+# Corectl (Experimental)
+Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 
 ---
@@ -7,7 +7,7 @@ Core CLI is a command line tool to perform reloads, fetch metadata and evaluate 
 ## Installation
 Either clone the repo or go get it:
 ```bash
-go get -u github.com/qlik-oss/core-cli
+go get -u github.com/qlik-oss/core-corectl
 ```
 
 Build the main.go file to a location on your path. You can use the buildtohomebin script.
@@ -18,40 +18,40 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 ## Example Usage
 Reload a script file in the specified app and print metadata. The script file path is local, the app name/path is from within the engine docker file system.
 ```bash
-qli --app myapp.qvf reload myscript.qvs
+corectl --app myapp.qvf reload myscript.qvs
 ```
 
 Print the metadata with reload
 ```bash
-qli --app myapp.qvf meta
+corectl --app myapp.qvf meta
 ```
 
 Evaluate expressions. Note the "by" keyword. The format is `<expressions> by <dimensions>`.
 
 ```bash
-qli --app myapp.qvf eval "sum(Z)" by X Y
+corectl --app myapp.qvf eval "sum(Z)" by X Y
 ```
 
 or iterate over all dimensions:
 
 ```bash
-qli --app myapp.qvf eval "sum(Z)" by "*"
+corectl --app myapp.qvf eval "sum(Z)" by "*"
 ```
 
 The `eval` command can also be used for calculated dimensions:
 
 ```bash
-qli --app myapp.qvf eval "=A+B+C"
+corectl --app myapp.qvf eval "=A+B+C"
 ```
 
 Specify what Qlik Associative Engine to use with the --engine parameter
 ```bash
-qli --engine remoteengine:9076 --app myapp.qvf reload myscript.qvs
+corectl --engine remoteengine:9076 --app myapp.qvf reload myscript.qvs
 ```
 
 Print some extra debugging information using --verbose flag
 ```bash
-qli --verbose --app myapp.qvf meta
+corectl --verbose --app myapp.qvf meta
 ```
 
 ## Testing
@@ -69,19 +69,19 @@ The tests are run with the test script:
 
 ```sh
 $ ACCEPT_EULA=<yes/no> docker-compose up -d
-$ go test cli_integration_test.go
+$ go test corectl_integration_test.go
 ```
 
 The tests are by default trying to connect to an engine on localhost:9076. This can be changed with the --engineIP flag.
 
 ```sh
-$ go test cli_integration_test.go --engineIP HOST:PORT
+$ go test corectl_integration_test.go --engineIP HOST:PORT
 ```
 
 If the reference output files need to be updated, run the test with --update flag.
 
 ```sh
-$ go test cli_integration_test.go --update
+$ go test corectl_integration_test.go --update
 ```
 
 ## Contributing

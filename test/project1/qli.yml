@@ -6,4 +6,4 @@ connections:
     type: testconnector
     username: gwe
     settings:
-      host: qli-test-connector
+      host: corectl-test-connector

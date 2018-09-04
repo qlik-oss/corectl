@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/qlik-oss/core-cli/test/testconnector/qlik_connect"
+	"github.com/qlik-oss/core-corectl/test/testconnector/qlik_connect"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"

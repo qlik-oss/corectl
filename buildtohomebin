@@ -3,4 +3,4 @@
 # Execute in script directory
 cd "$(dirname "$0")"
 
-go build -o ~/bin/qli.exe main.go
+go build -o ~/bin/corectl.exe main.go
