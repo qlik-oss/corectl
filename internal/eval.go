@@ -35,14 +35,15 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	}
 
 	// If the dimension info contains an error element the expression failed to evaluate
-	if layout.HyperCube.DimensionInfo[0].Error != nil {
+	if len(layout.HyperCube.DimensionInfo) != 0 && layout.HyperCube.DimensionInfo[0].Error != nil {
 		fmt.Println("Failed to evaluate expression with error code:", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
 		os.Exit(1)
 	}
 
-	fmt.Print(grid, strings.Join(dims, "\t"))
-	fmt.Print(grid, "\t")
-	fmt.Println(grid, strings.Join(measures, "\t"))
+	fmt.Fprintf(grid, strings.Join(dims, "\t"))
+	fmt.Fprintf(grid, "\t")
+	fmt.Fprintf(grid, strings.Join(measures, "\t"))
+	fmt.Fprintf(grid, "\n")
 	// Get hypercube layout
 	for _, page := range layout.HyperCube.DataPages {
 		for _, row := range page.Matrix {
@@ -67,7 +68,10 @@ func argumentsToMeasuresAndDims(args []string) ([]string, []string) {
 	)
 	for _, arg := range args {
 		if arg != "by" {
-			tempArray = append(tempArray, arg)
+			// Skip appending dimension if iterating over all dimensions
+			if arg != "*" {
+				tempArray = append(tempArray, arg)
+			}
 		} else {
 			//The first set of arguments are treated as measures when we find the "by" keyword
 			//Switch to adding dimensions

@@ -1,2 +1,6 @@
 #!/usr/bin/env bash
+
+# Execute in script directory
+cd "$(dirname "$0")"
+
 go build -o ~/bin/qli.exe main.go
