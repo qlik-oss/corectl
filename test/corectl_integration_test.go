@@ -21,7 +21,7 @@ var update = flag.Bool("update", false, "update golden files")
 
 var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
 
-const binaryName = "cli"
+const binaryName = "corectl"
 
 var binaryPath string
 
@@ -68,7 +68,7 @@ func (tf *testFile) load() string {
 	return string(content)
 }
 
-func TestCLI(t *testing.T) {
+func TestCorectl(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
 	tests := []struct {
 		name   string

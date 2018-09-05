@@ -3,7 +3,7 @@ package printer
 import (
 	"fmt"
 	tm "github.com/buger/goterm"
-	"github.com/qlik-oss/core-cli/internal"
+	"github.com/qlik-oss/corectl/internal"
 )
 
 func PrintTables(data *internal.ModelMetadata) {

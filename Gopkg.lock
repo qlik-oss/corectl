@@ -135,6 +135,26 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:a8ac14230226a36ff694189f02ce3f52851809d3d957a336c9c4f19e97e128f6"
+  name = "github.com/qlik-oss/core-cli"
+  packages = ["internal"]
+  pruneopts = ""
+  revision = "85e926f3de46b36d0ddd6a17ba483aff08988b66"
+  version = "0.0.1"
+
+[[projects]]
+  digest = "1:a8ac14230226a36ff694189f02ce3f52851809d3d957a336c9c4f19e97e128f6"
+  name = "github.com/qlik-oss/corectl"
+  packages = [
+    "internal",
+    "printer",
+    "test/testconnector/qlik_connect",
+  ]
+  pruneopts = ""
+  revision = "85e926f3de46b36d0ddd6a17ba483aff08988b66"
+  version = "0.0.1"
+
+[[projects]]
   branch = "master"
   digest = "1:80404645ea4f73e281543a546ba47328a3aed9aaf467f722cc66dfa5bc09b1c6"
   name = "github.com/qlik-oss/enigma-go"
@@ -309,6 +329,9 @@
     "github.com/golang/protobuf/proto",
     "github.com/kr/pretty",
     "github.com/magiconair/properties/assert",
+    "github.com/qlik-oss/corectl/internal",
+    "github.com/qlik-oss/corectl/printer",
+    "github.com/qlik-oss/corectl/test/testconnector/qlik_connect",
     "github.com/qlik-oss/enigma-go",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",

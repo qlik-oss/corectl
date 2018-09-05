@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qlik-oss/core-cli/internal"
-	"github.com/qlik-oss/core-cli/printer"
+	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -22,7 +22,7 @@ var (
 		Hidden: true,
 		Use:    "qli",
 		Short:  "",
-		Long:   `QLI contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
