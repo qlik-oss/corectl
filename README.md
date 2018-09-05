@@ -7,7 +7,7 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 ## Installation
 Either clone the repo or go get it:
 ```bash
-go get -u github.com/qlik-oss/core-corectl
+go get -u github.com/qlik-oss/corectl
 ```
 
 Build the main.go file to a location on your path. You can use the buildtohomebin script.

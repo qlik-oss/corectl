@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qlik-oss/core-corectl/internal"
-	"github.com/qlik-oss/core-corectl/printer"
+	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"

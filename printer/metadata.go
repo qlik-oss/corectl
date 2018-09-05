@@ -1,6 +1,6 @@
 package printer
 
-import "github.com/qlik-oss/core-corectl/internal"
+import "github.com/qlik-oss/corectl/internal"
 
 // TODO session app!
 

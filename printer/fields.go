@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	tm "github.com/buger/goterm"
-	"github.com/qlik-oss/core-corectl/internal"
+	"github.com/qlik-oss/corectl/internal"
 )
 
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
