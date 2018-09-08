@@ -2,7 +2,7 @@ version: "3.3"
 services:
   qix-engine:
     container_name: qix-engine
-    image: qlikcore/engine:12.215.0
+    image: qlikcore/engine:12.225.0
     ports:
       - 9076:9076
     command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="testconnector,corectl-test-connector:50051"
