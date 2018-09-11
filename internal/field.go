@@ -6,6 +6,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// PrintField prints the first few rows of a field to system out.
 func PrintField(ctx context.Context, doc *enigma.Doc, fieldName string) {
 	fmt.Print(getFieldContentAsTable(ctx, doc, fieldName, 100))
 }
@@ -95,9 +96,4 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 		}
 	}
 	return result
-}
-
-type FieldDetails struct {
-	Example string
-	HasNull bool
 }

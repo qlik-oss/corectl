@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// ReadMetadata fetches metadata from the rest api.
 func ReadMetadata(url string) (*Metadata, error) {
 	response, err := http.Get(url)
 	if err != nil {
@@ -22,7 +23,7 @@ func ReadMetadata(url string) (*Metadata, error) {
 	return result, nil
 }
 
-func ToFieldMetadataMap(fields []*FieldMetadata) map[string]*FieldMetadata {
+func toFieldMetadataMap(fields []*FieldMetadata) map[string]*FieldMetadata {
 	result := make(map[string]*FieldMetadata)
 	for _, field := range fields {
 		result[field.Name] = field
@@ -30,7 +31,7 @@ func ToFieldMetadataMap(fields []*FieldMetadata) map[string]*FieldMetadata {
 	return result
 }
 
-func ToTableMetadataMap(tables []*TableMetadata) map[string]*TableMetadata {
+func toTableMetadataMap(tables []*TableMetadata) map[string]*TableMetadata {
 	result := make(map[string]*TableMetadata)
 	for _, table := range tables {
 		result[table.Name] = table
@@ -38,60 +39,63 @@ func ToTableMetadataMap(tables []*TableMetadata) map[string]*TableMetadata {
 	return result
 }
 
+//Metadata defines all available info from the metdata rest api.
 type Metadata struct {
 	StaticByteSize int              `json:"static_byte_size,omitempty"`
 	Fields         []*FieldMetadata `json:"fields"`
 	Tables         []*TableMetadata `json:"tables"`
 }
 
+//TableMetadata defines all available info about a table.
 type TableMetadata struct {
 	// Name of the table.
 	Name string `json:"name"`
 	// If set to true, it means that the table is a system table. The default value is false.
-	Is_system bool `json:"is_system"`
+	IsSystem bool `json:"is_system"`
 	// If set to true, it means that the table is a semantic. The default value is false.
-	Is_semantic bool `json:"is_semantic"`
+	IsSemantic bool `json:"is_semantic"`
 	// If set to true, it means that the table is loose due to circular connection. The default value is false.
-	Is_loose bool `json:"is_loose"`
+	IsLoose bool `json:"is_loose"`
 	// of rows.
-	No_of_rows int `json:"no_of_rows"`
+	NoOfRows int `json:"no_of_rows"`
 	// of fields.
-	No_of_fields int `json:"no_of_fields"`
+	NoOfFields int `json:"no_of_fields"`
 	// of key fields.
-	No_of_key_fields int `json:"no_of_key_fields"`
+	NoOfKeyFields int `json:"no_of_key_fields"`
 	// Table comment.
 	Comment string `json:"commen"`
 	// RAM memory used in bytes.
-	Byte_size int `json:"byte_size"`
+	ByteSize int `json:"byte_size"`
 }
 
+//FieldMetadata defines all available info about a a field
 type FieldMetadata struct {
 	// Name of the field.
 	Name string `json:"name"`
 	// No List of table names.
-	Src_tables []string `json:"src_tables"`
+	SrcTables []string `json:"src_tables"`
 	// If set to true, it means that the field is a system field. The default value is false.
-	Is_system bool `json:"is_system"`
+	IsSystem bool `json:"is_system"`
 	// If set to true, it means that the field is hidden. The default value is false.
-	Is_hidden bool `json:"is_hidden"`
+	IsHidden bool `json:"is_hidden"`
 	// If set to true, it means that the field is a semantic. The default value is false.
-	Is_semantic bool `json:"is_semantic"`
+	IsSemantic bool `json:"is_semantic"`
 	// If set to true, only distinct field values are shown. The default value is false.
-	Distinct_only bool `json:"distinct_only"`
+	DistinctOnly bool `json:"distinct_only"`
 	// Number of distinct field values.
 	Cardinal int `json:"cardinal"`
 	// Total number of field values.
-	Total_count int `json:"total_count"`
+	TotalCount int `json:"total_count"`
 	// If set to true, it means that the field is locked. The default value is false.
-	Is_locked bool `json:"is_locked"`
+	IsLocked bool `json:"is_locked"`
 	// If set to true, it means that the field has one and only one selection (not 0 and not more than 1). If this property is set to true, the field cannot be cleared anymore and no more selections can be performed in that field. The default value is false.
-	Always_one_selected bool `json:"always_one_selected"`
+	AlwaysOneSelected bool `json:"always_one_selected"`
 	// Is set to true if the value is a numeric. The default value is false.
-	Is_numeric bool `json:"is_numeric"`
+	IsNumeric bool `json:"is_numeric"`
 	// Field comment.
 	Comment string `json:"comment"`
 	// No Gives information on a field. For example, it can return the type of the field. Examples: key, text, ASCII.
 	Tags []string `json:"tags"`
 	// Static RAM memory used in bytes.
-	Byte_size int `json:"byte_size"`
+	ByteSize int `json:"byte_size"`
 }

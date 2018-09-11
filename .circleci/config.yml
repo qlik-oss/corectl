@@ -17,9 +17,9 @@ jobs:
           key: dependency-cache-{{ checksum "Gopkg.lock" }}
           paths:
             - vendor
-      # - run:
-      #     name: Linting
-      #     command: golint -set_exit_status
+      - run:
+          name: Linting
+          command: golint -set_exit_status
       - run:
           name: Build
           command: go build

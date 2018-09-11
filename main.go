@@ -18,7 +18,7 @@ var (
 	state  *internal.State
 	config string
 
-	QliCommand = &cobra.Command{
+	qliCommand = &cobra.Command{
 		Hidden: true,
 		Use:    "qli",
 		Short:  "",
@@ -217,22 +217,22 @@ var (
 func init() {
 
 	// Flags
-	QliCommand.PersistentFlags().StringVarP(&config, "config", "c", "", "path/to/config.yml where default parameters can be set")
+	qliCommand.PersistentFlags().StringVarP(&config, "config", "c", "", "path/to/config.yml where default parameters can be set")
 
-	QliCommand.PersistentFlags().StringP("engine", "e", "localhost", "URL to engine")
-	viper.BindPFlag("engine", QliCommand.PersistentFlags().Lookup("engine"))
+	qliCommand.PersistentFlags().StringP("engine", "e", "localhost", "URL to engine")
+	viper.BindPFlag("engine", qliCommand.PersistentFlags().Lookup("engine"))
 
-	QliCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
-	viper.BindPFlag("ttl", QliCommand.PersistentFlags().Lookup("ttl"))
+	qliCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
+	viper.BindPFlag("ttl", qliCommand.PersistentFlags().Lookup("ttl"))
 
-	QliCommand.PersistentFlags().String("engine-headers", "30", "HTTP headers to send to the engine")
-	viper.BindPFlag("engine-headers", QliCommand.PersistentFlags().Lookup("engine-headers"))
+	qliCommand.PersistentFlags().String("engine-headers", "30", "HTTP headers to send to the engine")
+	viper.BindPFlag("engine-headers", qliCommand.PersistentFlags().Lookup("engine-headers"))
 
-	QliCommand.PersistentFlags().StringP("app", "a", "unnamed-app.qvf", "App name including .qvf file ending")
-	viper.BindPFlag("app", QliCommand.PersistentFlags().Lookup("app"))
+	qliCommand.PersistentFlags().StringP("app", "a", "unnamed-app.qvf", "App name including .qvf file ending")
+	viper.BindPFlag("app", qliCommand.PersistentFlags().Lookup("app"))
 
-	QliCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
-	viper.BindPFlag("verbose", QliCommand.PersistentFlags().Lookup("verbose"))
+	qliCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
+	viper.BindPFlag("verbose", qliCommand.PersistentFlags().Lookup("verbose"))
 
 	evalCmd.PersistentFlags().StringP("select", "s", "", "")
 	viper.BindPFlag("select", evalCmd.PersistentFlags().Lookup("select"))
@@ -247,15 +247,15 @@ func init() {
 	//viper.BindPFlag("script", reloadCmd.PersistentFlags().Lookup("script"))
 
 	// commands
-	QliCommand.AddCommand(reloadCmd)
-	QliCommand.AddCommand(evalCmd)
-	QliCommand.AddCommand(metaCmd)
-	QliCommand.AddCommand(getScriptCmd)
-	QliCommand.AddCommand(fieldsCommand)
-	QliCommand.AddCommand(keysCommand)
-	QliCommand.AddCommand(tablesCommand)
-	QliCommand.AddCommand(fieldCmd)
-	QliCommand.AddCommand(associationsCommand)
+	qliCommand.AddCommand(reloadCmd)
+	qliCommand.AddCommand(evalCmd)
+	qliCommand.AddCommand(metaCmd)
+	qliCommand.AddCommand(getScriptCmd)
+	qliCommand.AddCommand(fieldsCommand)
+	qliCommand.AddCommand(keysCommand)
+	qliCommand.AddCommand(tablesCommand)
+	qliCommand.AddCommand(fieldCmd)
+	qliCommand.AddCommand(associationsCommand)
 
 }
 
@@ -274,7 +274,7 @@ func GetPathParameter(ccmd *cobra.Command, paramName string) string {
 }
 
 func main() {
-	if err := QliCommand.Execute(); err != nil {
+	if err := qliCommand.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

@@ -7,9 +7,9 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 )
 
+// PrintAssociations prints a list of associations to system out.
 func PrintAssociations(data *internal.ModelMetadata) {
 
-	tm.Println("---------- Associations ----------")
 	keyList := tm.NewTable(0, 10, 3, ' ', 0)
 	fmt.Fprintf(keyList, "Field(s)\tLinked tables\n")
 	for _, key := range data.SourceKeys {

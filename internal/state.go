@@ -11,6 +11,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// State contains all needed info about the current app including a go context to use when communicating with the engine.
 type State struct {
 	Doc     *enigma.Doc
 	Ctx     context.Context
@@ -20,6 +21,8 @@ type State struct {
 	Verbose bool
 }
 
+// PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
+// depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
 func PrepareEngineState(ctx context.Context, engine string, sessionID string, appID string, ttl string) *State {
 	LogVerbose("---------- Connecting to app ----------")
 
