@@ -20,7 +20,7 @@ func flattenSettings(settings map[string]string) string {
 	return result
 }
 
-// SetupConnections reads all connectsion from both the project file path and the config file path and updates
+// SetupConnections reads all connections from both the project file path and the config file path and updates
 // the list of connections in the app.
 func SetupConnections(ctx context.Context, doc *enigma.Doc, projectFilePath string, configFilePath string) error {
 

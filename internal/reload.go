@@ -9,7 +9,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-// Reload reloads the app and prints the progerss to system out. If true is supplied to skipTransientLogs
+// Reload reloads the app and prints the progress to system out. If true is supplied to skipTransientLogs
 // the live ticking of table row counts is disabled (useful for testing).
 func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, skipTransientLogs bool) {
 	reloadDone := make(chan struct{})
