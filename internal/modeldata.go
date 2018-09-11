@@ -8,6 +8,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// ModelMetadata defines all available metadata around the data model.
 type ModelMetadata struct {
 	Tables                     []*enigma.TableRecord
 	SourceKeys                 []*enigma.SourceKeyRecord
@@ -23,6 +24,7 @@ type ModelMetadata struct {
 	SampleContentByFieldName   map[string]string
 }
 
+// GetModelMetadata retrives all available metadata about the app
 func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
@@ -54,8 +56,8 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyO
 	return &ModelMetadata{
 		Tables:                     tables,
 		SourceKeys:                 sourceKeys,
-		TableMetadataByName:        ToTableMetadataMap(metadata.Tables),
-		FieldMetadataByName:        ToFieldMetadataMap(metadata.Fields),
+		TableMetadataByName:        toTableMetadataMap(metadata.Tables),
+		FieldMetadataByName:        toFieldMetadataMap(metadata.Fields),
 		Metadata:                   metadata,
 		SystemTableLayout:          systemTableLayout,
 		FieldsInTable:              fieldsInTable,
@@ -103,13 +105,10 @@ func tableRecordsToMapMap(tables []*enigma.TableRecord) map[string]map[string]*e
 	return fieldsInTable
 }
 
+// FieldSourceTableInfo defines row count and key type for a field
 type FieldSourceTableInfo struct {
 	RowCount string
 	KeyType  string
-}
-type SystemTableInfo struct {
-	TableNames                []string
-	TableFieldInfoByFieldName map[string][]FieldSourceTableInfo
 }
 
 func systemTableToSystemMap(systemTableLayout *enigma.GenericObjectLayout, fieldInfo map[string]map[string]*enigma.FieldInTableData) ([]string, []string, map[string][]FieldSourceTableInfo) {

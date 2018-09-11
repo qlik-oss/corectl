@@ -10,6 +10,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// Eval builds a straight table  hypercube based on the supplied argument, evaluates it and prints the result to system out.
 func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	measures, dims := argumentsToMeasuresAndDims(args)
 	object, _ := doc.CreateObject(ctx, &enigma.GenericObjectProperties{

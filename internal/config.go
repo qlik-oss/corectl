@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
 type ConnectionConfigEntry struct {
 	Type     string
 	Username string
@@ -14,10 +15,13 @@ type ConnectionConfigEntry struct {
 	Path     string
 	Settings map[string]string
 }
+
+// ConnectionsConfigFile defines the content of a connections yml file.
 type ConnectionsConfigFile struct {
 	Connections map[string]ConnectionConfigEntry
 }
 
+// ReadConnectionsFile reads the connections config file from the supplied path.
 func ReadConnectionsFile(path string) ConnectionsConfigFile {
 
 	var config ConnectionsConfigFile

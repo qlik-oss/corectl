@@ -9,6 +9,7 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 )
 
+// PrintFields prints a table sof fields along with various metadata to system out.
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	fieldList := tm.NewTable(0, 10, 3, ' ', 0)
 	fmt.Fprintf(fieldList, "Field\tRows\tRAM\tTags\t")
@@ -21,9 +22,9 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	fmt.Fprintf(fieldList, "\n")
 	for _, fieldName := range data.FieldNames {
 		field := data.FieldMetadataByName[fieldName]
-		if field != nil && !field.Is_system {
+		if field != nil && !field.IsSystem {
 			total := uniqueAndTotal(field)
-			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", field.Name, total, formatBytes(field.Byte_size), strings.Join(field.Tags, ", "))
+			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", field.Name, total, formatBytes(field.ByteSize), strings.Join(field.Tags, ", "))
 			fieldInfo := data.FieldSourceTableInfoByName[field.Name]
 			for _, ff := range fieldInfo {
 				fmt.Fprintf(fieldList, "%s\t", ff.RowCount)
@@ -44,7 +45,7 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	for _, tableName := range data.TableNames {
 		table := data.TableMetadataByName[tableName]
 		if table != nil {
-			fmt.Fprintf(fieldList, "\t%s", formatBytes(table.Byte_size))
+			fmt.Fprintf(fieldList, "\t%s", formatBytes(table.ByteSize))
 		}
 	}
 	fmt.Print(fieldList, "\n\n")
@@ -52,10 +53,10 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 
 func uniqueAndTotal(field *internal.FieldMetadata) string {
 	total := ""
-	if field.Cardinal < field.Total_count {
-		total = fmt.Sprintf("%d/%d", field.Cardinal, field.Total_count)
+	if field.Cardinal < field.TotalCount {
+		total = fmt.Sprintf("%d/%d", field.Cardinal, field.TotalCount)
 	} else {
-		total = fmt.Sprintf("%d", field.Total_count)
+		total = fmt.Sprintf("%d", field.TotalCount)
 	}
 	return total
 }
