@@ -29,6 +29,8 @@ curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Win
 chmod +x "$HOME/bin/corectl.exe"
 ```
 
+You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
+
 ## Development
 
 Either clone the repo or go get it:
