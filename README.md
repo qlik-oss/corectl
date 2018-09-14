@@ -16,9 +16,9 @@ curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Dar
 On Linux
 
 ```bash
-curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Linux-x86_64 >/tmp/qli &&
-    chmod +x /tmp/qli &&
-   cp /tmp/qli /usr/local/bin/qli
+curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Linux-x86_64 >/tmp/corectl &&
+    chmod +x /tmp/corectl &&
+   cp /tmp/qli /usr/local/bin/corectl
 ```
 
 On Windows with git bash
