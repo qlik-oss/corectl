@@ -28,6 +28,10 @@ mkdir -p "$HOME/bin" &&
 curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Windows-x86_64.exe > "$HOME/bin/corectl.exe" &&
 chmod +x "$HOME/bin/corectl.exe"
 ```
+Optionally you can add the bin to the PATH environment variable to simplify usage in the command line.
+```bash
+setx PATH "%PATH%;%HOME%/bin"
+```
 
 You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
 
