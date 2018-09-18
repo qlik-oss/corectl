@@ -7,47 +7,69 @@ import (
 	"net/http"
 )
 
-// ReadMetadata fetches metadata from the rest api.
-func ReadMetadata(url string) (*Metadata, error) {
+// ReadRestMetadata fetches metadata from the rest api.
+func ReadRestMetadata(url string) (*RestMetadata, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 		return nil, err
 	}
 	if response.StatusCode != 200 {
-		return nil, fmt.Errorf("Too old app format")
+		return nil, nil
 	}
 	data, _ := ioutil.ReadAll(response.Body)
-	result := &Metadata{}
+	result := &RestMetadata{}
 	json.Unmarshal(data, result)
 	return result, nil
 }
 
-func toFieldMetadataMap(fields []*FieldMetadata) map[string]*FieldMetadata {
-	result := make(map[string]*FieldMetadata)
+func toFieldMetadataMap(fields []*RestFieldMetadata) map[string]*RestFieldMetadata {
+	result := make(map[string]*RestFieldMetadata)
 	for _, field := range fields {
 		result[field.Name] = field
 	}
 	return result
 }
 
-func toTableMetadataMap(tables []*TableMetadata) map[string]*TableMetadata {
-	result := make(map[string]*TableMetadata)
+func toTableMetadataMap(tables []*RestTableMetadata) map[string]*RestTableMetadata {
+	result := make(map[string]*RestTableMetadata)
 	for _, table := range tables {
 		result[table.Name] = table
 	}
 	return result
 }
 
-//Metadata defines all available info from the metdata rest api.
-type Metadata struct {
-	StaticByteSize int              `json:"static_byte_size,omitempty"`
-	Fields         []*FieldMetadata `json:"fields"`
-	Tables         []*TableMetadata `json:"tables"`
+//RestMetadata defines all available info from the metdata rest api.
+type RestMetadata struct {
+	StaticByteSize int                  `json:"static_byte_size,omitempty"`
+	Fields         []*RestFieldMetadata `json:"fields"`
+	Tables         []*RestTableMetadata `json:"tables"`
 }
 
-//TableMetadata defines all available info about a table.
-type TableMetadata struct {
+func (m *RestMetadata) tableByName(name string) *RestTableMetadata {
+	if m != nil {
+		for _, table := range m.Tables {
+			if table.Name == name {
+				return table
+			}
+		}
+	}
+	return nil
+}
+
+func (m *RestMetadata) fieldByName(name string) *RestFieldMetadata {
+	if m != nil {
+		for _, field := range m.Fields {
+			if field.Name == name {
+				return field
+			}
+		}
+	}
+	return nil
+}
+
+//RestTableMetadata defines all available info about a table.
+type RestTableMetadata struct {
 	// Name of the table.
 	Name string `json:"name"`
 	// If set to true, it means that the table is a system table. The default value is false.
@@ -68,8 +90,8 @@ type TableMetadata struct {
 	ByteSize int `json:"byte_size"`
 }
 
-//FieldMetadata defines all available info about a a field
-type FieldMetadata struct {
+//RestFieldMetadata defines all available info about a a field
+type RestFieldMetadata struct {
 	// Name of the field.
 	Name string `json:"name"`
 	// No List of table names.

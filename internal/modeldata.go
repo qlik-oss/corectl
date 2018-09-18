@@ -3,25 +3,117 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"github.com/qlik-oss/enigma-go"
+	"os"
 )
 
 // ModelMetadata defines all available metadata around the data model.
 type ModelMetadata struct {
-	Tables                     []*enigma.TableRecord
-	SourceKeys                 []*enigma.SourceKeyRecord
-	Metadata                   *Metadata
-	TableMetadataByName        map[string]*TableMetadata
-	FieldMetadataByName        map[string]*FieldMetadata
-	SystemTableLayout          *enigma.GenericObjectLayout
-	FieldsInTable              map[string]string
-	FieldNames                 []string
-	TableNames                 []string
-	FieldSourceTableInfoByName map[string][]FieldSourceTableInfo
-	FieldInTableDataByNames    map[string]map[string]*enigma.FieldInTableData
-	SampleContentByFieldName   map[string]string
+	Tables                   []*TableModel
+	Fields                   []*FieldModel
+	SourceKeys               []*enigma.SourceKeyRecord
+	RestMetadata             *RestMetadata
+	RestTableMetadataByName  map[string]*RestTableMetadata
+	RestFieldMetadataByName  map[string]*RestFieldMetadata
+	FieldsInTableTexts       map[string]string
+	SampleContentByFieldName map[string]string
+}
+
+// TableModel represents one table in the data model. It contains information from both the QIX and Rest apis
+type TableModel struct {
+	*enigma.TableRecord
+	RestMetadata *RestTableMetadata
+}
+
+// FieldModel represents one field in the data model. It contains information from both the QIX and Rest apis.
+// It also contains an array (with compatible ordering with the main Table model ordering) with field per source table info.
+type FieldModel struct {
+	*enigma.FieldDescription
+	RestMetadata *RestFieldMetadata
+	//Sparse array with information about the source tables.
+	FieldInTable []*enigma.FieldInTableData
+}
+
+// MemUsage returns the memory usage by the table if that information is available, "N/A" otherwise.
+func (t *TableModel) MemUsage() string {
+	if t.RestMetadata != nil {
+		return FormatBytes(t.RestMetadata.ByteSize)
+	}
+	return "N/A"
+}
+
+// MemUsage returns the static memory usage of the whole data model if that information is available, "N/A" otherwise.
+func (m *ModelMetadata) MemUsage() string {
+	if m.RestMetadata != nil {
+		return FormatBytes(m.RestMetadata.StaticByteSize)
+	}
+	return "N/A"
+}
+
+// MemUsage returns the memory usage of the field.
+func (f *FieldModel) MemUsage() string {
+	return FormatBytes(f.ByteSize)
+}
+
+func (m *ModelMetadata) tableByName(name string) *TableModel {
+	if m != nil {
+		for _, table := range m.Tables {
+			if table.Name == name {
+				return table
+			}
+		}
+	}
+	return nil
+}
+
+func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string, restMetadata *RestMetadata) []*FieldModel {
+	result := make([]*FieldModel, len(fieldNames))
+	resultChannel := make(chan *enigma.FieldDescription, len(fieldNames))
+	for _, fieldName := range fieldNames {
+		fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
+		if err != nil {
+			fmt.Println("Unexpected error", err)
+			os.Exit(1)
+		}
+		resultChannel <- fieldDescr
+	}
+	for i, fieldName := range fieldNames {
+		fieldDescr := <-resultChannel
+
+		result[i] = &FieldModel{
+			FieldDescription: fieldDescr,
+			RestMetadata:     restMetadata.fieldByName(fieldName),
+		}
+	}
+
+	return result
+}
+
+func createTableModels(ctx context.Context, doc *enigma.Doc, tableNames []string, tableRecords []*enigma.TableRecord, restMetadata *RestMetadata) []*TableModel {
+	tableRecordMap := make(map[string]*enigma.TableRecord)
+	for _, tableRecord := range tableRecords {
+		tableRecordMap[tableRecord.Name] = tableRecord
+	}
+
+	tableModels := make([]*TableModel, len(tableNames))
+	for i, tableName := range tableNames {
+		tableModels[i] = &TableModel{TableRecord: tableRecordMap[tableName], RestMetadata: restMetadata.tableByName(tableName)}
+	}
+	return tableModels
+}
+
+func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel) {
+	for _, field := range fields {
+		field.FieldInTable = make([]*enigma.FieldInTableData, len(tables))
+		for tableIndex, table := range tables {
+			for _, fieldInTableData := range table.Fields {
+				if fieldInTableData.Name == field.Name {
+					field.FieldInTable[tableIndex] = fieldInTableData
+				}
+			}
+
+		}
+	}
 }
 
 // GetModelMetadata retrives all available metadata about the app
@@ -31,41 +123,24 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyO
 		fmt.Println(err)
 		os.Exit(-1)
 	}
-	metadata, err := ReadMetadata(metaURL)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	restMetadata, err := ReadRestMetadata(metaURL)
+
+	if len(tables) > 0 && restMetadata == nil {
+		fmt.Println("No REST metadata available.")
 	}
-	if len(tables) > 0 && len(metadata.Tables) == 0 {
-		fmt.Println("Could not load metadata")
-		os.Exit(1)
-	}
-	systemTableObject := createSystemTableHypercube(ctx, doc)
-	systemTableLayout, err := systemTableObject.GetLayout(ctx)
+	tableNames, fieldNames := getSortedTableNamesAndFieldsNames(ctx, doc, err, tables)
 
-	if err != nil {
-		fmt.Println("Error when fetching system table:", err)
-		os.Exit(1)
-	}
-
-	fieldsInTable := tableRecordsToMap(tables)
-
-	fieldInTableDataByNames := tableRecordsToMapMap(tables)
-
-	tableNames, fieldNames, tableFieldInfoByFieldName := systemTableToSystemMap(systemTableLayout, fieldInTableDataByNames)
+	fieldModels := createFieldModels(ctx, doc, fieldNames, restMetadata)
+	tableModels := createTableModels(ctx, doc, tableNames, tables, restMetadata)
+	fieldsInTableTexts := tableRecordsToMap(tables)
+	addTableFieldCellCrossReferences(fieldModels, tableModels)
 	return &ModelMetadata{
-		Tables:                     tables,
-		SourceKeys:                 sourceKeys,
-		TableMetadataByName:        toTableMetadataMap(metadata.Tables),
-		FieldMetadataByName:        toFieldMetadataMap(metadata.Fields),
-		Metadata:                   metadata,
-		SystemTableLayout:          systemTableLayout,
-		FieldsInTable:              fieldsInTable,
-		FieldNames:                 fieldNames,
-		TableNames:                 tableNames,
-		FieldSourceTableInfoByName: tableFieldInfoByFieldName,
-		FieldInTableDataByNames:    fieldInTableDataByNames,
-		SampleContentByFieldName:   buildSampleContent(ctx, doc, fieldNames),
+		Tables:                   tableModels,
+		Fields:                   fieldModels,
+		SourceKeys:               sourceKeys,
+		RestMetadata:             restMetadata,
+		FieldsInTableTexts:       fieldsInTableTexts,
+		SampleContentByFieldName: buildSampleContent(ctx, doc, fieldNames),
 	}
 }
 
@@ -107,56 +182,6 @@ func tableRecordsToMapMap(tables []*enigma.TableRecord) map[string]map[string]*e
 
 // FieldSourceTableInfo defines row count and key type for a field
 type FieldSourceTableInfo struct {
-	RowCount string
-	KeyType  string
-}
-
-func systemTableToSystemMap(systemTableLayout *enigma.GenericObjectLayout, fieldInfo map[string]map[string]*enigma.FieldInTableData) ([]string, []string, map[string][]FieldSourceTableInfo) {
-
-	page := systemTableLayout.HyperCube.PivotDataPages[0]
-
-	tableNames := make([]string, len(page.Top))
-	fieldNames := make([]string, len(page.Left))
-	tableFieldInfoByFieldName := make(map[string][]FieldSourceTableInfo)
-
-	for x, tableName := range page.Top {
-		tableNames[x] = tableName.Text
-	}
-
-	for y, row := range page.Data {
-		fieldName := page.Left[y].Text
-		fieldNames[y] = fieldName
-		fieldSourceTableInfos := make([]FieldSourceTableInfo, len(page.Top))
-
-		for x := range row {
-
-			tableName := tableNames[x]
-			fieldDetails := fieldInfo[tableName][fieldName]
-			if fieldDetails != nil {
-
-				info := fmt.Sprintf("%d/%d", fieldDetails.NTotalDistinctValues, fieldDetails.NNonNulls)
-				if fieldDetails.NRows > fieldDetails.NNonNulls {
-					info += fmt.Sprintf("+%d", fieldDetails.NRows-fieldDetails.NNonNulls)
-				}
-				if fieldDetails.KeyType == "NOT_KEY" {
-					info += ""
-				} else if fieldDetails.KeyType == "ANY_KEY" {
-					info += "*"
-				} else if fieldDetails.KeyType == "PRIMARY_KEY" {
-					info += "**"
-				} else if fieldDetails.KeyType == "PERFECT_KEY" {
-					info += "***"
-				} else {
-					info += "?"
-				}
-				fieldSourceTableInfos[x].RowCount = info
-			} else {
-				fieldSourceTableInfos[x].RowCount = ""
-			}
-
-		}
-		tableFieldInfoByFieldName[fieldName] = fieldSourceTableInfos
-	}
-
-	return tableNames, fieldNames, tableFieldInfoByFieldName
+	CellContent string
+	KeyType     string
 }
