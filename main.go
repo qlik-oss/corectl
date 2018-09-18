@@ -18,9 +18,9 @@ var (
 	state  *internal.State
 	config string
 
-	qliCommand = &cobra.Command{
+	corectlCommand = &cobra.Command{
 		Hidden: true,
-		Use:    "qli",
+		Use:    "corectl",
 		Short:  "",
 		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 
@@ -173,7 +173,7 @@ var (
 	reloadCmd = &cobra.Command{
 		Use:   "reload",
 		Short: "Reloads the app",
-		Long:  `Reloads the app. Example: qli reload --connections ./myconnections.yml --script ./myscript.qvs`,
+		Long:  `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
@@ -217,22 +217,22 @@ var (
 func init() {
 
 	// Flags
-	qliCommand.PersistentFlags().StringVarP(&config, "config", "c", "", "path/to/config.yml where default parameters can be set")
+	corectlCommand.PersistentFlags().StringVarP(&config, "config", "c", "", "path/to/config.yml where default parameters can be set")
 
-	qliCommand.PersistentFlags().StringP("engine", "e", "localhost", "URL to engine")
-	viper.BindPFlag("engine", qliCommand.PersistentFlags().Lookup("engine"))
+	corectlCommand.PersistentFlags().StringP("engine", "e", "localhost", "URL to engine")
+	viper.BindPFlag("engine", corectlCommand.PersistentFlags().Lookup("engine"))
 
-	qliCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
-	viper.BindPFlag("ttl", qliCommand.PersistentFlags().Lookup("ttl"))
+	corectlCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
+	viper.BindPFlag("ttl", corectlCommand.PersistentFlags().Lookup("ttl"))
 
-	qliCommand.PersistentFlags().String("engine-headers", "30", "HTTP headers to send to the engine")
-	viper.BindPFlag("engine-headers", qliCommand.PersistentFlags().Lookup("engine-headers"))
+	corectlCommand.PersistentFlags().String("engine-headers", "30", "HTTP headers to send to the engine")
+	viper.BindPFlag("engine-headers", corectlCommand.PersistentFlags().Lookup("engine-headers"))
 
-	qliCommand.PersistentFlags().StringP("app", "a", "unnamed-app.qvf", "App name including .qvf file ending")
-	viper.BindPFlag("app", qliCommand.PersistentFlags().Lookup("app"))
+	corectlCommand.PersistentFlags().StringP("app", "a", "unnamed-app.qvf", "App name including .qvf file ending")
+	viper.BindPFlag("app", corectlCommand.PersistentFlags().Lookup("app"))
 
-	qliCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
-	viper.BindPFlag("verbose", qliCommand.PersistentFlags().Lookup("verbose"))
+	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
+	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
 	evalCmd.PersistentFlags().StringP("select", "s", "", "")
 	viper.BindPFlag("select", evalCmd.PersistentFlags().Lookup("select"))
@@ -247,15 +247,15 @@ func init() {
 	//viper.BindPFlag("script", reloadCmd.PersistentFlags().Lookup("script"))
 
 	// commands
-	qliCommand.AddCommand(reloadCmd)
-	qliCommand.AddCommand(evalCmd)
-	qliCommand.AddCommand(metaCmd)
-	qliCommand.AddCommand(getScriptCmd)
-	qliCommand.AddCommand(fieldsCommand)
-	qliCommand.AddCommand(keysCommand)
-	qliCommand.AddCommand(tablesCommand)
-	qliCommand.AddCommand(fieldCmd)
-	qliCommand.AddCommand(associationsCommand)
+	corectlCommand.AddCommand(reloadCmd)
+	corectlCommand.AddCommand(evalCmd)
+	corectlCommand.AddCommand(metaCmd)
+	corectlCommand.AddCommand(getScriptCmd)
+	corectlCommand.AddCommand(fieldsCommand)
+	corectlCommand.AddCommand(keysCommand)
+	corectlCommand.AddCommand(tablesCommand)
+	corectlCommand.AddCommand(fieldCmd)
+	corectlCommand.AddCommand(associationsCommand)
 
 }
 
@@ -274,7 +274,7 @@ func GetPathParameter(ccmd *cobra.Command, paramName string) string {
 }
 
 func main() {
-	if err := qliCommand.Execute(); err != nil {
+	if err := corectlCommand.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
