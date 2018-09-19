@@ -84,6 +84,8 @@ func TestCorectl(t *testing.T) {
 		golden string
 	}{
 		{"reload project1", []string{"--config=test/project1/qli.yml", connectToEngine, "reload"}, "project1-reload.golden"},
+		{"tables project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
+		{"assoc project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
 		{"fields project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
 		{"field numbers project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
 		{"eval project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},

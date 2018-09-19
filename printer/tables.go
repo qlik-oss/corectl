@@ -16,6 +16,5 @@ func PrintTables(data *internal.ModelMetadata) {
 	}
 	fmt.Fprintf(tableList2, "\t\t\n")
 	fmt.Fprintf(tableList2, "Total RAM \t\t%s\n", data.MemUsage())
-	tm.Print(tableList2)
-	tm.Flush()
+	fmt.Print(tableList2)
 }

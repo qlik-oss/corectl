@@ -56,8 +56,7 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 			}
 		}
 	}
-	tm.Print(grid)
-	tm.Flush()
+	fmt.Print(grid)
 }
 
 func argumentsToMeasuresAndDims(args []string) ([]string, []string) {

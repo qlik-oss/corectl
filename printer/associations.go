@@ -29,6 +29,5 @@ func PrintAssociations(data *internal.ModelMetadata) {
 		}
 		fmt.Fprintf(keyList, "%s\t%s\n", fieldInfo, tableInfo)
 	}
-	tm.Println(keyList)
-	tm.Flush()
+	fmt.Print(keyList)
 }
