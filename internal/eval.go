@@ -13,7 +13,7 @@ import (
 // Eval builds a straight table  hypercube based on the supplied argument, evaluates it and prints the result to system out.
 func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	measures, dims := argumentsToMeasuresAndDims(args)
-	object, _ := doc.CreateObject(ctx, &enigma.GenericObjectProperties{
+	object, _ := doc.CreateSessionObject(ctx, &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "my-straight-hypercube",
 		},

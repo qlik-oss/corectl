@@ -3,8 +3,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
 	"os"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 func applySelection(ctx context.Context, doc *enigma.Doc, fieldName string, value string) {
@@ -21,7 +22,7 @@ func applySelection(ctx context.Context, doc *enigma.Doc, fieldName string, valu
 
 func createHypercube(ctx context.Context, doc *enigma.Doc, dimensions []*enigma.NxDimension, measures []*enigma.NxMeasure, sortOrder []int) *enigma.GenericObject {
 
-	object, _ := doc.CreateObject(ctx, &enigma.GenericObjectProperties{
+	object, _ := doc.CreateSessionObject(ctx, &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "my-straight-hypercube",
 		},
