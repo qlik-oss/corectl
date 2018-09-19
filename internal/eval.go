@@ -26,7 +26,6 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 			}},
 		},
 	})
-	fmt.Println("---------- " + strings.Join(args, " ") + " ----------")
 	grid := tm.NewTable(0, 10, 3, ' ', 0)
 	layout, err := object.GetLayout(ctx)
 
@@ -57,8 +56,7 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 			}
 		}
 	}
-	tm.Println(grid)
-	tm.Flush()
+	fmt.Print(grid)
 }
 
 func argumentsToMeasuresAndDims(args []string) ([]string, []string) {

@@ -1,0 +1,2 @@
+Field(s)   Linked tables
+numbers    TableA <--> TableB
