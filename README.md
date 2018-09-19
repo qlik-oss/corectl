@@ -40,7 +40,7 @@ go get -u github.com/qlik-oss/corectl
 
 Build the main.go file to a location on your path. You can use the buildtohomebin script.
 ```bash
-./builtohomebin
+./buildohomebin
 ```
 
 ## Example Usage
