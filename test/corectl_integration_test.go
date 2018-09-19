@@ -129,7 +129,7 @@ func TestMain(m *testing.M) {
 
 	binaryPath = abs
 
-	if err := exec.Command("go", "build", "-o", "corectl.exe", "-v").Run(); err != nil {
+	if err := exec.Command("go", "build", "-o", binaryName, "-v").Run(); err != nil {
 		fmt.Printf("could not make binary for %s: %v", binaryName, err)
 		os.Exit(1)
 	}
