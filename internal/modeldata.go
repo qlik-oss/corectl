@@ -121,7 +121,11 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyO
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(-1)
+		os.Exit(1)
+	}
+	if len(tables) == 0 {
+		fmt.Println("The data model is empty.")
+		os.Exit(1)
 	}
 	restMetadata, err := ReadRestMetadata(metaURL)
 
@@ -184,4 +188,25 @@ func tableRecordsToMapMap(tables []*enigma.TableRecord) map[string]map[string]*e
 type FieldSourceTableInfo struct {
 	CellContent string
 	KeyType     string
+}
+
+// Exists if there  is no data model
+func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
+	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if len(tables) == 0 {
+		fmt.Println("The data model is empty.")
+		os.Exit(1)
+	}
+}
+
+func DataModelTableCount(ctx context.Context, doc *enigma.Doc) int {
+	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	if err != nil {
+		return 0
+	}
+	return len(tables)
 }

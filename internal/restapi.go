@@ -9,6 +9,9 @@ import (
 
 // ReadRestMetadata fetches metadata from the rest api.
 func ReadRestMetadata(url string) (*RestMetadata, error) {
+	if url == "" {
+		return nil, nil
+	}
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
