@@ -3,4 +3,11 @@
 # Execute in script directory
 cd "$(dirname "$0")"
 
-go build -o ~/bin/corectl.exe main.go
+# Set binary name depending on OS
+if [[ "$OS" = "Windows_NT" ]]; then
+    binary=corectl.exe
+else
+    binary=corectl
+fi
+
+go build -o ~/bin/$binary main.go
