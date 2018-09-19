@@ -64,7 +64,7 @@ var (
 			engine := viper.GetString("engine")
 			appID := viper.GetString("app")
 			ttl := viper.GetString("ttl")
-			sessionID := getSessionId(appID)
+			sessionID := getSessionID(appID)
 			state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 		},
 
@@ -219,24 +219,12 @@ var (
 		Long:  "Prints status info about the connection to engine and current app",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			if state.AppID != "" {
-				fmt.Println("Connected to " + state.AppID + " @ " + viper.GetString("engine") + " with sid=" + getSessionId(state.AppID))
-			} else {
-				fmt.Println("Connected to session app @ " + viper.GetString("engine") + " with sid=" + getSessionId(state.AppID))
-			}
-			tableCount := internal.DataModelTableCount(state.Ctx, state.Doc)
-			if tableCount == 0 {
-				fmt.Println("The data model is empty.")
-			} else if tableCount == 1 {
-				fmt.Println("The data model has 1 table.")
-			} else {
-				fmt.Printf("The data model has %d tables.", tableCount)
-			}
+			printer.PrintStatus(state)
 		},
 	}
 )
 
-func getSessionId(appID string) string {
+func getSessionID(appID string) string {
 	currentUser, err := user.Current()
 	if err != nil {
 		fmt.Println(err)

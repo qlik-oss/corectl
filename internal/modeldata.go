@@ -202,11 +202,3 @@ func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
 		os.Exit(1)
 	}
 }
-
-func DataModelTableCount(ctx context.Context, doc *enigma.Doc) int {
-	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
-	if err != nil {
-		return 0
-	}
-	return len(tables)
-}
