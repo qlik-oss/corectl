@@ -1,5 +1,5 @@
 engine: localhost:9076
-app: testapp.qvf
+app: project1.qvf
 script: ./script.qvs
 connections:
   myconnection:
