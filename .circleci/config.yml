@@ -37,6 +37,8 @@ jobs:
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$CONTAINER_ID")
             # Start a container for test execution
             TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.9-alpine tail -f /dev/null)
+            # Install packages
+            docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash'
             # Copy code into container
             docker cp . $TEST_CONTAINER:/go
             # Copy apps and data into engine container
