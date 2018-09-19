@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -52,7 +53,7 @@ func getFieldContentAsTable(ctx context.Context, doc *enigma.Doc, fieldName stri
 
 func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, count int) []string {
 
-	object, _ := doc.CreateObject(ctx, &enigma.GenericObjectProperties{
+	object, _ := doc.CreateSessionObject(ctx, &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "my-straight-hypercube",
 		},
