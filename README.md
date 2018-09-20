@@ -48,7 +48,7 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 Reload a script file in the specified app and print metadata. The script file path is local, the app name/path is from within the engine docker file system.
 If the `--app` parameter is left out the tool will use a session app instead.
 ```bash
-corectl --app myapp.qvf reload myscript.qvs
+corectl --app myapp.qvf reload --script myscript.qvs
 ```
 
 Print the metadata with reload
@@ -76,7 +76,7 @@ corectl --app myapp.qvf eval "=A+B+C"
 
 Specify what Qlik Associative Engine to use with the --engine parameter
 ```bash
-corectl --engine remoteengine:9076 --app myapp.qvf reload myscript.qvs
+corectl --engine remoteengine:9076 --app myapp.qvf reload --script myscript.qvs
 ```
 
 Print some extra debugging information using --verbose flag
