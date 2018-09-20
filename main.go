@@ -64,6 +64,12 @@ var (
 			ttl := viper.GetString("ttl")
 			sessionID := "QLISession-" + appID
 
+			if engine == "" {
+				fmt.Println("No engine specified.")
+				fmt.Println("Specify using the --engine parameter or in your config file")
+				fmt.Println("")
+				ccmd.HelpFunc()
+			}
 			if appID == "" {
 				fmt.Println("Using session app")
 			}
@@ -219,7 +225,7 @@ func init() {
 	// Flags
 	corectlCommand.PersistentFlags().StringVarP(&config, "config", "c", "", "path/to/config.yml where default parameters can be set")
 
-	corectlCommand.PersistentFlags().StringP("engine", "e", "localhost", "URL to engine")
+	corectlCommand.PersistentFlags().StringP("engine", "e", "", "URL to engine")
 	viper.BindPFlag("engine", corectlCommand.PersistentFlags().Lookup("engine"))
 
 	corectlCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
