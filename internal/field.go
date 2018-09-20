@@ -9,6 +9,7 @@ import (
 
 // PrintField prints the first few rows of a field to system out.
 func PrintField(ctx context.Context, doc *enigma.Doc, fieldName string) {
+	ensureModelExists(ctx, doc)
 	fmt.Print(getFieldContentAsTable(ctx, doc, fieldName, 100))
 }
 

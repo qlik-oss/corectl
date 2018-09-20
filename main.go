@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
+	"log"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 	"time"
@@ -62,7 +65,6 @@ var (
 			engine := viper.GetString("engine")
 			appID := viper.GetString("app")
 			ttl := viper.GetString("ttl")
-			sessionID := "QLISession-" + appID
 
 			if engine == "" {
 				fmt.Println("No engine specified.")
@@ -73,6 +75,9 @@ var (
 			if appID == "" {
 				fmt.Println("Using session app")
 			}
+
+			sessionID := getSessionID(appID)
+
 			state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 		},
 
@@ -157,8 +162,7 @@ var (
 
 			script, err := doc.GetScript(ctx)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(-1)
+				log.Fatalln(err)
 			}
 
 			fmt.Println(script)
@@ -200,7 +204,9 @@ var (
 			}
 
 			internal.Reload(ctx, doc, global, true)
-			internal.Save(ctx, doc, state.AppID)
+			if state.AppID != "" {
+				internal.Save(ctx, doc, state.AppID)
+			}
 		},
 	}
 
@@ -218,7 +224,30 @@ var (
 			internal.PrintField(state.Ctx, state.Doc, args[0])
 		},
 	}
+
+	statusCommand = &cobra.Command{
+		Use:   "status",
+		Short: "Prints status info about the connection to engine and current app",
+		Long:  "Prints status info about the connection to engine and current app",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			printer.PrintStatus(state)
+		},
+	}
 )
+
+func getSessionID(appID string) string {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	hostName, err := os.Hostname()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	sessionID := base64.StdEncoding.EncodeToString([]byte("Corectl-" + currentUser.Username + "-" + hostName + "-" + appID))
+	return sessionID
+}
 
 func init() {
 
@@ -234,7 +263,7 @@ func init() {
 	corectlCommand.PersistentFlags().String("engine-headers", "30", "HTTP headers to send to the engine")
 	viper.BindPFlag("engine-headers", corectlCommand.PersistentFlags().Lookup("engine-headers"))
 
-	corectlCommand.PersistentFlags().StringP("app", "a", "unnamed-app.qvf", "App name including .qvf file ending")
+	corectlCommand.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending")
 	viper.BindPFlag("app", corectlCommand.PersistentFlags().Lookup("app"))
 
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
@@ -262,6 +291,7 @@ func init() {
 	corectlCommand.AddCommand(tablesCommand)
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
+	corectlCommand.AddCommand(statusCommand)
 
 }
 

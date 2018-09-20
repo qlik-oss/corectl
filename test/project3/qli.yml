@@ -1,0 +1,5 @@
+engine: localhost:9076
+script: ./script.qvs
+connections:
+  testdata:
+    path: /data
