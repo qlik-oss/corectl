@@ -20,8 +20,6 @@ func PrintStatus(state *internal.State) {
 	tableCount := dataModelTableCount(state.Ctx, state.Doc)
 	if tableCount == 0 {
 		fmt.Println("The data model is empty.")
-	} else if tableCount == 1 {
-		fmt.Println("The data model has 1 table.")
 	} else {
 		fmt.Printf("The data model has %d tables.", tableCount)
 	}

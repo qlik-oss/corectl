@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	neturl "net/url"
 	"os"
@@ -61,23 +62,22 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 			if doc != nil {
 				LogVerbose("Session app (new)")
 			} else {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatalln(err)
 			}
 		} else {
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
-			if doc != nil {
+			if err != nil {
+				log.Fatalln(err)
+			} else if doc != nil {
 				LogVerbose("App:  " + appID + "(opened)")
 			} else {
 				_, _, err = global.CreateApp(ctx, appID, "")
 				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
+					log.Fatalln(err)
 				}
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
+					log.Fatalln(err)
 				}
 				if doc != nil {
 					LogVerbose("Document: " + appID + "(new)")
