@@ -1,0 +1,3 @@
+connections:
+  testdata:
+    path: /data

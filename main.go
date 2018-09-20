@@ -191,7 +191,7 @@ var (
 			doc := state.Doc
 			global := state.Global
 
-			connectionsFile := GetPathParameter(ccmd, "include-connections")
+			connectionsFile := GetPathParameter(ccmd, "connections")
 			if connectionsFile != "" {
 				internal.SetupConnections(ctx, doc, connectionsFile, viper.ConfigFileUsed())
 			} else {
@@ -275,7 +275,7 @@ func init() {
 	fieldsCommand.PersistentFlags().StringP("select", "s", "", "")
 	viper.BindPFlag("select", fieldsCommand.PersistentFlags().Lookup("select"))
 
-	reloadCmd.PersistentFlags().String("include-connections", "", "path to connections file")
+	reloadCmd.PersistentFlags().String("connections", "", "path to connections file")
 	//viper.BindPFlag("connections", reloadCmd.PersistentFlags().Lookup("connections"))
 
 	reloadCmd.PersistentFlags().String("script", "", "Script file name")
