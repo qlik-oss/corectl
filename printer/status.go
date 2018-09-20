@@ -3,6 +3,7 @@ package printer
 import (
 	"context"
 	"fmt"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
 	"github.com/spf13/viper"
@@ -27,7 +28,7 @@ func PrintStatus(state *internal.State) {
 
 }
 
-//Returns the number of
+// Returns the number of tables in the data model
 func dataModelTableCount(ctx context.Context, doc *enigma.Doc) int {
 	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {

@@ -3,8 +3,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
 	"os"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 // ModelMetadata defines all available metadata around the data model.
@@ -190,7 +191,7 @@ type FieldSourceTableInfo struct {
 	KeyType     string
 }
 
-// Exists if there  is no data model
+// Exits if there is no data model
 func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
 	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
