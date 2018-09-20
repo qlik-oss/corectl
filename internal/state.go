@@ -67,8 +67,6 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 		} else {
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 			if doc != nil {
-				log.Fatalln(err)
-			} else if doc != nil {
 				LogVerbose("App:  " + appID + "(opened)")
 			} else {
 				_, _, err = global.CreateApp(ctx, appID, "")
