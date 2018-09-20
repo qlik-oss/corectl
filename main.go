@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -149,8 +150,7 @@ var (
 
 			script, err := doc.GetScript(ctx)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatalln(err)
 			}
 
 			fmt.Println(script)
@@ -227,13 +227,11 @@ var (
 func getSessionID(appID string) string {
 	currentUser, err := user.Current()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 	hostName, err := os.Hostname()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("Corectl-" + currentUser.Username + "-" + hostName + "-" + appID))
 	return sessionID
