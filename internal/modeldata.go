@@ -3,8 +3,10 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
+	"log"
 	"os"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 // ModelMetadata defines all available metadata around the data model.
@@ -120,8 +122,10 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
+		log.Fatalln(err)
+	}
+	if len(tables) == 0 {
+		log.Fatalln("The data model is empty.")
 	}
 	restMetadata, err := ReadRestMetadata(metaURL)
 
@@ -184,4 +188,15 @@ func tableRecordsToMapMap(tables []*enigma.TableRecord) map[string]map[string]*e
 type FieldSourceTableInfo struct {
 	CellContent string
 	KeyType     string
+}
+
+// Exits if there is no data model
+func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
+	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if len(tables) == 0 {
+		log.Fatalln("The data model is empty.")
+	}
 }

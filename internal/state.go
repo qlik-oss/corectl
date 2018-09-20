@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	neturl "net/url"
 	"os"
@@ -33,13 +34,11 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 
 	LogVerbose("SessionId: " + sessionID)
 	headers := make(http.Header, 1)
-	if sessionID != "" {
-		headers.Set("X-Qlik-Session", sessionID)
-	}
+	headers.Set("X-Qlik-Session", sessionID)
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
 	if err != nil {
 		fmt.Println("Could not connect to engine:"+engine, err)
-		os.Exit(-1)
+		os.Exit(1)
 	}
 
 	go func() {
@@ -49,41 +48,34 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 			}
 		}
 	}()
-	if sessionID != "" {
-		doc, err = global.GetActiveDoc(ctx)
-		if doc != nil {
-			appID := "SessionDoc"
-			LogVerbose("Document: " + appID + "(reconnected)")
+	doc, err = global.GetActiveDoc(ctx)
+	if doc != nil {
+		// There is an already opened doc!
+		if appID != "" {
+			LogVerbose("App: " + appID + "(reconnected)")
 		} else {
-			LogVerbose("No active doc: " + appID + ", session=" + sessionID)
+			LogVerbose("Session app (reconnected)")
 		}
-	}
-	if doc == nil {
+	} else {
 		if appID == "" {
 			doc, err = global.CreateSessionApp(ctx)
 			if doc != nil {
-				appID = doc.GenericId
-				LogVerbose("Document: " + appID + "(new session app)")
+				LogVerbose("Session app (new)")
 			} else {
-				fmt.Println(err)
+				log.Fatalln(err)
 			}
 		} else {
-			if doc == nil {
-				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
-				if doc != nil {
-					LogVerbose("Document: " + appID + "(opened)")
-				}
-			}
-			if doc == nil {
+			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
+			if doc != nil {
+				LogVerbose("App:  " + appID + "(opened)")
+			} else {
 				_, _, err = global.CreateApp(ctx, appID, "")
 				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
+					log.Fatalln(err)
 				}
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
+					log.Fatalln(err)
 				}
 				if doc != nil {
 					LogVerbose("Document: " + appID + "(new)")
@@ -125,6 +117,9 @@ func buildWebSocketURL(engine string, ttl string) string {
 }
 
 func buildMetadataURL(engine string, appID string) string {
+	if appID == "" {
+		return ""
+	}
 	engine = tidyUpEngine(engine)
 	engine = strings.Replace(engine, "wss://", "https://", -1)
 	engine = strings.Replace(engine, "ws://", "http://", -1)
