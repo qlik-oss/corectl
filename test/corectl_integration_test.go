@@ -92,6 +92,7 @@ func TestCorectl(t *testing.T) {
 
 		{"reload project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
 		{"fields project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
+		{"reload project 2 with connections", []string{connectToEngine, "-a project2.qvf ", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml"}, "project2-reload.golden"},
 	}
 
 	for _, tt := range tests {
