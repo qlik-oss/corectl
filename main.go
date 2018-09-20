@@ -75,8 +75,8 @@ var (
 			if appID == "" {
 				fmt.Println("Using session app")
 			}
-      
-      sessionID := getSessionID(appID)
+
+			sessionID := getSessionID(appID)
 
 			state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 		},
