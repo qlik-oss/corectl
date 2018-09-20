@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -65,9 +66,7 @@ var (
 			sessionID := "QLISession-" + appID
 
 			if engine == "" {
-				fmt.Println("No engine specified.")
-				fmt.Println("Specify using the --engine parameter or in your config file")
-				os.Exit(0)
+				log.Fatalln("No engine specified.\nSpecify using the --engine parameter or in your config file")
 			}
 			if appID == "" {
 				fmt.Println("Using session app")
