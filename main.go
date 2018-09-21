@@ -203,7 +203,7 @@ var (
 				internal.SetScript(ctx, doc, scriptFile)
 			}
 
-			internal.Reload(ctx, doc, global, true)
+			internal.Reload(ctx, doc, global, internal.QliVerbose, true)
 			if state.AppID != "" {
 				internal.Save(ctx, doc, state.AppID)
 			}

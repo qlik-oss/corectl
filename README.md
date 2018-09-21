@@ -47,9 +47,14 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 
 Reload a script file in the specified app and print metadata. The script file path is local, the app name/path is from within the engine docker file system.
 If the `--app` parameter is left out the tool will use a session app instead.
+
 ```bash
 corectl --app myapp.qvf reload --script myscript.qvs
 ```
+
+If you want to include reload progress in the logs you can add the `--verbose` flag
+
+`corectl --app myapp.qvf --verbose reload --script myscript.qvs`
 
 Print the metadata with reload
 ```bash

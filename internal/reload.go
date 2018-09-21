@@ -11,24 +11,37 @@ import (
 
 // Reload reloads the app and prints the progress to system out. If true is supplied to skipTransientLogs
 // the live ticking of table row counts is disabled (useful for testing).
-func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, skipTransientLogs bool) {
-	reloadDone := make(chan struct{})
-	ctxWithReservedRequestID, reservedRequestID := doc.WithReservedRequestID(ctx)
-	go func() {
-		for {
-			select {
-			case <-reloadDone:
-				logProgress(ctx, global, reservedRequestID, skipTransientLogs)
-				return
-			default:
-				time.Sleep(1000)
-				// Get the progress using the request id we reserved for the reload
-				logProgress(ctx, global, reservedRequestID, skipTransientLogs)
-			}
+func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, verboseLogging bool, skipTransientLogs bool) {
 
-		}
-	}()
-	reloadSuccessful, err := doc.DoReload(ctxWithReservedRequestID, 0, false, false)
+	var (
+		reloadSuccessful bool
+		err              error
+	)
+
+	// Only log reload progress if verbose logging is enabled
+	if verboseLogging {
+		reloadDone := make(chan struct{})
+		ctxWithReservedRequestID, reservedRequestID := doc.WithReservedRequestID(ctx)
+		go func() {
+			for {
+				select {
+				case <-reloadDone:
+					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
+					return
+				default:
+					time.Sleep(1000)
+					// Get the progress using the request id we reserved for the reload
+					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
+				}
+
+			}
+		}()
+		reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, false)
+		close(reloadDone)
+	} else {
+		reloadSuccessful, err = doc.DoReload(ctx, 0, false, false)
+	}
+
 	if err != nil {
 		fmt.Println("Error when reloading app", err)
 		panic(err)
@@ -37,7 +50,7 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, skipTra
 		fmt.Println("DoReload was not successful!")
 		os.Exit(1)
 	}
-	close(reloadDone)
+
 	fmt.Println("Reload finished successfully")
 
 }

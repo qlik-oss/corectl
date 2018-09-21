@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"reflect"
@@ -76,7 +77,7 @@ func (tf *testFile) load() string {
 	return string(content)
 }
 
-func TestCorectl(t *testing.T) {
+func TestCorectlGolden(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
 	tests := []struct {
 		name   string
@@ -116,6 +117,36 @@ func TestCorectl(t *testing.T) {
 
 			if !reflect.DeepEqual(expected, actual) {
 				t.Fatalf("diff: %v", diff(expected, actual))
+			}
+		})
+	}
+}
+
+func TestCorectlContains(t *testing.T) {
+	connectToEngine := "--engine=" + *engineIP
+	tests := []struct {
+		name     string
+		args     []string
+		contains []string
+	}{
+		{"reload progress project 1", []string{"--config=test/project1/qli.yml", connectToEngine, "--verbose", "reload"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched"}},
+		{"reload progress project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
+		{"reload progress project 3", []string{"--config=test/project3/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cmd := exec.Command(binaryPath, tt.args...)
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
+			}
+			actual := string(output)
+
+			for _, sub := range tt.contains {
+				if !strings.Contains(actual, sub) {
+					t.Fatalf("Output did not contain substring %v", sub)
+				}
 			}
 		})
 	}
