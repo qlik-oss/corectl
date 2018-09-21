@@ -50,5 +50,6 @@ jobs:
       - run:
           name: Check if documentation needs to be updated
           command: |
+            ./buildtohomebin.sh
             corectl docs
             git diff --exit-code --name-only docs/

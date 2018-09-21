@@ -43,9 +43,9 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 ./buildtohomebin
 ```
 
-## Example Usage
+## Usage
 
-Usage documentation and examples can be found [here](./docs/corectl.md)
+Usage documentation and examples can be found [here](./docs/corectl.md).
 
 ## Testing
 
