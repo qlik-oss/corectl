@@ -234,6 +234,23 @@ var (
 			printer.PrintStatus(state)
 		},
 	}
+
+	listAppsCmd = &cobra.Command{
+		Use:   "apps",
+		Short: "Print app list",
+		Long:  "Print app list",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			docList, err := state.Global.GetDocList(state.Ctx)
+
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(-1)
+			}
+
+			printer.PrintApps(docList)
+		},
+	}
 )
 
 func getSessionID(appID string) string {
@@ -292,6 +309,7 @@ func init() {
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
+	corectlCommand.AddCommand(listAppsCmd)
 
 }
 
