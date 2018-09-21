@@ -25,7 +25,7 @@ corectl [flags]
 ### SEE ALSO
 
 * [corectl assoc](corectl_assoc.md)	 - Print table associations summary
-* [corectl docs](corectl_docs.md)	 - Generate markdown docs
+* [corectl docs](corectl_docs.md)	 - Generate markdown docs based on cobra commands
 * [corectl eval](corectl_eval.md)	 - Evalutes a hypercube
 * [corectl field](corectl_field.md)	 - Shows content of a field
 * [corectl fields](corectl_fields.md)	 - Print field list

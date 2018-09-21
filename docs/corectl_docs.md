@@ -1,10 +1,10 @@
 ## corectl docs
 
-Generate markdown docs
+Generate markdown docs based on cobra commands
 
 ### Synopsis
 
-Generate markdown docs
+Generate markdown docs based on cobra commands
 
 ```
 corectl docs [flags]
