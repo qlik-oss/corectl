@@ -29,8 +29,7 @@ jobs:
       - run:
           name: Check if documentation needs to be updated
           command: |
-            ./buildtohomebin
-            corectl generate-docs
+            ./corectl generate-docs
             git diff --exit-code --name-only docs/
       - setup_remote_docker
       - run:
