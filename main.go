@@ -23,13 +23,14 @@ var (
 	config string
 
 	corectlCommand = &cobra.Command{
-		Hidden: true,
-		Use:    "corectl",
-		Short:  "",
-		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		Hidden:            true,
+		Use:               "corectl",
+		Short:             "",
+		Long:              `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		DisableAutoGenTag: true,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			if ccmd.Use != "docs" {
+			if ccmd.Use != "generate-docs" {
 				ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
 
 				internal.QliVerbose = viper.GetBool("verbose")
@@ -238,10 +239,11 @@ var (
 		},
 	}
 
-	docsCommand = &cobra.Command{
-		Use:   "docs",
-		Short: "Generate markdown docs based on cobra commands",
-		Long:  "Generate markdown docs based on cobra commands",
+	generateDocsCommand = &cobra.Command{
+		Use:    "generate-docs",
+		Short:  "Generate markdown docs based on cobra commands",
+		Long:   "Generate markdown docs based on cobra commands",
+		Hidden: true,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			fmt.Println("Generating documentation")
@@ -306,7 +308,7 @@ func init() {
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
-	corectlCommand.AddCommand(docsCommand)
+	corectlCommand.AddCommand(generateDocsCommand)
 
 }
 

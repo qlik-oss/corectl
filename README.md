@@ -77,6 +77,13 @@ If the reference output files need to be updated, run the test with --update fla
 $ go test corectl_integration_test.go --update
 ```
 
+## Documentation
+
+The usage documentation is generated using [`cobra/doc`](https://github.com/spf13/cobra/blob/master/doc/md_docs.md).
+To regenerate the documentation:
+
+`corectl generate-docs`
+
 ## Contributing
 We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source)
 for more info on how to get involved.
