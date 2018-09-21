@@ -10,7 +10,7 @@ jobs:
       - run: go get -u github.com/golang/lint/golint
       - restore_cache:
           key: dependency-cache-{{ checksum "Gopkg.lock" }}
-      - run: 
+      - run:
           name: Install dependencies
           command: dep ensure
       - save_cache:
@@ -47,3 +47,8 @@ jobs:
             docker cp src/github.com/qlik-oss/corectl/test/data/ $CONTAINER_ID:/
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076'
+      - run:
+          name: Check if documentation needs to be updated
+          command: |
+            corectl docs
+            git diff --exit-code --name-only docs/

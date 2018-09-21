@@ -13,6 +13,7 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 )
@@ -28,57 +29,59 @@ var (
 		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
+			if ccmd.Use != "docs" {
+				ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
 
-			internal.QliVerbose = viper.GetBool("verbose")
-			if config != "" {
-				abs, err := filepath.Abs(config)
-				if err != nil {
-					fmt.Println("Error reading filepath: ", err.Error())
-				}
-				base := filepath.Base(abs)
-				path := filepath.Dir(abs)
-				viper.SetConfigName(strings.Split(base, ".")[0])
-				viper.SetConfigType("yml")
-				viper.AddConfigPath(path)
+				internal.QliVerbose = viper.GetBool("verbose")
+				if config != "" {
+					abs, err := filepath.Abs(config)
+					if err != nil {
+						fmt.Println("Error reading filepath: ", err.Error())
+					}
+					base := filepath.Base(abs)
+					path := filepath.Dir(abs)
+					viper.SetConfigName(strings.Split(base, ".")[0])
+					viper.SetConfigType("yml")
+					viper.AddConfigPath(path)
 
-				if err := viper.ReadInConfig(); err == nil {
-					internal.LogVerbose("Using config file: " + config)
+					if err := viper.ReadInConfig(); err == nil {
+						internal.LogVerbose("Using config file: " + config)
+					} else {
+						fmt.Println(err)
+					}
 				} else {
-					fmt.Println(err)
+					viper.SetConfigName("qli") // name of config file (without extension)
+					viper.SetConfigType("yml")
+					//viper.AddConfigPath("/etc/qli/") // paths to look for the config file
+					//viper.AddConfigPath("$HOME/.qli")
+					viper.AddConfigPath(".")
+
+					if err := viper.ReadInConfig(); err == nil {
+						internal.LogVerbose("Using config file in working directory")
+					} else {
+						internal.LogVerbose("No config file")
+					}
 				}
-			} else {
-				viper.SetConfigName("qli") // name of config file (without extension)
-				viper.SetConfigType("yml")
-				//viper.AddConfigPath("/etc/qli/") // paths to look for the config file
-				//viper.AddConfigPath("$HOME/.qli")
-				viper.AddConfigPath(".")
 
-				if err := viper.ReadInConfig(); err == nil {
-					internal.LogVerbose("Using config file in working directory")
-				} else {
-					internal.LogVerbose("No config file")
+				internal.QliVerbose = viper.GetBool("verbose")
+				engine := viper.GetString("engine")
+				appID := viper.GetString("app")
+				ttl := viper.GetString("ttl")
+
+				if engine == "" {
+					fmt.Println("No engine specified.")
+					fmt.Println("Specify using the --engine parameter or in your config file")
+					fmt.Println("")
+					ccmd.HelpFunc()
 				}
+				if appID == "" {
+					fmt.Println("Using session app")
+				}
+
+				sessionID := getSessionID(appID)
+
+				state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 			}
-
-			internal.QliVerbose = viper.GetBool("verbose")
-			engine := viper.GetString("engine")
-			appID := viper.GetString("app")
-			ttl := viper.GetString("ttl")
-
-			if engine == "" {
-				fmt.Println("No engine specified.")
-				fmt.Println("Specify using the --engine parameter or in your config file")
-				fmt.Println("")
-				ccmd.HelpFunc()
-			}
-			if appID == "" {
-				fmt.Println("Using session app")
-			}
-
-			sessionID := getSessionID(appID)
-
-			state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -234,6 +237,17 @@ var (
 			printer.PrintStatus(state)
 		},
 	}
+
+	docsCommand = &cobra.Command{
+		Use:   "docs",
+		Short: "Generate markdown docs based on cobra commands",
+		Long:  "Generate markdown docs based on cobra commands",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			fmt.Println("Generating documentation")
+			doc.GenMarkdownTree(corectlCommand, "./docs")
+		},
+	}
 )
 
 func getSessionID(appID string) string {
@@ -292,6 +306,7 @@ func init() {
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
+	corectlCommand.AddCommand(docsCommand)
 
 }
 

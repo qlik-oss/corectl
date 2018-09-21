@@ -45,49 +45,7 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 
 ## Example Usage
 
-Reload a script file in the specified app and print metadata. The script file path is local, the app name/path is from within the engine docker file system.
-If the `--app` parameter is left out the tool will use a session app instead.
-
-```bash
-corectl --app myapp.qvf reload --script myscript.qvs
-```
-
-If you want to include reload progress in the logs you can add the `--verbose` flag
-
-`corectl --app myapp.qvf --verbose reload --script myscript.qvs`
-
-Print the metadata with reload
-```bash
-corectl --app myapp.qvf meta
-```
-
-Evaluate expressions. Note the "by" keyword. The format is `<expressions> by <dimensions>`.
-
-```bash
-corectl --app myapp.qvf eval "sum(Z)" by X Y
-```
-
-or iterate over all dimensions:
-
-```bash
-corectl --app myapp.qvf eval "sum(Z)" by "*"
-```
-
-The `eval` command can also be used for calculated dimensions:
-
-```bash
-corectl --app myapp.qvf eval "=A+B+C"
-```
-
-Specify what Qlik Associative Engine to use with the --engine parameter
-```bash
-corectl --engine remoteengine:9076 --app myapp.qvf reload --script myscript.qvs
-```
-
-Print some extra debugging information using --verbose flag
-```bash
-corectl --verbose --app myapp.qvf meta
-```
+Usage documentation and examples can be found [here](./docs/corectl.md)
 
 ## Testing
 
