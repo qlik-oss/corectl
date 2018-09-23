@@ -73,7 +73,7 @@ var (
 				ccmd.HelpFunc()
 			}
 			if appID == "" {
-				fmt.Println("Using session app")
+				fmt.Println("No app specified, using session app instead")
 			}
 
 			sessionID := getSessionID(appID)
@@ -244,7 +244,7 @@ var (
 			docList, err := state.Global.GetDocList(state.Ctx)
 
 			if err != nil {
-				fmt.Println(err)
+				log.Fatalln(err)
 				os.Exit(-1)
 			}
 

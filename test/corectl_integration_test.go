@@ -132,7 +132,7 @@ func TestCorectlContains(t *testing.T) {
 		{"reload progress project 1", []string{"--config=test/project1/qli.yml", connectToEngine, "--verbose", "reload"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched"}},
 		{"reload progress project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
 		{"reload progress project 3", []string{"--config=test/project3/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
-		{"list apps", []string{connectToEngine, "apps"}, []string{"Name", "Last Modified", "Size", "Last Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
+		{"list apps", []string{connectToEngine, "apps"}, []string{"Name", "Last Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
 	}
 
 	for _, tt := range tests {
