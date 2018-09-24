@@ -28,6 +28,11 @@ var (
 		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			// if help command, no prerun is needed.
+			if strings.Contains(ccmd.Use, "help") {
+				return
+			}
+
 			ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
 
 			internal.QliVerbose = viper.GetBool("verbose")
@@ -72,13 +77,19 @@ var (
 				fmt.Println("")
 				ccmd.HelpFunc()
 			}
-			if appID == "" {
-				fmt.Println("Using session app")
+
+			// global command with no app dependency
+			if ccmd.Use == "apps" {
+				state = internal.PrepareEngineStateWithoutApp(ctx, engine, ttl)
+			} else {
+				if appID == "" {
+					fmt.Println("No app specified, using session app instead")
+				}
+
+				sessionID := getSessionID(appID)
+
+				state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 			}
-
-			sessionID := getSessionID(appID)
-
-			state = internal.PrepareEngineState(ctx, engine, sessionID, appID, ttl)
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -234,6 +245,23 @@ var (
 			printer.PrintStatus(state)
 		},
 	}
+
+	listAppsCmd = &cobra.Command{
+		Use:   "apps",
+		Short: "Print app list",
+		Long:  "Print app list",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			docList, err := state.Global.GetDocList(state.Ctx)
+
+			if err != nil {
+				log.Fatalln(err)
+				os.Exit(-1)
+			}
+
+			printer.PrintApps(docList)
+		},
+	}
 )
 
 func getSessionID(appID string) string {
@@ -292,6 +320,7 @@ func init() {
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
+	corectlCommand.AddCommand(listAppsCmd)
 
 }
 
