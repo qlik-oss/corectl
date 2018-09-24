@@ -96,7 +96,30 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 	}
 }
 
-func tidyUpEngine(engine string) string {
+// PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
+func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string) *State {
+	LogVerbose("---------- Connecting to engine ----------")
+
+	engineURL := buildWebSocketURL(engine, ttl)
+
+	LogVerbose("Engine: " + engineURL)
+
+	global, err := enigma.Dialer{}.Dial(ctx, engineURL, nil)
+	if err != nil {
+		fmt.Println("Could not connect to engine:"+engine, err)
+		os.Exit(1)
+	}
+
+	return &State{
+		Doc:     nil,
+		Global:  global,
+		AppID:   "",
+		Ctx:     ctx,
+		MetaURL: "",
+	}
+}
+
+func tidyUpEngineURL(engine string) string {
 	var url string
 	if strings.HasPrefix(engine, "wss://") {
 		url = engine
@@ -112,7 +135,7 @@ func tidyUpEngine(engine string) string {
 }
 
 func buildWebSocketURL(engine string, ttl string) string {
-	engine = tidyUpEngine(engine)
+	engine = tidyUpEngineURL(engine)
 	return engine + "/app/engineData/ttl/" + ttl
 }
 
@@ -120,7 +143,7 @@ func buildMetadataURL(engine string, appID string) string {
 	if appID == "" {
 		return ""
 	}
-	engine = tidyUpEngine(engine)
+	engine = tidyUpEngineURL(engine)
 	engine = strings.Replace(engine, "wss://", "https://", -1)
 	engine = strings.Replace(engine, "ws://", "http://", -1)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
