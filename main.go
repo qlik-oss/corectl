@@ -30,53 +30,62 @@ var (
 		DisableAutoGenTag: true,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			if ccmd.Use != "generate-docs" {
-				ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
+			// if help or generate-docs command, no prerun is needed.
+			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" {
+				return
+			}
 
-				internal.QliVerbose = viper.GetBool("verbose")
-				if config != "" {
-					abs, err := filepath.Abs(config)
-					if err != nil {
-						fmt.Println("Error reading filepath: ", err.Error())
-					}
-					base := filepath.Base(abs)
-					path := filepath.Dir(abs)
-					viper.SetConfigName(strings.Split(base, ".")[0])
-					viper.SetConfigType("yml")
-					viper.AddConfigPath(path)
+			ctx, _ := context.WithTimeout(context.Background(), 60*time.Second)
 
-					if err := viper.ReadInConfig(); err == nil {
-						internal.LogVerbose("Using config file: " + config)
-					} else {
-						fmt.Println(err)
-					}
+			internal.QliVerbose = viper.GetBool("verbose")
+			if config != "" {
+				abs, err := filepath.Abs(config)
+				if err != nil {
+					fmt.Println("Error reading filepath: ", err.Error())
+				}
+				base := filepath.Base(abs)
+				path := filepath.Dir(abs)
+				viper.SetConfigName(strings.Split(base, ".")[0])
+				viper.SetConfigType("yml")
+				viper.AddConfigPath(path)
+
+				if err := viper.ReadInConfig(); err == nil {
+					internal.LogVerbose("Using config file: " + config)
 				} else {
-					viper.SetConfigName("qli") // name of config file (without extension)
-					viper.SetConfigType("yml")
-					//viper.AddConfigPath("/etc/qli/") // paths to look for the config file
-					//viper.AddConfigPath("$HOME/.qli")
-					viper.AddConfigPath(".")
-
-					if err := viper.ReadInConfig(); err == nil {
-						internal.LogVerbose("Using config file in working directory")
-					} else {
-						internal.LogVerbose("No config file")
-					}
+					fmt.Println(err)
 				}
+			} else {
+				viper.SetConfigName("qli") // name of config file (without extension)
+				viper.SetConfigType("yml")
+				//viper.AddConfigPath("/etc/qli/") // paths to look for the config file
+				//viper.AddConfigPath("$HOME/.qli")
+				viper.AddConfigPath(".")
 
-				internal.QliVerbose = viper.GetBool("verbose")
-				engine := viper.GetString("engine")
-				appID := viper.GetString("app")
-				ttl := viper.GetString("ttl")
-
-				if engine == "" {
-					fmt.Println("No engine specified.")
-					fmt.Println("Specify using the --engine parameter or in your config file")
-					fmt.Println("")
-					ccmd.HelpFunc()
+				if err := viper.ReadInConfig(); err == nil {
+					internal.LogVerbose("Using config file in working directory")
+				} else {
+					internal.LogVerbose("No config file")
 				}
+			}
+
+			internal.QliVerbose = viper.GetBool("verbose")
+			engine := viper.GetString("engine")
+			appID := viper.GetString("app")
+			ttl := viper.GetString("ttl")
+
+			if engine == "" {
+				fmt.Println("No engine specified.")
+				fmt.Println("Specify using the --engine parameter or in your config file")
+				fmt.Println("")
+				ccmd.HelpFunc()
+			}
+
+			// global command with no app dependency
+			if ccmd.Use == "apps" {
+				state = internal.PrepareEngineStateWithoutApp(ctx, engine, ttl)
+			} else {
 				if appID == "" {
-					fmt.Println("Using session app")
+					fmt.Println("No app specified, using session app instead")
 				}
 
 				sessionID := getSessionID(appID)
@@ -250,6 +259,23 @@ var (
 			doc.GenMarkdownTree(corectlCommand, "./docs")
 		},
 	}
+
+	listAppsCmd = &cobra.Command{
+		Use:   "apps",
+		Short: "Print app list",
+		Long:  "Print app list",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			docList, err := state.Global.GetDocList(state.Ctx)
+
+			if err != nil {
+				log.Fatalln(err)
+				os.Exit(-1)
+			}
+
+			printer.PrintApps(docList)
+		},
+	}
 )
 
 func getSessionID(appID string) string {
@@ -309,6 +335,7 @@ func init() {
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
 	corectlCommand.AddCommand(generateDocsCommand)
+	corectlCommand.AddCommand(listAppsCmd)
 
 }
 

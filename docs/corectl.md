@@ -24,6 +24,7 @@ corectl [flags]
 
 ### SEE ALSO
 
+* [corectl apps](corectl_apps.md)	 - Print app list
 * [corectl assoc](corectl_assoc.md)	 - Print table associations summary
 * [corectl eval](corectl_eval.md)	 - Evalutes a hypercube
 * [corectl field](corectl_field.md)	 - Shows content of a field
