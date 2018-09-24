@@ -10,7 +10,7 @@ jobs:
       - run: go get -u github.com/golang/lint/golint
       - restore_cache:
           key: dependency-cache-{{ checksum "Gopkg.lock" }}
-      - run: 
+      - run:
           name: Install dependencies
           command: dep ensure
       - save_cache:
@@ -26,6 +26,11 @@ jobs:
       - run:
           name: Test
           command: go test -v -race ./...
+      - run:
+          name: Check if documentation needs to be updated
+          command: |
+            ./corectl generate-docs
+            git diff --exit-code --name-only docs/
       - setup_remote_docker
       - run:
           name: Run Integration Test

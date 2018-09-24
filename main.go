@@ -13,6 +13,7 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 )
@@ -22,14 +23,15 @@ var (
 	config string
 
 	corectlCommand = &cobra.Command{
-		Hidden: true,
-		Use:    "corectl",
-		Short:  "",
-		Long:   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		Hidden:            true,
+		Use:               "corectl",
+		Short:             "",
+		Long:              `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		DisableAutoGenTag: true,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			// if help command, no prerun is needed.
-			if strings.Contains(ccmd.Use, "help") {
+			// if help or generate-docs command, no prerun is needed.
+			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" {
 				return
 			}
 
@@ -246,6 +248,18 @@ var (
 		},
 	}
 
+	generateDocsCommand = &cobra.Command{
+		Use:    "generate-docs",
+		Short:  "Generate markdown docs based on cobra commands",
+		Long:   "Generate markdown docs based on cobra commands",
+		Hidden: true,
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			fmt.Println("Generating documentation")
+			doc.GenMarkdownTree(corectlCommand, "./docs")
+		},
+	}
+
 	listAppsCmd = &cobra.Command{
 		Use:   "apps",
 		Short: "Print app list",
@@ -320,6 +334,7 @@ func init() {
 	corectlCommand.AddCommand(fieldCmd)
 	corectlCommand.AddCommand(associationsCommand)
 	corectlCommand.AddCommand(statusCommand)
+	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(listAppsCmd)
 
 }
