@@ -31,7 +31,8 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	}
 	fmt.Fprintf(fieldList, "\n")
 	for _, field := range data.Fields {
-		if field != nil && !field.IsSystem {
+		if field != nil && !field.IsSystem && (!keyOnly || isKey(field)) {
+
 			total := uniqueAndTotal(field)
 			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", "))
 			//fieldInfo := data.FieldSourceTableInfoByName[field.Name]
@@ -57,6 +58,15 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	}
 
 	fmt.Print(fieldList, "\n\n")
+}
+
+func isKey(field *internal.FieldModel) bool {
+	for _, tag := range field.Tags {
+		if tag == "$key" {
+			return true
+		}
+	}
+	return false
 }
 
 func fieldInTableToText(fieldInTable *enigma.FieldInTableData) string {
