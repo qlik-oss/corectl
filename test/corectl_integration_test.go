@@ -90,6 +90,7 @@ func TestCorectlGolden(t *testing.T) {
 		{"fields project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
 		{"field numbers project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
 		{"eval project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},
+		{"reload project1 without progress", []string{"--config=test/project1/qli.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 
 		{"reload project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
 		{"fields project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
@@ -129,9 +130,6 @@ func TestCorectlContains(t *testing.T) {
 		args     []string
 		contains []string
 	}{
-		{"reload progress project 1", []string{"--config=test/project1/qli.yml", connectToEngine, "--verbose", "reload"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched"}},
-		{"reload progress project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
-		{"reload progress project 3", []string{"--config=test/project3/qli.yml ", connectToEngine, "--verbose", "reload"}, []string{"datacsv << data 1 Lines fetched"}},
 		{"list apps", []string{connectToEngine, "apps"}, []string{"Name", "Last Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
 	}
 

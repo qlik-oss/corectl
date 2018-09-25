@@ -11,15 +11,15 @@ import (
 
 // Reload reloads the app and prints the progress to system out. If true is supplied to skipTransientLogs
 // the live ticking of table row counts is disabled (useful for testing).
-func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, verboseLogging bool, skipTransientLogs bool) {
+func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool, skipTransientLogs bool) {
 
 	var (
 		reloadSuccessful bool
 		err              error
 	)
 
-	// Only log reload progress if verbose logging is enabled
-	if verboseLogging {
+	// Log progress unless silent flag was passed in to the reload command
+	if !silent {
 		reloadDone := make(chan struct{})
 		ctxWithReservedRequestID, reservedRequestID := doc.WithReservedRequestID(ctx)
 		go func() {
