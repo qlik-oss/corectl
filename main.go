@@ -21,7 +21,7 @@ var (
 		ttl       string
 	}
 	rootCtx = context.Background()
-
+	silent bool
 	corectlCommand = &cobra.Command{
 		Hidden:            true,
 		Use:               "corectl",
@@ -170,7 +170,7 @@ var (
 				internal.SetScript(ctx, state.Doc, scriptFile)
 			}
 
-			internal.Reload(ctx, state.Doc, state.Global, internal.QliVerbose, true)
+			internal.Reload(ctx, state.Doc, state.Global, silent, true)
 			if state.AppID != "" {
 				internal.Save(ctx, state.Doc, state.AppID)
 			}
@@ -250,7 +250,7 @@ func init() {
 	// Don't bind these to viper since paths are treated separately to support relative paths!
 	reloadCmd.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Can also be specified in the config file")
 	reloadCmd.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
-
+	reloadCmd.Flags().BoolVar(&silent, "silent", false, "Do not log reload progress")
 	// commands
 	corectlCommand.AddCommand(reloadCmd)
 	corectlCommand.AddCommand(evalCmd)
