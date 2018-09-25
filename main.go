@@ -21,6 +21,7 @@ import (
 var (
 	state  *internal.State
 	config string
+	silent bool
 
 	corectlCommand = &cobra.Command{
 		Hidden:            true,
@@ -216,7 +217,7 @@ var (
 				internal.SetScript(ctx, doc, scriptFile)
 			}
 
-			internal.Reload(ctx, doc, global, internal.QliVerbose, true)
+			internal.Reload(ctx, doc, global, silent, true)
 			if state.AppID != "" {
 				internal.Save(ctx, doc, state.AppID)
 			}
@@ -318,10 +319,8 @@ func init() {
 	viper.BindPFlag("select", fieldsCommand.PersistentFlags().Lookup("select"))
 
 	reloadCmd.PersistentFlags().String("connections", "", "path to connections file")
-	//viper.BindPFlag("connections", reloadCmd.PersistentFlags().Lookup("connections"))
-
 	reloadCmd.PersistentFlags().String("script", "", "Script file name")
-	//viper.BindPFlag("script", reloadCmd.PersistentFlags().Lookup("script"))
+	reloadCmd.Flags().BoolVar(&silent, "silent", false, "Do not log reload progress")
 
 	// commands
 	corectlCommand.AddCommand(reloadCmd)
