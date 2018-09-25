@@ -21,7 +21,7 @@ var (
 		ttl       string
 	}
 	rootCtx = context.Background()
-	silent bool
+
 	corectlCommand = &cobra.Command{
 		Hidden:            true,
 		Use:               "corectl",
@@ -156,7 +156,9 @@ var (
 	reloadCmd = &cobra.Command{
 		Use:   "reload",
 		Short: "Reloads the app",
-		Long:  `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs`,
+		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
+			
+`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx := rootCtx
@@ -169,6 +171,8 @@ var (
 			if scriptFile != "" {
 				internal.SetScript(ctx, state.Doc, scriptFile)
 			}
+
+			silent := viper.GetBool("silent")
 
 			internal.Reload(ctx, state.Doc, state.Global, silent, true)
 			if state.AppID != "" {
@@ -247,10 +251,13 @@ func init() {
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
+	reloadCmd.PersistentFlags().Bool("silent", false, "Do not log reload progress")
+	viper.BindPFlag("silent", reloadCmd.PersistentFlags().Lookup("silent"))
+
 	// Don't bind these to viper since paths are treated separately to support relative paths!
-	reloadCmd.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Can also be specified in the config file")
+	reloadCmd.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
 	reloadCmd.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
-	reloadCmd.Flags().BoolVar(&silent, "silent", false, "Do not log reload progress")
+
 	// commands
 	corectlCommand.AddCommand(reloadCmd)
 	corectlCommand.AddCommand(evalCmd)

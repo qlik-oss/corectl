@@ -5,6 +5,8 @@ Reloads the app
 ### Synopsis
 
 Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
+			
+
 
 ```
 corectl reload [flags]
@@ -13,21 +15,20 @@ corectl reload [flags]
 ### Options
 
 ```
-      --connections string   path to connections file
+      --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
   -h, --help                 help for reload
-      --script string        Script file name
+      --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
       --silent               Do not log reload progress
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -a, --app string              App name including .qvf file ending
-  -c, --config string           path/to/config.yml where default parameters can be set
-  -e, --engine string           URL to engine
-      --engine-headers string   HTTP headers to send to the engine (default "30")
-      --ttl string              Engine session time to live (default "30")
-  -v, --verbose                 Logs extra information
+  -a, --app string      App name including .qvf file ending. If no app is specified a session app is used instead.
+  -c, --config string   path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string   URL to engine (default "localhost:9076")
+      --ttl string      Engine session time to live (default "30")
+  -v, --verbose         Logs extra information
 ```
 
 ### SEE ALSO
