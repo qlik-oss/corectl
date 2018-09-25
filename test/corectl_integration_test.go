@@ -84,20 +84,20 @@ func TestCorectlGolden(t *testing.T) {
 		args   []string
 		golden string
 	}{
-		{"reload project1", []string{"--config=test/project1/qli.yml", connectToEngine, "reload"}, "project1-reload.golden"},
-		{"tables project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
-		{"assoc project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
-		{"fields project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
-		{"field numbers project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
-		{"eval project 1", []string{"--config=test/project1/qli.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},
-		{"reload project1 without progress", []string{"--config=test/project1/qli.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
+		{"reload project1", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload"}, "project1-reload.golden"},
+		{"tables project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
+		{"assoc project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
+		{"fields project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
+		{"field numbers project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
+		{"eval project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},
+		{"reload project1 without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 
-		{"reload project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
-		{"fields project 2", []string{"--config=test/project2/qli.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
+		{"reload project 2", []string{"--config=test/project2/corectl.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
+		{"fields project 2", []string{"--config=test/project2/corectl.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
 		{"reload project 2 with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml"}, "project2-reload.golden"},
 
-		{"reload project 3", []string{"--config=test/project3/qli.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
-		{"fields project 3", []string{"--config=test/project3/qli.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
+		{"reload project 3", []string{"--config=test/project3/corectl.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
+		{"fields project 3", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
 	}
 
 	for _, tt := range tests {

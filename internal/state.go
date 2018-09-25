@@ -2,11 +2,12 @@ package internal
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
-	"log"
 	"net/http"
 	neturl "net/url"
 	"os"
+	"os/user"
 	"strings"
 
 	"github.com/qlik-oss/enigma-go"
@@ -24,7 +25,11 @@ type State struct {
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-func PrepareEngineState(ctx context.Context, engine string, sessionID string, appID string, ttl string) *State {
+func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, createAppIfMissing bool) *State {
+	if appID == "" {
+		fmt.Println("No app specified, using session app instead")
+	}
+	sessionID := getSessionID(appID)
 	LogVerbose("---------- Connecting to app ----------")
 
 	engineURL := buildWebSocketURL(engine, ttl)
@@ -62,24 +67,26 @@ func PrepareEngineState(ctx context.Context, engine string, sessionID string, ap
 			if doc != nil {
 				LogVerbose("Session app (new)")
 			} else {
-				log.Fatalln(err)
+				FatalError(err)
 			}
 		} else {
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 			if doc != nil {
 				LogVerbose("App:  " + appID + "(opened)")
-			} else {
+			} else if createAppIfMissing {
 				_, _, err = global.CreateApp(ctx, appID, "")
 				if err != nil {
-					log.Fatalln(err)
+					FatalError(err)
 				}
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
-					log.Fatalln(err)
+					FatalError(err)
 				}
 				if doc != nil {
 					LogVerbose("Document: " + appID + "(new)")
 				}
+			} else {
+				FatalError(err)
 			}
 		}
 	}
@@ -148,4 +155,23 @@ func buildMetadataURL(engine string, appID string) string {
 	engine = strings.Replace(engine, "ws://", "http://", -1)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
 	return url
+}
+
+func getSessionID(appID string) string {
+	currentUser, err := user.Current()
+	if err != nil {
+		FatalError(err)
+	}
+	hostName, err := os.Hostname()
+	if err != nil {
+		FatalError(err)
+	}
+	sessionID := base64.StdEncoding.EncodeToString([]byte("Corectl-" + currentUser.Username + "-" + hostName + "-" + appID))
+	return sessionID
+}
+
+// FatalError prints the supplied message and exists the process with code 1
+func FatalError(fatalMessage ...interface{}) {
+	fmt.Println(fatalMessage...)
+	os.Exit(1)
 }

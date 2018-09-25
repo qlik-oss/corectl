@@ -13,19 +13,17 @@ corectl eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...] [fl
 ### Options
 
 ```
-  -h, --help            help for eval
-  -s, --select string   
+  -h, --help   help for eval
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -a, --app string              App name including .qvf file ending
-  -c, --config string           path/to/config.yml where default parameters can be set
-  -e, --engine string           URL to engine
-      --engine-headers string   HTTP headers to send to the engine (default "30")
-      --ttl string              Engine session time to live (default "30")
-  -v, --verbose                 Logs extra information
+  -a, --app string      App name including .qvf file ending. If no app is specified a session app is used instead.
+  -c, --config string   path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string   URL to engine (default "localhost:9076")
+      --ttl string      Engine session time to live (default "30")
+  -v, --verbose         Logs extra information
 ```
 
 ### SEE ALSO

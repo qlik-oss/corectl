@@ -22,18 +22,17 @@ func flattenSettings(settings map[string]string) string {
 
 // SetupConnections reads all connections from both the project file path and the config file path and updates
 // the list of connections in the app.
-func SetupConnections(ctx context.Context, doc *enigma.Doc, projectFilePath string, configFilePath string) error {
+func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsFile string, projectConfigFilePath string) error {
 
 	connectionConfigEntries := make(map[string]ConnectionConfigEntry)
-
-	if configFilePath != "" {
-		config := ReadConnectionsFile(configFilePath)
+	if projectConfigFilePath != "" {
+		config := ReadConnectionsFile(projectConfigFilePath)
 		for name, configEntry := range config.Connections {
 			connectionConfigEntries[name] = configEntry
 		}
 	}
-	if projectFilePath != "" {
-		config := ReadConnectionsFile(projectFilePath)
+	if separateConnectionsFile != "" {
+		config := ReadConnectionsFile(separateConnectionsFile)
 		for name, configEntry := range config.Connections {
 			connectionConfigEntries[name] = configEntry
 		}
