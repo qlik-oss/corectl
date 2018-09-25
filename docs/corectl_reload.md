@@ -16,6 +16,7 @@ corectl reload [flags]
       --connections string   path to connections file
   -h, --help                 help for reload
       --script string        Script file name
+      --silent               Do not log reload progress
 ```
 
 ### Options inherited from parent commands
