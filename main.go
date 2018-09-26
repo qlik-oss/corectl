@@ -204,7 +204,11 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
-			printer.PrintStatus(state)
+			engine := params.engine
+			if engine == "" {
+				engine = "localhost:9076"
+			}
+			printer.PrintStatus(state, engine)
 		},
 	}
 
@@ -239,7 +243,7 @@ var (
 func init() {
 	corectlCommand.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 
-	corectlCommand.PersistentFlags().StringP("engine", "e", "localhost:9076", "URL to engine")
+	corectlCommand.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
 	viper.BindPFlag("engine", corectlCommand.PersistentFlags().Lookup("engine"))
 
 	corectlCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
