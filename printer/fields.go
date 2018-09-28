@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/qlik-oss/enigma-go"
 	"strings"
+	"github.com/fatih/color"
 
 	tm "github.com/buger/goterm"
 	"github.com/qlik-oss/corectl/internal"
@@ -21,10 +22,12 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 
 // PrintFields prints a table sof fields along with various metadata to system out.
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
+	yellow := color.New(color.FgYellow).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
 	fieldList := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(fieldList, "Field\tUniq/Tot\tRAM\tTags\t")
+	fmt.Fprintf(fieldList, "%s\tUniq/ToT\tRAM\tTags\t", green("Field"))
 	for _, table := range data.Tables {
-		fmt.Fprintf(fieldList, "%s\t", table.Name)
+		fmt.Fprintf(fieldList, "%s\t", yellow(table.Name))
 	}
 	if data.SampleContentByFieldName != nil {
 		fmt.Fprintf(fieldList, "Sample content")
@@ -34,10 +37,10 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 		if field != nil && !field.IsSystem && (!keyOnly || isKey(field)) {
 
 			total := uniqueAndTotal(field)
-			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", "))
+			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", green(field.Name), total, field.MemUsage(), strings.Join(field.Tags, ", "))
 			//fieldInfo := data.FieldSourceTableInfoByName[field.Name]
 			for _, fieldInTable := range field.FieldInTable {
-				fmt.Fprintf(fieldList, "%s\t", fieldInTableToText(fieldInTable))
+				fmt.Fprintf(fieldList, "%s\t", yellow(fieldInTableToText(fieldInTable)))
 			}
 			if data.SampleContentByFieldName != nil {
 				fmt.Fprintf(fieldList, "%s\t", data.SampleContentByFieldName[field.Name])
