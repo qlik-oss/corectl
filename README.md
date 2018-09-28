@@ -9,14 +9,14 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 On OS X
 
 ```bash
-curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Darwin-x86_64 >/usr/local/bin/corectl &&
+curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.3/corectl-darwin-amd64 >/usr/local/bin/corectl &&
   chmod +x /usr/local/bin/corectl
 ```
 
 On Linux
 
 ```bash
-curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Linux-x86_64 >/tmp/corectl &&
+curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.3/corectl-linux-amd64 >/tmp/corectl &&
     chmod +x /tmp/corectl &&
    cp /tmp/corectl /usr/local/bin/corectl
 ```
@@ -25,7 +25,7 @@ On Windows with git bash
 
 ```bash
 mkdir -p "$HOME/bin" &&
-curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.2/corectl-Windows-x86_64.exe > "$HOME/bin/corectl.exe" &&
+curl -L https://github.com/qlik-oss/corectl/releases/download/v0.0.3/corectl-windows-amd64.exe > "$HOME/bin/corectl.exe" &&
 chmod +x "$HOME/bin/corectl.exe"
 ```
 
