@@ -6,16 +6,15 @@ import (
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
-	"github.com/spf13/viper"
 )
 
 //PrintStatus prints the name of the app and the engine corectl is connected to.
 // It also prints if the data model is empty or not
-func PrintStatus(state *internal.State) {
+func PrintStatus(state *internal.State, engine string) {
 	if state.AppID != "" {
-		fmt.Println("Connected to " + state.AppID + " @ " + viper.GetString("engine"))
+		fmt.Println("Connected to " + state.AppID + " @ " + engine)
 	} else {
-		fmt.Println("Connected to session app @ " + viper.GetString("engine"))
+		fmt.Println("Connected to session app @ " + engine)
 	}
 	tableCount := dataModelTableCount(state.Ctx, state.Doc)
 	if tableCount == 0 {

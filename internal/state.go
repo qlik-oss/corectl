@@ -23,12 +23,23 @@ type State struct {
 	Verbose bool
 }
 
+func logConnectError(err error, engine string) {
+
+	if engine == "" {
+		fmt.Println("Could not connect to the default engine on http://localhost:9076")
+		fmt.Println("Specify where the engine is running using the --engine parameter or in your config file.")
+		fmt.Println("Error details: ", err)
+	} else {
+		fmt.Println("Could not connect to engine on " + engine + ".")
+		fmt.Println("Please check the --engine parameter or your config file.")
+		fmt.Println("Error details: ", err)
+	}
+	os.Exit(1)
+}
+
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
 func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, createAppIfMissing bool) *State {
-	if appID == "" {
-		fmt.Println("No app specified, using session app instead")
-	}
 	sessionID := getSessionID(appID)
 	LogVerbose("---------- Connecting to app ----------")
 
@@ -36,16 +47,17 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 	var doc *enigma.Doc
 
 	LogVerbose("Engine: " + engineURL)
-
 	LogVerbose("SessionId: " + sessionID)
 	headers := make(http.Header, 1)
 	headers.Set("X-Qlik-Session", sessionID)
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
 	if err != nil {
-		fmt.Println("Could not connect to engine:"+engine, err)
-		os.Exit(1)
+		logConnectError(err, engine)
 	}
 
+	if appID == "" {
+		fmt.Println("No app specified, using session app.")
+	}
 	go func() {
 		for x := range global.SessionMessageChannel() {
 			if x.Topic != "OnConnected" {
@@ -113,8 +125,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, nil)
 	if err != nil {
-		fmt.Println("Could not connect to engine:"+engine, err)
-		os.Exit(1)
+		logConnectError(err, engine)
 	}
 
 	return &State{
@@ -127,6 +138,9 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 }
 
 func tidyUpEngineURL(engine string) string {
+	if engine == "" {
+		engine = "localhost:9076"
+	}
 	var url string
 	if strings.HasPrefix(engine, "wss://") {
 		url = engine
