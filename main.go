@@ -112,7 +112,7 @@ var (
 	}
 	evalCmd = &cobra.Command{
 		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
-		Short: "Evalutes a hypercube",
+		Short: "Evalutes a list of measures and dimensions",
 		Long:  `Evalutes a list of measures and dimensions. Meaures are separeted from dimensions by the "by" keyword. To omit dimensions and only use measures use "*" as dimension: eval <measures> by *`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -155,29 +155,25 @@ var (
 
 	reloadCmd = &cobra.Command{
 		Use:   "reload",
-		Short: "Reloads the app",
+		Short: "Reloads and saves the app after updating connections, objects and the script",
 		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 			
 `,
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			ctx := rootCtx
-			state := internal.PrepareEngineState(ctx, params.engine, params.appID, params.ttl, true)
+			updateOrReload(ccmd, args, true)
+		},
+	}
 
-			separateConnectionsFile := GetPathParameter(ccmd, "connections")
-			internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
+	updateCmd = &cobra.Command{
+		Use:   "update",
+		Short: "Updates connections, objects and script and saves the app",
+		Long: `Updates connections, objects and script in the app. Example: corectl update	
 
-			scriptFile := GetPathParameter(ccmd, "script")
-			if scriptFile != "" {
-				internal.SetScript(ctx, state.Doc, scriptFile)
-			}
+`,
 
-			silent := viper.GetBool("silent")
-
-			internal.Reload(ctx, state.Doc, state.Global, silent, true)
-			if state.AppID != "" {
-				internal.Save(ctx, state.Doc, state.AppID)
-			}
+		Run: func(ccmd *cobra.Command, args []string) {
+			updateOrReload(ccmd, args, false)
 		},
 	}
 
@@ -238,6 +234,58 @@ var (
 			printer.PrintApps(docList)
 		},
 	}
+
+	listObjectsCmd = &cobra.Command{
+		Use:   "objects",
+		Short: "Print object list",
+		Long:  "Print object list",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			allInfos, err := state.Doc.GetAllInfos(rootCtx)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			printer.PrintObjects(allInfos)
+		},
+	}
+
+	getObjectPropertiesCmd = &cobra.Command{
+		Use:   "properties",
+		Short: "Print the properties of the object identified --object flag",
+		Long:  "Print the properties of the object identified --object flag",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			objectID := ccmd.Flag("object").Value.String()
+			if objectID == "" {
+				fmt.Println("Expected a --object flag to specify what object to use")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			printer.PrintObject(state, objectID)
+		},
+	}
+
+	getObjectDataCmd = &cobra.Command{
+		Use:   "data",
+		Short: "Evalutes the hypercube of an object defined by the --object parameter",
+		Long:  `Evalutes the hypercube of an object defined by the --object parameter`,
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			objectID := ccmd.Flag("object").Value.String()
+			if objectID == "" {
+				fmt.Println("Expected a --object flag to specify what object to use")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			printer.EvalObject(rootCtx, state.Doc, objectID)
+		},
+	}
 )
 
 func init() {
@@ -258,13 +306,25 @@ func init() {
 	reloadCmd.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	viper.BindPFlag("silent", reloadCmd.PersistentFlags().Lookup("silent"))
 
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	reloadCmd.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
-	reloadCmd.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectDataCmd, listObjectsCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("objects", "", "A list of object json paths")
+	}
+	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectDataCmd} {
+		//Don't bind to vibe rsince this parameter is purely interactive
+		command.PersistentFlags().StringP("object", "o", "", "ID of a generic object")
+	}
+	for _, command := range []*cobra.Command{reloadCmd, updateCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
+	}
 
 	// commands
 	corectlCommand.AddCommand(reloadCmd)
+	corectlCommand.AddCommand(updateCmd)
 	corectlCommand.AddCommand(evalCmd)
+	corectlCommand.AddCommand(getObjectDataCmd)
 	corectlCommand.AddCommand(metaCmd)
 	corectlCommand.AddCommand(getScriptCmd)
 	corectlCommand.AddCommand(fieldsCommand)
@@ -275,6 +335,8 @@ func init() {
 	corectlCommand.AddCommand(statusCommand)
 	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(listAppsCmd)
+	corectlCommand.AddCommand(listObjectsCmd)
+	corectlCommand.AddCommand(getObjectPropertiesCmd)
 }
 
 // GetPathParameter returns a parameter from either the command line or the config file.
@@ -295,5 +357,27 @@ func main() {
 	if err := corectlCommand.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+}
+
+func updateOrReload(ccmd *cobra.Command, args []string, reload bool) {
+	ctx := rootCtx
+	state := internal.PrepareEngineState(ctx, params.engine, params.appID, params.ttl, true)
+
+	separateConnectionsFile := GetPathParameter(ccmd, "connections")
+	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
+	internal.SetupObjects(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+	scriptFile := GetPathParameter(ccmd, "script")
+	if scriptFile != "" {
+		internal.SetScript(ctx, state.Doc, scriptFile)
+	}
+
+	silent := viper.GetBool("silent")
+
+	if reload {
+		internal.Reload(ctx, state.Doc, state.Global, silent, true)
+	}
+	if state.AppID != "" {
+		internal.Save(ctx, state.Doc, state.AppID)
 	}
 }
