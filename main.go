@@ -2,18 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
-	"os"
-	"strings"
 )
 
 var (
 	explicitConfigFile = ""
+	version            = ""
 	params             struct {
 		engine    string
 		appID     string
@@ -238,6 +240,14 @@ var (
 			printer.PrintApps(docList)
 		},
 	}
+	versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Output the version of corectl",
+
+		Run: func(_ *cobra.Command, args []string) {
+			fmt.Printf("corectl version %s", version)
+		},
+	}
 )
 
 func init() {
@@ -275,6 +285,7 @@ func init() {
 	corectlCommand.AddCommand(statusCommand)
 	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(listAppsCmd)
+	corectlCommand.AddCommand(versionCmd)
 }
 
 // GetPathParameter returns a parameter from either the command line or the config file.
