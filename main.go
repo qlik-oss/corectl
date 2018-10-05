@@ -32,8 +32,8 @@ var (
 		DisableAutoGenTag: true,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			// if help or generate-docs command, no prerun is needed.
-			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" {
+			// if help, version or generate-docs command, no prerun is needed.
+			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "version" {
 				return
 			}
 			internal.QliVerbose = viper.GetBool("verbose")
@@ -242,7 +242,7 @@ var (
 	}
 	versionCmd = &cobra.Command{
 		Use:   "version",
-		Short: "Output the version of corectl",
+		Short: "Print the version of corectl",
 
 		Run: func(_ *cobra.Command, args []string) {
 			fmt.Printf("corectl version %s", version)
