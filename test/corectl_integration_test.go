@@ -105,7 +105,6 @@ func TestCorectlGolden(t *testing.T) {
 
 		{"project 3 - reload ", []string{"--config=test/project3/corectl.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
 		{"project 3 - fields", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
-		{"err 1", []string{"--engine=localhost:9999", "fields"}, "err-1.golden"},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
 		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--object=nosuchobject", "data"}, "err-3.golden"},
 	}
@@ -145,13 +144,18 @@ func TestCorectlContains(t *testing.T) {
 		contains []string
 	}{
 		{"list apps", []string{connectToEngine, "apps"}, []string{"Name", "Last Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
+		{"err 1", []string{"--engine=localhost:9999", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := exec.Command(binaryPath, tt.args...)
 			output, err := cmd.CombinedOutput()
-			if err != nil {
+			if strings.HasPrefix(tt.name, "err") {
+				if err == nil {
+					t.Fatalf("%s\nexpected (err == nil) to be %v, but got %v. err: %v", output, false, err == nil, err)
+				}
+			} else if err != nil {
 				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
 			}
 			actual := string(output)

@@ -1,3 +1,0 @@
-Could not connect to engine on localhost:9999.
-Please check the --engine parameter or your config file.
-Error details:  dial tcp [::1]:9999: connectex: No connection could be made because the target machine actively refused it.
