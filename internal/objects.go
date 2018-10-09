@@ -18,7 +18,6 @@ type ObjectsConfigFile struct {
 
 // ReadObjectsFile reads the object config file from the supplied path.
 func ReadObjectsFile(path string) ObjectsConfigFile {
-
 	var config ObjectsConfigFile
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -36,17 +35,30 @@ func ReadObjectsFile(path string) ObjectsConfigFile {
 // SetupObjects reads all objects from both the project file path and the config file path and updates
 // the list of objects in the app.
 func SetupObjects(ctx context.Context, doc *enigma.Doc, projectFile string, objectPathsOnCommandLine string) {
-	if projectFile != "" {
-		configFileContents := ReadObjectsFile(projectFile)
-		for _, objectPathInConfigFile := range configFileContents.Objects {
-			pathRelativeToProjectFile := RelativeToProject(projectFile, objectPathInConfigFile)
-			setupObject(ctx, doc, pathRelativeToProjectFile)
-		}
+
+	objectsOnCommandLine, err := filepath.Glob(objectPathsOnCommandLine)
+	if err != nil {
+		FatalError(err)
 	}
-	for _, relativeObjectPath := range filepath.SplitList(objectPathsOnCommandLine) {
+	for _, relativeObjectPath := range objectsOnCommandLine {
 		setupObject(ctx, doc, relativeObjectPath)
 	}
+	if projectFile != "" {
+		configFileContents := ReadObjectsFile(projectFile)
+		currentWorkingDir, _ := os.Getwd()
+		defer os.Chdir(currentWorkingDir)
+		os.Chdir(filepath.Dir(projectFile))
 
+		for _, objectGlobPatternInConfigFile := range configFileContents.Objects {
+			objectsInConfigLine, err := filepath.Glob(objectGlobPatternInConfigFile)
+			if err != nil {
+				FatalError(err)
+			}
+			for _, relativeObjectPath := range objectsInConfigLine {
+				setupObject(ctx, doc, relativeObjectPath)
+			}
+		}
+	}
 }
 
 func setupObject(ctx context.Context, doc *enigma.Doc, objectPath string) {
@@ -66,10 +78,18 @@ func setupObject(ctx context.Context, doc *enigma.Doc, objectPath string) {
 	if props.Info.Type == "" {
 		FatalError("Missing qInfo qId attribute", objectPath)
 	}
-	object, _ := doc.GetObject(ctx, props.Info.Id)
-	if object != nil {
-		object.SetPropertiesRaw(ctx, objectFileContents)
+	object, err := doc.GetObject(ctx, props.Info.Id)
+	if err == nil && object.Handle != 0 {
+		LogVerbose("Updating object " + props.Info.Id)
+		err = object.SetPropertiesRaw(ctx, objectFileContents)
+		if err != nil {
+			FatalError("Failed to update object", err)
+		}
 	} else {
-		doc.CreateObjectRaw(ctx, objectFileContents)
+		LogVerbose("Creating object " + props.Info.Id)
+		_, err = doc.CreateObjectRaw(ctx, objectFileContents)
+		if err != nil {
+			FatalError("Failed to create object", err)
+		}
 	}
 }

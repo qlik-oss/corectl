@@ -1,0 +1,17 @@
+{
+  "qInfo": {
+    "qId": "my-hypercube-on-commandline",
+    "qType": "my-hypercube-on-commandline"
+  },
+  "qHyperCubeDef": {
+    "qDimensions": [{
+      "qDef": {
+        "qFieldDefs": ["a"]
+      }
+    }],
+    "qInitialDataFetch": [{
+      "qWidth": 50,
+      "qHeight": 20
+    }]
+  }
+}

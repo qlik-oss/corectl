@@ -222,8 +222,8 @@ var (
 
 	listAppsCmd = &cobra.Command{
 		Use:   "apps",
-		Short: "Print app list",
-		Long:  "Print app list",
+		Short: "Prints a list of all apps available in the current engine",
+		Long:  "Prints a list of all apps available in the current engine",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineStateWithoutApp(rootCtx, params.engine, params.ttl)
@@ -237,8 +237,8 @@ var (
 
 	listObjectsCmd = &cobra.Command{
 		Use:   "objects",
-		Short: "Print object list",
-		Long:  "Print object list",
+		Short: "Prints a list of all objects in the current app",
+		Long:  "Prints a list of all objects in the current app",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
@@ -253,8 +253,8 @@ var (
 
 	getObjectPropertiesCmd = &cobra.Command{
 		Use:   "properties",
-		Short: "Print the properties of the object identified --object flag",
-		Long:  "Print the properties of the object identified --object flag",
+		Short: "Prints the properties of the object identified by the --object flag",
+		Long:  "Prints the properties of the object identified by the --object flag",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := ccmd.Flag("object").Value.String()
@@ -269,10 +269,28 @@ var (
 		},
 	}
 
+	getObjectLayoutCmd = &cobra.Command{
+		Use:   "layout",
+		Short: "Evalutes the hypercube layout of an object defined by the --object parameter",
+		Long:  `Evalutes the hypercube layout of an object defined by the --object parameter`,
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			objectID := ccmd.Flag("object").Value.String()
+			if objectID == "" {
+				fmt.Println("Expected a --object flag to specify what object to use")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			printer.PrintObjectLayout(state, objectID)
+		},
+	}
+
 	getObjectDataCmd = &cobra.Command{
 		Use:   "data",
-		Short: "Evalutes the hypercube of an object defined by the --object parameter",
-		Long:  `Evalutes the hypercube of an object defined by the --object parameter`,
+		Short: "Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported",
+		Long:  `Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := ccmd.Flag("object").Value.String()
@@ -306,11 +324,11 @@ func init() {
 	reloadCmd.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	viper.BindPFlag("silent", reloadCmd.PersistentFlags().Lookup("silent"))
 
-	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectDataCmd, listObjectsCmd} {
+	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, listObjectsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of object json paths")
 	}
-	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectDataCmd} {
+	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd} {
 		//Don't bind to vibe rsince this parameter is purely interactive
 		command.PersistentFlags().StringP("object", "o", "", "ID of a generic object")
 	}
@@ -324,7 +342,6 @@ func init() {
 	corectlCommand.AddCommand(reloadCmd)
 	corectlCommand.AddCommand(updateCmd)
 	corectlCommand.AddCommand(evalCmd)
-	corectlCommand.AddCommand(getObjectDataCmd)
 	corectlCommand.AddCommand(metaCmd)
 	corectlCommand.AddCommand(getScriptCmd)
 	corectlCommand.AddCommand(fieldsCommand)
@@ -337,6 +354,8 @@ func init() {
 	corectlCommand.AddCommand(listAppsCmd)
 	corectlCommand.AddCommand(listObjectsCmd)
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
+	corectlCommand.AddCommand(getObjectLayoutCmd)
+	corectlCommand.AddCommand(getObjectDataCmd)
 }
 
 // GetPathParameter returns a parameter from either the command line or the config file.

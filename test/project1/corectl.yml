@@ -7,3 +7,5 @@ connections:
     username: gwe
     settings:
       host: corectl-test-connector
+objects:
+  - ./object-1.json

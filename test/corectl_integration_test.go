@@ -84,27 +84,41 @@ func TestCorectlGolden(t *testing.T) {
 		args   []string
 		golden string
 	}{
-		{"reload project1", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload"}, "project1-reload.golden"},
-		{"tables project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
-		{"assoc project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
-		{"fields project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
-		{"field numbers project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
-		{"eval project 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},
-		{"reload project1 without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
+		{"help 1", []string{"--config=test/project1/corectl.yml", connectToEngine, ""}, "help-1.golden"},
+		{"help 2", []string{"--config=test/project1/corectl.yml", connectToEngine, "help"}, "help-2.golden"},
+		{"help 3", []string{"--config=test/project1/corectl.yml", connectToEngine, "help", "reload"}, "help-3.golden"},
+		{"project 1 - reload", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload"}, "project1-reload.golden"},
+		{"project 1 - tables", []string{"--config=test/project1/corectl.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
+		{"project 1 - assoc", []string{"--config=test/project1/corectl.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
+		{"project 1 - fields", []string{"--config=test/project1/corectl.yml ", connectToEngine, "fields"}, "project1-fields.golden"},
+		{"project 1 - field numbers", []string{"--config=test/project1/corectl.yml ", connectToEngine, "field", "numbers"}, "project1-field-numbers.golden"},
+		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, "project1-eval-1.golden"},
+		{"project 1 - objects", []string{"--config=test/project1/corectl.yml ", connectToEngine, "objects"}, "project1-objects.golden"},
+		{"project 1 - data", []string{"--config=test/project1/corectl.yml ", connectToEngine, "--object", "my-hypercube", "data"}, "project1-data.golden"},
+		{"project 1 - properties", []string{"--config=test/project1/corectl.yml ", connectToEngine, "--object", "my-hypercube", "properties"}, "project1-properties.golden"},
+		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 
-		{"reload project 2", []string{"--config=test/project2/corectl.yml ", connectToEngine, "reload"}, "project2-reload.golden"},
-		{"fields project 2", []string{"--config=test/project2/corectl.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
-		{"reload project 2 with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml"}, "project2-reload.golden"},
+		// Project 2 has separate connections file
+		{"project 2 - reload with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-on-commandline.json"}, "project2-reload.golden"},
+		{"project 2 - fields ", []string{"--config=test/project2/corectl.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
+		{"project 2 - data", []string{"--config=test/project2/corectl.yml ", connectToEngine, "--object", "my-hypercube-on-commandline", "data"}, "project2-data.golden"},
 
-		{"reload project 3", []string{"--config=test/project3/corectl.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
-		{"fields project 3", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
+		{"project 3 - reload ", []string{"--config=test/project3/corectl.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
+		{"project 3 - fields", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
+		{"err 1", []string{"--engine=localhost:9999", "fields"}, "err-1.golden"},
+		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
+		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--object=nosuchobject", "data"}, "err-3.golden"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := exec.Command(binaryPath, tt.args...)
 			output, err := cmd.CombinedOutput()
-			if err != nil {
+			if strings.HasPrefix(tt.name, "err") {
+				if err == nil {
+					t.Fatalf("%s\nexpected (err == nil) to be %v, but got %v. err: %v", output, false, err == nil, err)
+				}
+			} else if err != nil {
 				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
 			}
 			actual := string(output)

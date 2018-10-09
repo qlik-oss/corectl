@@ -23,7 +23,7 @@ func PrintObjects(allInfos []*enigma.NxInfo) {
 	fmt.Print(objectTable)
 }
 
-// PrintObject prints the properties of object defined by objectID
+// PrintObject prints the properties of the object defined by objectID
 func PrintObject(state *internal.State, objectID string) {
 	object, err := state.Doc.GetObject(state.Ctx, objectID)
 	if err != nil {
@@ -36,6 +36,18 @@ func PrintObject(state *internal.State, objectID string) {
 	fmt.Println(prettyJSON(properties))
 }
 
+// PrintObjectLayout prints the layout of the object defined by objectID
+func PrintObjectLayout(state *internal.State, objectID string) {
+	object, err := state.Doc.GetObject(state.Ctx, objectID)
+	if err != nil {
+		internal.FatalError(err)
+	}
+	properties, err := object.GetLayoutRaw(state.Ctx)
+	if err != nil {
+		internal.FatalError(err)
+	}
+	fmt.Println(prettyJSON(properties))
+}
 func prettyJSON(data []byte) string {
 	var prettyJSON bytes.Buffer
 	json.Indent(&prettyJSON, data, "", "   ")
@@ -53,7 +65,6 @@ func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	if err != nil {
 		internal.FatalError(err)
 	}
-	fmt.Println(prettyJSON(layout))
 
 	layoutMap := make(map[string]interface{})
 	err = json.Unmarshal(layout, &layoutMap)

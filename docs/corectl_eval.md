@@ -1,6 +1,6 @@
 ## corectl eval
 
-Evalutes a hypercube
+Evalutes a list of measures and dimensions
 
 ### Synopsis
 
