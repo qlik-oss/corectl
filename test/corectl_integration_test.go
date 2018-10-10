@@ -84,9 +84,9 @@ func TestCorectlGolden(t *testing.T) {
 		args   []string
 		golden string
 	}{
-		{"help 1", []string{"--config=test/project1/corectl.yml", connectToEngine, ""}, "help-1.golden"},
-		{"help 2", []string{"--config=test/project1/corectl.yml", connectToEngine, "help"}, "help-2.golden"},
-		{"help 3", []string{"--config=test/project1/corectl.yml", connectToEngine, "help", "reload"}, "help-3.golden"},
+		{"help 1", []string{"--config=test/project1/corectl.yml", "--engine=localhost:9999", ""}, "help-1.golden"},
+		{"help 2", []string{"--config=test/project1/corectl.yml", "--engine=localhost:9999", "help"}, "help-2.golden"},
+		{"help 3", []string{"--config=test/project1/corectl.yml", "--engine=localhost:9999", "help", "reload"}, "help-3.golden"},
 		{"project 1 - reload", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload"}, "project1-reload.golden"},
 		{"project 1 - tables", []string{"--config=test/project1/corectl.yml ", connectToEngine, "tables"}, "project1-tables.golden"},
 		{"project 1 - assoc", []string{"--config=test/project1/corectl.yml ", connectToEngine, "assoc"}, "project1-assoc.golden"},
