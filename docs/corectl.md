@@ -38,5 +38,6 @@ corectl [flags]
 * [corectl script](corectl_script.md)	 - Print the reload script
 * [corectl status](corectl_status.md)	 - Prints status info about the connection to engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables summary
+* [corectl version](corectl_version.md)	 - Print the version of corectl
 * [corectl update](corectl_update.md)	 - Updates connections, objects and script and saves the app
 

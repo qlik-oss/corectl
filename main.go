@@ -2,18 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
-	"os"
-	"strings"
 )
 
 var (
 	explicitConfigFile = ""
+	version            = ""
 	params             struct {
 		engine    string
 		appID     string
@@ -30,8 +32,8 @@ var (
 		DisableAutoGenTag: true,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-			// if help or generate-docs command, no prerun is needed.
-			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" {
+			// if help, version or generate-docs command, no prerun is needed.
+			if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "version" {
 				return
 			}
 			internal.QliVerbose = viper.GetBool("verbose")
@@ -234,6 +236,14 @@ var (
 			printer.PrintApps(docList)
 		},
 	}
+	versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Print the version of corectl",
+
+		Run: func(_ *cobra.Command, args []string) {
+			fmt.Printf("corectl version %s", version)
+		},
+	}
 
 	listObjectsCmd = &cobra.Command{
 		Use:   "objects",
@@ -352,6 +362,7 @@ func init() {
 	corectlCommand.AddCommand(statusCommand)
 	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(listAppsCmd)
+	corectlCommand.AddCommand(versionCmd)
 	corectlCommand.AddCommand(listObjectsCmd)
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
 	corectlCommand.AddCommand(getObjectLayoutCmd)
