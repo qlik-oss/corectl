@@ -22,6 +22,7 @@ Available Commands:
   status        Prints status info about the connection to engine and current app
   tables        Print tables summary
   update        Updates connections, objects and script and saves the app
+  version       Print the version of corectl
 
 Flags:
   -a, --app string      App name including .qvf file ending. If no app is specified a session app is used instead.
