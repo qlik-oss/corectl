@@ -11,7 +11,7 @@ import (
 func PrintApps(docList []*enigma.DocListEntry) {
 
 	docTable := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(docTable, "Name\tLast Reloaded\tReadOnly\tTitle\n")
+	fmt.Fprintf(docTable, "Name\tLast-Reloaded\tReadOnly\tTitle\n")
 	for _, doc := range docList {
 		fmt.Fprintf(docTable, "%s\t%s\t%t\t%s\n", doc.DocName, doc.LastReloadTime, doc.ReadOnly, doc.Title)
 	}
