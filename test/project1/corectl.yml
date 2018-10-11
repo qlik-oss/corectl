@@ -8,4 +8,4 @@ connections:
     settings:
       host: corectl-test-connector
 objects:
-  - ./object-1.json
+  - ./object-*.json

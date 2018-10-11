@@ -88,11 +88,6 @@ func printHypercube(hypercube *enigma.HyperCube) {
 		fmt.Fprintf(grid, "%s\t", mes.FallbackTitle)
 	}
 	fmt.Fprint(grid, "\n")
-	//fmt.Fprintf(grid, strings.Join(dims, "\t"))
-	//fmt.Fprintf(grid, "\t")
-	//fmt.Fprintf(grid, strings.Join(measures, "\t"))
-	//fmt.Fprintf(grid, "\n")
-	// Get hypercube layout
 
 	for _, page := range hypercube.DataPages {
 		for _, row := range page.Matrix {

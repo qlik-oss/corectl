@@ -99,7 +99,7 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 
 		// Project 2 has separate connections file
-		{"project 2 - reload with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-on-commandline.json"}, "project2-reload.golden"},
+		{"project 2 - reload with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, "project2-reload.golden"},
 		{"project 2 - fields ", []string{"--config=test/project2/corectl.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
 		{"project 2 - data", []string{"--config=test/project2/corectl.yml ", connectToEngine, "--object", "my-hypercube-on-commandline", "data"}, "project2-data.golden"},
 
