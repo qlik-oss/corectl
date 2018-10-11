@@ -1,19 +1,21 @@
-## corectl apps
+## corectl properties
 
-Prints a list of all apps available in the current engine
+Prints the properties of the object identified by the --object flag
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Prints the properties of the object identified by the --object flag
 
 ```
-corectl apps [flags]
+corectl properties [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for apps
+  -h, --help             help for properties
+  -o, --object string    ID of a generic object
+      --objects string   A list of object json paths
 ```
 
 ### Options inherited from parent commands

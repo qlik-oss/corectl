@@ -1,19 +1,20 @@
-## corectl apps
+## corectl objects
 
-Prints a list of all apps available in the current engine
+Prints a list of all objects in the current app
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Prints a list of all objects in the current app
 
 ```
-corectl apps [flags]
+corectl objects [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for apps
+  -h, --help             help for objects
+      --objects string   A list of object json paths
 ```
 
 ### Options inherited from parent commands

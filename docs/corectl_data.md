@@ -1,19 +1,21 @@
-## corectl apps
+## corectl data
 
-Prints a list of all apps available in the current engine
+Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
 
 ```
-corectl apps [flags]
+corectl data [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for apps
+  -h, --help             help for data
+  -o, --object string    ID of a generic object
+      --objects string   A list of object json paths
 ```
 
 ### Options inherited from parent commands

@@ -39,7 +39,6 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 	}
 
 	connections, err := doc.GetConnections(ctx)
-	//fmt.Println("------ Setting up connections ------")
 
 	for name, configEntry := range connectionConfigEntries {
 		var connection *enigma.Connection

@@ -1,0 +1,25 @@
+{
+  "qInfo": {
+    "qId": "my-hypercube",
+    "qType": "my-hypercube"
+  },
+  "qHyperCubeDef": {
+    "qDimensions": [{
+      "qDef": {
+        "qFieldDefs": ["xyz"]
+      }
+    }],
+    "qMeasures": [{
+      "qDef": {
+        "qDef": "count(numbers)"
+      },
+      "qSortBy": {
+        "qSortByFrequency": 1
+      }
+    }],
+    "qInitialDataFetch": [{
+      "qWidth": 50,
+      "qHeight": 20
+    }]
+  }
+}

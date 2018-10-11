@@ -1,19 +1,21 @@
-## corectl apps
+## corectl layout
 
-Prints a list of all apps available in the current engine
+Evalutes the hypercube layout of an object defined by the --object parameter
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Evalutes the hypercube layout of an object defined by the --object parameter
 
 ```
-corectl apps [flags]
+corectl layout [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for apps
+  -h, --help             help for layout
+  -o, --object string    ID of a generic object
+      --objects string   A list of object json paths
 ```
 
 ### Options inherited from parent commands
