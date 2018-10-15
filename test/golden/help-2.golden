@@ -32,4 +32,7 @@ Flags:
       --ttl string      Engine session time to live (default "30")
   -v, --verbose         Logs extra information
 
+Additional help topics:
+  corectl config        test 1
+
 Use "corectl [command] --help" for more information about a command.

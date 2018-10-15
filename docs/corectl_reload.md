@@ -12,6 +12,17 @@ Reloads the app. Example: corectl reload --connections ./myconnections.yml --scr
 corectl reload [flags]
 ```
 
+### Examples
+
+```
+  # Specify all parameters on the command line:
+  corectl reload --connections ./myconnections.yml --script ./myscript.qvs
+
+  # Specify parameters in the config file:
+  corectl reload --config ./config.yml
+
+```
+
 ### Options
 
 ```

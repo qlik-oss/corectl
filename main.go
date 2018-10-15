@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/spf13/cobra/doc"
+	"github.com/spf13/pflag"
 	"os"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 )
@@ -161,7 +162,12 @@ var (
 		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 			
 `,
+		Example: `  # Specify all parameters on the command line:
+  corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 
+  # Specify parameters in the config file:
+  corectl reload --config ./config.yml
+`,
 		Run: func(ccmd *cobra.Command, args []string) {
 			updateOrReload(ccmd, args, true)
 		},
@@ -239,7 +245,6 @@ var (
 	versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version of corectl",
-
 		Run: func(_ *cobra.Command, args []string) {
 			fmt.Printf("corectl version %s", version)
 		},
@@ -367,6 +372,27 @@ func init() {
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
 	corectlCommand.AddCommand(getObjectLayoutCmd)
 	corectlCommand.AddCommand(getObjectDataCmd)
+
+	removeGlobalsFunctionsWhereNotApplicable()
+}
+
+func removeGlobalsFunctionsWhereNotApplicable() {
+	origHelpFunc := corectlCommand.HelpFunc()
+	corectlCommand.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		if cmd.Name() == "version" {
+			cmd.Parent().PersistentFlags().VisitAll(func(flag *pflag.Flag) {
+				flag.Hidden = true
+			})
+		} else if cmd.Name() == "apps" {
+			cmd.Parent().PersistentFlags().VisitAll(func(flag *pflag.Flag) {
+				if flag.Name == "app" {
+					flag.Hidden = true
+				}
+			})
+		}
+
+		origHelpFunc(cmd, args)
+	})
 }
 
 // GetPathParameter returns a parameter from either the command line or the config file.
