@@ -75,4 +75,3 @@ workflows:
             tags:
               only:
                 - /v.*/
-                
