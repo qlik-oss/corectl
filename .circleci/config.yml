@@ -53,13 +53,13 @@ jobs:
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076'
 
-release:
-  docker:
-    - image: circleci/golang:1.9
-  steps:
-    - checkout
-    - run: go get -u github.com/golang/dep/cmd/dep
-    - run: curl -sL https://git.io/goreleaser | bash
+  publish:
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
   version: 2
