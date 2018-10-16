@@ -144,6 +144,7 @@ func TestCorectlContains(t *testing.T) {
 		contains []string
 	}{
 		{"list apps", []string{connectToEngine, "apps"}, []string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
+		{"list apps json", []string{connectToEngine, "apps", "--json"}, []string{"\"id\": \"/apps/project2.qvf\","}},
 		{"err 1", []string{"--engine=localhost:9999", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}},
 	}
 
