@@ -1,0 +1,28 @@
+# Configuration file for GoReleaser - https://goreleaser.com/build/
+builds:
+- env:
+    - CGO_ENABLED=0
+  goos:
+    - darwin
+    - linux
+    - windows
+  goarch:
+    - amd64
+
+before:
+  hooks:
+    - dep ensure
+
+archive:
+  name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    amd64: x86_64
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+  files:
+  - none*

@@ -77,6 +77,11 @@ If the reference output files need to be updated, run the test with --update fla
 $ go test corectl_integration_test.go --update
 ```
 
+## Release
+
+You create a release by pushing a git tag with semantic versioning.
+CircleCi will then run a release build that uses `goreleaser` to release `corectl` with the version set as the git tag.
+
 ## Documentation
 
 The usage documentation is generated using [`cobra/doc`](https://github.com/spf13/cobra/blob/master/doc/md_docs.md).
