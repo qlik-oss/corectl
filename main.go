@@ -239,7 +239,7 @@ var (
 			if err != nil {
 				internal.FatalError(err)
 			}
-			printer.PrintApps(docList)
+			printer.PrintApps(docList, viper.GetBool("json"))
 		},
 	}
 	versionCmd = &cobra.Command{
@@ -338,6 +338,9 @@ func init() {
 
 	reloadCmd.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	viper.BindPFlag("silent", reloadCmd.PersistentFlags().Lookup("silent"))
+
+	listAppsCmd.PersistentFlags().Bool("json", false, "Prints the apps in json format")
+	viper.BindPFlag("json", listAppsCmd.PersistentFlags().Lookup("json"))
 
 	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, listObjectsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
