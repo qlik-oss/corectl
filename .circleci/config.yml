@@ -54,6 +54,7 @@ jobs:
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076'
 
   publish:
+    working_directory: /go/src/github.com/qlik-oss/corectl
     docker:
       - image: circleci/golang:1.9
     steps:
