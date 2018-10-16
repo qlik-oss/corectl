@@ -19,7 +19,7 @@ On Linux and OS X
 On Windows with git bash
 
 ```bash
-curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v0.0.4/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/"
+curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
 ```
 
 You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
