@@ -65,7 +65,11 @@ workflows:
   version: 2
   build_and_publish:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only:
+                - /v.*/
       - publish:
           requires:
             - build
