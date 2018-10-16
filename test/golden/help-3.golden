@@ -3,14 +3,6 @@ Reloads the app. Example: corectl reload --connections ./myconnections.yml --scr
 Usage:
   corectl reload [flags]
 
-Examples:
-  # Specify all parameters on the command line:
-  corectl reload --connections ./myconnections.yml --script ./myscript.qvs
-
-  # Specify parameters in the config file:
-  corectl reload --config ./config.yml
-
-
 Flags:
       --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
   -h, --help                 help for reload

@@ -162,12 +162,7 @@ var (
 		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 			
 `,
-		Example: `  # Specify all parameters on the command line:
-  corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 
-  # Specify parameters in the config file:
-  corectl reload --config ./config.yml
-`,
 		Run: func(ccmd *cobra.Command, args []string) {
 			updateOrReload(ccmd, args, true)
 		},
@@ -245,6 +240,7 @@ var (
 	versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version of corectl",
+
 		Run: func(_ *cobra.Command, args []string) {
 			fmt.Printf("corectl version %s", version)
 		},
