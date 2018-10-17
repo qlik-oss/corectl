@@ -241,7 +241,7 @@ var (
 		Short: "Print the version of corectl",
 
 		Run: func(_ *cobra.Command, args []string) {
-			fmt.Printf("corectl version %s", version)
+			fmt.Printf("corectl version %s\n", version)
 		},
 	}
 
