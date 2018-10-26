@@ -79,7 +79,7 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
 			printer.PrintFields(data, false)
 		},
 	}
@@ -91,7 +91,7 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, true)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, true)
 			printer.PrintFields(data, true)
 		},
 	}
@@ -103,7 +103,7 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
 			printer.PrintAssociations(data)
 		},
 	}
@@ -115,7 +115,7 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
 			printer.PrintTables(data)
 		},
 	}
@@ -157,7 +157,7 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
 			printer.PrintMetadata(data)
 		},
 	}
