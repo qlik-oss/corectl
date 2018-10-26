@@ -23,11 +23,11 @@ func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 		return nil, err
 	}
+	defer response.Body.Close()
 	if response.StatusCode != 200 {
 		return nil, nil
 	}
 	data, _ := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
 	result := &RestMetadata{}
 	json.Unmarshal(data, result)
 	return result, nil
