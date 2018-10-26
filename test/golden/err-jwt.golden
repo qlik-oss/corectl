@@ -1,0 +1,2 @@
+Could not connect to engine on localhost:9076.
+Error details:  401 from ws server: websocket: bad handshake

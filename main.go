@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -21,6 +22,7 @@ var (
 		appID     string
 		sessionID string
 		ttl       string
+		headers   http.Header
 	}
 	rootCtx = context.Background()
 
@@ -58,6 +60,11 @@ var (
 			params.engine = viper.GetString("engine")
 			params.appID = viper.GetString("app")
 			params.ttl = viper.GetString("ttl")
+			headersMap := viper.GetStringMapString("headers")
+			params.headers = make(http.Header, 1)
+			for key, value := range headersMap {
+				params.headers.Set(key, value)
+			}
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -71,7 +78,7 @@ var (
 		Long:  "Print field list",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
 			printer.PrintFields(data, false)
 		},
@@ -83,7 +90,7 @@ var (
 		Long:  "Print key-only field list",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, true)
 			printer.PrintFields(data, true)
 		},
@@ -95,7 +102,7 @@ var (
 		Long:  "Print table associations summary",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
 			printer.PrintAssociations(data)
 		},
@@ -107,7 +114,7 @@ var (
 		Long:  "Prints tables summary",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
 			printer.PrintTables(data)
 		},
@@ -123,7 +130,7 @@ var (
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.Eval(rootCtx, state.Doc, args)
 		},
 	}
@@ -134,7 +141,7 @@ var (
 		Long:  "Print the reload script",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			script, err := state.Doc.GetScript(rootCtx)
 			if err != nil {
 				internal.FatalError(err)
@@ -149,7 +156,7 @@ var (
 		Long:  "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, false)
 			printer.PrintMetadata(data)
 		},
@@ -190,7 +197,7 @@ var (
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.PrintField(rootCtx, state.Doc, args[0])
 		},
 	}
@@ -201,7 +208,7 @@ var (
 		Long:  "Prints status info about the connection to engine and current app",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			engine := params.engine
 			if engine == "" {
 				engine = "localhost:9076"
@@ -228,7 +235,7 @@ var (
 		Long:  "Prints a list of all apps available in the current engine",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineStateWithoutApp(rootCtx, params.engine, params.ttl)
+			state := internal.PrepareEngineStateWithoutApp(rootCtx, params.engine, params.ttl, params.headers)
 			docList, err := state.Global.GetDocList(rootCtx)
 			if err != nil {
 				internal.FatalError(err)
@@ -251,7 +258,7 @@ var (
 		Long:  "Prints a list of all objects in the current app",
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
 			allInfos, err := state.Doc.GetAllInfos(rootCtx)
 			if err != nil {
@@ -273,7 +280,7 @@ var (
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
 			printer.PrintObject(state, objectID)
 		},
@@ -291,7 +298,7 @@ var (
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
 			printer.PrintObjectLayout(state, objectID)
 		},
@@ -309,7 +316,7 @@ var (
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, false)
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
 			printer.EvalObject(rootCtx, state.Doc, objectID)
 		},
@@ -395,7 +402,7 @@ func main() {
 
 func updateOrReload(ccmd *cobra.Command, args []string, reload bool) {
 	ctx := rootCtx
-	state := internal.PrepareEngineState(ctx, params.engine, params.appID, params.ttl, true)
+	state := internal.PrepareEngineState(ctx, params.engine, params.appID, params.ttl, params.headers, true)
 
 	separateConnectionsFile := GetPathParameter(ccmd, "connections")
 	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())

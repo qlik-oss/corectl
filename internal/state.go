@@ -39,17 +39,21 @@ func logConnectError(err error, engine string) {
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, createAppIfMissing bool) *State {
-	sessionID := getSessionID(appID)
+func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, headers http.Header, createAppIfMissing bool) *State {
 	LogVerbose("---------- Connecting to app ----------")
 
 	engineURL := buildWebSocketURL(engine, ttl)
 	var doc *enigma.Doc
 
 	LogVerbose("Engine: " + engineURL)
-	LogVerbose("SessionId: " + sessionID)
-	headers := make(http.Header, 1)
-	headers.Set("X-Qlik-Session", sessionID)
+
+	if headers.Get("X-Qlik-Session") == "" {
+		sessionID := getSessionID(appID)
+		LogVerbose("SessionId: " + sessionID)
+		headers.Set("X-Qlik-Session", sessionID)
+	}
+	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
+
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
 	if err != nil {
 		logConnectError(err, engine)
@@ -116,14 +120,14 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 }
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
-func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string) *State {
+func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string, headers http.Header) *State {
 	LogVerbose("---------- Connecting to engine ----------")
 
 	engineURL := buildWebSocketURL(engine, ttl)
 
 	LogVerbose("Engine: " + engineURL)
 
-	global, err := enigma.Dialer{}.Dial(ctx, engineURL, nil)
+	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
 	if err != nil {
 		logConnectError(err, engine)
 	}

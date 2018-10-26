@@ -107,6 +107,9 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 3 - fields", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
 		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--object=nosuchobject", "data"}, "err-3.golden"},
+
+		// Project 4 has no JWT
+		{"err jwt", []string{connectToEngine, "apps"}, "err-jwt.golden"},
 	}
 
 	for _, tt := range tests {
