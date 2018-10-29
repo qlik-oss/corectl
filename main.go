@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	headersMap         = make(map[string]string)
 	explicitConfigFile = ""
 	version            = ""
 	params             struct {
@@ -60,7 +61,10 @@ var (
 			params.engine = viper.GetString("engine")
 			params.appID = viper.GetString("app")
 			params.ttl = viper.GetString("ttl")
-			headersMap := viper.GetStringMapString("headers")
+
+			if len(headersMap) == 0 {
+				headersMap = viper.GetStringMapString("headers")
+			}
 			params.headers = make(http.Header, 1)
 			for key, value := range headersMap {
 				params.headers.Set(key, value)
@@ -334,6 +338,9 @@ func init() {
 
 	corectlCommand.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
 	viper.BindPFlag("app", corectlCommand.PersistentFlags().Lookup("app"))
+
+	//not binding to viper since binding a map does not seem to work.
+	corectlCommand.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))

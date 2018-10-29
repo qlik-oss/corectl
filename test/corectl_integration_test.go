@@ -99,14 +99,14 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 
 		// Project 2 has separate connections file
-		{"project 2 - reload with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, "project2-reload.golden"},
+		{"project 2 - reload with connections", []string{connectToEngine, "-a=project2.qvf", "reload", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json --headers authorization=\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0\""}, "project2-reload.golden"},
 		{"project 2 - fields ", []string{"--config=test/project2/corectl.yml ", connectToEngine, "fields"}, "project2-fields.golden"},
 		{"project 2 - data", []string{"--config=test/project2/corectl.yml ", connectToEngine, "--object", "my-hypercube-on-commandline", "data"}, "project2-data.golden"},
 
 		{"project 3 - reload ", []string{"--config=test/project3/corectl.yml ", connectToEngine, "reload"}, "project3-reload.golden"},
 		{"project 3 - fields", []string{"--config=test/project3/corectl.yml ", connectToEngine, "fields"}, "project3-fields.golden"},
-		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
-		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--object=nosuchobject", "data"}, "err-3.golden"},
+		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf --headers authorization=\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0\"", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
+		{"err 3", []string{connectToEngine, "--app=project1.qvf --headers authorization=\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0\"", "--object=nosuchobject", "data"}, "err-3.golden"},
 
 		// Project 4 has no JWT
 		{"err jwt", []string{connectToEngine, "apps"}, "err-jwt.golden"},
