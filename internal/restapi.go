@@ -8,15 +8,22 @@ import (
 )
 
 // ReadRestMetadata fetches metadata from the rest api.
-func ReadRestMetadata(url string) (*RestMetadata, error) {
+func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
 	if url == "" {
 		return nil, nil
 	}
-	response, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 		return nil, err
 	}
+	req.Header = headers
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Printf("The HTTP request failed with error %s\n", err)
+		return nil, err
+	}
+	defer response.Body.Close()
 	if response.StatusCode != 200 {
 		return nil, nil
 	}

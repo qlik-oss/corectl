@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/qlik-oss/enigma-go"
@@ -118,7 +119,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 }
 
 // GetModelMetadata retrives all available metadata about the app
-func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyOnly bool) *ModelMetadata {
+func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, headers http.Header, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		FatalError(err)
@@ -126,7 +127,7 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, keyO
 	if len(tables) == 0 {
 		FatalError("The data model is empty.")
 	}
-	restMetadata, err := ReadRestMetadata(metaURL)
+	restMetadata, err := ReadRestMetadata(metaURL, headers)
 
 	if len(tables) > 0 && restMetadata == nil {
 		fmt.Println("No REST metadata available.")
