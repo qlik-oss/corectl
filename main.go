@@ -430,7 +430,7 @@ func updateOrReload(ccmd *cobra.Command, args []string, reload bool) {
 
 	separateConnectionsFile := GetPathParameter(ccmd, "connections")
 	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-	internal.SetupObjects(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
 	scriptFile := GetPathParameter(ccmd, "script")
 	if scriptFile != "" {
 		internal.SetScript(ctx, state.Doc, scriptFile)
