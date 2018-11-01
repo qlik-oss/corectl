@@ -263,7 +263,23 @@ var (
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+			allInfos, err := state.Doc.GetAllInfos(rootCtx)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			printer.PrintObjects(allInfos)
+		},
+	}
+
+	listMeasuresCmd = &cobra.Command{
+		Use:   "measures",
+		Short: "Prints a list of all measures in the current app",
+		Long:  "Prints a list of all measures in the current app",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 			allInfos, err := state.Doc.GetAllInfos(rootCtx)
 			if err != nil {
 				internal.FatalError(err)
@@ -285,7 +301,7 @@ var (
 				os.Exit(1)
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
 			printer.PrintObject(state, objectID)
 		},
 	}
@@ -303,7 +319,7 @@ var (
 				os.Exit(1)
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
 			printer.PrintObjectLayout(state, objectID)
 		},
 	}
@@ -321,7 +337,7 @@ var (
 				os.Exit(1)
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
 			printer.EvalObject(rootCtx, state.Doc, objectID)
 		},
 	}
@@ -381,6 +397,7 @@ func init() {
 	corectlCommand.AddCommand(listAppsCmd)
 	corectlCommand.AddCommand(versionCmd)
 	corectlCommand.AddCommand(listObjectsCmd)
+	corectlCommand.AddCommand(listMeasuresCmd)
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
 	corectlCommand.AddCommand(getObjectLayoutCmd)
 	corectlCommand.AddCommand(getObjectDataCmd)
