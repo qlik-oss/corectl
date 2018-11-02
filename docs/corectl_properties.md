@@ -1,10 +1,10 @@
 ## corectl properties
 
-Prints the properties of the object identified by the --object flag
+Prints the properties of the object identified by the --object flag and the type with --type
 
 ### Synopsis
 
-Prints the properties of the object identified by the --object flag
+Prints the properties of the object identified by the --object flag and the type with --type. If --type is ommited genericObject is assumed
 
 ```
 corectl properties [flags]
@@ -13,9 +13,11 @@ corectl properties [flags]
 ### Options
 
 ```
-  -h, --help             help for properties
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help              help for properties
+      --measures string   A list of measure json paths
+  -o, --object string     ID of a generic object
+      --objects string    A list of object json paths
+      --type string       The type of object to print
 ```
 
 ### Options inherited from parent commands

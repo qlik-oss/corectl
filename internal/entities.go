@@ -18,7 +18,7 @@ type EntitiesConfigFile struct {
 	Measures []string
 }
 type genericEntity struct {
-	Info *enigma.NxInfo
+	Info *enigma.NxInfo `json:"qInfo"`
 }
 
 // ReadEntitiesFile reads the entity config file from the supplied path.
@@ -40,7 +40,6 @@ func ReadEntitiesFile(path string) EntitiesConfigFile {
 // SetupEntities reads all entities of the specified type from both the project file path and the config file path and updates
 // the list of entities in the app.
 func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, entitiesPathsOnCommandLine string, entityType string) {
-
 	entitiesOnCommandLine, err := filepath.Glob(entitiesPathsOnCommandLine)
 	if err != nil {
 		FatalError(err)
@@ -56,7 +55,7 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, ent
 
 		var entities []string
 		switch entityType {
-		case "object":
+		case "object": //change to generic-object as the type?
 			entities = configFileContents.Objects
 		case "measure":
 			entities = configFileContents.Measures
@@ -77,12 +76,10 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, ent
 }
 
 func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entityType string) {
-
 	entityFileContents, err := ioutil.ReadFile(entityPath)
 	if err != nil {
 		FatalError("Could not open "+entityType+" file", err)
 	}
-
 	var props genericEntity
 	err = json.Unmarshal(entityFileContents, &props)
 	validateEntity(props, entityPath, err)

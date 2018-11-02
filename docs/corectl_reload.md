@@ -1,6 +1,6 @@
 ## corectl reload
 
-Reloads and saves the app after updating connections, objects and the script
+Reloads and saves the app after updating connections, objects, measures and the script
 
 ### Synopsis
 
@@ -17,6 +17,7 @@ corectl reload [flags]
 ```
       --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
   -h, --help                 help for reload
+      --measures string      A list of measure json paths
       --objects string       A list of object json paths
       --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
       --silent               Do not log reload progress

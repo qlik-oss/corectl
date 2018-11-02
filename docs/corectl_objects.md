@@ -13,8 +13,10 @@ corectl objects [flags]
 ### Options
 
 ```
-  -h, --help             help for objects
-      --objects string   A list of object json paths
+  -h, --help              help for objects
+      --measures string   A list of measure json paths
+      --objects string    A list of object json paths
+      --type string       The type of object to print
 ```
 
 ### Options inherited from parent commands

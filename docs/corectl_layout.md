@@ -1,10 +1,10 @@
 ## corectl layout
 
-Evalutes the hypercube layout of an object defined by the --object parameter
+Evalutes the hypercube layout of an object defined by the --object parameter and the type with --type
 
 ### Synopsis
 
-Evalutes the hypercube layout of an object defined by the --object parameter
+Evalutes the hypercube layout of an object defined by the --object parameter and the type with --type. If --type is ommited genericObject is assumed
 
 ```
 corectl layout [flags]
@@ -13,9 +13,11 @@ corectl layout [flags]
 ### Options
 
 ```
-  -h, --help             help for layout
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help              help for layout
+      --measures string   A list of measure json paths
+  -o, --object string     ID of a generic object
+      --objects string    A list of object json paths
+      --type string       The type of object to print
 ```
 
 ### Options inherited from parent commands

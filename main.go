@@ -168,7 +168,7 @@ var (
 
 	reloadCmd = &cobra.Command{
 		Use:   "reload",
-		Short: "Reloads and saves the app after updating connections, objects and the script",
+		Short: "Reloads and saves the app after updating connections, objects, measures and the script",
 		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
 			
 `,
@@ -180,8 +180,8 @@ var (
 
 	updateCmd = &cobra.Command{
 		Use:   "update",
-		Short: "Updates connections, objects and script and saves the app",
-		Long: `Updates connections, objects and script in the app. Example: corectl update	
+		Short: "Updates connections, objects, measures and script and saves the app",
+		Long: `Updates connections, objects, measures and script in the app. Example: corectl update	
 
 `,
 
@@ -256,6 +256,8 @@ var (
 		},
 	}
 
+	//rename listEntities? since it list things that are not generic objects? it lists all nxinfos or are all things objects and genericbjects and genericmeasures both different types of measures?
+	//I think that object should mean borth "generic object" and "generic dimenions" and "generic measure" and "generic variable"
 	listObjectsCmd = &cobra.Command{
 		Use:   "objects",
 		Short: "Prints a list of all objects in the current app",
@@ -264,34 +266,39 @@ var (
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
-			allInfos, err := state.Doc.GetAllInfos(rootCtx)
-			if err != nil {
-				internal.FatalError(err)
-			}
-			printer.PrintObjects(allInfos)
-		},
-	}
-
-	listMeasuresCmd = &cobra.Command{
-		Use:   "measures",
-		Short: "Prints a list of all measures in the current app",
-		Long:  "Prints a list of all measures in the current app",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 			allInfos, err := state.Doc.GetAllInfos(rootCtx)
 			if err != nil {
 				internal.FatalError(err)
 			}
-			printer.PrintObjects(allInfos)
+			objectType := ccmd.Flag("type").Value.String()
+			if objectType == "" {
+				objectType = "all"
+			}
+			printer.PrintEntities(allInfos, objectType)
 		},
 	}
 
+	// listMeasuresCmd = &cobra.Command{
+	// 	Use:   "measures",
+	// 	Short: "Prints a list of all measures in the current app",
+	// 	Long:  "Prints a list of all measures in the current app",
+
+	// 	Run: func(ccmd *cobra.Command, args []string) {
+	// 		state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
+	// 		internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+	// 		allInfos, err := state.Doc.GetAllInfos(rootCtx)
+	// 		if err != nil {
+	// 			internal.FatalError(err)
+	// 		}
+	// 		printer.PrintEntities(allInfos, "measure")
+	// 	},
+	// }
+
 	getObjectPropertiesCmd = &cobra.Command{
 		Use:   "properties",
-		Short: "Prints the properties of the object identified by the --object flag",
-		Long:  "Prints the properties of the object identified by the --object flag",
+		Short: "Prints the properties of the object identified by the --object flag and the type with --type",
+		Long:  "Prints the properties of the object identified by the --object flag and the type with --type. If --type is ommited genericObject is assumed",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := ccmd.Flag("object").Value.String()
@@ -302,14 +309,15 @@ var (
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
-			printer.PrintObject(state, objectID)
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+			printer.PrintObject(state, objectID, ccmd.Flag("type").Value.String())
 		},
 	}
 
 	getObjectLayoutCmd = &cobra.Command{
 		Use:   "layout",
-		Short: "Evalutes the hypercube layout of an object defined by the --object parameter",
-		Long:  `Evalutes the hypercube layout of an object defined by the --object parameter`,
+		Short: "Evalutes the hypercube layout of an object defined by the --object parameter and the type with --type",
+		Long:  `Evalutes the hypercube layout of an object defined by the --object parameter and the type with --type. If --type is ommited genericObject is assumed`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := ccmd.Flag("object").Value.String()
@@ -320,14 +328,15 @@ var (
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
-			printer.PrintObjectLayout(state, objectID)
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+			printer.PrintObjectLayout(state, objectID, ccmd.Flag("type").Value.String())
 		},
 	}
 
 	getObjectDataCmd = &cobra.Command{
 		Use:   "data",
-		Short: "Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported",
-		Long:  `Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported`,
+		Short: "Evalutes the hypercube data of an generic object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported",
+		Long:  `Evalutes the hypercube data of an generic object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := ccmd.Flag("object").Value.String()
@@ -338,6 +347,7 @@ var (
 			}
 			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
 			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+			internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 			printer.EvalObject(rootCtx, state.Doc, objectID)
 		},
 	}
@@ -370,7 +380,12 @@ func init() {
 	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, listObjectsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of object json paths")
+		command.PersistentFlags().String("measures", "", "A list of measure json paths")
 	}
+	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectLayoutCmd, listObjectsCmd} {
+		command.PersistentFlags().String("type", "", "The type of object to print")
+	}
+
 	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd} {
 		//Don't bind to vibe rsince this parameter is purely interactive
 		command.PersistentFlags().StringP("object", "o", "", "ID of a generic object")
@@ -397,7 +412,7 @@ func init() {
 	corectlCommand.AddCommand(listAppsCmd)
 	corectlCommand.AddCommand(versionCmd)
 	corectlCommand.AddCommand(listObjectsCmd)
-	corectlCommand.AddCommand(listMeasuresCmd)
+	// corectlCommand.AddCommand(listMeasuresCmd)
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
 	corectlCommand.AddCommand(getObjectLayoutCmd)
 	corectlCommand.AddCommand(getObjectDataCmd)
@@ -430,7 +445,8 @@ func updateOrReload(ccmd *cobra.Command, args []string, reload bool) {
 
 	separateConnectionsFile := GetPathParameter(ccmd, "connections")
 	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object") //change to generic-object for the type?
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 	scriptFile := GetPathParameter(ccmd, "script")
 	if scriptFile != "" {
 		internal.SetScript(ctx, state.Doc, scriptFile)

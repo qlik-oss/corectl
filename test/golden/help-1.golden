@@ -7,21 +7,21 @@ Usage:
 Available Commands:
   apps          Prints a list of all apps available in the current engine
   assoc         Print table associations summary
-  data          Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+  data          Evalutes the hypercube data of an generic object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
   eval          Evalutes a list of measures and dimensions
   field         Shows content of a field
   fields        Print field list
   help          Help about any command
   keys          Print key-only field list
-  layout        Evalutes the hypercube layout of an object defined by the --object parameter
+  layout        Evalutes the hypercube layout of an object defined by the --object parameter and the type with --type
   meta          Shows metadata about the app
   objects       Prints a list of all objects in the current app
-  properties    Prints the properties of the object identified by the --object flag
-  reload        Reloads and saves the app after updating connections, objects and the script
+  properties    Prints the properties of the object identified by the --object flag and the type with --type
+  reload        Reloads and saves the app after updating connections, objects, measures and the script
   script        Print the reload script
   status        Prints status info about the connection to engine and current app
   tables        Print tables summary
-  update        Updates connections, objects and script and saves the app
+  update        Updates connections, objects, measures and script and saves the app
   version       Print the version of corectl
 
 Flags:

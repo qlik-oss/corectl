@@ -1,10 +1,10 @@
 ## corectl data
 
-Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+Evalutes the hypercube data of an generic object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
 
 ### Synopsis
 
-Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+Evalutes the hypercube data of an generic object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
 
 ```
 corectl data [flags]
@@ -13,9 +13,10 @@ corectl data [flags]
 ### Options
 
 ```
-  -h, --help             help for data
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help              help for data
+      --measures string   A list of measure json paths
+  -o, --object string     ID of a generic object
+      --objects string    A list of object json paths
 ```
 
 ### Options inherited from parent commands

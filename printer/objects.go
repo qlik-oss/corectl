@@ -5,31 +5,48 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	tm "github.com/buger/goterm"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
-	"strings"
 )
 
-// PrintObjects prints a list of the id and type of all objects in the app
-func PrintObjects(allInfos []*enigma.NxInfo) {
+// PrintEntities prints a list of the id and type of all objects in the app
+func PrintEntities(allInfos []*enigma.NxInfo, entityType string) {
 
-	objectTable := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(objectTable, "Id\tType\n")
+	entityTable := tm.NewTable(0, 10, 3, ' ', 0)
+	fmt.Fprintf(entityTable, "Id\tType\n")
 	for _, info := range allInfos {
-
-		fmt.Fprintf(objectTable, "%s\t%s\n", info.Id, info.Type)
+		if entityType == "all" || entityType == info.Type {
+			fmt.Fprintf(entityTable, "%s\t%s\n", info.Id, info.Type)
+		}
 	}
-	fmt.Print(objectTable)
+	fmt.Print(entityTable)
 }
 
 // PrintObject prints the properties of the object defined by objectID
-func PrintObject(state *internal.State, objectID string) {
-	object, err := state.Doc.GetObject(state.Ctx, objectID)
-	if err != nil {
-		internal.FatalError(err)
+func PrintObject(state *internal.State, objectID string, objectType string) {
+
+	if objectType == "" {
+		objectType = "object"
 	}
-	properties, err := object.GetPropertiesRaw(state.Ctx)
+	var err error
+	var properties json.RawMessage
+	switch objectType {
+	case "object": //change to generic-object as the type?
+		genericObject, err := state.Doc.GetObject(state.Ctx, objectID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+	case "measure":
+		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, objectID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
+	}
 	if err != nil {
 		internal.FatalError(err)
 	}
@@ -37,12 +54,27 @@ func PrintObject(state *internal.State, objectID string) {
 }
 
 // PrintObjectLayout prints the layout of the object defined by objectID
-func PrintObjectLayout(state *internal.State, objectID string) {
-	object, err := state.Doc.GetObject(state.Ctx, objectID)
-	if err != nil {
-		internal.FatalError(err)
+func PrintObjectLayout(state *internal.State, objectID string, objectType string) {
+
+	if objectType == "" {
+		objectType = "object"
 	}
-	properties, err := object.GetLayoutRaw(state.Ctx)
+	var err error
+	var properties json.RawMessage
+	switch objectType {
+	case "object": //change to generic-object as the type?
+		genericObject, err := state.Doc.GetObject(state.Ctx, objectID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericObject.GetLayoutRaw(state.Ctx)
+	case "measure":
+		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, objectID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericMeasure.GetLayoutRaw(state.Ctx)
+	}
 	if err != nil {
 		internal.FatalError(err)
 	}
@@ -54,7 +86,7 @@ func prettyJSON(data []byte) string {
 	return prettyJSON.String()
 }
 
-// EvalObject evalutes the data of the object identified by objectID
+// EvalObject evalutes the data of the generic object identified by objectID
 func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	object, err := doc.GetObject(ctx, objectID)
 	if err != nil {
