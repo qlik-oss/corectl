@@ -256,8 +256,8 @@ var (
 		},
 	}
 
-	//rename listEntities? since it list things that are not generic objects? it lists all nxinfos or are all things objects and genericbjects and genericmeasures both different types of measures?
-	//I think that object should mean borth "generic object" and "generic dimenions" and "generic measure" and "generic variable"
+	//rename listEntities? since it list things that are not generic objects? it lists all nxinfos or are all things objects and genericbjects and genericmeasures both different types of objects?
+	//I think that object should mean borth "generic object" and "generic dimenions" and "generic measure" and "generic variable" and the name should stay as "listObjectsCmd"
 	listObjectsCmd = &cobra.Command{
 		Use:   "objects",
 		Short: "Prints a list of all objects in the current app",
@@ -278,22 +278,6 @@ var (
 			printer.PrintEntities(allInfos, objectType)
 		},
 	}
-
-	// listMeasuresCmd = &cobra.Command{
-	// 	Use:   "measures",
-	// 	Short: "Prints a list of all measures in the current app",
-	// 	Long:  "Prints a list of all measures in the current app",
-
-	// 	Run: func(ccmd *cobra.Command, args []string) {
-	// 		state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-	// 		internal.SetupEntities(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
-	// 		allInfos, err := state.Doc.GetAllInfos(rootCtx)
-	// 		if err != nil {
-	// 			internal.FatalError(err)
-	// 		}
-	// 		printer.PrintEntities(allInfos, "measure")
-	// 	},
-	// }
 
 	getObjectPropertiesCmd = &cobra.Command{
 		Use:   "properties",
@@ -412,7 +396,6 @@ func init() {
 	corectlCommand.AddCommand(listAppsCmd)
 	corectlCommand.AddCommand(versionCmd)
 	corectlCommand.AddCommand(listObjectsCmd)
-	// corectlCommand.AddCommand(listMeasuresCmd)
 	corectlCommand.AddCommand(getObjectPropertiesCmd)
 	corectlCommand.AddCommand(getObjectLayoutCmd)
 	corectlCommand.AddCommand(getObjectDataCmd)

@@ -13,6 +13,7 @@ import (
 )
 
 // PrintEntities prints a list of the id and type of all objects in the app
+//Maybe this one should be renamed back to printObjects if objects means both genericObjects and genericMeasures
 func PrintEntities(allInfos []*enigma.NxInfo, entityType string) {
 
 	entityTable := tm.NewTable(0, 10, 3, ' ', 0)
