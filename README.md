@@ -6,17 +6,17 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 
 ## Download
 
-Change \<version\> below to the version you want to download.
+**Change _\<version\>_ below to the version you want to download.**
 
 E.G v0.0.4
 
-On Linux and OS X
+On **Linux** and **OS X**
 
 ```bash
  curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
 
-On Windows with git bash
+On **Windows** with git bash
 
 ```bash
 curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
