@@ -131,14 +131,16 @@ Usage:
 Available Commands:
   apps        Prints a list of all apps available in the current engine
   assoc       Print table associations summary
-  data        Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+  dimension   Shows content of an generic dimension
+  dimensions  Prints a list of all generic dimensions in the current app
   field       Shows content of a field
   fields      Print field list
   keys        Print key-only field list
-  layout      Evalutes the hypercube layout of an object defined by the --object parameter
+  measure     Shows content of an generic measure
+  measures    Prints a list of all generic measures in the current app
   meta        Shows metadata about the app
-  objects     Prints a list of all objects in the current app
-  properties  Prints the properties of the object identified by the --object flag
+  object      Shows content of an generic object
+  objects     Prints a list of all generic objects in the current app
   script      Print the reload script
   status      Prints status info about the connection to engine and current app
   tables      Print tables summary
@@ -157,10 +159,36 @@ Maybe apps should be lifted out of here since the other are things related or so
 
 The specific `get` subcommands will then have its specific parameters as flags (such as json for listing apps, the app itself for most commands)
 
-`data`, `layout` and `properties` could have a `--set-objects` to set the object(s) inside the app if it is not already is there
-(this is the current behaviour) otherwise you would have to do something like `corectl set object ./my-object.json && corectl get layout --object my-object-id`
-
 I also think we should use the verb "list" as the action we describe the command to do. As in "list the content of a field" ,"list the apps" or "list the properties of an object" Currently we are mixing "shows" and "prints" and picking one of them would also be fine.
+
+#### Get Object Command
+
+The `get measure` and `get dimension` would look the same (if all subcommands still makes sense for those types.)
+
+```bash
+Lists one object in different ways.
+
+Usage:
+  corectl get object [command]
+
+Available Commands:
+  data        Evalutes the hypercube data of an object. Note that only basic hypercubes like straight tables are supported
+  layout      Evalutes the hypercube layout of an object
+  properties  Prints the properties of the object.
+
+Flags:
+  -a, --app string           App name including .qvf file ending. If no app is specified a session app is used instead.
+
+Global Flags:
+  -c, --config string   path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string   URL to engine (default "localhost:9076")
+  -h, --help            help for get
+      --ttl string      Engine session time to live (default "30")
+  -v, --verbose         Logs extra information
+```
+
+`data`, `layout` and `properties` could have a `--set-objects` to set the entity(s) inside the app if it is not already is there
+(this is the current behaviour) otherwise you would have to do something like `corectl set object ./my-object.json && corectl get object layout --object my-object-id`
 
 ### Reload Command
 
@@ -198,9 +226,11 @@ Usage:
   corectl set [command]
 
 Available Commands:
-  all         Sets the objects, connections and script in the current app
+  all         Sets the objects, measures, dimensions, connections and script in the current app
   connections Sets the connection
-  objects     Set a list of all objects
+  objects     Set a list of all generic objects
+  measures    Set a list of all generic measures
+  dimensions  Set a list of all generic dimensions
   script      Sets the reload script
 
 Flags:
