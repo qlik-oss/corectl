@@ -16,7 +16,7 @@ corectl eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...] [fl
 corectl eval "Count(a)" // returns the number of values in field "a"
 corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
-corectl eval by "Region" // Returns the values for dimension Region
+corectl eval by "Region" // Returns the values for dimension "Region"
 ```
 
 ### Options
