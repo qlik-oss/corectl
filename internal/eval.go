@@ -72,8 +72,6 @@ func argumentsToMeasuresAndDims(args []string) ([]string, []string) {
 	for _, arg := range args {
 		if arg == "by" {
 			foundDims = true
-		} else if arg == "*" {
-			break
 		} else if foundDims {
 			dimensions = append(dimensions, arg)
 		} else {
