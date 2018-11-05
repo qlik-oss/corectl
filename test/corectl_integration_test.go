@@ -97,6 +97,7 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)"}, "project1-eval-3.golden"},
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "=1+1"}, "project1-eval-4.golden"},
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "1+1"}, "project1-eval-4.golden"},
+		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "by", "numbers"}, "project1-eval-5.golden"},
 		{"project 1 - objects", []string{"--config=test/project1/corectl.yml ", connectToEngine, "objects"}, "project1-objects.golden"},
 		{"project 1 - data", []string{"--config=test/project1/corectl.yml ", connectToEngine, "--object", "my-hypercube", "data"}, "project1-data.golden"},
 		{"project 1 - properties", []string{"--config=test/project1/corectl.yml ", connectToEngine, "--object", "my-hypercube", "properties"}, "project1-properties.golden"},
