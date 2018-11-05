@@ -127,9 +127,9 @@ var (
 		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
 		Short: "Evalutes a list of measures and dimensions",
 		Long:  `Evalutes a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
-		Example: `corectl eval Count(a) // returns the number of values in field "a"
-corectl eval 1+1 // returns the calculated value for 1+1
-corectl eval Avg(Sales) by Region // returns the average of measure "Sales" for dimension "Region"`,
+		Example: `corectl eval "Count(a)" // returns the number of values in field "a"
+corectl eval "1+1" // returns the calculated value for 1+1
+corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			if len(args) == 0 {
