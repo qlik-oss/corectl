@@ -4,10 +4,18 @@ Evalutes a list of measures and dimensions
 
 ### Synopsis
 
-Evalutes a list of measures and dimensions. Meaures are separeted from dimensions by the "by" keyword. To omit dimensions and only use measures use "*" as dimension: eval <measures> by *
+Evalutes a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.
 
 ```
 corectl eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...] [flags]
+```
+
+### Examples
+
+```
+corectl eval Count(a) // returns the number of values in field "a"
+corectl eval 1+1 // returns the calculated value for 1+1
+corectl eval Avg(Sales) by Region // returns the average of measure "Sales" for dimension "Region"
 ```
 
 ### Options
