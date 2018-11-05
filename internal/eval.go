@@ -64,23 +64,20 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 
 func argumentsToMeasuresAndDims(args []string) ([]string, []string) {
 	var (
-		dims      []string
-		measures  []string
-		tempArray []string
+		measures   = []string{}
+		dimensions = []string{}
+		foundDims  = false
 	)
+
 	for _, arg := range args {
-		if arg != "by" {
-			// Skip appending dimension if iterating over all dimensions
-			if arg != "*" {
-				tempArray = append(tempArray, arg)
-			}
+		if arg == "by" {
+			foundDims = true
+		} else if foundDims {
+			dimensions = append(dimensions, arg)
 		} else {
-			//The first set of arguments are treated as measures when we find the "by" keyword
-			//Switch to adding dimensions
-			measures = tempArray
-			tempArray = []string{}
+			measures = append(measures, arg)
 		}
 	}
-	dims = tempArray
-	return measures, dims
+
+	return measures, dimensions
 }
