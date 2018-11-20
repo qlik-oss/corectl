@@ -1,14 +1,10 @@
-## corectl reload
+## corectl remove
 
-Reloads the app.
+remove one or mores generic entities (dimensions, measures, objects) in the app
 
 ### Synopsis
 
-Reloads the app. Example: corectl reload
-
-```
-corectl reload [flags]
-```
+remove one or mores generic entities (dimensions, measures, objects) in the app
 
 ### Options
 
@@ -17,9 +13,8 @@ corectl reload [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-  -h, --help                     help for reload
+  -h, --help                     help for remove
       --noSave                   Do not save the app after doing reload
-      --silent                   Do not log reload progress
       --ttl string               Engine session time to live (default "30")
 ```
 
@@ -32,4 +27,7 @@ corectl reload [flags]
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
+* [corectl remove dimensions](corectl_remove_dimensions.md)	 - removes the specified generic dimensions in the current app
+* [corectl remove measures](corectl_remove_measures.md)	 - removes the specified generic measures in the current app
+* [corectl remove objects](corectl_remove_objects.md)	 - removes the specified generic objects in the current app
 

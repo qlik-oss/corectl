@@ -5,49 +5,86 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	tm "github.com/buger/goterm"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
-	"strings"
 )
 
-// PrintObjects prints a list of the id and type of all objects in the app
-func PrintObjects(allInfos []*enigma.NxInfo) {
+// PrintGenericEntities prints a list of the id and type of all gerneric entities in the app
+func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string) {
 
-	objectTable := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(objectTable, "Id\tType\n")
+	entityTable := tm.NewTable(0, 10, 3, ' ', 0)
+	fmt.Fprintf(entityTable, "Id\tType\n")
 	for _, info := range allInfos {
-
-		fmt.Fprintf(objectTable, "%s\t%s\n", info.Id, info.Type)
+		if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
+			fmt.Fprintf(entityTable, "%s\t%s\n", info.Id, info.Type)
+		}
 	}
-	fmt.Print(objectTable)
+	fmt.Print(entityTable)
 }
 
-// PrintObject prints the properties of the object defined by objectID
-func PrintObject(state *internal.State, objectID string) {
-	object, err := state.Doc.GetObject(state.Ctx, objectID)
-	if err != nil {
-		internal.FatalError(err)
+// PrintGenericEntityProperties prints the properties of the generic entity defined by entityID
+func PrintGenericEntityProperties(state *internal.State, entityID string, entityType string) {
+	var err error
+	var properties json.RawMessage
+	switch entityType {
+	case "object":
+		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+	case "measure":
+		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
+	case "dimension":
+		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
 	}
-	properties, err := object.GetPropertiesRaw(state.Ctx)
 	if err != nil {
 		internal.FatalError(err)
 	}
 	fmt.Println(prettyJSON(properties))
 }
 
-// PrintObjectLayout prints the layout of the object defined by objectID
-func PrintObjectLayout(state *internal.State, objectID string) {
-	object, err := state.Doc.GetObject(state.Ctx, objectID)
-	if err != nil {
-		internal.FatalError(err)
+// PrintGenericEntityLayout prints the layout of the object defined by objectID
+func PrintGenericEntityLayout(state *internal.State, entityID string, entityType string) {
+	var err error
+	var properties json.RawMessage
+	switch entityType {
+	case "object":
+		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericObject.GetLayoutRaw(state.Ctx)
+	case "measure":
+		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericMeasure.GetLayoutRaw(state.Ctx)
+	case "dimension":
+		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		properties, err = genericDimension.GetLayoutRaw(state.Ctx)
 	}
-	properties, err := object.GetLayoutRaw(state.Ctx)
 	if err != nil {
 		internal.FatalError(err)
 	}
 	fmt.Println(prettyJSON(properties))
 }
+
 func prettyJSON(data []byte) string {
 	var prettyJSON bytes.Buffer
 	json.Indent(&prettyJSON, data, "", "   ")

@@ -1,35 +1,35 @@
-## corectl reload
+## corectl set dimensions
 
-Reloads the app.
+Sets or updates the dimensions in the current app
 
 ### Synopsis
 
-Reloads the app. Example: corectl reload
+Sets or updates the dimensions in the current app
 
 ```
-corectl reload [flags]
+corectl set dimensions [flags]
 ```
 
 ### Options
+
+```
+      --dimensions string   A list of generic dimension json paths
+  -h, --help                help for dimensions
+```
+
+### Options inherited from parent commands
 
 ```
   -a, --app string               App name including .qvf file ending. If no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-  -h, --help                     help for reload
       --noSave                   Do not save the app after doing reload
-      --silent                   Do not log reload progress
       --ttl string               Engine session time to live (default "30")
-```
-
-### Options inherited from parent commands
-
-```
-  -v, --verbose   Logs extra information
+  -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl set](corectl_set.md)	 - Sets one or several resources
 

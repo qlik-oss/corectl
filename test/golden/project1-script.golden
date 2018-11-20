@@ -1,0 +1,8 @@
+LIB CONNECT TO myconnection;
+
+TableA:
+SELECT A;
+
+TableB:
+SELECT B;
+

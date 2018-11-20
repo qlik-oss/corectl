@@ -1,35 +1,35 @@
-## corectl reload
+## corectl set script
 
-Reloads the app.
+Sets the script in the current app
 
 ### Synopsis
 
-Reloads the app. Example: corectl reload
+Sets the script in the current app
 
 ```
-corectl reload [flags]
+corectl set script [flags]
 ```
 
 ### Options
+
+```
+  -h, --help            help for script
+      --script string   path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
+```
+
+### Options inherited from parent commands
 
 ```
   -a, --app string               App name including .qvf file ending. If no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-  -h, --help                     help for reload
       --noSave                   Do not save the app after doing reload
-      --silent                   Do not log reload progress
       --ttl string               Engine session time to live (default "30")
-```
-
-### Options inherited from parent commands
-
-```
-  -v, --verbose   Logs extra information
+  -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl set](corectl_set.md)	 - Sets one or several resources
 

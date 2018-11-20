@@ -5,32 +5,17 @@ Usage:
   corectl [command]
 
 Available Commands:
-  apps          Prints a list of all apps available in the current engine
-  assoc         Print table associations summary
-  data          Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+  build         Reloads and saves the app after updating connections, dimensions, measures,objects and the script
   eval          Evalutes a list of measures and dimensions
-  field         Shows content of a field
-  fields        Print field list
+  get           Lists one or several resources
   help          Help about any command
-  keys          Print key-only field list
-  layout        Evalutes the hypercube layout of an object defined by the --object parameter
-  meta          Shows metadata about the app
-  objects       Prints a list of all objects in the current app
-  properties    Prints the properties of the object identified by the --object flag
-  reload        Reloads and saves the app after updating connections, objects and the script
-  script        Print the reload script
-  status        Prints status info about the connection to engine and current app
-  tables        Print tables summary
-  update        Updates connections, objects and script and saves the app
+  reload        Reloads the app.
+  remove        remove one or mores generic entities (dimensions, measures, objects) in the app
+  set           Sets one or several resources
   version       Print the version of corectl
 
 Flags:
-  -a, --app string               App name including .qvf file ending. If no app is specified a session app is used instead.
-  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
-  -e, --engine string            URL to engine (default "localhost:9076")
-      --headers stringToString   Headers to use when connecting to qix engine (default [])
-  -h, --help                     help for corectl
-      --ttl string               Engine session time to live (default "30")
-  -v, --verbose                  Logs extra information
+  -h, --help      help for corectl
+  -v, --verbose   Logs extra information
 
 Use "corectl [command] --help" for more information about a command.
