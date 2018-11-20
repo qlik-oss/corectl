@@ -158,7 +158,7 @@ func TestCorectlContains(t *testing.T) {
 		args     []string
 		contains []string
 	}{
-		{"project 1 - get status", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "status"}, []string{"Connected to project1.qvf @ ","The data model has 2 tables."},
+		{"project 1 - get status", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "status"}, []string{"Connected to project1.qvf @ ", "The data model has 2 tables."}},
 		{"list apps", []string{connectToEngine, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "apps"}, []string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
 		{"list apps json", []string{connectToEngine, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "apps", "--json"}, []string{"\"id\": \"/apps/project2.qvf\","}},
 		{"err 1", []string{"--engine=localhost:9999", "get", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}},
