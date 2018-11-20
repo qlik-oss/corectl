@@ -13,8 +13,7 @@ corectl set objects [flags]
 ### Options
 
 ```
-  -h, --help             help for objects
-      --objects string   A list of generic object json paths
+  -h, --help   help for objects
 ```
 
 ### Options inherited from parent commands

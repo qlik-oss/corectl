@@ -649,12 +649,18 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		Run: func(ccmd *cobra.Command, args []string) {
 
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			separateConnectionsFile := GetPathParameter(ccmd, "connections")
+			separateConnectionsFile := ccmd.Flag("connections").Value.String()
+			if separateConnectionsFile == "" {
+				separateConnectionsFile = GetRelativeParameter("connections")
+			}
 			internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
-			scriptFile := GetPathParameter(ccmd, "script")
+			scriptFile := ccmd.Flag("script").Value.String()
+			if scriptFile == "" {
+				scriptFile = GetRelativeParameter("script")
+			}
 			if scriptFile != "" {
 				internal.SetScript(rootCtx, state.Doc, scriptFile)
 			}
@@ -668,7 +674,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setConnectionsCmd = &cobra.Command{
 		Use:   "connections",
 		Short: "Sets or updates the connections in the current app",
-		Long:  "Sets or updates the connections in the current app",
+		Long:  "Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
@@ -677,7 +683,13 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		Run: func(ccmd *cobra.Command, args []string) {
 
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			separateConnectionsFile := GetPathParameter(ccmd, "connections")
+			separateConnectionsFile := ""
+			if len(args) > 0 {
+				separateConnectionsFile = args[0]
+			}
+			if separateConnectionsFile == "" {
+				separateConnectionsFile = GetRelativeParameter("connections")
+			}
 			internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 			if state.AppID != "" && !viper.GetBool("noSave") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
@@ -688,7 +700,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setDimensionsCmd = &cobra.Command{
 		Use:   "dimensions",
 		Short: "Sets or updates the dimensions in the current app",
-		Long:  "Sets or updates the dimensions in the current app",
+		Long:  "Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
@@ -696,8 +708,12 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
+			commandLineDimensions := ""
+			if len(args) > 0 {
+				commandLineDimensions = args[0]
+			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
 			if state.AppID != "" && !viper.GetBool("noSave") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
@@ -707,7 +723,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setMeasuresCmd = &cobra.Command{
 		Use:   "measures",
 		Short: "Sets or updates the measures in the current app",
-		Long:  "Sets or updates the measures in the current app",
+		Long:  "Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
@@ -715,8 +731,12 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
+			commandLineMeasures := ""
+			if len(args) > 0 {
+				commandLineMeasures = args[0]
+			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
 			if state.AppID != "" && !viper.GetBool("noSave") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
@@ -726,7 +746,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setObjectsCmd = &cobra.Command{
 		Use:   "objects",
 		Short: "Sets or updates the objects in the current app",
-		Long:  "Sets or updates the objects in the current app",
+		Long:  "Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
@@ -734,8 +754,13 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
+			commandLineObjects := ""
+			if len(args) > 0 {
+				commandLineObjects = args[0]
+			}
+
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
 			if state.AppID != "" && !viper.GetBool("noSave") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
@@ -745,7 +770,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setScriptCmd = &cobra.Command{
 		Use:   "script",
 		Short: "Sets the script in the current app",
-		Long:  "Sets the script in the current app",
+		Long:  "Sets the script in the current app. Example: corectl set script ./my-script-file",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
@@ -754,7 +779,13 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		Run: func(ccmd *cobra.Command, args []string) {
 
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
-			scriptFile := GetPathParameter(ccmd, "script")
+			scriptFile := ""
+			if len(args) > 0 {
+				scriptFile = args[0]
+			}
+			if scriptFile == "" {
+				scriptFile = GetRelativeParameter("script")
+			}
 			if scriptFile != "" {
 				internal.SetScript(rootCtx, state.Doc, scriptFile)
 			} else {
@@ -826,17 +857,17 @@ func init() {
 		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setDimensionsCmd} {
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setMeasuresCmd} {
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setObjectsCmd} {
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
 	}
@@ -849,7 +880,7 @@ func init() {
 		command.PersistentFlags().Bool("noSave", false, "Do not save the app")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setScriptCmd} {
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 	}
@@ -905,13 +936,9 @@ func init() {
 
 }
 
-// GetPathParameter returns a parameter from either the command line or the config file.
-// Compared to using BindPFlag this function modifies relative paths in the config file
-// to actually be relative to the config file and not the working directory
-func GetPathParameter(ccmd *cobra.Command, paramName string) string {
-	if pathOnCommandLine := ccmd.Flag(paramName).Value.String(); pathOnCommandLine != "" {
-		return pathOnCommandLine
-	}
+// GetRelativeParameter returns a parameter from the config file.
+// It modifies the parameter to actually be relative to the config file and not the working directory
+func GetRelativeParameter(paramName string) string {
 	pathInConfigFile := viper.GetString(paramName)
 	if pathInConfigFile != "" {
 		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
@@ -959,12 +986,18 @@ func build(ccmd *cobra.Command, args []string) {
 	ctx := rootCtx
 	state := internal.PrepareEngineState(ctx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 
-	separateConnectionsFile := GetPathParameter(ccmd, "connections")
+	separateConnectionsFile := ccmd.Flag("connections").Value.String()
+	if separateConnectionsFile == "" {
+		separateConnectionsFile = GetRelativeParameter("connections")
+	}
 	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
 	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
 	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
-	scriptFile := GetPathParameter(ccmd, "script")
+	scriptFile := ccmd.Flag("script").Value.String()
+	if scriptFile == "" {
+		scriptFile = GetRelativeParameter("script")
+	}
 	if scriptFile != "" {
 		internal.SetScript(ctx, state.Doc, scriptFile)
 	}

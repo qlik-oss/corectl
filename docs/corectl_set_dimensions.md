@@ -13,8 +13,7 @@ corectl set dimensions [flags]
 ### Options
 
 ```
-      --dimensions string   A list of generic dimension json paths
-  -h, --help                help for dimensions
+  -h, --help   help for dimensions
 ```
 
 ### Options inherited from parent commands

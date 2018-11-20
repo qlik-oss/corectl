@@ -4,7 +4,7 @@ Sets or updates the connections in the current app
 
 ### Synopsis
 
-Sets or updates the connections in the current app
+Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml
 
 ```
 corectl set connections [flags]

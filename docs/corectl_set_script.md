@@ -4,7 +4,7 @@ Sets the script in the current app
 
 ### Synopsis
 
-Sets the script in the current app
+Sets the script in the current app. Example: corectl set script ./my-script-file
 
 ```
 corectl set script [flags]
@@ -13,8 +13,7 @@ corectl set script [flags]
 ### Options
 
 ```
-  -h, --help            help for script
-      --script string   path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
+  -h, --help   help for script
 ```
 
 ### Options inherited from parent commands

@@ -106,11 +106,11 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - get script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "script"}, "project1-script.golden"},
 		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 		{"project 1 - reload without progress and without save", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent", "--noSave"}, "project1-reload-silent-nosave.golden"},
-		{"project 1 - set measures", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "measures", "--measures=test/project1/not-following-glob-pattern-measure.json", "--noSave"}, "blank.golden"},
+		{"project 1 - set measures", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "measures", "test/project1/not-following-glob-pattern-measure.json", "--noSave"}, "blank.golden"},
 		{"project 1 - get measures 2", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures"}, "project1-measures-2.golden"},
 		{"project 1 - remove measures", []string{"--config=test/project1/corectl.yml ", connectToEngine, "remove", "measures", "measure-3", "--noSave"}, "blank.golden"},
 		{"project 1 - check measures after removal", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures"}, "project1-measures-1.golden"},
-		{"project 1 - set script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "script", "--script=test/project1/dummy-script.qvs", "--noSave"}, "blank.golden"},
+		{"project 1 - set script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "script", "test/project1/dummy-script.qvs", "--noSave"}, "blank.golden"},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "script"}, "project1-script-2.golden"},
 
 		// Project 2 has separate connections file

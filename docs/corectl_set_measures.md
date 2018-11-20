@@ -13,8 +13,7 @@ corectl set measures [flags]
 ### Options
 
 ```
-  -h, --help              help for measures
-      --measures string   A list of generic measures json paths
+  -h, --help   help for measures
 ```
 
 ### Options inherited from parent commands
