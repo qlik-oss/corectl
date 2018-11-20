@@ -24,7 +24,7 @@ corectl set script [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --noSave                   Do not save the app after doing reload
+      --noSave                   Do not save the app
       --ttl string               Engine session time to live (default "30")
   -v, --verbose                  Logs extra information
 ```

@@ -18,7 +18,7 @@ corectl reload [flags]
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
   -h, --help                     help for reload
-      --noSave                   Do not save the app after doing reload
+      --noSave                   Do not save the app
       --silent                   Do not log reload progress
       --ttl string               Engine session time to live (default "30")
 ```
