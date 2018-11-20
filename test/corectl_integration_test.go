@@ -104,7 +104,6 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - get measures 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures"}, "project1-measures-1.golden"},
 		{"project 1 - get dimensions", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "dimensions"}, "project1-dimensions.golden"},
 		{"project 1 - get script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "script"}, "project1-script.golden"},
-		{"project 1 - get status", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "status"}, "project1-status.golden"},
 		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
 		{"project 1 - reload without progress and without save", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent", "--noSave"}, "project1-reload-silent-nosave.golden"},
 		{"project 1 - set measures", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "measures", "--measures=test/project1/not-following-glob-pattern-measure.json", "--noSave"}, "blank.golden"},
@@ -159,6 +158,7 @@ func TestCorectlContains(t *testing.T) {
 		args     []string
 		contains []string
 	}{
+		{"project 1 - get status", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "status"}, []string{"Connected to project1.qvf @ ","The data model has 2 tables."},
 		{"list apps", []string{connectToEngine, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "apps"}, []string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title", "project2.qvf", "project1.qvf"}},
 		{"list apps json", []string{connectToEngine, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "apps", "--json"}, []string{"\"id\": \"/apps/project2.qvf\","}},
 		{"err 1", []string{"--engine=localhost:9999", "get", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}},
