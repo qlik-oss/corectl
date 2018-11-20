@@ -4,7 +4,7 @@ Sets or updates the dimensions in the current app
 
 ### Synopsis
 
-Sets or updates the dimensions in the current app
+Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json
 
 ```
 corectl set dimensions [flags]

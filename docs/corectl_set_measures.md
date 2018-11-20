@@ -4,7 +4,7 @@ Sets or updates the measures in the current app
 
 ### Synopsis
 
-Sets or updates the measures in the current app
+Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json
 
 ```
 corectl set measures [flags]

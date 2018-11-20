@@ -4,7 +4,7 @@ Sets or updates the objects in the current app
 
 ### Synopsis
 
-Sets or updates the objects in the current app
+Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json
 
 ```
 corectl set objects [flags]
