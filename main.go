@@ -18,14 +18,8 @@ var (
 	headersMap         = make(map[string]string)
 	explicitConfigFile = ""
 	version            = ""
-	params             struct {
-		engine    string
-		appID     string
-		sessionID string
-		ttl       string
-		headers   http.Header
-	}
-	rootCtx = context.Background()
+	headers            http.Header
+	rootCtx            = context.Background()
 
 	corectlCommand = &cobra.Command{
 		Hidden:            true,
@@ -58,16 +52,13 @@ var (
 				}
 			}
 			internal.QliVerbose = viper.GetBool("verbose")
-			params.engine = viper.GetString("engine")
-			params.appID = viper.GetString("app")
-			params.ttl = viper.GetString("ttl")
 
 			if len(headersMap) == 0 {
 				headersMap = viper.GetStringMapString("headers")
 			}
-			params.headers = make(http.Header, 1)
+			headers = make(http.Header, 1)
 			for key, value := range headersMap {
-				params.headers.Set(key, value)
+				headers.Set(key, value)
 			}
 		},
 
@@ -76,61 +67,39 @@ var (
 		},
 	}
 
-	fieldsCommand = &cobra.Command{
-		Use:   "fields",
-		Short: "Print field list",
-		Long:  "Print field list",
-
+	buildCmd = &cobra.Command{
+		Use:   "build",
+		Short: "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
+		Long: `Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
+			
+`,
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("silent", ccmd.PersistentFlags().Lookup("silent"))
+		},
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
-			printer.PrintFields(data, false)
+			build(ccmd, args)
 		},
 	}
 
-	keysCommand = &cobra.Command{
-		Use:   "keys",
-		Short: "Print key-only field list",
-		Long:  "Print key-only field list",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, true)
-			printer.PrintFields(data, true)
-		},
-	}
-
-	associationsCommand = &cobra.Command{
-		Use:   "assoc",
-		Short: "Print table associations summary",
-		Long:  "Print table associations summary",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
-			printer.PrintAssociations(data)
-		},
-	}
-
-	tablesCommand = &cobra.Command{
-		Use:   "tables",
-		Short: "Print tables summary",
-		Long:  "Prints tables summary",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
-			printer.PrintTables(data)
-		},
-	}
 	evalCmd = &cobra.Command{
 		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
-		Short: "Evalutes a list of measures and dimensions",
-		Long:  `Evalutes a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
+		Short: "Evaluates a list of measures and dimensions",
+		Long:  `Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
 		Example: `corectl eval "Count(a)" // returns the number of values in field "a"
 corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
 corectl eval by "Region" // Returns the values for dimension "Region"`,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			if len(args) == 0 {
@@ -138,8 +107,334 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			internal.Eval(rootCtx, state.Doc, args)
+		},
+	}
+
+	//Get commands
+
+	getCmd = &cobra.Command{
+		Use:   "get",
+		Short: "Lists one or several resources",
+		Long:  "Lists one or several resources",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+		},
+	}
+
+	getAppsCmd = &cobra.Command{
+		Use:   "apps",
+		Short: "Prints a list of all apps available in the current engine",
+		Long:  "Prints a list of all apps available in the current engine",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineStateWithoutApp(rootCtx, viper.GetString("engine"), viper.GetString("ttl"), headers)
+			docList, err := state.Global.GetDocList(rootCtx)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			printer.PrintApps(docList, viper.GetBool("json"))
+		},
+	}
+
+	getAssociationsCmd = &cobra.Command{
+		Use:   "assoc",
+		Short: "Print table associations summary",
+		Long:  "Print table associations summary",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+			printer.PrintAssociations(data)
+		},
+	}
+
+	getDimensionsCmd = &cobra.Command{
+		Use:   "dimensions",
+		Short: "Prints a list of all generic dimensions in the current app",
+		Long:  "Prints a list of all generic dimensions in the current app",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntities(ccmd, args, "dimension")
+		},
+	}
+
+	getDimensionCmd = &cobra.Command{
+		Use:   "dimension <dimension-id>",
+		Short: "Shows content of an generic dimension",
+		Long:  "Shows content of an generic dimension. If no subcommand is specified the properties will be shown. Example: corectl get dimension DIMENSION-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		//if no specific subcommand is used show the Dimensions properties
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "dimension")
+		},
+	}
+
+	getDimensionPropertiesCmd = &cobra.Command{
+		Use:   "properties <dimension-id>",
+		Short: "Prints the properties of the generic dimension",
+		Long:  "Prints the properties of the generic dimension. Example: corectl get dimension properties DIMENSION-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getDimensionCmd.PersistentPreRun(getDimensionCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "dimension")
+		},
+	}
+
+	getDimensionLayoutCmd = &cobra.Command{
+		Use:   "layout <dimension-id>",
+		Short: "Evaluates the layout of an generic dimension",
+		Long:  `Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf`,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getDimensionCmd.PersistentPreRun(getDimensionCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityLayout(ccmd, args, "dimension")
+		},
+	}
+
+	getFieldCmd = &cobra.Command{
+		Use:   "field <field name>",
+		Short: "Shows content of a field",
+		Long:  ``,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("Expected a field name as parameter")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			internal.PrintField(rootCtx, state.Doc, args[0])
+		},
+	}
+
+	getFieldsCmd = &cobra.Command{
+		Use:   "fields",
+		Short: "Print field list",
+		Long:  "Print field list",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+			printer.PrintFields(data, false)
+		},
+	}
+
+	getKeysCmd = &cobra.Command{
+		Use:   "keys",
+		Short: "Print key-only field list",
+		Long:  "Print key-only field list",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, true)
+			printer.PrintFields(data, true)
+		},
+	}
+
+	getMeasuresCmd = &cobra.Command{
+		Use:   "measures",
+		Short: "Prints a list of all generic measures in the current app",
+		Long:  "Prints a list of all generic measures in the current app",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntities(ccmd, args, "measure")
+		},
+	}
+
+	getMeasureCmd = &cobra.Command{
+		Use:   "measure <measure-id>",
+		Short: "Shows content of an generic measure",
+		Long:  "Shows content of an generic measure. If no subcommand is specified the properties will be shown. Example: corectl get measure MEASURE-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		//if no specific subcommand is used show the Measure properties
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "measure")
+		},
+	}
+
+	getMeasurePropertiesCmd = &cobra.Command{
+		Use:   "properties <measure-id>",
+		Short: "Prints the properties of the generic measure",
+		Long:  "Prints the properties of the generic measure. Example: corectl get measure properties MEASURE-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getMeasureCmd.PersistentPreRun(getMeasureCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "measure")
+		},
+	}
+
+	getMeasureLayoutCmd = &cobra.Command{
+		Use:   "layout <measure-id>",
+		Short: "Evaluates the layout of an generic measure",
+		Long:  `Evaluates the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf`,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getMeasureCmd.PersistentPreRun(getMeasureCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityLayout(ccmd, args, "measure")
+		},
+	}
+
+	getMetaCmd = &cobra.Command{
+		Use:   "meta",
+		Short: "Shows metadata about the app",
+		Long:  "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+			printer.PrintMetadata(data)
+		},
+	}
+
+	getObjectsCmd = &cobra.Command{
+		Use:   "objects",
+		Short: "Prints a list of all generic objects in the current app",
+		Long:  "Prints a list of all generic objects in the current app",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntities(ccmd, args, "object")
+		},
+	}
+
+	getObjectCmd = &cobra.Command{
+		Use:   "object <object-id>",
+		Short: "Shows content of an generic object",
+		Long:  "Shows content of an generic object. If no subcommand is specified the properties will be shown. Example: corectl get object OBJECT-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		//if no specific subcommand is used show the objects properties
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "object")
+		},
+	}
+
+	getObjectPropertiesCmd = &cobra.Command{
+		Use:   "properties <object-id>",
+		Short: "Prints the properties of the generic object",
+		Long:  "Prints the properties of the generic object. Example: corectl get object properties OBJECT-ID --app my-app.qvf",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getObjectCmd.PersistentPreRun(getObjectCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			getEntityProperties(ccmd, args, "object")
+		},
+	}
+
+	getObjectLayoutCmd = &cobra.Command{
+		Use:   "layout <object-id>",
+		Short: "Evaluates the hypercube layout of an generic object",
+		Long:  `Evaluates the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf`,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getObjectCmd.PersistentPreRun(getObjectCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				fmt.Println("Expected an object id specify what object to use as a parameter")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			printer.PrintGenericEntityLayout(state, args[0], "object")
+		},
+	}
+
+	getObjectDataCmd = &cobra.Command{
+		Use:   "data <object-id>",
+		Short: "Evaluates the hypercube data of an generic object",
+		Long:  `Evaluates the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf`,
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getObjectCmd.PersistentPreRun(getObjectCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				fmt.Println("Expected an object id specify what object to use as a parameter")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			printer.EvalObject(rootCtx, state.Doc, args[0])
 		},
 	}
 
@@ -148,8 +443,13 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		Short: "Print the reload script",
 		Long:  "Print the reload script",
 
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			script, err := state.Doc.GetScript(rootCtx)
 			if err != nil {
 				internal.FatalError(err)
@@ -158,70 +458,355 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		},
 	}
 
-	metaCmd = &cobra.Command{
-		Use:   "meta",
-		Short: "Shows metadata about the app",
-		Long:  "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, params.headers, false)
-			printer.PrintMetadata(data)
-		},
-	}
-
-	reloadCmd = &cobra.Command{
-		Use:   "reload",
-		Short: "Reloads and saves the app after updating connections, objects and the script",
-		Long: `Reloads the app. Example: corectl reload --connections ./myconnections.yml --script ./myscript.qvs
-			
-`,
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			updateOrReload(ccmd, args, true)
-		},
-	}
-
-	updateCmd = &cobra.Command{
-		Use:   "update",
-		Short: "Updates connections, objects and script and saves the app",
-		Long: `Updates connections, objects and script in the app. Example: corectl update	
-
-`,
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			updateOrReload(ccmd, args, false)
-		},
-	}
-
-	fieldCmd = &cobra.Command{
-		Use:   "field <field name>",
-		Short: "Shows content of a field",
-		Long:  ``,
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			if len(args) != 1 {
-				fmt.Println("Expected a field name as parameter")
-				ccmd.Usage()
-				os.Exit(1)
-			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.PrintField(rootCtx, state.Doc, args[0])
-		},
-	}
-
-	statusCommand = &cobra.Command{
+	getStatusCmd = &cobra.Command{
 		Use:   "status",
 		Short: "Prints status info about the connection to engine and current app",
 		Long:  "Prints status info about the connection to engine and current app",
 
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
 		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			engine := params.engine
+			engine := viper.GetString("engine")
 			if engine == "" {
 				engine = "localhost:9076"
 			}
+			state := internal.PrepareEngineState(rootCtx, engine, viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			printer.PrintStatus(state, engine)
+		},
+	}
+
+	getTablesCmd = &cobra.Command{
+		Use:   "tables",
+		Short: "Print tables summary",
+		Long:  "Prints tables summary",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+			printer.PrintTables(data)
+		},
+	}
+
+	//Reload command
+
+	reloadCmd = &cobra.Command{
+		Use:   "reload",
+		Short: "Reloads the app.",
+		Long:  "Reloads the app. Example: corectl reload",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("silent", ccmd.PersistentFlags().Lookup("silent"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			silent := viper.GetBool("silent")
+
+			internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
+
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	//Remove commands
+
+	removeCmd = &cobra.Command{
+		Use:   "remove",
+		Short: "Remove one or mores generic entities (dimensions, measures, objects) in the app",
+		Long:  "Remove one or mores generic entities (dimensions, measures, objects) in the app",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
+
+			if len(args) < 1 {
+				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+		},
+	}
+
+	removeDimensionsCmd = &cobra.Command{
+		Use:   "dimensions <dimension-id>...",
+		Short: "Removes the specified generic dimensions in the current app",
+		Long:  "Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			removeCmd.PersistentPreRun(removeCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			for _, entity := range args {
+				destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
+				if err != nil {
+					internal.FatalError("Failed to remove generic dimension ", entity+" with error: "+err.Error())
+				} else if !destroyed {
+					internal.FatalError("Failed to remove generic dimension ", entity)
+				}
+			}
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	removeMeasuresCmd = &cobra.Command{
+		Use:   "measures <measure-id>...",
+		Short: "Removes the specified generic measures in the current app",
+		Long:  "Removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			removeCmd.PersistentPreRun(removeCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			for _, entity := range args {
+				destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
+				if err != nil {
+					internal.FatalError("Failed to remove generic measure ", entity+" with error: "+err.Error())
+				} else if !destroyed {
+					internal.FatalError("Failed to remove generic measure ", entity)
+				}
+			}
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	removeObjectsCmd = &cobra.Command{
+		Use:   "objects <object-id>...",
+		Short: "Removes the specified generic objects in the current app",
+		Long:  "Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			removeCmd.PersistentPreRun(removeCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+			for _, entity := range args {
+				destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
+				if err != nil {
+					internal.FatalError("Failed to remove generic object ", entity+" with error: "+err.Error())
+				} else if !destroyed {
+					internal.FatalError("Failed to remove generic object ", entity)
+				}
+			}
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	//Set commands
+
+	setCmd = &cobra.Command{
+		Use:   "set",
+		Short: "Sets one or several resources",
+		Long:  "Sets one or several resources",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+
+		},
+	}
+
+	setAllCmd = &cobra.Command{
+		Use:   "all",
+		Short: "Sets the objects, measures, dimensions, connections and script in the current app",
+		Long:  "Sets the objects, measures, dimensions, connections and script in the current app",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			separateConnectionsFile := ccmd.Flag("connections").Value.String()
+			if separateConnectionsFile == "" {
+				separateConnectionsFile = GetRelativeParameter("connections")
+			}
+			internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+			scriptFile := ccmd.Flag("script").Value.String()
+			if scriptFile == "" {
+				scriptFile = GetRelativeParameter("script")
+			}
+			if scriptFile != "" {
+				internal.SetScript(rootCtx, state.Doc, scriptFile)
+			}
+
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	setConnectionsCmd = &cobra.Command{
+		Use:   "connections <path-to-connections-file.yml>",
+		Short: "Sets or updates the connections in the current app",
+		Long:  "Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			separateConnectionsFile := ""
+			if len(args) > 0 {
+				separateConnectionsFile = args[0]
+			}
+			if separateConnectionsFile == "" {
+				separateConnectionsFile = GetRelativeParameter("connections")
+			}
+			internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	setDimensionsCmd = &cobra.Command{
+		Use:   "dimensions <glob-pattern-path-to-dimensions-files.json>",
+		Short: "Sets or updates the dimensions in the current app",
+		Long:  "Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			commandLineDimensions := ""
+			if len(args) > 0 {
+				commandLineDimensions = args[0]
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	setMeasuresCmd = &cobra.Command{
+		Use:   "measures <glob-pattern-path-to-measures-files.json>",
+		Short: "Sets or updates the measures in the current app",
+		Long:  "Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			commandLineMeasures := ""
+			if len(args) > 0 {
+				commandLineMeasures = args[0]
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	setObjectsCmd = &cobra.Command{
+		Use:   "objects <glob-pattern-path-to-objects-files.json",
+		Short: "Sets or updates the objects in the current app",
+		Long:  "Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			commandLineObjects := ""
+			if len(args) > 0 {
+				commandLineObjects = args[0]
+			}
+
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	setScriptCmd = &cobra.Command{
+		Use:   "script <path-to-script-file.yml>",
+		Short: "Sets the script in the current app",
+		Long:  "Sets the script in the current app. Example: corectl set script ./my-script-file",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			setCmd.PersistentPreRun(setCmd, args)
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			scriptFile := ""
+			if len(args) > 0 {
+				scriptFile = args[0]
+			}
+			if scriptFile == "" {
+				scriptFile = GetRelativeParameter("script")
+			}
+			if scriptFile != "" {
+				internal.SetScript(rootCtx, state.Doc, scriptFile)
+			} else {
+				fmt.Println("Expected the path to a file containing the qlik script")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+		},
+	}
+
+	//Other commands
+
+	versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Print the version of corectl",
+
+		Run: func(_ *cobra.Command, args []string) {
+			fmt.Printf("corectl version %s\n", version)
 		},
 	}
 
@@ -236,167 +821,124 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			doc.GenMarkdownTree(corectlCommand, "./docs")
 		},
 	}
-
-	listAppsCmd = &cobra.Command{
-		Use:   "apps",
-		Short: "Prints a list of all apps available in the current engine",
-		Long:  "Prints a list of all apps available in the current engine",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineStateWithoutApp(rootCtx, params.engine, params.ttl, params.headers)
-			docList, err := state.Global.GetDocList(rootCtx)
-			if err != nil {
-				internal.FatalError(err)
-			}
-			printer.PrintApps(docList, viper.GetBool("json"))
-		},
-	}
-	versionCmd = &cobra.Command{
-		Use:   "version",
-		Short: "Print the version of corectl",
-
-		Run: func(_ *cobra.Command, args []string) {
-			fmt.Printf("corectl version %s\n", version)
-		},
-	}
-
-	listObjectsCmd = &cobra.Command{
-		Use:   "objects",
-		Short: "Prints a list of all objects in the current app",
-		Long:  "Prints a list of all objects in the current app",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
-			allInfos, err := state.Doc.GetAllInfos(rootCtx)
-			if err != nil {
-				internal.FatalError(err)
-			}
-			printer.PrintObjects(allInfos)
-		},
-	}
-
-	getObjectPropertiesCmd = &cobra.Command{
-		Use:   "properties",
-		Short: "Prints the properties of the object identified by the --object flag",
-		Long:  "Prints the properties of the object identified by the --object flag",
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			objectID := ccmd.Flag("object").Value.String()
-			if objectID == "" {
-				fmt.Println("Expected a --object flag to specify what object to use")
-				ccmd.Usage()
-				os.Exit(1)
-			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
-			printer.PrintObject(state, objectID)
-		},
-	}
-
-	getObjectLayoutCmd = &cobra.Command{
-		Use:   "layout",
-		Short: "Evalutes the hypercube layout of an object defined by the --object parameter",
-		Long:  `Evalutes the hypercube layout of an object defined by the --object parameter`,
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			objectID := ccmd.Flag("object").Value.String()
-			if objectID == "" {
-				fmt.Println("Expected a --object flag to specify what object to use")
-				ccmd.Usage()
-				os.Exit(1)
-			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
-			printer.PrintObjectLayout(state, objectID)
-		},
-	}
-
-	getObjectDataCmd = &cobra.Command{
-		Use:   "data",
-		Short: "Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported",
-		Long:  `Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported`,
-
-		Run: func(ccmd *cobra.Command, args []string) {
-			objectID := ccmd.Flag("object").Value.String()
-			if objectID == "" {
-				fmt.Println("Expected a --object flag to specify what object to use")
-				ccmd.Usage()
-				os.Exit(1)
-			}
-			state := internal.PrepareEngineState(rootCtx, params.engine, params.appID, params.ttl, params.headers, false)
-			internal.SetupObjects(state.Ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
-			printer.EvalObject(rootCtx, state.Doc, objectID)
-		},
-	}
 )
 
 func init() {
-	corectlCommand.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
-
-	corectlCommand.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
-	viper.BindPFlag("engine", corectlCommand.PersistentFlags().Lookup("engine"))
-
-	corectlCommand.PersistentFlags().String("ttl", "30", "Engine session time to live")
-	viper.BindPFlag("ttl", corectlCommand.PersistentFlags().Lookup("ttl"))
-
-	corectlCommand.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
-	viper.BindPFlag("app", corectlCommand.PersistentFlags().Lookup("app"))
-
-	//not binding to viper since binding a map does not seem to work.
-	corectlCommand.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
-	reloadCmd.PersistentFlags().Bool("silent", false, "Do not log reload progress")
-	viper.BindPFlag("silent", reloadCmd.PersistentFlags().Lookup("silent"))
-
-	listAppsCmd.PersistentFlags().Bool("json", false, "Prints the apps in json format")
-	viper.BindPFlag("json", listAppsCmd.PersistentFlags().Lookup("json"))
-
-	for _, command := range []*cobra.Command{reloadCmd, updateCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, listObjectsCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("objects", "", "A list of object json paths")
+	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 	}
-	for _, command := range []*cobra.Command{getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd} {
-		//Don't bind to vibe rsince this parameter is purely interactive
-		command.PersistentFlags().StringP("object", "o", "", "ID of a generic object")
+
+	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
+
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+		command.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
 	}
-	for _, command := range []*cobra.Command{reloadCmd, updateCmd} {
+
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+		//not binding to viper since binding a map does not seem to work.
+		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
+		command.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
 	}
 
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, reloadCmd} {
+		command.PersistentFlags().Bool("silent", false, "Do not log reload progress")
+	}
+
+	for _, command := range []*cobra.Command{reloadCmd, removeCmd, setCmd} {
+		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		// Don't bind these to viper since paths are treated separately to support relative paths!
+		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+	}
+
+	getAppsCmd.PersistentFlags().Bool("json", false, "Prints the apps in json format")
+
 	// commands
-	corectlCommand.AddCommand(reloadCmd)
-	corectlCommand.AddCommand(updateCmd)
+	corectlCommand.AddCommand(buildCmd)
 	corectlCommand.AddCommand(evalCmd)
-	corectlCommand.AddCommand(metaCmd)
-	corectlCommand.AddCommand(getScriptCmd)
-	corectlCommand.AddCommand(fieldsCommand)
-	corectlCommand.AddCommand(keysCommand)
-	corectlCommand.AddCommand(tablesCommand)
-	corectlCommand.AddCommand(fieldCmd)
-	corectlCommand.AddCommand(associationsCommand)
-	corectlCommand.AddCommand(statusCommand)
 	corectlCommand.AddCommand(generateDocsCommand)
-	corectlCommand.AddCommand(listAppsCmd)
+	corectlCommand.AddCommand(getCmd)
+	corectlCommand.AddCommand(reloadCmd)
+	corectlCommand.AddCommand(removeCmd)
+	corectlCommand.AddCommand(setCmd)
 	corectlCommand.AddCommand(versionCmd)
-	corectlCommand.AddCommand(listObjectsCmd)
-	corectlCommand.AddCommand(getObjectPropertiesCmd)
-	corectlCommand.AddCommand(getObjectLayoutCmd)
-	corectlCommand.AddCommand(getObjectDataCmd)
+
+	getCmd.AddCommand(getAppsCmd)
+	getCmd.AddCommand(getAssociationsCmd)
+	getCmd.AddCommand(getDimensionCmd)
+	getCmd.AddCommand(getDimensionsCmd)
+	getCmd.AddCommand(getFieldCmd)
+	getCmd.AddCommand(getFieldsCmd)
+	getCmd.AddCommand(getKeysCmd)
+	getCmd.AddCommand(getMeasureCmd)
+	getCmd.AddCommand(getMeasuresCmd)
+	getCmd.AddCommand(getMetaCmd)
+	getCmd.AddCommand(getObjectCmd)
+	getCmd.AddCommand(getObjectsCmd)
+	getCmd.AddCommand(getScriptCmd)
+	getCmd.AddCommand(getStatusCmd)
+	getCmd.AddCommand(getTablesCmd)
+
+	getObjectCmd.AddCommand(getObjectPropertiesCmd)
+	getObjectCmd.AddCommand(getObjectLayoutCmd)
+	getObjectCmd.AddCommand(getObjectDataCmd)
+
+	getDimensionCmd.AddCommand(getDimensionPropertiesCmd)
+	getDimensionCmd.AddCommand(getDimensionLayoutCmd)
+
+	getMeasureCmd.AddCommand(getMeasurePropertiesCmd)
+	getMeasureCmd.AddCommand(getMeasureLayoutCmd)
+
+	removeCmd.AddCommand(removeDimensionsCmd)
+	removeCmd.AddCommand(removeMeasuresCmd)
+	removeCmd.AddCommand(removeObjectsCmd)
+
+	setCmd.AddCommand(setAllCmd)
+	setCmd.AddCommand(setConnectionsCmd)
+	setCmd.AddCommand(setDimensionsCmd)
+	setCmd.AddCommand(setMeasuresCmd)
+	setCmd.AddCommand(setObjectsCmd)
+	setCmd.AddCommand(setScriptCmd)
+
 }
 
-// GetPathParameter returns a parameter from either the command line or the config file.
-// Compared to using BindPFlag this function modifies relative paths in the config file
-// to actually be relative to the config file and not the working directory
-func GetPathParameter(ccmd *cobra.Command, paramName string) string {
-	if pathOnCommandLine := ccmd.Flag(paramName).Value.String(); pathOnCommandLine != "" {
-		return pathOnCommandLine
-	}
+// GetRelativeParameter returns a parameter from the config file.
+// It modifies the parameter to actually be relative to the config file and not the working directory
+func GetRelativeParameter(paramName string) string {
 	pathInConfigFile := viper.GetString(paramName)
 	if pathInConfigFile != "" {
 		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
@@ -411,23 +953,59 @@ func main() {
 	}
 }
 
-func updateOrReload(ccmd *cobra.Command, args []string, reload bool) {
-	ctx := rootCtx
-	state := internal.PrepareEngineState(ctx, params.engine, params.appID, params.ttl, params.headers, true)
+func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) {
+	if len(args) < 1 {
+		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
+		ccmd.Usage()
+		os.Exit(1)
+	}
+	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	printer.PrintGenericEntityProperties(state, args[0], entityType)
+}
 
-	separateConnectionsFile := GetPathParameter(ccmd, "connections")
+func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
+	if len(args) < 1 {
+		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
+		ccmd.Usage()
+		os.Exit(1)
+	}
+	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	printer.PrintGenericEntityLayout(state, args[0], entityType)
+}
+
+func getEntities(ccmd *cobra.Command, args []string, entityType string) {
+	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	allInfos, err := state.Doc.GetAllInfos(rootCtx)
+	if err != nil {
+		internal.FatalError(err)
+	}
+	printer.PrintGenericEntities(allInfos, entityType)
+}
+
+func build(ccmd *cobra.Command, args []string) {
+	ctx := rootCtx
+	state := internal.PrepareEngineState(ctx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+
+	separateConnectionsFile := ccmd.Flag("connections").Value.String()
+	if separateConnectionsFile == "" {
+		separateConnectionsFile = GetRelativeParameter("connections")
+	}
 	internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-	internal.SetupObjects(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String())
-	scriptFile := GetPathParameter(ccmd, "script")
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
+	internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+	scriptFile := ccmd.Flag("script").Value.String()
+	if scriptFile == "" {
+		scriptFile = GetRelativeParameter("script")
+	}
 	if scriptFile != "" {
 		internal.SetScript(ctx, state.Doc, scriptFile)
 	}
 
 	silent := viper.GetBool("silent")
 
-	if reload {
-		internal.Reload(ctx, state.Doc, state.Global, silent, true)
-	}
+	internal.Reload(ctx, state.Doc, state.Global, silent, true)
+
 	if state.AppID != "" {
 		internal.Save(ctx, state.Doc, state.AppID)
 	}

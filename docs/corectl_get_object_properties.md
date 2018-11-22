@@ -1,21 +1,19 @@
-## corectl layout
+## corectl get object properties
 
-Evalutes the hypercube layout of an object defined by the --object parameter
+Prints the properties of the generic object
 
 ### Synopsis
 
-Evalutes the hypercube layout of an object defined by the --object parameter
+Prints the properties of the generic object. Example: corectl get object properties OBJECT-ID --app my-app.qvf
 
 ```
-corectl layout [flags]
+corectl get object properties <object-id> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help             help for layout
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help   help for properties
 ```
 
 ### Options inherited from parent commands
@@ -25,11 +23,11 @@ corectl layout [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl get object](corectl_get_object.md)	 - Shows content of an generic object
 

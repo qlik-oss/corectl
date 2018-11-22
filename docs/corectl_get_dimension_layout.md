@@ -1,19 +1,19 @@
-## corectl keys
+## corectl get dimension layout
 
-Print key-only field list
+Evaluates the layout of an generic dimension
 
 ### Synopsis
 
-Print key-only field list
+Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf
 
 ```
-corectl keys [flags]
+corectl get dimension layout <dimension-id> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for keys
+  -h, --help   help for layout
 ```
 
 ### Options inherited from parent commands
@@ -23,11 +23,11 @@ corectl keys [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl get dimension](corectl_get_dimension.md)	 - Shows content of an generic dimension
 

@@ -1,23 +1,23 @@
-## corectl update
+## corectl set all
 
-Updates connections, objects and script and saves the app
+Sets the objects, measures, dimensions, connections and script in the current app
 
 ### Synopsis
 
-Updates connections, objects and script in the app. Example: corectl update	
-
-
+Sets the objects, measures, dimensions, connections and script in the current app
 
 ```
-corectl update [flags]
+corectl set all [flags]
 ```
 
 ### Options
 
 ```
       --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
-  -h, --help                 help for update
-      --objects string       A list of object json paths
+      --dimensions string    A list of generic dimension json paths
+  -h, --help                 help for all
+      --measures string      A list of generic measures json paths
+      --objects string       A list of generic object json paths
       --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
 ```
 
@@ -28,11 +28,12 @@ corectl update [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --no-save                  Do not save the app
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl set](corectl_set.md)	 - Sets one or several resources
 

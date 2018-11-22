@@ -1,21 +1,19 @@
-## corectl data
+## corectl set objects
 
-Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+Sets or updates the objects in the current app
 
 ### Synopsis
 
-Evalutes the hypercube data of an object defined by the --object parameter. Note that only basic hypercubes like straight tables are supported
+Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json
 
 ```
-corectl data [flags]
+corectl set objects <glob-pattern-path-to-objects-files.json [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help             help for data
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help   help for objects
 ```
 
 ### Options inherited from parent commands
@@ -25,11 +23,12 @@ corectl data [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --no-save                  Do not save the app
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl set](corectl_set.md)	 - Sets one or several resources
 

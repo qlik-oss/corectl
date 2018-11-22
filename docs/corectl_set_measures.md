@@ -1,20 +1,19 @@
-## corectl objects
+## corectl set measures
 
-Prints a list of all objects in the current app
+Sets or updates the measures in the current app
 
 ### Synopsis
 
-Prints a list of all objects in the current app
+Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json
 
 ```
-corectl objects [flags]
+corectl set measures <glob-pattern-path-to-measures-files.json> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help             help for objects
-      --objects string   A list of object json paths
+  -h, --help   help for measures
 ```
 
 ### Options inherited from parent commands
@@ -24,11 +23,12 @@ corectl objects [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --no-save                  Do not save the app
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl set](corectl_set.md)	 - Sets one or several resources
 

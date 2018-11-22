@@ -1,21 +1,19 @@
-## corectl properties
+## corectl get measure properties
 
-Prints the properties of the object identified by the --object flag
+Prints the properties of the generic measure
 
 ### Synopsis
 
-Prints the properties of the object identified by the --object flag
+Prints the properties of the generic measure. Example: corectl get measure properties MEASURE-ID --app my-app.qvf
 
 ```
-corectl properties [flags]
+corectl get measure properties <measure-id> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help             help for properties
-  -o, --object string    ID of a generic object
-      --objects string   A list of object json paths
+  -h, --help   help for properties
 ```
 
 ### Options inherited from parent commands
@@ -25,11 +23,11 @@ corectl properties [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl get measure](corectl_get_measure.md)	 - Shows content of an generic measure
 

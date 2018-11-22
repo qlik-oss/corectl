@@ -40,6 +40,11 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 		close(reloadDone)
 	} else {
 		reloadSuccessful, err = doc.DoReload(ctx, 0, false, false)
+		//fetch the progress but do nothing, othwerwise we will get it for the next non silent call
+		_, err := global.GetProgress(ctx, 0)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	if err != nil {

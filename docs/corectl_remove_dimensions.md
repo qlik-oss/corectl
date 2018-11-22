@@ -1,20 +1,19 @@
-## corectl apps
+## corectl remove dimensions
 
-Prints a list of all apps available in the current engine
+Removes the specified generic dimensions in the current app
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2
 
 ```
-corectl apps [flags]
+corectl remove dimensions <dimension-id>... [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for apps
-      --json   Prints the apps in json format
+  -h, --help   help for dimensions
 ```
 
 ### Options inherited from parent commands
@@ -24,11 +23,12 @@ corectl apps [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --no-save                  Do not save the app
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl remove](corectl_remove.md)	 - Remove one or mores generic entities (dimensions, measures, objects) in the app
 

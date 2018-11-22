@@ -1,33 +1,33 @@
-## corectl field
+## corectl get fields
 
-Shows content of a field
+Print field list
 
 ### Synopsis
 
-Shows content of a field
+Print field list
 
 ```
-corectl field <field name> [flags]
+corectl get fields [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for field
+  -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
+  -h, --help         help for fields
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -a, --app string               App name including .qvf file ending. If no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl get](corectl_get.md)	 - Lists one or several resources
 

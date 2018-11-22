@@ -1,19 +1,19 @@
-## corectl assoc
+## corectl get measure layout
 
-Print table associations summary
+Evaluates the layout of an generic measure
 
 ### Synopsis
 
-Print table associations summary
+Evaluates the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf
 
 ```
-corectl assoc [flags]
+corectl get measure layout <measure-id> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for assoc
+  -h, --help   help for layout
 ```
 
 ### Options inherited from parent commands
@@ -23,11 +23,11 @@ corectl assoc [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl get measure](corectl_get_measure.md)	 - Shows content of an generic measure
 
