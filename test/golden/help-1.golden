@@ -5,12 +5,12 @@ Usage:
   corectl [command]
 
 Available Commands:
-  build         Reloads and saves the app after updating connections, dimensions, measures,objects and the script
+  build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
   eval          Evalutes a list of measures and dimensions
   get           Lists one or several resources
   help          Help about any command
   reload        Reloads the app.
-  remove        remove one or mores generic entities (dimensions, measures, objects) in the app
+  remove        Remove one or mores generic entities (dimensions, measures, objects) in the app
   set           Sets one or several resources
   version       Print the version of corectl
 

@@ -7,7 +7,7 @@ Shows content of an generic measure
 Shows content of an generic measure. If no subcommand is specified the properties will be shown. Example: corectl get measure MEASURE-ID --app my-app.qvf
 
 ```
-corectl get measure [flags]
+corectl get measure <measure-id> [flags]
 ```
 
 ### Options
@@ -23,7 +23,7 @@ corectl get measure [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 

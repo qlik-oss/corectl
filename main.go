@@ -69,7 +69,7 @@ var (
 
 	buildCmd = &cobra.Command{
 		Use:   "build",
-		Short: "Reloads and saves the app after updating connections, dimensions, measures,objects and the script",
+		Short: "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
 		Long: `Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
 			
 `,
@@ -179,7 +179,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getDimensionCmd = &cobra.Command{
-		Use:   "dimension",
+		Use:   "dimension <dimension-id>",
 		Short: "Shows content of an generic dimension",
 		Long:  "Shows content of an generic dimension. If no subcommand is specified the properties will be shown. Example: corectl get dimension DIMENSION-ID --app my-app.qvf",
 
@@ -195,7 +195,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getDimensionPropertiesCmd = &cobra.Command{
-		Use:   "properties",
+		Use:   "properties <dimension-id>",
 		Short: "Prints the properties of the generic dimension",
 		Long:  "Prints the properties of the generic dimension. Example: corectl get dimension properties DIMENSION-ID --app my-app.qvf",
 
@@ -209,7 +209,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getDimensionLayoutCmd = &cobra.Command{
-		Use:   "layout",
+		Use:   "layout <dimension-id>",
 		Short: "Evalutes the layout of an generic dimension",
 		Long:  `Evalutes the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf`,
 
@@ -293,7 +293,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getMeasureCmd = &cobra.Command{
-		Use:   "measure",
+		Use:   "measure <measure-id>",
 		Short: "Shows content of an generic measure",
 		Long:  "Shows content of an generic measure. If no subcommand is specified the properties will be shown. Example: corectl get measure MEASURE-ID --app my-app.qvf",
 
@@ -309,7 +309,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getMeasurePropertiesCmd = &cobra.Command{
-		Use:   "properties",
+		Use:   "properties <measure-id>",
 		Short: "Prints the properties of the generic measure",
 		Long:  "Prints the properties of the generic measure. Example: corectl get measure properties MEASURE-ID --app my-app.qvf",
 
@@ -323,7 +323,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getMeasureLayoutCmd = &cobra.Command{
-		Use:   "layout",
+		Use:   "layout <measure-id>",
 		Short: "Evalutes the layout of an generic measure",
 		Long:  `Evalutes the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf`,
 
@@ -369,7 +369,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getObjectCmd = &cobra.Command{
-		Use:   "object",
+		Use:   "object <object-id>",
 		Short: "Shows content of an generic object",
 		Long:  "Shows content of an generic object. If no subcommand is specified the properties will be shown. Example: corectl get object OBJECT-ID --app my-app.qvf",
 
@@ -385,7 +385,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getObjectPropertiesCmd = &cobra.Command{
-		Use:   "properties",
+		Use:   "properties <object-id>",
 		Short: "Prints the properties of the generic object",
 		Long:  "Prints the properties of the generic object. Example: corectl get object properties OBJECT-ID --app my-app.qvf",
 
@@ -399,7 +399,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getObjectLayoutCmd = &cobra.Command{
-		Use:   "layout",
+		Use:   "layout <object-id>",
 		Short: "Evalutes the hypercube layout of an generic object",
 		Long:  `Evalutes the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf`,
 
@@ -419,9 +419,9 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	getObjectDataCmd = &cobra.Command{
-		Use:   "data",
-		Short: "Evalutes the hypercube data of an generic object",
-		Long:  `Evalutes the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf`,
+		Use:   "data <object-id>",
+		Short: "Evaluates the hypercube data of an generic object",
+		Long:  `Evaluates the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getObjectCmd.PersistentPreRun(getObjectCmd, args)
@@ -508,7 +508,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 			viper.BindPFlag("silent", ccmd.PersistentFlags().Lookup("silent"))
-			viper.BindPFlag("noSave", ccmd.PersistentFlags().Lookup("noSave"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -517,7 +517,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 			internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
 
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
@@ -527,15 +527,15 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	removeCmd = &cobra.Command{
 		Use:   "remove",
-		Short: "remove one or mores generic entities (dimensions, measures, objects) in the app",
-		Long:  "remove one or mores generic entities (dimensions, measures, objects) in the app",
+		Short: "Remove one or mores generic entities (dimensions, measures, objects) in the app",
+		Long:  "Remove one or mores generic entities (dimensions, measures, objects) in the app",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			corectlCommand.PersistentPreRun(corectlCommand, args)
 			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-			viper.BindPFlag("noSave", ccmd.PersistentFlags().Lookup("noSave"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 
 			if len(args) < 1 {
 				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
@@ -546,9 +546,9 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	}
 
 	removeDimensionsCmd = &cobra.Command{
-		Use:   "dimensions",
-		Short: "removes the specified generic dimensions in the current app",
-		Long:  "removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2",
+		Use:   "dimensions <dimension-id>...",
+		Short: "Removes the specified generic dimensions in the current app",
+		Long:  "Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
@@ -564,16 +564,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 					internal.FatalError("Failed to remove generic dimension ", entity)
 				}
 			}
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	removeMeasuresCmd = &cobra.Command{
-		Use:   "measures",
-		Short: "removes the specified generic measures in the current app",
-		Long:  "removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2",
+		Use:   "measures <measure-id>...",
+		Short: "Removes the specified generic measures in the current app",
+		Long:  "Removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
@@ -589,16 +589,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 					internal.FatalError("Failed to remove generic measure ", entity)
 				}
 			}
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	removeObjectsCmd = &cobra.Command{
-		Use:   "objects",
-		Short: "removes the specified generic objects in the current app",
-		Long:  "removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2",
+		Use:   "objects <object-id>...",
+		Short: "Removes the specified generic objects in the current app",
+		Long:  "Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
@@ -614,7 +614,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 					internal.FatalError("Failed to remove generic object ", entity)
 				}
 			}
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
@@ -631,7 +631,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			corectlCommand.PersistentPreRun(corectlCommand, args)
 			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-			viper.BindPFlag("noSave", ccmd.PersistentFlags().Lookup("noSave"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 
 		},
@@ -665,14 +665,14 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 				internal.SetScript(rootCtx, state.Doc, scriptFile)
 			}
 
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	setConnectionsCmd = &cobra.Command{
-		Use:   "connections",
+		Use:   "connections <path-to-connections-file.yml>",
 		Short: "Sets or updates the connections in the current app",
 		Long:  "Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml",
 
@@ -691,14 +691,14 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 				separateConnectionsFile = GetRelativeParameter("connections")
 			}
 			internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	setDimensionsCmd = &cobra.Command{
-		Use:   "dimensions",
+		Use:   "dimensions <glob-pattern-path-to-dimensions-files.json>",
 		Short: "Sets or updates the dimensions in the current app",
 		Long:  "Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json",
 
@@ -714,14 +714,14 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	setMeasuresCmd = &cobra.Command{
-		Use:   "measures",
+		Use:   "measures <glob-pattern-path-to-measures-files.json>",
 		Short: "Sets or updates the measures in the current app",
 		Long:  "Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json",
 
@@ -737,14 +737,14 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	setObjectsCmd = &cobra.Command{
-		Use:   "objects",
+		Use:   "objects <glob-pattern-path-to-objects-files.json",
 		Short: "Sets or updates the objects in the current app",
 		Long:  "Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json",
 
@@ -761,14 +761,14 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 			internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
 	}
 
 	setScriptCmd = &cobra.Command{
-		Use:   "script",
+		Use:   "script <path-to-script-file.yml>",
 		Short: "Sets the script in the current app",
 		Long:  "Sets the script in the current app. Example: corectl set script ./my-script-file",
 
@@ -789,11 +789,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			if scriptFile != "" {
 				internal.SetScript(rootCtx, state.Doc, scriptFile)
 			} else {
-				fmt.Println("Expected the path to a file containg the qlik script")
+				fmt.Println("Expected the path to a file containing the qlik script")
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			if state.AppID != "" && !viper.GetBool("noSave") {
+			if state.AppID != "" && !viper.GetBool("no-save") {
 				internal.Save(rootCtx, state.Doc, state.AppID)
 			}
 		},
@@ -840,7 +840,7 @@ func init() {
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().String("ttl", "30", "Engine session time to live")
+		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
@@ -877,7 +877,7 @@ func init() {
 	}
 
 	for _, command := range []*cobra.Command{reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().Bool("noSave", false, "Do not save the app")
+		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {

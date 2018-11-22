@@ -95,13 +95,13 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 			LogVerbose("Updating dimension " + props.Info.Id)
 			err = dimension.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update dimension", err)
+				FatalError("Failed to update dimension "+props.Info.Id, err)
 			}
 		} else {
 			LogVerbose("Creating dimension " + props.Info.Id)
 			_, err = doc.CreateDimensionRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create dimension", err)
+				FatalError("Failed to create dimension "+props.Info.Id, err)
 			}
 		}
 	case "measure":
@@ -110,13 +110,13 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 			LogVerbose("Updating measure " + props.Info.Id)
 			err = measure.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update measure", err)
+				FatalError("Failed to update measure "+props.Info.Id, err)
 			}
 		} else {
 			LogVerbose("Creating measure " + props.Info.Id)
 			_, err = doc.CreateMeasureRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create measure", err)
+				FatalError("Failed to create measure "+props.Info.Id, err)
 			}
 		}
 	case "object":
@@ -125,13 +125,13 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 			LogVerbose("Updating object " + props.Info.Id)
 			err = object.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update object", err)
+				FatalError("Failed to update object "+props.Info.Id, err)
 			}
 		} else {
 			LogVerbose("Creating object " + props.Info.Id)
 			_, err = doc.CreateObjectRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create object", err)
+				FatalError("Failed to create object "+props.Info.Id, err)
 			}
 		}
 	}

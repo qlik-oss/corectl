@@ -7,7 +7,7 @@ Evalutes the hypercube layout of an generic object
 Evalutes the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf
 
 ```
-corectl get object layout [flags]
+corectl get object layout <object-id> [flags]
 ```
 
 ### Options
@@ -23,7 +23,7 @@ corectl get object layout [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 

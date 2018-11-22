@@ -1,6 +1,6 @@
 ## corectl build
 
-Reloads and saves the app after updating connections, dimensions, measures,objects and the script
+Reloads and saves the app after updating connections, dimensions, measures, objects and the script
 
 ### Synopsis
 
@@ -26,7 +26,7 @@ corectl build [flags]
       --objects string           A list of generic object json paths
       --script string            path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
       --silent                   Do not log reload progress
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
 ```
 
 ### Options inherited from parent commands

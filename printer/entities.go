@@ -12,7 +12,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-// PrintGenericEntities prints a list of the id and type of all gerneric entities in the app
+// PrintGenericEntities prints a list of the id and type of all generic entities in the app
 func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string) {
 
 	entityTable := tm.NewTable(0, 10, 3, ' ', 0)

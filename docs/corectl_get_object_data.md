@@ -1,13 +1,13 @@
 ## corectl get object data
 
-Evalutes the hypercube data of an generic object
+Evaluates the hypercube data of an generic object
 
 ### Synopsis
 
-Evalutes the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf
+Evaluates the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf
 
 ```
-corectl get object data [flags]
+corectl get object data <object-id> [flags]
 ```
 
 ### Options
@@ -23,7 +23,7 @@ corectl get object data [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 

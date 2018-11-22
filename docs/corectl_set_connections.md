@@ -7,7 +7,7 @@ Sets or updates the connections in the current app
 Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml
 
 ```
-corectl set connections [flags]
+corectl set connections <path-to-connections-file.yml> [flags]
 ```
 
 ### Options
@@ -24,8 +24,8 @@ corectl set connections [flags]
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --noSave                   Do not save the app
-      --ttl string               Engine session time to live (default "30")
+      --no-save                  Do not save the app
+      --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 

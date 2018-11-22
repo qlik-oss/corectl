@@ -27,7 +27,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
   -h, --help                     help for eval
-      --ttl string               Engine session time to live (default "30")
+      --ttl string               Engine session time to live in seconds (default "30")
 ```
 
 ### Options inherited from parent commands
