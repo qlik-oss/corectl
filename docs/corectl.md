@@ -20,7 +20,7 @@ corectl [flags]
 ### SEE ALSO
 
 * [corectl build](corectl_build.md)	 - Reloads and saves the app after updating connections, dimensions, measures, objects and the script
-* [corectl eval](corectl_eval.md)	 - Evalutes a list of measures and dimensions
+* [corectl eval](corectl_eval.md)	 - Evaluates a list of measures and dimensions
 * [corectl get](corectl_get.md)	 - Lists one or several resources
 * [corectl reload](corectl_reload.md)	 - Reloads the app.
 * [corectl remove](corectl_remove.md)	 - Remove one or mores generic entities (dimensions, measures, objects) in the app

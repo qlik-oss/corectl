@@ -1,10 +1,10 @@
 ## corectl eval
 
-Evalutes a list of measures and dimensions
+Evaluates a list of measures and dimensions
 
 ### Synopsis
 
-Evalutes a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.
+Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.
 
 ```
 corectl eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...] [flags]

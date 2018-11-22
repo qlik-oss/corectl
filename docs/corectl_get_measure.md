@@ -30,6 +30,6 @@ corectl get measure <measure-id> [flags]
 ### SEE ALSO
 
 * [corectl get](corectl_get.md)	 - Lists one or several resources
-* [corectl get measure layout](corectl_get_measure_layout.md)	 - Evalutes the layout of an generic measure
+* [corectl get measure layout](corectl_get_measure_layout.md)	 - Evaluates the layout of an generic measure
 * [corectl get measure properties](corectl_get_measure_properties.md)	 - Prints the properties of the generic measure
 

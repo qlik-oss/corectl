@@ -31,6 +31,6 @@ corectl get object <object-id> [flags]
 
 * [corectl get](corectl_get.md)	 - Lists one or several resources
 * [corectl get object data](corectl_get_object_data.md)	 - Evaluates the hypercube data of an generic object
-* [corectl get object layout](corectl_get_object_layout.md)	 - Evalutes the hypercube layout of an generic object
+* [corectl get object layout](corectl_get_object_layout.md)	 - Evaluates the hypercube layout of an generic object
 * [corectl get object properties](corectl_get_object_properties.md)	 - Prints the properties of the generic object
 

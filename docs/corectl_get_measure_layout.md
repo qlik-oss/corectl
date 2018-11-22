@@ -1,10 +1,10 @@
 ## corectl get measure layout
 
-Evalutes the layout of an generic measure
+Evaluates the layout of an generic measure
 
 ### Synopsis
 
-Evalutes the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf
+Evaluates the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf
 
 ```
 corectl get measure layout <measure-id> [flags]

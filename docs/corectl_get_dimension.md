@@ -30,6 +30,6 @@ corectl get dimension <dimension-id> [flags]
 ### SEE ALSO
 
 * [corectl get](corectl_get.md)	 - Lists one or several resources
-* [corectl get dimension layout](corectl_get_dimension_layout.md)	 - Evalutes the layout of an generic dimension
+* [corectl get dimension layout](corectl_get_dimension_layout.md)	 - Evaluates the layout of an generic dimension
 * [corectl get dimension properties](corectl_get_dimension_properties.md)	 - Prints the properties of the generic dimension
 

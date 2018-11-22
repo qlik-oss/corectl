@@ -87,8 +87,8 @@ var (
 
 	evalCmd = &cobra.Command{
 		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
-		Short: "Evalutes a list of measures and dimensions",
-		Long:  `Evalutes a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
+		Short: "Evaluates a list of measures and dimensions",
+		Long:  `Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
 		Example: `corectl eval "Count(a)" // returns the number of values in field "a"
 corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
@@ -210,8 +210,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	getDimensionLayoutCmd = &cobra.Command{
 		Use:   "layout <dimension-id>",
-		Short: "Evalutes the layout of an generic dimension",
-		Long:  `Evalutes the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf`,
+		Short: "Evaluates the layout of an generic dimension",
+		Long:  `Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getDimensionCmd.PersistentPreRun(getDimensionCmd, args)
@@ -324,8 +324,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	getMeasureLayoutCmd = &cobra.Command{
 		Use:   "layout <measure-id>",
-		Short: "Evalutes the layout of an generic measure",
-		Long:  `Evalutes the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf`,
+		Short: "Evaluates the layout of an generic measure",
+		Long:  `Evaluates the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getMeasureCmd.PersistentPreRun(getMeasureCmd, args)
@@ -400,8 +400,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	getObjectLayoutCmd = &cobra.Command{
 		Use:   "layout <object-id>",
-		Short: "Evalutes the hypercube layout of an generic object",
-		Long:  `Evalutes the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf`,
+		Short: "Evaluates the hypercube layout of an generic object",
+		Long:  `Evaluates the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getObjectCmd.PersistentPreRun(getObjectCmd, args)
