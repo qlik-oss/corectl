@@ -141,7 +141,8 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	}
 }
 
-func tidyUpEngineURL(engine string) string {
+//TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
+func TidyUpEngineURL(engine string) string {
 	if engine == "" {
 		engine = "localhost:9076"
 	}
@@ -160,7 +161,7 @@ func tidyUpEngineURL(engine string) string {
 }
 
 func buildWebSocketURL(engine string, ttl string) string {
-	engine = tidyUpEngineURL(engine)
+	engine = TidyUpEngineURL(engine)
 	return engine + "/app/engineData/ttl/" + ttl
 }
 
@@ -168,7 +169,7 @@ func buildMetadataURL(engine string, appID string) string {
 	if appID == "" {
 		return ""
 	}
-	engine = tidyUpEngineURL(engine)
+	engine = TidyUpEngineURL(engine)
 	engine = strings.Replace(engine, "wss://", "https://", -1)
 	engine = strings.Replace(engine, "ws://", "http://", -1)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -82,6 +83,24 @@ var (
 		},
 		Run: func(ccmd *cobra.Command, args []string) {
 			build(ccmd, args)
+		},
+	}
+
+	catwalkCmd = &cobra.Command{
+		Use:   "catwalk",
+		Short: "Opens the specified app in Catwalk",
+		Long: `Opens the app in Catwalk. Example: corectl catwalk --app my-app.qvf
+			
+`,
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+		Run: func(ccmd *cobra.Command, args []string) {
+			catwalkURL := "https://catwalk.core.qlik.com/?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/ttl/" + viper.GetString("ttl") + "/apps/" + viper.GetString("app")
+			browser.OpenURL(catwalkURL)
 		},
 	}
 
@@ -829,17 +848,17 @@ func init() {
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 	}
 
 	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
 	}
 
@@ -848,7 +867,7 @@ func init() {
 		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
 	}
 
@@ -889,6 +908,7 @@ func init() {
 
 	// commands
 	corectlCommand.AddCommand(buildCmd)
+	corectlCommand.AddCommand(catwalkCmd)
 	corectlCommand.AddCommand(evalCmd)
 	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(getCmd)

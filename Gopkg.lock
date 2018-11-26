@@ -127,6 +127,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:f8c5b1a7be7de5bc373f5c8e30c06b593887e04a9dffd8ca5f15a939c361cdcc"
+  name = "github.com/pkg/browser"
+  packages = ["."]
+  pruneopts = ""
+  revision = "0a3d74bf9ce488f035cf5bc36f753a711bc74334"
+
+[[projects]]
   digest = "1:7365acd48986e205ccb8652cc746f09c8b7876030d53710ea6ef7d0bd0dcd7ca"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -328,6 +336,7 @@
     "github.com/golang/protobuf/proto",
     "github.com/kr/pretty",
     "github.com/magiconair/properties/assert",
+    "github.com/pkg/browser",
     "github.com/qlik-oss/enigma-go",
     "github.com/spf13/cobra",
     "github.com/spf13/cobra/doc",
