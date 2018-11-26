@@ -6,6 +6,7 @@ Usage:
 
 Available Commands:
   build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
+  catwalk       Opens the specified app in Catwalk
   eval          Evaluates a list of measures and dimensions
   get           Lists one or several resources
   help          Help about any command
