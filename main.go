@@ -87,10 +87,11 @@ var (
 	}
 
 	catwalkCmd = &cobra.Command{
-		Use:     "catwalk",
-		Short:   "Opens the specified app in catwalk",
-		Long:    `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
-		Example: "corectl catwalk --app my-app.qvf",
+		Use:   "catwalk",
+		Short: "Opens the specified app in catwalk",
+		Long:  `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
+		Example: `corectl catwalk --app my-app.qvf
+corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			corectlCommand.PersistentPreRun(corectlCommand, args)
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))

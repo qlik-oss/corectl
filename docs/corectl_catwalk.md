@@ -14,6 +14,7 @@ corectl catwalk [flags]
 
 ```
 corectl catwalk --app my-app.qvf
+corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080
 ```
 
 ### Options
