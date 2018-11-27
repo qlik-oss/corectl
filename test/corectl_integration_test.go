@@ -120,6 +120,7 @@ func TestCorectlGolden(t *testing.T) {
 
 		{"project 3 - build ", []string{"--config=test/project3/corectl.yml ", connectToEngine, "build"}, "project3-build.golden"},
 		{"project 3 - get fields", []string{"--config=test/project3/corectl.yml ", connectToEngine, "get", "fields"}, "project3-fields.golden"},
+		{"err project 1 - invalid-catwalk-url", []string{"--config=test/project1/corectl.yml", connectToEngine, "catwalk", "--catwalk-url=not-a-valid-url"}, "project1-catwalk-error.golden"},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "eval", "count(numbers)", "by", "xyz"}, "err-2.golden"},
 		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "object", "data", "nosuchobject"}, "err-3.golden"},
 	}
