@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -82,6 +83,32 @@ var (
 		},
 		Run: func(ccmd *cobra.Command, args []string) {
 			build(ccmd, args)
+		},
+	}
+
+	catwalkCmd = &cobra.Command{
+		Use:   "catwalk",
+		Short: "Opens the specified app in catwalk",
+		Long:  `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
+		Example: `corectl catwalk --app my-app.qvf
+corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("catwalk-url", ccmd.PersistentFlags().Lookup("catwalk-url"))
+		},
+		Run: func(ccmd *cobra.Command, args []string) {
+			catwalkURL := viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/apps/" + viper.GetString("app")
+			if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
+				fmt.Println("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
+				os.Exit(1)
+			}
+			err := browser.OpenURL(catwalkURL)
+			if err != nil {
+				fmt.Println("Could not open URL", err)
+				os.Exit(1)
+			}
 		},
 	}
 
@@ -829,13 +856,13 @@ func init() {
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 	}
 
 	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
 	}
 
@@ -848,7 +875,7 @@ func init() {
 		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
 	}
 
@@ -885,10 +912,13 @@ func init() {
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 	}
 
+	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
+
 	getAppsCmd.PersistentFlags().Bool("json", false, "Prints the apps in json format")
 
 	// commands
 	corectlCommand.AddCommand(buildCmd)
+	corectlCommand.AddCommand(catwalkCmd)
 	corectlCommand.AddCommand(evalCmd)
 	corectlCommand.AddCommand(generateDocsCommand)
 	corectlCommand.AddCommand(getCmd)
