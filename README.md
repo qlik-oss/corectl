@@ -76,6 +76,10 @@ go test corectl_integration_test.go --update
 You create a release by pushing a git tag with semantic versioning.
 CircleCi will then run a release build that uses `goreleaser` to release `corectl` with the version set as the git tag.
 
+Example:
+`git tag v0.1.0 COMMIT-SHA`
+`git push origin v0.1.0`
+
 ## Documentation
 
 The usage documentation is generated using [`cobra/doc`](https://github.com/spf13/cobra/blob/master/doc/md_docs.md).
