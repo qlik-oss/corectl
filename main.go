@@ -198,10 +198,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getCmd.PersistentPreRun(getCmd, args)
 			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			getEntities(ccmd, args, "dimension")
+			getEntities(ccmd, args, "dimension", viper.GetBool("json"))
 		},
 	}
 
@@ -312,10 +313,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getCmd.PersistentPreRun(getCmd, args)
 			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			getEntities(ccmd, args, "measure")
+			getEntities(ccmd, args, "measure", viper.GetBool("json"))
 		},
 	}
 
@@ -388,10 +390,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			getCmd.PersistentPreRun(getCmd, args)
 			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			getEntities(ccmd, args, "object")
+			getEntities(ccmd, args, "object", viper.GetBool("json"))
 		},
 	}
 
@@ -912,9 +915,11 @@ func init() {
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 	}
 
-	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
+	for _, command := range []*cobra.Command{getAppsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
+		command.PersistentFlags().Bool("json", false, "Prints the information in json format")
+	}
 
-	getAppsCmd.PersistentFlags().Bool("json", false, "Prints the apps in json format")
+	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
 
 	// commands
 	corectlCommand.AddCommand(buildCmd)
@@ -1003,13 +1008,13 @@ func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
 	printer.PrintGenericEntityLayout(state, args[0], entityType)
 }
 
-func getEntities(ccmd *cobra.Command, args []string, entityType string) {
+func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
 	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 	allInfos, err := state.Doc.GetAllInfos(rootCtx)
 	if err != nil {
 		internal.FatalError(err)
 	}
-	printer.PrintGenericEntities(allInfos, entityType)
+	printer.PrintGenericEntities(allInfos, entityType, printAsJSON)
 }
 
 func build(ccmd *cobra.Command, args []string) {

@@ -14,7 +14,7 @@ corectl get apps [flags]
 
 ```
   -h, --help   help for apps
-      --json   Prints the apps in json format
+      --json   Prints the information in json format
 ```
 
 ### Options inherited from parent commands

@@ -102,6 +102,7 @@ func TestCorectlGolden(t *testing.T) {
 		{"project 1 - get object properties", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "object", "properties", "my-hypercube"}, "project1-properties.golden"},
 		{"project 1 - get object", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "object", "my-hypercube"}, "project1-properties.golden"},
 		{"project 1 - get measures 1", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures"}, "project1-measures-1.golden"},
+		{"project 1 - get measures 1 as json", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures", "--json"}, "project1-measures-1-json.golden"},
 		{"project 1 - get dimensions", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "dimensions"}, "project1-dimensions.golden"},
 		{"project 1 - get script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "script"}, "project1-script.golden"},
 		{"project 1 - reload without progress", []string{"--config=test/project1/corectl.yml", connectToEngine, "reload", "--silent"}, "project1-reload-silent.golden"},
