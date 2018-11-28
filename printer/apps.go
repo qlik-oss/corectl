@@ -3,8 +3,9 @@ package printer
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/qlik-oss/corectl/internal"
 	"time"
+
+	"github.com/qlik-oss/corectl/internal"
 
 	tm "github.com/buger/goterm"
 	"github.com/qlik-oss/enigma-go"

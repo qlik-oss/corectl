@@ -13,16 +13,30 @@ import (
 )
 
 // PrintGenericEntities prints a list of the id and type of all generic entities in the app
-func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string) {
-
-	entityTable := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(entityTable, "Id\tType\n")
-	for _, info := range allInfos {
-		if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-			fmt.Fprintf(entityTable, "%s\t%s\n", info.Id, info.Type)
+func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJSON bool) {
+	if printAsJSON {
+		specifiedEntityTypeInfos := []*enigma.NxInfo{}
+		for _, info := range allInfos {
+			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
+				specifiedEntityTypeInfos = append(specifiedEntityTypeInfos, info)
+			}
 		}
+		buffer, err := json.Marshal(specifiedEntityTypeInfos)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		fmt.Println(prettyJSON(buffer))
+
+	} else {
+		entityTable := tm.NewTable(0, 10, 3, ' ', 0)
+		fmt.Fprintf(entityTable, "Id\tType\n")
+		for _, info := range allInfos {
+			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
+				fmt.Fprintf(entityTable, "%s\t%s\n", info.Id, info.Type)
+			}
+		}
+		fmt.Print(entityTable)
 	}
-	fmt.Print(entityTable)
 }
 
 // PrintGenericEntityProperties prints the properties of the generic entity defined by entityID
