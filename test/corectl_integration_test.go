@@ -86,6 +86,7 @@ func TestConnections(t *testing.T) {
 	output, _ := cmd.CombinedOutput()
 
 	//verify that the connection was created
+	fmt.Println(string(output))
 	var connections []*enigma.Connection
 	err := json.Unmarshal(output, &connections)
 	assert.NoError(t, err)
