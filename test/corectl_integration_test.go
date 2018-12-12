@@ -23,7 +23,6 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
-var connectToEngine = "--engine=" + *engineIP
 
 func getBinaryName() string {
 	if runtime.GOOS == "windows" {
@@ -81,6 +80,8 @@ func (tf *testFile) load() string {
 }
 
 func TestConnections(t *testing.T) {
+	connectToEngine := "--engine=" + *engineIP
+	fmt.Println("connect to engine: ", connectToEngine)
 	cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
 	cmd.Run()
 	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
@@ -108,6 +109,7 @@ func TestConnections(t *testing.T) {
 }
 
 func TestCorectl(t *testing.T) {
+	connectToEngine := "--engine=" + *engineIP
 	tests := []struct {
 		name     string
 		args     []string
