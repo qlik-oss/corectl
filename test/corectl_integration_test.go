@@ -81,7 +81,6 @@ func (tf *testFile) load() string {
 
 func TestConnections(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
-	fmt.Println("connect to engine: ", connectToEngine)
 	cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
 	cmd.Run()
 	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
