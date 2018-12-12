@@ -1,21 +1,25 @@
-## corectl remove objects
+## corectl remove app
 
-Removes the specified generic objects in the current app
+removes the specified app.
 
 ### Synopsis
 
-Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2
+removes the specified app.
 
 ```
-corectl remove objects <object-id>... [flags]
+corectl remove app <app-id> [flags]
+```
+
+### Examples
+
+```
+corectl remove app APP-ID
 ```
 
 ### Options
 
 ```
-  -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
-  -h, --help         help for objects
-      --no-save      Do not save the app
+  -h, --help   help for app
 ```
 
 ### Options inherited from parent commands

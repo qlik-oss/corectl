@@ -37,14 +37,8 @@ func logConnectError(err error, engine string) {
 	os.Exit(1)
 }
 
-// PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
-// depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, headers http.Header, createAppIfMissing bool) *State {
-	LogVerbose("---------- Connecting to app ----------")
-
+func connectToEngine(ctx context.Context, engine string, appID string, ttl string, headers http.Header) *enigma.Global {
 	engineURL := buildWebSocketURL(engine, ttl)
-	var doc *enigma.Doc
-
 	LogVerbose("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
@@ -58,7 +52,25 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 	if err != nil {
 		logConnectError(err, engine)
 	}
+	return global
+}
 
+//DeleteApp removes the specified app from the engine.
+func DeleteApp(ctx context.Context, engine string, appID string, ttl string, headers http.Header) {
+	global := connectToEngine(ctx, engine, appID, ttl, headers)
+	succ, err := global.DeleteApp(ctx, appID)
+	if err != nil {
+		FatalError(err)
+	} else if !succ {
+		FatalError("Failed to delete app " + appID)
+	}
+}
+
+// PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
+// depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
+func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, headers http.Header, createAppIfMissing bool) *State {
+	LogVerbose("---------- Connecting to app ----------")
+	global := connectToEngine(ctx, engine, appID, ttl, headers)
 	if appID == "" {
 		fmt.Println("No app specified, using session app.")
 	}
@@ -69,7 +81,7 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 			}
 		}
 	}()
-	doc, err = global.GetActiveDoc(ctx)
+	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
 		if appID != "" {

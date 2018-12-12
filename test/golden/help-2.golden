@@ -11,7 +11,7 @@ Available Commands:
   get           Lists one or several resources
   help          Help about any command
   reload        Reloads the app.
-  remove        Remove one or mores generic entities (dimensions, measures, objects) in the app
+  remove        Remove entities (connections, dimensions, measures, objects) in the app or the app itself
   set           Sets one or several resources
   version       Print the version of corectl
 

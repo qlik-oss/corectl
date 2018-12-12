@@ -27,6 +27,8 @@ Lists one or several resources
 * [corectl](corectl.md)	 - 
 * [corectl get apps](corectl_get_apps.md)	 - Prints a list of all apps available in the current engine
 * [corectl get assoc](corectl_get_assoc.md)	 - Print table associations summary
+* [corectl get connection](corectl_get_connection.md)	 - Shows the content of a specific connector
+* [corectl get connections](corectl_get_connections.md)	 - Prints a list of all connections in the current app
 * [corectl get dimension](corectl_get_dimension.md)	 - Shows content of an generic dimension
 * [corectl get dimensions](corectl_get_dimensions.md)	 - Prints a list of all generic dimensions in the current app
 * [corectl get field](corectl_get_field.md)	 - Shows content of a field

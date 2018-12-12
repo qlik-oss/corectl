@@ -24,7 +24,7 @@ corectl [flags]
 * [corectl eval](corectl_eval.md)	 - Evaluates a list of measures and dimensions
 * [corectl get](corectl_get.md)	 - Lists one or several resources
 * [corectl reload](corectl_reload.md)	 - Reloads the app.
-* [corectl remove](corectl_remove.md)	 - Remove one or mores generic entities (dimensions, measures, objects) in the app
+* [corectl remove](corectl_remove.md)	 - Remove entities (connections, dimensions, measures, objects) in the app or the app itself
 * [corectl set](corectl_set.md)	 - Sets one or several resources
 * [corectl version](corectl_version.md)	 - Print the version of corectl
 

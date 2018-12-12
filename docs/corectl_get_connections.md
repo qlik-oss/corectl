@@ -1,21 +1,27 @@
-## corectl remove objects
+## corectl get connections
 
-Removes the specified generic objects in the current app
+Prints a list of all connections in the current app
 
 ### Synopsis
 
-Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2
+Prints a list of all connections in the current app
 
 ```
-corectl remove objects <object-id>... [flags]
+corectl get connections [flags]
+```
+
+### Examples
+
+```
+corectl get connections
 ```
 
 ### Options
 
 ```
   -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
-  -h, --help         help for objects
-      --no-save      Do not save the app
+  -h, --help         help for connections
+      --json         Prints the information in json format
 ```
 
 ### Options inherited from parent commands
@@ -30,5 +36,5 @@ corectl remove objects <object-id>... [flags]
 
 ### SEE ALSO
 
-* [corectl remove](corectl_remove.md)	 - Remove entities (connections, dimensions, measures, objects) in the app or the app itself
+* [corectl get](corectl_get.md)	 - Lists one or several resources
 

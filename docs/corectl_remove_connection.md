@@ -1,20 +1,26 @@
-## corectl remove objects
+## corectl remove connection
 
-Removes the specified generic objects in the current app
+removes the specified connection.
 
 ### Synopsis
 
-Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2
+removes the specified connection.
 
 ```
-corectl remove objects <object-id>... [flags]
+corectl remove connection <connection-id> [flags]
+```
+
+### Examples
+
+```
+corectl remove connection CONNECTION-ID
 ```
 
 ### Options
 
 ```
   -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
-  -h, --help         help for objects
+  -h, --help         help for connection
       --no-save      Do not save the app
 ```
 
