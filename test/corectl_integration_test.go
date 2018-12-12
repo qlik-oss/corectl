@@ -80,10 +80,9 @@ func (tf *testFile) load() string {
 }
 
 func TestConnections(t *testing.T) {
-	connectToEngine := "--engine=" + *engineIP
-	cmd := exec.Command(binaryPath, []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "build", "--connections=test/project2/connections.yml"}...)
+	cmd := exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "connections", "--json"}...)
+	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
 	output, _ := cmd.CombinedOutput()
 
 	//verify that the connection was created
@@ -94,17 +93,17 @@ func TestConnections(t *testing.T) {
 	assert.NotNil(t, connections[0].Id)
 
 	//verify that removing the connection works
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "remove", "connection", connections[0].Id}...)
+	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "remove", "connection", connections[0].Id}...)
 	output, _ = cmd.CombinedOutput()
 	assert.Equal(t, "Saving...Done\n\n", string(output))
 
 	//verify that there is no connections in the app anymore.
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "get", "connections", "--json"}...)
+	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
 	output, _ = cmd.CombinedOutput()
 	assert.Equal(t, "[]\n", string(output))
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "remove", "app", "project1.qvf"}...)
+	_ = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "remove", "app", "project1.qvf"}...)
 }
 
 func TestCorectl(t *testing.T) {

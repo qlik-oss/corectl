@@ -214,8 +214,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	getConnectionCmd = &cobra.Command{
 		Use:     "connection",
-		Short:   "Shows the content of a specific connector",
-		Long:    "Shows the content of a specific connector",
+		Short:   "Shows the properties for a specific connection",
+		Long:    "Shows the properties for a specific connection",
 		Example: "corectl get connection CONNECTION-ID",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
@@ -675,7 +675,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			if len(args) < 1 {
-				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
+				fmt.Println("Expected atleast one dimension-id specify what dimension to remove from the app")
 				ccmd.Usage()
 				os.Exit(1)
 			}
@@ -707,7 +707,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			if len(args) < 1 {
-				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
+				fmt.Println("Expected atleast one measure-id specify what measure to remove from the app")
 				ccmd.Usage()
 				os.Exit(1)
 			}
@@ -739,7 +739,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			if len(args) < 1 {
-				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
+				fmt.Println("Expected atleast one object-id specify what object to remove from the app")
 				ccmd.Usage()
 				os.Exit(1)
 			}

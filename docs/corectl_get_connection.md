@@ -1,10 +1,10 @@
 ## corectl get connection
 
-Shows the content of a specific connector
+Shows the properties for a specific connection
 
 ### Synopsis
 
-Shows the content of a specific connector
+Shows the properties for a specific connection
 
 ```
 corectl get connection [flags]
