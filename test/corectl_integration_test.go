@@ -23,6 +23,7 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
+var connectToEngine = "--engine=" + *engineIP
 
 func getBinaryName() string {
 	if runtime.GOOS == "windows" {
@@ -80,13 +81,12 @@ func (tf *testFile) load() string {
 }
 
 func TestConnections(t *testing.T) {
-	cmd := exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
 	output, _ := cmd.CombinedOutput()
 
 	//verify that the connection was created
-	fmt.Println(string(output))
 	var connections []*enigma.Connection
 	err := json.Unmarshal(output, &connections)
 	assert.NoError(t, err)
@@ -94,21 +94,20 @@ func TestConnections(t *testing.T) {
 	assert.NotNil(t, connections[0].Id)
 
 	//verify that removing the connection works
-	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "remove", "connection", connections[0].Id}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "connection", connections[0].Id}...)
 	output, _ = cmd.CombinedOutput()
 	assert.Equal(t, "Saving...Done\n\n", string(output))
 
 	//verify that there is no connections in the app anymore.
-	cmd = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
 	output, _ = cmd.CombinedOutput()
 	assert.Equal(t, "[]\n", string(output))
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{"--config=test/project2/corectl.yml", "remove", "app", "project1.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project1.qvf"}...)
 }
 
 func TestCorectl(t *testing.T) {
-	connectToEngine := "--engine=" + *engineIP
 	tests := []struct {
 		name     string
 		args     []string
