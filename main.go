@@ -192,8 +192,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	getConnectionsCmd = &cobra.Command{
 		Use:     "connections",
-		Short:   "Prints a list of all connections in the current app",
-		Long:    "Prints a list of all connections in the current app",
+		Short:   "Prints a list of all connections in the specified app",
+		Long:    "Prints a list of all connections in the specified app",
 		Example: "corectl get connections",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
@@ -987,7 +987,7 @@ func init() {
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeConnectionCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
-		command.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
+		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
