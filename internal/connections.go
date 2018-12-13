@@ -74,7 +74,10 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 			err = doc.ModifyConnection(ctx, existingConnectionID, connection, true)
 		} else {
 			LogVerbose("Creating new connection: " + fmt.Sprint(connection))
-			_, err = doc.CreateConnection(ctx, connection)
+			id, err := doc.CreateConnection(ctx, connection)
+			if err == nil {
+				fmt.Println("New connection created with id: ", id)
+			}
 		}
 
 		if err != nil {

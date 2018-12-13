@@ -1,25 +1,32 @@
-## corectl get dimension layout
+## corectl remove connection
 
-Evaluates the layout of an generic dimension
+removes the specified connection.
 
 ### Synopsis
 
-Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf
+removes the specified connection.
 
 ```
-corectl get dimension layout <dimension-id> [flags]
+corectl remove connection <connection-id> [flags]
+```
+
+### Examples
+
+```
+corectl remove connection CONNECTION-ID
 ```
 
 ### Options
 
 ```
-  -h, --help   help for layout
+  -a, --app string   App name, if no app is specified a session app is used instead.
+  -h, --help         help for connection
+      --no-save      Do not save the app
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -a, --app string               App name, if no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
@@ -29,5 +36,5 @@ corectl get dimension layout <dimension-id> [flags]
 
 ### SEE ALSO
 
-* [corectl get dimension](corectl_get_dimension.md)	 - Shows content of an generic dimension
+* [corectl remove](corectl_remove.md)	 - Remove entities (connections, dimensions, measures, objects) in the app or the app itself
 

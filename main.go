@@ -190,6 +190,54 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		},
 	}
 
+	getConnectionsCmd = &cobra.Command{
+		Use:     "connections",
+		Short:   "Prints a list of all connections in the specified app",
+		Long:    "Prints a list of all connections in the specified app",
+		Example: "corectl get connections",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			connections, err := state.Doc.GetConnections(rootCtx)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			printer.PrintConnections(connections, viper.GetBool("json"))
+		},
+	}
+
+	getConnectionCmd = &cobra.Command{
+		Use:     "connection",
+		Short:   "Shows the properties for a specific connection",
+		Long:    "Shows the properties for a specific connection",
+		Example: "corectl get connection CONNECTION-ID",
+
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			getCmd.PersistentPreRun(getCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+		},
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("Expected a connection name as parameter")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			connection, err := state.Doc.GetConnection(rootCtx, args[0])
+			if err != nil {
+				internal.FatalError(err)
+			}
+			printer.PrintConnection(connection)
+		},
+	}
+
 	getDimensionsCmd = &cobra.Command{
 		Use:   "dimensions",
 		Short: "Prints a list of all generic dimensions in the current app",
@@ -557,21 +605,60 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	removeCmd = &cobra.Command{
 		Use:   "remove",
-		Short: "Remove one or mores generic entities (dimensions, measures, objects) in the app",
-		Long:  "Remove one or mores generic entities (dimensions, measures, objects) in the app",
+		Short: "Remove entities (connections, dimensions, measures, objects) in the app or the app itself",
+		Long:  "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			corectlCommand.PersistentPreRun(corectlCommand, args)
-			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
+		},
+	}
 
-			if len(args) < 1 {
-				fmt.Println("Expected atleast one entity id specify what entity to remove from the app")
+	removeAppCmd = &cobra.Command{
+		Use:     "app <app-id>",
+		Short:   "removes the specified app.",
+		Long:    `removes the specified app.`,
+		Example: "corectl remove app APP-ID",
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			removeCmd.PersistentPreRun(removeCmd, args)
+		},
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("Expected an identifier of the app to delete.")
 				ccmd.Usage()
 				os.Exit(1)
 			}
+			internal.DeleteApp(rootCtx, viper.GetString("engine"), args[0], viper.GetString("ttl"), headers)
+		},
+	}
+
+	removeConnectionCmd = &cobra.Command{
+		Use:     "connection <connection-id>",
+		Short:   "removes the specified connection.",
+		Long:    `removes the specified connection.`,
+		Example: "corectl remove connection CONNECTION-ID",
+		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
+			removeCmd.PersistentPreRun(removeCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
+		},
+		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("Expected an identifier of the connection to delete.")
+				ccmd.Usage()
+				os.Exit(1)
+			}
+
+			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+			err := state.Doc.DeleteConnection(rootCtx, args[0])
+			if err != nil {
+				internal.FatalError("Failed to remove connection", args[0])
+			}
+			if state.AppID != "" && !viper.GetBool("no-save") {
+				internal.Save(rootCtx, state.Doc, state.AppID)
+			}
+
 		},
 	}
 
@@ -582,9 +669,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				fmt.Println("Expected atleast one dimension-id specify what dimension to remove from the app")
+				ccmd.Usage()
+				os.Exit(1)
+			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			for _, entity := range args {
 				destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
@@ -607,9 +701,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				fmt.Println("Expected atleast one measure-id specify what measure to remove from the app")
+				ccmd.Usage()
+				os.Exit(1)
+			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			for _, entity := range args {
 				destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
@@ -632,9 +733,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
+			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				fmt.Println("Expected atleast one object-id specify what object to remove from the app")
+				ccmd.Usage()
+				os.Exit(1)
+			}
 			state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 			for _, entity := range args {
 				destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
@@ -878,8 +986,8 @@ func init() {
 		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringP("app", "a", "", "App name including .qvf file ending. If no app is specified a session app is used instead.")
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeConnectionCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
+		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
@@ -906,7 +1014,7 @@ func init() {
 		command.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	}
 
-	for _, command := range []*cobra.Command{reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{reloadCmd, removeConnectionCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
 		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
 	}
 
@@ -915,7 +1023,7 @@ func init() {
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 	}
 
-	for _, command := range []*cobra.Command{getAppsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
+	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
 		command.PersistentFlags().Bool("json", false, "Prints the information in json format")
 	}
 
@@ -934,6 +1042,8 @@ func init() {
 
 	getCmd.AddCommand(getAppsCmd)
 	getCmd.AddCommand(getAssociationsCmd)
+	getCmd.AddCommand(getConnectionsCmd)
+	getCmd.AddCommand(getConnectionCmd)
 	getCmd.AddCommand(getDimensionCmd)
 	getCmd.AddCommand(getDimensionsCmd)
 	getCmd.AddCommand(getFieldCmd)
@@ -958,6 +1068,8 @@ func init() {
 	getMeasureCmd.AddCommand(getMeasurePropertiesCmd)
 	getMeasureCmd.AddCommand(getMeasureLayoutCmd)
 
+	removeCmd.AddCommand(removeAppCmd)
+	removeCmd.AddCommand(removeConnectionCmd)
 	removeCmd.AddCommand(removeDimensionsCmd)
 	removeCmd.AddCommand(removeMeasuresCmd)
 	removeCmd.AddCommand(removeObjectsCmd)

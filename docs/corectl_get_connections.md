@@ -1,25 +1,32 @@
-## corectl get dimension layout
+## corectl get connections
 
-Evaluates the layout of an generic dimension
+Prints a list of all connections in the specified app
 
 ### Synopsis
 
-Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf
+Prints a list of all connections in the specified app
 
 ```
-corectl get dimension layout <dimension-id> [flags]
+corectl get connections [flags]
+```
+
+### Examples
+
+```
+corectl get connections
 ```
 
 ### Options
 
 ```
-  -h, --help   help for layout
+  -a, --app string   App name, if no app is specified a session app is used instead.
+  -h, --help         help for connections
+      --json         Prints the information in json format
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -a, --app string               App name, if no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
@@ -29,5 +36,5 @@ corectl get dimension layout <dimension-id> [flags]
 
 ### SEE ALSO
 
-* [corectl get dimension](corectl_get_dimension.md)	 - Shows content of an generic dimension
+* [corectl get](corectl_get.md)	 - Lists one or several resources
 
