@@ -1,10 +1,10 @@
 ## corectl get connections
 
-Prints a list of all connections in the current app
+Prints a list of all connections in the specified app
 
 ### Synopsis
 
-Prints a list of all connections in the current app
+Prints a list of all connections in the specified app
 
 ```
 corectl get connections [flags]
@@ -19,7 +19,7 @@ corectl get connections
 ### Options
 
 ```
-  -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
+  -a, --app string   App name, if no app is specified a session app is used instead.
   -h, --help         help for connections
       --json         Prints the information in json format
 ```

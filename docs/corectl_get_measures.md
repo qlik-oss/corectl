@@ -13,7 +13,7 @@ corectl get measures [flags]
 ### Options
 
 ```
-  -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
+  -a, --app string   App name, if no app is specified a session app is used instead.
   -h, --help         help for measures
       --json         Prints the information in json format
 ```

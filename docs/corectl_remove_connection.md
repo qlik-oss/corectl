@@ -19,7 +19,7 @@ corectl remove connection CONNECTION-ID
 ### Options
 
 ```
-  -a, --app string   App name including .qvf file ending. If no app is specified a session app is used instead.
+  -a, --app string   App name, if no app is specified a session app is used instead.
   -h, --help         help for connection
       --no-save      Do not save the app
 ```
