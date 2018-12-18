@@ -3,6 +3,8 @@ package internal
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	neturl "net/url"
@@ -48,10 +50,12 @@ func connectToEngine(ctx context.Context, engine string, appID string, ttl strin
 	}
 	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
 
+	fmt.Println("before connected!")
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
 	if err != nil {
 		logConnectError(err, engine)
 	}
+	fmt.Println("I connected!")
 	return global
 }
 
@@ -131,6 +135,54 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 	}
 }
 
+//Låsa tills onConnected?
+//Allmänt printa på very verbose?
+func printMessage(global *enigma.Global) {
+	sessionMessages := global.SessionMessageChannel()
+	for sessionEvent := range sessionMessages {
+		fmt.Println("TOPIC: ", sessionEvent.Topic)
+		//fmt.Println("Content: ", sessionEvent.Content)
+		var parsed map[string]string
+		err := json.Unmarshal(sessionEvent.Content, &parsed)
+		fmt.Println("???")
+		if err != nil {
+			fmt.Println("Error parsing ", err)
+			// for key := range parsed.key()
+
+		} else {
+			fmt.Println("dags att visa upp vad jag har: ")
+			for k, v := range parsed {
+				fmt.Printf("key[%s] value[%s]\n", k, v)
+			}
+		}
+	}
+}
+
+func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
+	for sessionEvent := range sessionMessages {
+		if sessionEvent.Topic == "OnConnected" {
+			var parsed map[string]string
+			err := json.Unmarshal(sessionEvent.Content, &parsed)
+			if err != nil {
+				FatalError(err)
+			}
+			if parsed["qSessionState"] == "SESSION_CREATED" || parsed["qSessionState"] == "SESSION_ATTACHED" {
+				return nil
+			}
+			return errors.New(parsed["qSessionState"])
+
+			// } else if parsed["qSessionState"] == "SESSION_ERROR_NO_LICENSE" {
+			// 	FatalError(errors.New("Failed to connect to engine because of missing license"))
+			// } else {
+			// 	for k, v := range parsed {
+			// 		fmt.Printf("key[%s] value[%s]\n", k, v)
+			// 	}
+			// }
+		}
+	}
+	return errors.New("This should never happen")
+}
+
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string, headers http.Header) *State {
 	LogVerbose("---------- Connecting to engine ----------")
@@ -138,11 +190,42 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	engineURL := buildWebSocketURL(engine, ttl)
 
 	LogVerbose("Engine: " + engineURL)
-
+	fmt.Println("Before connection")
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
+
 	if err != nil {
 		logConnectError(err, engine)
 	}
+	sessionMessages := global.SessionMessageChannel()
+	err = waitForOnConnectedMessage(sessionMessages)
+	if err != nil {
+		FatalError("Failed to connect to engine with error message: ", err)
+	}
+	// for sessionEvent := range sessionMessages {
+	// 	// var parsed map[string]string
+	// 	// err := json.Unmarshal(sessionEvent.Content, &parsed)
+	// 	// if err != nil {
+	// 	// 	FatalError(err)
+	// 	// }
+
+	// 	//bryt ut till funktion som returnerar eror eller nil (Ha sen en annan funktion som körs kontiunerligt)
+	// 	if sessionEvent.Topic == "OnConnected" {
+	// 		var parsed map[string]string
+	// 		err := json.Unmarshal(sessionEvent.Content, &parsed)
+	// 		if err != nil {
+	// 			FatalError(err)
+	// 		}
+	// 		if parsed["qSessionState"] == "SESSION_CREATED" || parsed["qSessionState"] == "SESSION_ATTACHED" {
+	// 			break
+	// 		} else if parsed["qSessionState"] == "SESSION_ERROR_NO_LICENSE" {
+	// 			FatalError(errors.New("Failed to connect to engine because of missing license"))
+	// 		} else {
+	// 			for k, v := range parsed {
+	// 				fmt.Printf("key[%s] value[%s]\n", k, v)
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return &State{
 		Doc:     nil,
