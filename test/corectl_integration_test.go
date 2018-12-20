@@ -23,6 +23,7 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
+var engine2IP = flag.String("engine2IP", "localhost:9176", "dir of package containing embedded files")
 
 func getBinaryName() string {
 	if runtime.GOOS == "windows" {
@@ -109,6 +110,7 @@ func TestConnections(t *testing.T) {
 
 func TestCorectl(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
+	connectToEngineWithInccorectLicenseService := "--engine=" + *engine2IP
 	tests := []struct {
 		name     string
 		args     []string
@@ -161,6 +163,7 @@ func TestCorectl(t *testing.T) {
 		{"err 1", []string{"--engine=localhost:9999", "get", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}},
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
 		{"err jwt", []string{connectToEngine, "get", "apps"}, []string{"Error details:  401 from ws server: websocket: bad handshake"}},
+		{"err no license", []string{connectToEngineWithInccorectLicenseService, "get", "apps"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}},
 	}
 
 	for _, tt := range tests {

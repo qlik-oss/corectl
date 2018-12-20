@@ -51,7 +51,7 @@ jobs:
             docker cp src/github.com/qlik-oss/corectl/test/apps/ $CONTAINER_ID:/
             docker cp src/github.com/qlik-oss/corectl/test/data/ $CONTAINER_ID:/
             # Execute tests
-            docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076'
+            docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
 
   publish:
     working_directory: /go/src/github.com/qlik-oss/corectl
