@@ -38,18 +38,18 @@ jobs:
           command: |
             # Spin up environment
             ACCEPT_EULA=yes docker-compose -f src/github.com/qlik-oss/corectl/test/docker-compose.yml up -d
-            CONTAINER_ID=$(docker ps -aqf "name=engine")
-            TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$CONTAINER_ID")
+            ENGINE_1_CONTAINER_ID=$(docker ps -aqf "name=engine-1")
+            TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_1_CONTAINER_ID")
             # Start a container for test execution
             TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.9-alpine tail -f /dev/null)
             # Install packages
             docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash'
             # Copy code into container
             docker cp . $TEST_CONTAINER:/go
-            # Copy apps and data into engine container
+            # Copy apps and data into the first engine container, the second one does not need it.
             chmod -R 777 src/github.com/qlik-oss/corectl/test/
-            docker cp src/github.com/qlik-oss/corectl/test/apps/ $CONTAINER_ID:/
-            docker cp src/github.com/qlik-oss/corectl/test/data/ $CONTAINER_ID:/
+            docker cp src/github.com/qlik-oss/corectl/test/apps/ $ENGINE_1_CONTAINER_ID:/
+            docker cp src/github.com/qlik-oss/corectl/test/data/ $ENGINE_1_CONTAINER_ID:/
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
 
