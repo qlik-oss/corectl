@@ -165,10 +165,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			state := internal.PrepareEngineStateWithoutApp(rootCtx, viper.GetString("engine"), viper.GetString("ttl"), headers)
-			fmt.Println("nu ska jag hämta doclistan")
 			docList, err := state.Global.GetDocList(rootCtx)
 			if err != nil {
-				fmt.Println("det gick inget bra att hämta docklistan")
 				internal.FatalError(err)
 			}
 			printer.PrintApps(docList, viper.GetBool("json"))
