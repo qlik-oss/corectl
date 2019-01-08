@@ -134,6 +134,7 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 
 func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
 	for sessionEvent := range sessionMessages {
+		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
 		if sessionEvent.Topic == "OnConnected" {
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
@@ -146,8 +147,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 			return errors.New(parsedEvent["qSessionState"])
 		}
 	}
-	//we need to have a return here to compile
-	return errors.New("This should never happen")
+	return errors.New("Session closed before reciving OnConnected message")
 }
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
