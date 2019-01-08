@@ -3,6 +3,8 @@ package internal
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	neturl "net/url"
@@ -74,13 +76,12 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 	if appID == "" {
 		fmt.Println("No app specified, using session app.")
 	}
-	go func() {
-		for x := range global.SessionMessageChannel() {
-			if x.Topic != "OnConnected" {
-				fmt.Println(x.Topic, string(x.Content))
-			}
-		}
-	}()
+	sessionMessages := global.SessionMessageChannel()
+	err := waitForOnConnectedMessage(sessionMessages)
+	if err != nil {
+		FatalError("Failed to connect to engine with error message: ", err)
+	}
+	go printSessionMessagesIfInVerboseMode(sessionMessages)
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
@@ -131,6 +132,30 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 	}
 }
 
+func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
+	for sessionEvent := range sessionMessages {
+		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		if sessionEvent.Topic == "OnConnected" {
+			var parsedEvent map[string]string
+			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
+			if err != nil {
+				FatalError(err)
+			}
+			if parsedEvent["qSessionState"] == "SESSION_CREATED" || parsedEvent["qSessionState"] == "SESSION_ATTACHED" {
+				return nil
+			}
+			return errors.New(parsedEvent["qSessionState"])
+		}
+	}
+	return errors.New("Session closed before reciving OnConnected message")
+}
+
+func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
+	for sessionEvent := range sessionMessages {
+		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+	}
+}
+
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string, headers http.Header) *State {
 	LogVerbose("---------- Connecting to engine ----------")
@@ -138,11 +163,17 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	engineURL := buildWebSocketURL(engine, ttl)
 
 	LogVerbose("Engine: " + engineURL)
-
 	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
+
 	if err != nil {
 		logConnectError(err, engine)
 	}
+	sessionMessages := global.SessionMessageChannel()
+	err = waitForOnConnectedMessage(sessionMessages)
+	if err != nil {
+		FatalError("Failed to connect to engine with error message: ", err)
+	}
+	go printSessionMessagesIfInVerboseMode(sessionMessages)
 
 	return &State{
 		Doc:     nil,

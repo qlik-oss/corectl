@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   qix-engine:
-    container_name: qix-engine
+    container_name: qix-engine-1
     image: qlikcore/engine:12.292.0
     ports:
       - 9076:9076
@@ -9,6 +9,12 @@ services:
     volumes:
       - ./apps:/apps
       - ./data:/data
+  qix-engine-2:
+    container_name: qix-engine-2
+    image: qlikcore/engine:12.292.0
+    ports:
+      - 9176:9076
+    command: -S AcceptEULA=${ACCEPT_EULA}  -S SystemLogVerbosity=5 -S LicenseServiceUrl="doesnotexit:9090"
   corectl-test-connector:
     container_name: corectl-test-connector
     build: testconnector
