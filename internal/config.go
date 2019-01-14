@@ -2,18 +2,19 @@ package internal
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
 type ConnectionConfigEntry struct {
-	Type     string
-	Username string
-	Password string
-	Path     string
-	Settings map[string]string
+	Type             string
+	Username         string
+	Password         string
+	ConnectionString string
+	Settings         map[string]string
 }
 
 // ConnectionsConfigFile defines the content of a connections yml file.
