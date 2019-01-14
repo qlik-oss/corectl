@@ -59,10 +59,10 @@ ACCEPT_EULA=<yes/no> docker-compose up -d
 go test corectl_integration_test.go
 ```
 
-The tests are by default trying to connect to an engine on localhost:9076. This can be changed with the --engineIP flag.
+The tests are by default trying to connect to an engine on localhost:9076 and another one on localhost:9176. This can be changed with the --engineIP flag and --engine2IP flag.
 
 ```sh
-go test corectl_integration_test.go --engineIP HOST:PORT
+go test corectl_integration_test.go --engineIP HOST:PORT --engine2IP HOST:ANOTHERPORT
 ```
 
 If the reference output files need to be updated, run the test with --update flag.
