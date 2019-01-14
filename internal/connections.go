@@ -45,7 +45,7 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		if configEntry.Path != "" {
 			connection = &enigma.Connection{
 				Name:             name,
-				Type:             "folder",
+				Type:             configEntry.Type,
 				UserName:         "",
 				Password:         "",
 				ConnectionString: configEntry.Path,
@@ -74,7 +74,8 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 			err = doc.ModifyConnection(ctx, existingConnectionID, connection, true)
 		} else {
 			LogVerbose("Creating new connection: " + fmt.Sprint(connection))
-			id, err := doc.CreateConnection(ctx, connection)
+			var id string
+			id, err = doc.CreateConnection(ctx, connection)
 			if err == nil {
 				fmt.Println("New connection created with id: ", id)
 			}

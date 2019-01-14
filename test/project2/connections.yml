@@ -1,3 +1,4 @@
 connections:
   testdata:
     path: /data
+    type: folder
