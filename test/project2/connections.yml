@@ -1,4 +1,4 @@
 connections:
   testdata:
-    connectionString: /data
+    connectionstring: /data
     type: folder
