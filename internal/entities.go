@@ -33,7 +33,7 @@ func ReadEntitiesFile(path string) EntitiesConfigFile {
 
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		panic(err)
+		FatalError(err)
 	}
 	return config
 }
