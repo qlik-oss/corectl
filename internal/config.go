@@ -2,9 +2,10 @@ package internal
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
@@ -33,7 +34,7 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		panic(err)
+		FatalError(err)
 	}
 	return config
 }
