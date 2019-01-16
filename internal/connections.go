@@ -42,13 +42,13 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 
 	for name, configEntry := range connectionConfigEntries {
 		var connection *enigma.Connection
-		if configEntry.Path != "" {
+		if configEntry.ConnectionString != "" {
 			connection = &enigma.Connection{
 				Name:             name,
 				Type:             configEntry.Type,
 				UserName:         "",
 				Password:         "",
-				ConnectionString: configEntry.Path,
+				ConnectionString: configEntry.ConnectionString,
 			}
 		} else {
 			connection = &enigma.Connection{
