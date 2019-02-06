@@ -3,19 +3,20 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
 	"os"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
-func getSortedTableNamesAndFieldsNames(ctx context.Context, doc *enigma.Doc, err error, tables []*enigma.TableRecord) ([]string, []string) {
+func getSortedFieldsNames(ctx context.Context, doc *enigma.Doc, err error) []string {
 	systemTableObject := createSystemTableHypercube(ctx, doc)
 	systemTableLayout, err := systemTableObject.GetLayout(ctx)
 	if err != nil {
 		fmt.Println("Error when fetching system table:", err)
 		os.Exit(1)
 	}
-	tableNames, fieldNames := layoutToFieldListsAndTableLists(systemTableLayout)
-	return tableNames, fieldNames
+	fieldNames := layoutToFieldLists(systemTableLayout)
+	return fieldNames
 }
 
 func createSystemTableHypercube(ctx context.Context, doc *enigma.Doc) *enigma.GenericObject {
@@ -57,20 +58,15 @@ func createSystemTableHypercube(ctx context.Context, doc *enigma.Doc) *enigma.Ge
 	return object
 }
 
-func layoutToFieldListsAndTableLists(systemTableLayout *enigma.GenericObjectLayout) ([]string, []string) {
+func layoutToFieldLists(systemTableLayout *enigma.GenericObjectLayout) []string {
 
 	page := systemTableLayout.HyperCube.PivotDataPages[0]
-	tableNames := make([]string, len(page.Top))
 	fieldNames := make([]string, len(page.Left))
-
-	for x, tableName := range page.Top {
-		tableNames[x] = tableName.Text
-	}
 
 	for y := range page.Data {
 		fieldName := page.Left[y].Text
 		fieldNames[y] = fieldName
 	}
 
-	return tableNames, fieldNames
+	return fieldNames
 }
