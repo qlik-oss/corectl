@@ -1,0 +1,10 @@
+<-- {"jsonrpc":"2.0","method":"OnConnected","params":{"qSessionState":"SESSION_ATTACHED"}}
+--> {"jsonrpc":"2.0","delta":false,"method":"GetActiveDoc","handle":-1,"id":1,"params":[]}
+<-- {"jsonrpc":"2.0","id":1,"result":{"qReturn":{"qType":"Doc","qHandle":1,"qGenericId":"/apps/project1.qvf"}}}
+--> {"jsonrpc":"2.0","delta":false,"method":"GetScript","handle":1,"id":2,"params":[]}
+<-- {"jsonrpc":"2.0","id":2,"result":{"qScript":"LIB CONNECT TO myconnection;\n\nTableA:\nSELECT A;\n"}}
+LIB CONNECT TO myconnection;
+
+TableA:
+SELECT A;
+

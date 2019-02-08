@@ -11,3 +11,19 @@ func LogVerbose(message string) {
 		fmt.Println(message)
 	}
 }
+
+var LogTraffic bool
+
+type TrafficLogger struct{}
+
+func (l *TrafficLogger) Opened() {}
+
+func (l *TrafficLogger) Sent(message []byte) {
+	fmt.Println("-->", string(message[:]))
+}
+
+func (l *TrafficLogger) Received(message []byte) {
+	fmt.Println("<--", string(message[:]))
+}
+
+func (l *TrafficLogger) Closed() {}

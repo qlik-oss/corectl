@@ -17,6 +17,7 @@ Available Commands:
 
 Flags:
   -h, --help      help for corectl
+  -t, --traffic   Log JSON traffic to stdout
   -v, --verbose   Logs extra information
 
 Use "corectl [command] --help" for more information about a command.

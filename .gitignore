@@ -6,3 +6,4 @@ vendor/
 *.exe
 corectl
 corectl.exe
+main
