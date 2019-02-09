@@ -32,6 +32,7 @@ corectl build [flags]
 ### Options inherited from parent commands
 
 ```
+  -t, --traffic   Log JSON traffic to stdout
   -v, --verbose   Logs extra information
 ```
 
