@@ -14,6 +14,7 @@ corectl [flags]
 
 ```
   -h, --help      help for corectl
+  -t, --traffic   Log JSON websocket traffic to stdout
   -v, --verbose   Logs extra information
 ```
 

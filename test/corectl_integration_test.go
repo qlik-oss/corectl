@@ -145,6 +145,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - check measures after removal", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "measures"}, []string{"golden", "project1-measures-1.golden"}},
 		{"project 1 - set script", []string{"--config=test/project1/corectl.yml ", connectToEngine, "set", "script", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "script"}, []string{"golden", "project1-script-2.golden"}},
+		{"project 1 - traffic logging", []string{"--config=test/project1/corectl.yml", connectToEngine, "get", "script", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}},
 
 		// Project 2 has separate connections file
 		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0", "build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving...Done"}},

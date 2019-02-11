@@ -50,7 +50,15 @@ func connectToEngine(ctx context.Context, engine string, appID string, ttl strin
 	}
 	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
 
-	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
+	var dialer enigma.Dialer
+
+	if LogTraffic {
+		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
+	} else {
+		dialer = enigma.Dialer{}
+	}
+
+	global, err := dialer.Dial(ctx, engineURL, headers)
 	if err != nil {
 		logConnectError(err, engine)
 	}
@@ -163,7 +171,16 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	engineURL := buildWebSocketURL(engine, ttl)
 
 	LogVerbose("Engine: " + engineURL)
-	global, err := enigma.Dialer{}.Dial(ctx, engineURL, headers)
+
+	var dialer enigma.Dialer
+
+	if LogTraffic {
+		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
+	} else {
+		dialer = enigma.Dialer{}
+	}
+
+	global, err := dialer.Dial(ctx, engineURL, headers)
 
 	if err != nil {
 		logConnectError(err, engine)

@@ -35,6 +35,7 @@ var (
 				return
 			}
 			internal.QliVerbose = viper.GetBool("verbose")
+			internal.LogTraffic = viper.GetBool("traffic")
 			if explicitConfigFile != "" {
 				viper.SetConfigFile(strings.TrimSpace(explicitConfigFile))
 				if err := viper.ReadInConfig(); err == nil {
@@ -52,7 +53,6 @@ var (
 					internal.LogVerbose("No config file")
 				}
 			}
-			internal.QliVerbose = viper.GetBool("verbose")
 
 			if len(headersMap) == 0 {
 				headersMap = viper.GetStringMapString("headers")
@@ -965,6 +965,9 @@ func init() {
 
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
+
+	corectlCommand.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
+	viper.BindPFlag("traffic", corectlCommand.PersistentFlags().Lookup("traffic"))
 
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
 	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
