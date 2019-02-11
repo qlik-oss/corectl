@@ -1,3 +1,7 @@
+[![CircleCI](https://circleci.com/gh/qlik-oss/corectl.svg?style=shield)](https://circleci.com/gh/qlik-oss/corectl)
+[![Go Report Card](https://goreportcard.com/badge/qlik-oss/corectl)](https://goreportcard.com/report/qlik-oss/corectl)
+[![](https://img.shields.io/github/release/qlik-oss/corectl.svg)]
+
 # Corectl (Experimental)
 
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
