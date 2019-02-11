@@ -29,7 +29,7 @@ corectl set all [flags]
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
       --no-save                  Do not save the app
-  -t, --traffic                  Log JSON traffic to stdout
+  -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```

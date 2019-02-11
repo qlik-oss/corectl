@@ -26,7 +26,7 @@ corectl reload [flags]
 ### Options inherited from parent commands
 
 ```
-  -t, --traffic   Log JSON traffic to stdout
+  -t, --traffic   Log JSON websocket traffic to stdout
   -v, --verbose   Logs extra information
 ```
 

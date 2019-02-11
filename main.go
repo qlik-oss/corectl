@@ -966,7 +966,7 @@ func init() {
 	corectlCommand.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", corectlCommand.PersistentFlags().Lookup("verbose"))
 
-	corectlCommand.PersistentFlags().BoolP("traffic", "t", false, "Log JSON traffic to stdout")
+	corectlCommand.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	viper.BindPFlag("traffic", corectlCommand.PersistentFlags().Lookup("traffic"))
 
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?

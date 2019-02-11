@@ -30,7 +30,7 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080
 ### Options inherited from parent commands
 
 ```
-  -t, --traffic   Log JSON traffic to stdout
+  -t, --traffic   Log JSON websocket traffic to stdout
   -v, --verbose   Logs extra information
 ```
 
