@@ -91,15 +91,10 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 	return result
 }
 
-func createTableModels(ctx context.Context, doc *enigma.Doc, tableNames []string, tableRecords []*enigma.TableRecord, restMetadata *RestMetadata) []*TableModel {
-	tableRecordMap := make(map[string]*enigma.TableRecord)
-	for _, tableRecord := range tableRecords {
-		tableRecordMap[tableRecord.Name] = tableRecord
-	}
-
-	tableModels := make([]*TableModel, len(tableNames))
-	for i, tableName := range tableNames {
-		tableModels[i] = &TableModel{TableRecord: tableRecordMap[tableName], RestMetadata: restMetadata.tableByName(tableName)}
+func createTableModels(ctx context.Context, doc *enigma.Doc, tableRecords []*enigma.TableRecord, restMetadata *RestMetadata) []*TableModel {
+	tableModels := make([]*TableModel, len(tableRecords))
+	for i, tableRecord := range tableRecords {
+		tableModels[i] = &TableModel{TableRecord: tableRecord, RestMetadata: restMetadata.tableByName(tableRecord.Name)}
 	}
 	return tableModels
 }
@@ -132,10 +127,10 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, head
 	if len(tables) > 0 && restMetadata == nil {
 		fmt.Println("No REST metadata available.")
 	}
-	tableNames, fieldNames := getSortedTableNamesAndFieldsNames(ctx, doc, err, tables)
+	fieldNames := getSortedFieldsNames(ctx, doc, err)
 
 	fieldModels := createFieldModels(ctx, doc, fieldNames, restMetadata)
-	tableModels := createTableModels(ctx, doc, tableNames, tables, restMetadata)
+	tableModels := createTableModels(ctx, doc, tables, restMetadata)
 	fieldsInTableTexts := tableRecordsToMap(tables)
 	addTableFieldCellCrossReferences(fieldModels, tableModels)
 	return &ModelMetadata{
