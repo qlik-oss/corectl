@@ -124,6 +124,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - get assoc", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "assoc"}, []string{"golden", "project1-assoc.golden"}},
 		{"project 1 - get fields", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "fields"}, []string{"golden", "project1-fields.golden"}},
 		{"project 1 - get field numbers", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "field", "numbers"}, []string{"golden", "project1-field-numbers.golden"}},
+		{"project 1 - get meta", []string{"--config=test/project1/corectl.yml ", connectToEngine, "get", "meta"}, []string{"golden", "project1-meta.golden"}},
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)", "by", "xyz"}, []string{"golden", "project1-eval-1.golden"}},
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "count(numbers)"}, []string{"golden", "project1-eval-2.golden"}},
 		{"project 1 - eval", []string{"--config=test/project1/corectl.yml ", connectToEngine, "eval", "=1+1"}, []string{"golden", "project1-eval-3.golden"}},
