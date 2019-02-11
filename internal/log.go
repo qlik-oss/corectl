@@ -12,18 +12,24 @@ func LogVerbose(message string) {
 	}
 }
 
+// LogTraffic is set to true when websocket traffic should be printed to stdout
 var LogTraffic bool
 
+// TrafficLogger is a struct implementing the TrafficLogger interface in enigma-go
 type TrafficLogger struct{}
 
-func (l *TrafficLogger) Opened() {}
+// Opened implements Opened() method in enigma-go TrafficLogger interface
+func (TrafficLogger) Opened() {}
 
-func (l *TrafficLogger) Sent(message []byte) {
-	fmt.Println("-->", string(message[:]))
+// Sent implements Sent() method in enigma-go TrafficLogger interface
+func (TrafficLogger) Sent(message []byte) {
+	fmt.Println("-->", string(message))
 }
 
-func (l *TrafficLogger) Received(message []byte) {
-	fmt.Println("<--", string(message[:]))
+// Received implements Received() method in enigma-go TrafficLogger interface
+func (TrafficLogger) Received(message []byte) {
+	fmt.Println("<--", string(message))
 }
 
-func (l *TrafficLogger) Closed() {}
+// Closed implements Closed() method in enigma-go TrafficLogger interface
+func (TrafficLogger) Closed() {}

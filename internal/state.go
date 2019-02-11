@@ -53,7 +53,7 @@ func connectToEngine(ctx context.Context, engine string, appID string, ttl strin
 	var dialer enigma.Dialer
 
 	if LogTraffic {
-		dialer = enigma.Dialer{TrafficLogger: &TrafficLogger{}}
+		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
 	} else {
 		dialer = enigma.Dialer{}
 	}
@@ -175,7 +175,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	var dialer enigma.Dialer
 
 	if LogTraffic {
-		dialer = enigma.Dialer{TrafficLogger: &TrafficLogger{}}
+		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
 	} else {
 		dialer = enigma.Dialer{}
 	}
