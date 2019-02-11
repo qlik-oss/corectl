@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/qlik-oss/corectl.svg?style=shield)](https://circleci.com/gh/qlik-oss/corectl)
 [![Go Report Card](https://goreportcard.com/badge/qlik-oss/corectl)](https://goreportcard.com/report/qlik-oss/corectl)
-[![](https://img.shields.io/github/release/qlik-oss/corectl.svg)]
+![](https://img.shields.io/github/release/qlik-oss/corectl.svg?style=flat)
 
 # Corectl (Experimental)
 
