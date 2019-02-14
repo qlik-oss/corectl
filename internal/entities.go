@@ -19,7 +19,8 @@ type EntitiesConfigFile struct {
 	Objects    []string
 }
 type genericEntity struct {
-	Info *enigma.NxInfo `json:"qInfo"`
+	Info     *enigma.NxInfo                  `json:"qInfo,omitempty"`
+	Property *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
 }
 
 // ReadEntitiesFile reads the entity config file from the supplied path.
@@ -83,55 +84,72 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 	if err != nil {
 		FatalError("Could not open "+entityType+" file", err)
 	}
-	var props genericEntity
-	err = json.Unmarshal(entityFileContents, &props)
-	validateEntity(props, entityPath, err)
-
+	var entity genericEntity
+	err = json.Unmarshal(entityFileContents, &entity)
+	validateEntity(entity, entityPath, err)
 	//I do not know how to to this nicer, with less duplication.
 	switch entityType {
 	case "dimension":
-		dimension, err := doc.GetDimension(ctx, props.Info.Id)
+		dimension, err := doc.GetDimension(ctx, entity.Info.Id)
 		if err == nil && dimension.Handle != 0 {
-			LogVerbose("Updating dimension " + props.Info.Id)
+			LogVerbose("Updating dimension " + entity.Info.Id)
 			err = dimension.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update dimension "+props.Info.Id, err)
+				FatalError("Failed to update dimension "+entity.Info.Id, err)
 			}
 		} else {
-			LogVerbose("Creating dimension " + props.Info.Id)
+			LogVerbose("Creating dimension " + entity.Info.Id)
 			_, err = doc.CreateDimensionRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create dimension "+props.Info.Id, err)
+				FatalError("Failed to create dimension "+entity.Info.Id, err)
 			}
 		}
 	case "measure":
-		measure, err := doc.GetMeasure(ctx, props.Info.Id)
+		measure, err := doc.GetMeasure(ctx, entity.Info.Id)
 		if err == nil && measure.Handle != 0 {
-			LogVerbose("Updating measure " + props.Info.Id)
+			LogVerbose("Updating measure " + entity.Info.Id)
 			err = measure.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update measure "+props.Info.Id, err)
+				FatalError("Failed to update measure "+entity.Info.Id, err)
 			}
 		} else {
-			LogVerbose("Creating measure " + props.Info.Id)
+			LogVerbose("Creating measure " + entity.Info.Id)
 			_, err = doc.CreateMeasureRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create measure "+props.Info.Id, err)
+				FatalError("Failed to create measure "+entity.Info.Id, err)
 			}
 		}
 	case "object":
-		object, err := doc.GetObject(ctx, props.Info.Id)
+		var objectID string
+		isGenericObjectEntry := false
+		if entity.Info != nil {
+			objectID = entity.Info.Id
+		} else {
+			objectID = entity.Property.Info.Id
+			isGenericObjectEntry = true
+		}
+		object, err := doc.GetObject(ctx, objectID)
 		if err == nil && object.Handle != 0 {
-			LogVerbose("Updating object " + props.Info.Id)
-			err = object.SetPropertiesRaw(ctx, entityFileContents)
+			LogVerbose("Updating object " + objectID)
+			if isGenericObjectEntry {
+				err = object.SetFullPropertyTreeRaw(ctx, entityFileContents)
+			} else {
+				err = object.SetPropertiesRaw(ctx, entityFileContents)
+			}
 			if err != nil {
-				FatalError("Failed to update object "+props.Info.Id, err)
+				FatalError("Failed to update object "+objectID, err)
 			}
 		} else {
-			LogVerbose("Creating object " + props.Info.Id)
-			_, err = doc.CreateObjectRaw(ctx, entityFileContents)
+			LogVerbose("Creating object " + objectID)
+			if isGenericObjectEntry {
+				var createdObject *enigma.GenericObject
+				createdObject, err = doc.CreateObject(ctx, &enigma.GenericObjectProperties{Info: &enigma.NxInfo{Id: objectID, Type: entity.Property.Info.Type}})
+				err = createdObject.SetFullPropertyTreeRaw(ctx, entityFileContents)
+			} else {
+				_, err = doc.CreateObjectRaw(ctx, entityFileContents)
+			}
 			if err != nil {
-				FatalError("Failed to create object "+props.Info.Id, err)
+				FatalError("Failed to create object "+objectID, err)
 			}
 		}
 	}
@@ -141,10 +159,22 @@ func validateEntity(entity genericEntity, entityPath string, err error) {
 	if err != nil {
 		FatalError("Invalid json", err)
 	}
-	if entity.Info.Id == "" {
+	if entity.Info == nil && entity.Property == nil {
+		FatalError("Missing qInfo attribute or qProperty attribute", entityPath)
+	}
+	if entity.Info != nil && entity.Info.Id == "" {
 		FatalError("Missing qInfo qId attribute", entityPath)
 	}
-	if entity.Info.Type == "" {
-		FatalError("Missing qInfo type attribute", entityPath)
+	if entity.Info != nil && entity.Info.Type == "" {
+		FatalError("Missing qInfo qType attribute", entityPath)
+	}
+	if entity.Property != nil && entity.Property.Info == nil {
+		FatalError("Missing qInfo attribute inside the qProperty", entityPath)
+	}
+	if entity.Property != nil && entity.Property.Info.Id == "" {
+		FatalError("Missing qInfo qId attribute inside qProperty", entityPath)
+	}
+	if entity.Property != nil && entity.Property.Info.Type == "" {
+		FatalError("Missing qInfo qType attribute inside qProperty", entityPath)
 	}
 }
