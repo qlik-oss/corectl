@@ -119,9 +119,6 @@ func TestNestedObjectSupport(t *testing.T) {
 
 	//verify that there is no objects in the app anymore.
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "objects")
-	// cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "objects", "--json"}...)
-	// output, _ = cmd.CombinedOutput()
-	// assert.Equal(t, "[]\n", string(output))
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
 	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
@@ -144,9 +141,6 @@ func TestConnections(t *testing.T) {
 
 	//verify that there is no connections in the app anymore.
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connections")
-	// cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
-	// output, _ = cmd.CombinedOutput()
-	// assert.Equal(t, "[]\n", string(output))
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
 	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
