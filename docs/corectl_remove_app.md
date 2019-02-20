@@ -29,7 +29,7 @@ corectl remove app APP-ID
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
-      --suppress                 Suppress confirm
+      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
