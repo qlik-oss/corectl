@@ -48,7 +48,7 @@ jobs:
             docker cp ./test/apps/ $ENGINE_1_CONTAINER_ID:/
             docker cp ./test/data/ $ENGINE_1_CONTAINER_ID:/
             # Execute tests
-            docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test /corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
+            docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test ./test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
 
   publish:
     working_directory: ~/corectl
