@@ -641,13 +641,9 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 				app = args[0]
 			}
 
-			var confirmed bool
+			confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
-			if viper.GetString("suppress") != "true" {
-				confirmed = askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
-			}
-
-			if confirmed || viper.GetString("suppress") == "true" {
+			if confirmed {
 				internal.DeleteApp(rootCtx, viper.GetString("engine"), app, viper.GetString("ttl"), headers)
 			}
 		},
@@ -787,7 +783,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-
 		},
 	}
 
@@ -1047,7 +1042,7 @@ func init() {
 	}
 
 	for _, command := range []*cobra.Command{removeCmd} {
-		command.PersistentFlags().Bool("suppress", false, "Suppress confirm")
+		command.PersistentFlags().Bool("suppress", false, "Suppress all confirmation dialogues")
 	}
 
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
@@ -1182,6 +1177,10 @@ func build(ccmd *cobra.Command, args []string) {
 }
 
 func askForConfirmation(s string) bool {
+	if viper.GetString("suppress") == "true" {
+		return true
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for {

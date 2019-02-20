@@ -222,7 +222,6 @@ func TestCorectl(t *testing.T) {
 			teardownTest := setupTest(t, tt)
 			defer teardownTest(t, tt)
 
-			//
 			args := append(tt.connectString, tt.command...)
 			cmd := exec.Command(binaryPath, args...)
 
