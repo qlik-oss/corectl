@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -610,8 +612,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			corectlCommand.PersistentPreRun(corectlCommand, args)
+			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+			viper.BindPFlag("headers", ccmd.PersistentFlags().Lookup("headers"))
+			viper.BindPFlag("supress", ccmd.PersistentFlags().Lookup("supress"))
 		},
 	}
 
@@ -624,12 +629,27 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			removeCmd.PersistentPreRun(removeCmd, args)
 		},
 		Run: func(ccmd *cobra.Command, args []string) {
-			if len(args) != 1 {
+			app := viper.GetString("app")
+
+			if len(args) != 1 && app == "" {
 				fmt.Println("Expected an identifier of the app to delete.")
 				ccmd.Usage()
 				os.Exit(1)
 			}
-			internal.DeleteApp(rootCtx, viper.GetString("engine"), args[0], viper.GetString("ttl"), headers)
+
+			if len(args) == 1 {
+				app = args[0]
+			}
+
+			var confirmed bool
+
+			if viper.GetString("supress") != "true" {
+				confirmed = askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
+			}
+
+			if confirmed || viper.GetString("supress") == "true" {
+				internal.DeleteApp(rootCtx, viper.GetString("engine"), app, viper.GetString("ttl"), headers)
+			}
 		},
 	}
 
@@ -640,7 +660,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		Example: "corectl remove connection CONNECTION-ID",
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
-			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 		Run: func(ccmd *cobra.Command, args []string) {
@@ -669,7 +688,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
-			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
@@ -701,7 +719,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
-			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
@@ -733,7 +750,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			removeCmd.PersistentPreRun(removeCmd, args)
-			viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 			viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		},
 
@@ -984,12 +1000,12 @@ func init() {
 		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, setCmd, removeCmd} {
 		//not binding to viper since binding a map does not seem to work.
 		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 	}
 
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeConnectionCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
+	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	}
 
@@ -1028,6 +1044,10 @@ func init() {
 
 	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
 		command.PersistentFlags().Bool("json", false, "Prints the information in json format")
+	}
+
+	for _, command := range []*cobra.Command{removeCmd} {
+		command.PersistentFlags().Bool("supress", false, "Supress confirm")
 	}
 
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
@@ -1158,5 +1178,26 @@ func build(ccmd *cobra.Command, args []string) {
 
 	if state.AppID != "" {
 		internal.Save(ctx, state.Doc, state.AppID)
+	}
+}
+
+func askForConfirmation(s string) bool {
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]: ", s)
+
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		if response == "y" || response == "yes" {
+			return true
+		} else if response == "n" || response == "no" {
+			return false
+		}
 	}
 }
