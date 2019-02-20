@@ -14,7 +14,7 @@ Remove one or mores generic entities (connections, dimensions, measures, objects
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
   -h, --help                     help for remove
-      --supress                  Supress confirm
+      --suppress                 Suppress confirm
       --ttl string               Engine session time to live in seconds (default "30")
 ```
 

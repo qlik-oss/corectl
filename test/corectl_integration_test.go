@@ -126,7 +126,7 @@ func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
 		if tt.initTest.teardown == true {
 			t.Log("\u001b[96m *** Teardown *** \u001b[0m")
 
-			args := append(tt.connectString, []string{"remove", "app", "--supress"}...)
+			args := append(tt.connectString, []string{"remove", "app", "--suppress"}...)
 			cmd := exec.Command(binaryPath, args...)
 
 			t.Log("\u001b[35m Executing command:" + strings.Join(cmd.Args, " ") + "\u001b[0m")

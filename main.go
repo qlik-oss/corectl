@@ -616,7 +616,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 			viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 			viper.BindPFlag("headers", ccmd.PersistentFlags().Lookup("headers"))
-			viper.BindPFlag("supress", ccmd.PersistentFlags().Lookup("supress"))
+			viper.BindPFlag("suppress", ccmd.PersistentFlags().Lookup("suppress"))
 		},
 	}
 
@@ -643,11 +643,11 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 			var confirmed bool
 
-			if viper.GetString("supress") != "true" {
+			if viper.GetString("suppress") != "true" {
 				confirmed = askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 			}
 
-			if confirmed || viper.GetString("supress") == "true" {
+			if confirmed || viper.GetString("suppress") == "true" {
 				internal.DeleteApp(rootCtx, viper.GetString("engine"), app, viper.GetString("ttl"), headers)
 			}
 		},
@@ -1047,7 +1047,7 @@ func init() {
 	}
 
 	for _, command := range []*cobra.Command{removeCmd} {
-		command.PersistentFlags().Bool("supress", false, "Supress confirm")
+		command.PersistentFlags().Bool("suppress", false, "Suppress confirm")
 	}
 
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
