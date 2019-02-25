@@ -9,10 +9,6 @@ builds:
   goarch:
     - amd64
 
-before:
-  hooks:
-    - dep ensure
-
 archive:
   name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
   replacements:

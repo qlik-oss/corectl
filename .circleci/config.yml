@@ -1,28 +1,25 @@
 version: 2
 jobs:
   build:
-    working_directory: /go/src/github.com/qlik-oss/corectl
+    working_directory: ~/corectl
     docker:
       - image: circleci/golang:1.11
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: go get -u golang.org/x/lint/golint
       - restore_cache:
-          key: dependency-cache-{{ checksum "Gopkg.lock" }}
-      - run:
-          name: Install dependencies
-          command: dep ensure
-      - save_cache:
-          key: dependency-cache-{{ checksum "Gopkg.lock" }}
-          paths:
-            - vendor
-      - run:
-          name: Linting
-          command: golint -set_exit_status
+          key: dependency-cache-{{ checksum "go.sum" }}
       - run:
           name: Build
           command: go build
+      - save_cache:
+          key: dependency-cache-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Linting
+          command: |
+            go get -u golang.org/x/lint/golint
+            golint -set_exit_status
       - run:
           name: Test
           command: go test -v -race ./...
@@ -34,32 +31,31 @@ jobs:
       - setup_remote_docker
       - run:
           name: Run Integration Test
-          working_directory: /go
           command: |
             # Spin up environment
-            ACCEPT_EULA=yes docker-compose -f src/github.com/qlik-oss/corectl/test/docker-compose.yml up -d
+            ACCEPT_EULA=yes docker-compose -f ./test/docker-compose.yml up -d
             ENGINE_1_CONTAINER_ID=$(docker ps -aqf "name=engine-1")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_1_CONTAINER_ID")
             # Start a container for test execution
-            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.9-alpine tail -f /dev/null)
+            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.11-alpine tail -f /dev/null)
             # Install packages
-            docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash'
+            docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash gcc git libc-dev'
             # Copy code into container
-            docker cp . $TEST_CONTAINER:/go
+            docker cp /go/pkg $TEST_CONTAINER:/go/pkg
+            docker cp . $TEST_CONTAINER:/corectl
             # Copy apps and data into the first engine container, the second one does not need it.
-            chmod -R 777 src/github.com/qlik-oss/corectl/test/
-            docker cp src/github.com/qlik-oss/corectl/test/apps/ $ENGINE_1_CONTAINER_ID:/
-            docker cp src/github.com/qlik-oss/corectl/test/data/ $ENGINE_1_CONTAINER_ID:/
+            chmod -R 777 ./test/
+            docker cp ./test/apps/ $ENGINE_1_CONTAINER_ID:/
+            docker cp ./test/data/ $ENGINE_1_CONTAINER_ID:/
             # Execute tests
-            docker exec $TEST_CONTAINER /bin/bash -c 'go test /go/src/github.com/qlik-oss/corectl/test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
+            docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test ./test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176'
 
   publish:
-    working_directory: /go/src/github.com/qlik-oss/corectl
+    working_directory: ~/corectl
     docker:
       - image: circleci/golang:1.11
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:

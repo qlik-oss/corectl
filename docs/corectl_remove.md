@@ -9,10 +9,12 @@ Remove one or mores generic entities (connections, dimensions, measures, objects
 ### Options
 
 ```
+  -a, --app string               App name, if no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
   -h, --help                     help for remove
+      --suppress                 Suppress all confirmation dialogues
       --ttl string               Engine session time to live in seconds (default "30")
 ```
 
