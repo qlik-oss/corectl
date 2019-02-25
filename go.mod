@@ -2,7 +2,7 @@ module github.com/qlik-oss/corectl
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/buger/goterm v0.0.0-20180423150900-6d19e6a8df12
+	github.com/buger/goterm v0.0.0-20190225113744-c206103e1f37
 	github.com/cpuguy83/go-md2man v1.0.8 // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
