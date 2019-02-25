@@ -895,7 +895,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	setObjectsCmd = &cobra.Command{
 		Use:   "objects <glob-pattern-path-to-objects-files.json",
 		Short: "Sets or updates the objects in the current app",
-		Long:  "Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json",
+		Long: `Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json.
+The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
 
 		PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 			setCmd.PersistentPreRun(setCmd, args)
