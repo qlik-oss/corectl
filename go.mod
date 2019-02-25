@@ -12,7 +12,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/qlik-oss/enigma-go v0.0.0-20181006095811-4813e15744f8
+	github.com/qlik-oss/enigma-go v0.0.0-20190225113110-743d6e55f4f7
 	github.com/russross/blackfriday v1.5.2 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
