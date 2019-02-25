@@ -130,10 +130,11 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 		}
 		object, err := doc.GetObject(ctx, objectID)
 		if err == nil && object.Handle != 0 {
-			LogVerbose("Updating object " + objectID)
 			if isGenericObjectEntry {
+				LogVerbose("Updating object using SetFullPropertyTree" + objectID)
 				err = object.SetFullPropertyTreeRaw(ctx, entityFileContents)
 			} else {
+				LogVerbose("Updating object using SetProperties" + objectID)
 				err = object.SetPropertiesRaw(ctx, entityFileContents)
 			}
 			if err != nil {
@@ -144,6 +145,7 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 			if isGenericObjectEntry {
 				var createdObject *enigma.GenericObject
 				createdObject, err = doc.CreateObject(ctx, &enigma.GenericObjectProperties{Info: &enigma.NxInfo{Id: objectID, Type: entity.Property.Info.Type}})
+				LogVerbose("Setting object using SetFullPropertyTree" + objectID)
 				err = createdObject.SetFullPropertyTreeRaw(ctx, entityFileContents)
 			} else {
 				_, err = doc.CreateObjectRaw(ctx, entityFileContents)
