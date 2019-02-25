@@ -4,7 +4,8 @@ Sets or updates the objects in the current app
 
 ### Synopsis
 
-Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json
+Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json.
+The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format
 
 ```
 corectl set objects <glob-pattern-path-to-objects-files.json [flags]

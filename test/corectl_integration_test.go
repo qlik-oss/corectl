@@ -80,12 +80,54 @@ func (tf *testFile) load() string {
 	return string(content)
 }
 
-func TestConnections(t *testing.T) {
-	connectToEngine := "--engine=" + *engineIP
-	cmd := exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "build", "--connections=test/project2/connections.yml"}...)
+func setupEntities(connectToEngine string, configPath string, entityType string, entityPath string) []byte {
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "build", entityPath}...)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json"}...)
 	output, _ := cmd.CombinedOutput()
+	return output
+}
+
+func removeEntities(t *testing.T, connectToEngine string, configPath string, entityType string, entityId string) {
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "remove", entityType, entityId}...)
+	output, _ := cmd.CombinedOutput()
+	assert.Equal(t, "Saving...Done\n\n", string(output))
+}
+
+func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, entityType string) {
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json"}...)
+	output, _ := cmd.CombinedOutput()
+	assert.Equal(t, "[]\n", string(output))
+}
+
+func TestNestedObjectSupport(t *testing.T) {
+	connectToEngine := "--engine=" + *engineIP
+	//create the nested objects
+	output := setupEntities(connectToEngine, "--config=test/project2/corectl.yml", "objects", "--objects=test/project2/sheet.json")
+
+	//verify that the objects are created
+	var objects []*enigma.NxInfo
+	err := json.Unmarshal(output, &objects)
+	assert.NoError(t, err)
+	assert.NotNil(t, objects[0])
+	assert.NotNil(t, objects[0].Id)
+	assert.Equal(t, "a699ee97-152d-4470-9655-ae7c82d71491", objects[0].Id)
+	assert.Len(t, objects, 3)
+
+	//verify that removing the objects works
+	removeEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "objects", objects[0].Id)
+
+	//verify that there is no objects in the app anymore.
+	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "objects")
+
+	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
+}
+
+func TestConnections(t *testing.T) {
+	//create the connection
+	connectToEngine := "--engine=" + *engineIP
+	output := setupEntities(connectToEngine, "--config=test/project2/corectl.yml", "connections", "--connections=test/project2/connections.yml")
 
 	//verify that the connection was created
 	var connections []*enigma.Connection
@@ -95,17 +137,13 @@ func TestConnections(t *testing.T) {
 	assert.NotNil(t, connections[0].Id)
 
 	//verify that removing the connection works
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "connection", connections[0].Id}...)
-	output, _ = cmd.CombinedOutput()
-	assert.Equal(t, "Saving...Done\n\n", string(output))
+	removeEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connection", connections[0].Id)
 
 	//verify that there is no connections in the app anymore.
-	cmd = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "get", "connections", "--json"}...)
-	output, _ = cmd.CombinedOutput()
-	assert.Equal(t, "[]\n", string(output))
+	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connections")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project1.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
 }
 
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
