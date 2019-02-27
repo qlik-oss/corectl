@@ -37,7 +37,7 @@ jobs:
             ENGINE_1_CONTAINER_ID=$(docker ps -aqf "name=engine-1")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_1_CONTAINER_ID")
             # Start a container for test execution
-            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.11-alpine tail -f /dev/null)
+            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.12-alpine tail -f /dev/null)
             # Install packages
             docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash gcc git libc-dev'
             # Copy code into container
