@@ -53,7 +53,7 @@ jobs:
   publish:
     working_directory: ~/corectl
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.12
     steps:
       - checkout
       - run: curl -sL https://git.io/goreleaser | bash
