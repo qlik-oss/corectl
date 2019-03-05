@@ -3,6 +3,7 @@
 ![Latest Version](https://img.shields.io/github/release/qlik-oss/corectl.svg?style=flat)
 
 # Corectl (Experimental)
+<img src="./corectl.svg" alt="corectl" width="200"/>
 
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
