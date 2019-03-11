@@ -5,7 +5,7 @@ Reloads and saves the app after updating connections, dimensions, measures, obje
 ### Synopsis
 
 Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
-			
+		
 
 
 ```
