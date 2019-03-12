@@ -29,7 +29,6 @@ var getAppsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -68,7 +67,6 @@ var getConnectionsCmd = &cobra.Command{
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
 		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -115,7 +113,6 @@ var getDimensionsCmd = &cobra.Command{
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
 		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -230,7 +227,6 @@ var getMeasuresCmd = &cobra.Command{
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
 		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -307,7 +303,6 @@ var getObjectsCmd = &cobra.Command{
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
 		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {

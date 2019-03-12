@@ -16,7 +16,7 @@ import (
 	"testing"
 
 	"github.com/kr/pretty"
-	enigma "github.com/qlik-oss/enigma-go"
+	"github.com/qlik-oss/enigma-go"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -251,7 +251,7 @@ func TestCorectl(t *testing.T) {
 
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
 		{"err jwt", []string{connectToEngine}, []string{"get", "apps"}, []string{"Error details: 401 from ws server: websocket: bad handshake"}, initTest{false, false}},
-		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"get", "apps"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
+		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"get", "apps"}, []string{"Failed to connect to engine with error message: SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
 	}
 
 	for _, tt := range tests {
