@@ -130,11 +130,28 @@ var generateDocsCmd = &cobra.Command{
 	},
 }
 
+var generateAPIspecCmd = &cobra.Command{
+	Use:    "generate-API-spec",
+	Short:  "Generate API spec based on cobra commands",
+	Long:   "Generate API spec docs based on cobra commands",
+	Hidden: true,
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		fmt.Println("Generating API spec")
+		commands := rootCmd.Commands()
+
+		for _, command := range commands {
+			fmt.Println(command.Use)
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(catwalkCmd)
 	rootCmd.AddCommand(evalCmd)
 	rootCmd.AddCommand(generateDocsCmd)
+	rootCmd.AddCommand(generateAPIspecCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(reloadCmd)
 }
