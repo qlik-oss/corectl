@@ -118,7 +118,7 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var generateDocsCommand = &cobra.Command{
+var generateDocsCmd = &cobra.Command{
 	Use:    "generate-docs",
 	Short:  "Generate markdown docs based on cobra commands",
 	Long:   "Generate markdown docs based on cobra commands",
@@ -134,7 +134,7 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(catwalkCmd)
 	rootCmd.AddCommand(evalCmd)
-	rootCmd.AddCommand(generateDocsCommand)
+	rootCmd.AddCommand(generateDocsCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(reloadCmd)
 }
