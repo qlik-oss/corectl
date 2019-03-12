@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -45,13 +44,11 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 	Run: func(ccmd *cobra.Command, args []string) {
 		catwalkURL := viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/apps/" + viper.GetString("app")
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			fmt.Println("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
-			os.Exit(1)
+			internal.Logger.Fatal("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
 		}
 		err := browser.OpenURL(catwalkURL)
 		if err != nil {
-			fmt.Println("Could not open URL", err)
-			os.Exit(1)
+			internal.Logger.Fatalf("Could not open URL: %s", err)
 		}
 	},
 }
@@ -74,7 +71,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("Expected at least one dimension or measure")
+			internal.Logger.Error("Expected at least one dimension or measure")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -114,7 +111,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version of corectl",
 
 	Run: func(_ *cobra.Command, args []string) {
-		fmt.Printf("corectl version %s\n", version)
+		internal.Logger.Infof("corectl version %s\n", version)
 	},
 }
 
@@ -125,7 +122,7 @@ var generateDocsCmd = &cobra.Command{
 	Hidden: true,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		fmt.Println("Generating documentation")
+		internal.Logger.Info("Generating documentation")
 		doc.GenMarkdownTree(rootCmd, "./docs")
 	},
 }

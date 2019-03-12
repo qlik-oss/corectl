@@ -2,9 +2,7 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -74,8 +72,7 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 	for _, fieldName := range fieldNames {
 		fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
 		if err != nil {
-			fmt.Println("Unexpected error", err)
-			os.Exit(1)
+			Logger.Fatalf("Unexpected error: %s", err)
 		}
 		resultChannel <- fieldDescr
 	}
@@ -117,15 +114,15 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, headers http.Header, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	if len(tables) == 0 {
-		FatalError("The data model is empty.")
+		Logger.Fatal("The data model is empty.")
 	}
 	restMetadata, err := ReadRestMetadata(metaURL, headers)
 
 	if len(tables) > 0 && restMetadata == nil {
-		fmt.Println("No REST metadata available.")
+		Logger.Info("No REST metadata available.")
 	}
 	fieldNames := getSortedFieldsNames(ctx, doc, err)
 
@@ -189,9 +186,9 @@ type FieldSourceTableInfo struct {
 func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
 	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	if len(tables) == 0 {
-		FatalError("The data model is empty.")
+		Logger.Fatal("The data model is empty.")
 	}
 }

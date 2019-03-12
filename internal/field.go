@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -10,7 +9,7 @@ import (
 // PrintField prints the first few rows of a field to system out.
 func PrintField(ctx context.Context, doc *enigma.Doc, fieldName string) {
 	ensureModelExists(ctx, doc)
-	fmt.Print(getFieldContentAsTable(ctx, doc, fieldName, 100))
+	Logger.Info(getFieldContentAsTable(ctx, doc, fieldName, 100))
 }
 
 func getFieldContentAsString(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
@@ -78,7 +77,7 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 
 	layout, err := object.GetLayout(ctx)
 	if err != nil {
-		fmt.Println(err)
+		Logger.Errorf("Failed to get object layout: %s", err)
 		return []string{}
 	}
 

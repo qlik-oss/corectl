@@ -23,7 +23,7 @@ func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJ
 		}
 		buffer, err := json.Marshal(specifiedEntityTypeInfos)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		fmt.Println(prettyJSON(buffer))
 
@@ -47,24 +47,24 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 	case "object":
 		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericObject.GetPropertiesRaw(state.Ctx)
 	case "measure":
 		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
 	case "dimension":
 		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
 	}
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 	fmt.Println(prettyJSON(properties))
 }
@@ -77,24 +77,24 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 	case "object":
 		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericObject.GetLayoutRaw(state.Ctx)
 	case "measure":
 		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericMeasure.GetLayoutRaw(state.Ctx)
 	case "dimension":
 		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		properties, err = genericDimension.GetLayoutRaw(state.Ctx)
 	}
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 	fmt.Println(prettyJSON(properties))
 }
@@ -109,12 +109,12 @@ func prettyJSON(data []byte) string {
 func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	object, err := doc.GetObject(ctx, objectID)
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 
 	layout, err := object.GetLayoutRaw(ctx)
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 
 	layoutMap := make(map[string]interface{})

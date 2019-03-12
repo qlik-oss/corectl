@@ -21,8 +21,8 @@ Sets one or several resources
 ### Options inherited from parent commands
 
 ```
-  -t, --traffic   Log JSON websocket traffic to stdout
-  -v, --verbose   Logs extra information
+  -j, --json               Set logging format to JSON
+  -l, --log-level string   Set logging level, one of; TRACE, DEBUG, INFO, WARN, ERROR, FATAL and PANIC. Logging levels DEBUG and TRACE includes JSON websocket traffic. (default "INFO")
 ```
 
 ### SEE ALSO

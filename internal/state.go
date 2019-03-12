@@ -28,27 +28,25 @@ type State struct {
 func logConnectError(err error, engine string) {
 
 	if engine == "" {
-		fmt.Println("Could not connect to the default engine on http://localhost:9076")
-		fmt.Println("Specify where the engine is running using the --engine parameter or in your config file.")
-		fmt.Println("Error details: ", err)
+		Logger.Info("Could not connect to the default engine on http://localhost:9076")
+		Logger.Info("Specify where the engine is running using the --engine parameter or in your config file.")
+		Logger.Fatal("Error details: ", err)
 	} else {
-		fmt.Println("Could not connect to engine on " + engine + ".")
-		fmt.Println("Please check the --engine parameter or your config file.")
-		fmt.Println("Error details: ", err)
+		Logger.Info("Could not connect to engine on " + engine + ".")
+		Logger.Info("Please check the --engine parameter or your config file.")
+		Logger.Fatal("Error details: ", err)
 	}
-	os.Exit(1)
 }
 
 func connectToEngine(ctx context.Context, engine string, appID string, ttl string, headers http.Header) *enigma.Global {
 	engineURL := buildWebSocketURL(engine, ttl)
-	LogVerbose("Engine: " + engineURL)
+	Logger.Debug("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
 		sessionID := getSessionID(appID)
-		LogVerbose("SessionId: " + sessionID)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
-	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
+	Logger.Debug("SessionId: " + headers.Get("X-Qlik-Session"))
 
 	var dialer enigma.Dialer
 
@@ -70,66 +68,66 @@ func DeleteApp(ctx context.Context, engine string, appID string, ttl string, hea
 	global := connectToEngine(ctx, engine, appID, ttl, headers)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	} else if !succ {
-		FatalError("Failed to delete app " + appID)
+		Logger.Fatal("Failed to delete app " + appID)
 	}
 }
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
 func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, headers http.Header, createAppIfMissing bool) *State {
-	LogVerbose("---------- Connecting to app ----------")
+	Logger.Debug("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appID, ttl, headers)
 	if appID == "" {
-		fmt.Println("No app specified, using session app.")
+		Logger.Info("No app specified, using session app.")
 	}
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		Logger.Fatal("Failed to connect to engine with error message: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
 		if appID != "" {
-			LogVerbose("App: " + appID + "(reconnected)")
+			Logger.Debug("App: " + appID + "(reconnected)")
 		} else {
-			LogVerbose("Session app (reconnected)")
+			Logger.Debug("Session app (reconnected)")
 		}
 	} else {
 		if appID == "" {
 			doc, err = global.CreateSessionApp(ctx)
 			if doc != nil {
-				LogVerbose("Session app (new)")
+				Logger.Debug("Session app (new)")
 			} else {
-				FatalError(err)
+				Logger.Fatal(err)
 			}
 		} else {
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 			if doc != nil {
-				LogVerbose("App:  " + appID + "(opened)")
+				Logger.Debug("App:  " + appID + "(opened)")
 			} else if createAppIfMissing {
 				_, _, err = global.CreateApp(ctx, appID, "")
 				if err != nil {
-					FatalError(err)
+					Logger.Fatal(err)
 				}
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
-					FatalError(err)
+					Logger.Fatal(err)
 				}
 				if doc != nil {
-					LogVerbose("Document: " + appID + "(new)")
+					Logger.Debug("Document: " + appID + "(new)")
 				}
 			} else {
-				FatalError(err)
+				Logger.Fatal(err)
 			}
 		}
 	}
 
 	metaURL := buildMetadataURL(engine, appID)
-	LogVerbose("Meta: " + metaURL)
+	Logger.Debug("Meta: " + metaURL)
 
 	return &State{
 		Doc:     doc,
@@ -142,12 +140,12 @@ func PrepareEngineState(ctx context.Context, engine string, appID string, ttl st
 
 func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
 	for sessionEvent := range sessionMessages {
-		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		Logger.Debug(sessionEvent.Topic + " " + string(sessionEvent.Content))
 		if sessionEvent.Topic == "OnConnected" {
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
 			if err != nil {
-				FatalError(err)
+				Logger.Fatal(err)
 			}
 			if parsedEvent["qSessionState"] == "SESSION_CREATED" || parsedEvent["qSessionState"] == "SESSION_ATTACHED" {
 				return nil
@@ -160,17 +158,17 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
 	for sessionEvent := range sessionMessages {
-		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		Logger.Debug(sessionEvent.Topic + " " + string(sessionEvent.Content))
 	}
 }
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string, headers http.Header) *State {
-	LogVerbose("---------- Connecting to engine ----------")
+	Logger.Debug("---------- Connecting to engine ----------")
 
 	engineURL := buildWebSocketURL(engine, ttl)
 
-	LogVerbose("Engine: " + engineURL)
+	Logger.Debug("Engine: " + engineURL)
 
 	var dialer enigma.Dialer
 
@@ -188,7 +186,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		Logger.Fatal("Failed to connect to engine with error message: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 
@@ -239,18 +237,12 @@ func buildMetadataURL(engine string, appID string) string {
 func getSessionID(appID string) string {
 	currentUser, err := user.Current()
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	hostName, err := os.Hostname()
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("Corectl-" + currentUser.Username + "-" + hostName + "-" + appID))
 	return sessionID
-}
-
-// FatalError prints the supplied message and exists the process with code 1
-func FatalError(fatalMessage ...interface{}) {
-	fmt.Println(fatalMessage...)
-	os.Exit(1)
 }

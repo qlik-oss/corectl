@@ -2,8 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"time"
 
 	"github.com/qlik-oss/enigma-go"
@@ -43,49 +41,46 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 		//fetch the progress but do nothing, othwerwise we will get it for the next non silent call
 		_, getProgressErr := global.GetProgress(ctx, 0)
 		if getProgressErr != nil {
-			fmt.Println(getProgressErr)
+			Logger.Info(getProgressErr)
 		}
 	}
 
 	if err != nil {
-		fmt.Println("Error when reloading app", err)
+		Logger.Errorf("Error when reloading app: %s", err)
 	}
 	if !reloadSuccessful {
-		fmt.Println("DoReload was not successful!")
-		os.Exit(1)
+		Logger.Fatal("DoReload was not successful!")
 	}
 
-	fmt.Println("Reload finished successfully")
+	Logger.Info("Reload finished successfully")
 
 }
 
 func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID int, skipTransientLogs bool) {
 	progress, err := global.GetProgress(ctx, reservedRequestID)
 	if err != nil {
-		fmt.Println(err)
+		Logger.Error(err)
 	} else {
 		var text string
 		if progress.TransientProgress != "" {
 			if !skipTransientLogs {
 				text = progress.TransientProgress
-				fmt.Print("\033\r" + text)
+				Logger.Info("\033\r" + text)
 			}
 		} else if progress.PersistentProgress != "" {
 			text = progress.PersistentProgress
-			fmt.Print(text)
+			Logger.Info(text)
 		}
 	}
 }
 
 // Save calls DoSave on the app and prints "Done" if it succeeded or "Save failed" to system out.
 func Save(ctx context.Context, doc *enigma.Doc, path string) {
-	fmt.Print("Saving...")
+	Logger.Info("Saving...")
 	err := doc.DoSave(ctx, path)
 	if err == nil {
-		fmt.Println("Done")
+		Logger.Info("Done")
 	} else {
-		fmt.Println("Save failed")
+		Logger.Error("Save failed")
 	}
-	fmt.Println()
-
 }

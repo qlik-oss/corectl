@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -37,7 +36,7 @@ var getAppsCmd = &cobra.Command{
 		state := internal.PrepareEngineStateWithoutApp(rootCtx, viper.GetString("engine"), viper.GetString("ttl"), headers)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		printer.PrintApps(docList, viper.GetBool("json"))
 	},
@@ -76,7 +75,7 @@ var getConnectionsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		printer.PrintConnections(connections, viper.GetBool("json"))
 	},
@@ -95,14 +94,14 @@ var getConnectionCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) != 1 {
-			fmt.Println("Expected a connection name as parameter")
+			internal.Logger.Error("Expected a connection name as parameter")
 			ccmd.Usage()
 			os.Exit(1)
 		}
 		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		printer.PrintConnection(connection)
 	},
@@ -180,7 +179,7 @@ var getFieldCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) != 1 {
-			fmt.Println("Expected a field name as parameter")
+			internal.Logger.Error("Expected a field name as parameter")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -357,7 +356,7 @@ var getObjectLayoutCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Expected an object id specify what object to use as a parameter")
+			internal.Logger.Error("Expected an object id specify what object to use as a parameter")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -377,7 +376,7 @@ var getObjectDataCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Expected an object id specify what object to use as a parameter")
+			internal.Logger.Error("Expected an object id specify what object to use as a parameter")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -400,9 +399,9 @@ var getScriptCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
-		fmt.Println(script)
+		internal.Logger.Info(script)
 	},
 }
 

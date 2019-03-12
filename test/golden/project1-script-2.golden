@@ -1,5 +1,1 @@
-LIB CONNECT TO myconnection;
-
-TableA:
-SELECT A;
-
+logseverity=info message="LIB CONNECT TO myconnection;\n\nTableA:\nSELECT A;\n"

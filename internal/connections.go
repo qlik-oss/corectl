@@ -63,27 +63,26 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 			varName := strings.TrimSuffix(strings.TrimPrefix(connection.Password, "${"), "}")
 			connection.Password = os.Getenv(varName)
 			if connection.Password == "" {
-				fmt.Println("WARNING environment variable not found:", varName)
+				Logger.Warnf("environment variable not found: %s", varName)
 			} else {
-				LogVerbose("Resolved password from environment variable " + varName)
+				Logger.Debugf("Resolved password from environment variable %s", varName)
 			}
 		}
 
 		if existingConnectionID := findExistingConnection(connections, connection.Name); existingConnectionID != "" {
-			LogVerbose("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
+			Logger.Debug("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
 			err = doc.ModifyConnection(ctx, existingConnectionID, connection, true)
 		} else {
-			LogVerbose("Creating new connection: " + fmt.Sprint(connection))
+			Logger.Debug("Creating new connection: " + fmt.Sprint(connection))
 			var id string
 			id, err = doc.CreateConnection(ctx, connection)
 			if err == nil {
-				fmt.Println("New connection created with id: ", id)
+				Logger.Info("New connection created with id: ", id)
 			}
 		}
 
 		if err != nil {
-			fmt.Println("Could not create/modify connection", err)
-			os.Exit(1)
+			Logger.Fatalf("Could not create/modify connection: %s", err)
 		}
 	}
 	return err

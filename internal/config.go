@@ -1,9 +1,7 @@
 package internal
 
 import (
-	"fmt"
 	"io/ioutil"
-	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -28,13 +26,12 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 	var config ConnectionsConfigFile
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Println("Could not find connections file:", path)
-		os.Exit(1)
+		Logger.Fatalf("Could not find connections file: %s", path)
 	}
 
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	return config
 }

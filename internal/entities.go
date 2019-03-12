@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -28,13 +27,12 @@ func ReadEntitiesFile(path string) EntitiesConfigFile {
 	var config EntitiesConfigFile
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Println("Could not find entities file:", path)
-		os.Exit(1)
+		Logger.Fatalf("Could not find entities file: %s", path)
 	}
 
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	return config
 }
@@ -44,7 +42,7 @@ func ReadEntitiesFile(path string) EntitiesConfigFile {
 func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, entitiesPathsOnCommandLine string, entityType string) {
 	entitiesOnCommandLine, err := filepath.Glob(entitiesPathsOnCommandLine)
 	if err != nil {
-		FatalError(err)
+		Logger.Fatal(err)
 	}
 	for _, relativeEntityPath := range entitiesOnCommandLine {
 		setupEntity(ctx, doc, relativeEntityPath, entityType)
@@ -64,13 +62,13 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, ent
 		case "object":
 			entities = configFileContents.Objects
 		default:
-			FatalError("Unknown type: " + entityType)
+			Logger.Fatal("Unknown type: " + entityType)
 		}
 
 		for _, entityGlobPatternInConfigFile := range entities {
 			entitiesInConfigLine, err := filepath.Glob(entityGlobPatternInConfigFile)
 			if err != nil {
-				FatalError(err)
+				Logger.Fatal(err)
 			}
 			for _, relativeEntityPath := range entitiesInConfigLine {
 				setupEntity(ctx, doc, relativeEntityPath, entityType)
@@ -82,7 +80,7 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, ent
 func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entityType string) {
 	entityFileContents, err := ioutil.ReadFile(entityPath)
 	if err != nil {
-		FatalError("Could not open "+entityType+" file", err)
+		Logger.Fatal("Could not open "+entityType+" file", err)
 	}
 	var entity genericEntity
 	err = json.Unmarshal(entityFileContents, &entity)
@@ -92,31 +90,31 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 	case "dimension":
 		dimension, err := doc.GetDimension(ctx, entity.Info.Id)
 		if err == nil && dimension.Handle != 0 {
-			LogVerbose("Updating dimension " + entity.Info.Id)
+			Logger.Debug("Updating dimension " + entity.Info.Id)
 			err = dimension.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update dimension "+entity.Info.Id, err)
+				Logger.Fatal("Failed to update dimension "+entity.Info.Id, err)
 			}
 		} else {
-			LogVerbose("Creating dimension " + entity.Info.Id)
+			Logger.Debug("Creating dimension " + entity.Info.Id)
 			_, err = doc.CreateDimensionRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create dimension "+entity.Info.Id, err)
+				Logger.Fatal("Failed to create dimension "+entity.Info.Id, err)
 			}
 		}
 	case "measure":
 		measure, err := doc.GetMeasure(ctx, entity.Info.Id)
 		if err == nil && measure.Handle != 0 {
-			LogVerbose("Updating measure " + entity.Info.Id)
+			Logger.Debug("Updating measure " + entity.Info.Id)
 			err = measure.SetPropertiesRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to update measure "+entity.Info.Id, err)
+				Logger.Fatal("Failed to update measure "+entity.Info.Id, err)
 			}
 		} else {
-			LogVerbose("Creating measure " + entity.Info.Id)
+			Logger.Debug("Creating measure " + entity.Info.Id)
 			_, err = doc.CreateMeasureRaw(ctx, entityFileContents)
 			if err != nil {
-				FatalError("Failed to create measure "+entity.Info.Id, err)
+				Logger.Fatal("Failed to create measure "+entity.Info.Id, err)
 			}
 		}
 	case "object":
@@ -131,27 +129,27 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 		object, err := doc.GetObject(ctx, objectID)
 		if err == nil && object.Handle != 0 {
 			if isGenericObjectEntry {
-				LogVerbose("Updating object " + objectID + " using SetFullPropertyTree")
+				Logger.Debug("Updating object " + objectID + " using SetFullPropertyTree")
 				err = object.SetFullPropertyTreeRaw(ctx, entityFileContents)
 			} else {
-				LogVerbose("Updating object " + objectID + " using SetProperties")
+				Logger.Debug("Updating object " + objectID + " using SetProperties")
 				err = object.SetPropertiesRaw(ctx, entityFileContents)
 			}
 			if err != nil {
-				FatalError("Failed to update object "+objectID, err)
+				Logger.Fatal("Failed to update object "+objectID, err)
 			}
 		} else {
-			LogVerbose("Creating object " + objectID)
+			Logger.Debug("Creating object " + objectID)
 			if isGenericObjectEntry {
 				var createdObject *enigma.GenericObject
 				createdObject, err = doc.CreateObject(ctx, &enigma.GenericObjectProperties{Info: &enigma.NxInfo{Id: objectID, Type: entity.Property.Info.Type}})
-				LogVerbose("Setting object  " + objectID + " using SetFullPropertyTree")
+				Logger.Debug("Setting object  " + objectID + " using SetFullPropertyTree")
 				err = createdObject.SetFullPropertyTreeRaw(ctx, entityFileContents)
 			} else {
 				_, err = doc.CreateObjectRaw(ctx, entityFileContents)
 			}
 			if err != nil {
-				FatalError("Failed to create object "+objectID, err)
+				Logger.Fatal("Failed to create object "+objectID, err)
 			}
 		}
 	}
@@ -159,24 +157,24 @@ func setupEntity(ctx context.Context, doc *enigma.Doc, entityPath string, entity
 
 func validateEntity(entity genericEntity, entityPath string, err error) {
 	if err != nil {
-		FatalError("Invalid json", err)
+		Logger.Fatal("Invalid json", err)
 	}
 	if entity.Info == nil && entity.Property == nil {
-		FatalError("Missing qInfo attribute or qProperty attribute", entityPath)
+		Logger.Fatal("Missing qInfo attribute or qProperty attribute", entityPath)
 	}
 	if entity.Info != nil && entity.Info.Id == "" {
-		FatalError("Missing qInfo qId attribute", entityPath)
+		Logger.Fatal("Missing qInfo qId attribute", entityPath)
 	}
 	if entity.Info != nil && entity.Info.Type == "" {
-		FatalError("Missing qInfo qType attribute", entityPath)
+		Logger.Fatal("Missing qInfo qType attribute", entityPath)
 	}
 	if entity.Property != nil && entity.Property.Info == nil {
-		FatalError("Missing qInfo attribute inside the qProperty", entityPath)
+		Logger.Fatal("Missing qInfo attribute inside the qProperty", entityPath)
 	}
 	if entity.Property != nil && entity.Property.Info.Id == "" {
-		FatalError("Missing qInfo qId attribute inside qProperty", entityPath)
+		Logger.Fatal("Missing qInfo qId attribute inside qProperty", entityPath)
 	}
 	if entity.Property != nil && entity.Property.Info.Type == "" {
-		FatalError("Missing qInfo qType attribute inside qProperty", entityPath)
+		Logger.Fatal("Missing qInfo qType attribute inside qProperty", entityPath)
 	}
 }

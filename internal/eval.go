@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
 	tm "github.com/buger/goterm"
@@ -33,14 +32,12 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	layout, err := object.GetLayout(ctx)
 
 	if err != nil {
-		fmt.Println("Failed to get hypercube layout: ", err)
-		os.Exit(1)
+		Logger.Fatal("Failed to get hypercube layout: ", err)
 	}
 
 	// If the dimension info contains an error element the expression failed to evaluate
 	if len(layout.HyperCube.DimensionInfo) != 0 && layout.HyperCube.DimensionInfo[0].Error != nil {
-		fmt.Println("Failed to evaluate expression with error code:", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
-		os.Exit(1)
+		Logger.Fatalf("Failed to evaluate expression with error code: %d", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
 	}
 
 	fmt.Fprintf(grid, strings.Join(dims, "\t"))

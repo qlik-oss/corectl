@@ -81,21 +81,21 @@ func (tf *testFile) load() string {
 }
 
 func setupEntities(connectToEngine string, configPath string, entityType string, entityPath string) []byte {
-	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "build", entityPath}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "build", entityPath, "--test"}...)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json"}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json", "--test"}...)
 	output, _ := cmd.CombinedOutput()
 	return output
 }
 
 func removeEntities(t *testing.T, connectToEngine string, configPath string, entityType string, entityId string) {
-	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "remove", entityType, entityId}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "remove", entityType, entityId, "--test"}...)
 	output, _ := cmd.CombinedOutput()
-	assert.Equal(t, "Saving...Done\n\n", string(output))
+	assert.Equal(t, "logseverity=info message=Saving...\nlogseverity=info message=Done\n", string(output))
 }
 
 func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, entityType string) {
-	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json"}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "get", entityType, "--json", "--test"}...)
 	output, _ := cmd.CombinedOutput()
 	assert.Equal(t, "[]\n", string(output))
 }
@@ -121,7 +121,7 @@ func TestNestedObjectSupport(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "objects")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf", "--test"}...)
 }
 
 func TestConnections(t *testing.T) {
@@ -143,7 +143,7 @@ func TestConnections(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connections")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "remove", "app", "project2.qvf", "--test"}...)
 }
 
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
@@ -204,7 +204,7 @@ func TestCorectl(t *testing.T) {
 		{"help 2", emptyConnectString, []string{"help"}, []string{"golden", "help-2.golden"}, initTest{false, false}},
 		{"help 3", emptyConnectString, []string{"help", "build"}, []string{"golden", "help-3.golden"}, initTest{false, false}},
 
-		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
+		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<", "5 Lines fetched", "TableB <<", "5 Lines fetched", "Reload finished successfully", "Saving...", "Done"}, initTest{false, true}},
 		{"project 1 - get tables", defaultConnectString1, []string{"get", "tables"}, []string{"golden", "project1-tables.golden"}, initTest{true, true}},
 		{"project 1 - get assoc", defaultConnectString1, []string{"get", "assoc"}, []string{"golden", "project1-assoc.golden"}, initTest{true, true}},
 		{"project 1 - get fields", defaultConnectString1, []string{"get", "fields"}, []string{"golden", "project1-fields.golden"}, initTest{true, true}},
@@ -231,14 +231,14 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - check measures after removal", defaultConnectString1, []string{"get", "measures"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
 		{"project 1 - set script", defaultConnectString1, []string{"set", "script", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
-		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
+		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script", "--log-level=DEBUG", "--json"}, []string{"{\"logseverity\":\"debug\",\"message\":\"recv\",\"traffic\":{\"jsonrpc\":\"2.0\",\"method\":\"OnConnected\",\"params\":{\"qSessionState\":\"SESSION_ATTACHED\"}}}"}, initTest{true, true}},
 
 		// Project 2 has separate connections file
-		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
+		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data", "Reload finished successfully", "Saving...", "Done"}, initTest{false, true}},
 		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
 
-		{"project 3 - build ", defaultConnectString3, []string{"build"}, []string{"No app specified, using session app.", "datacsv << data 1 Lines fetched", "Reload finished successfully"}, initTest{false, false}},
+		{"project 3 - build ", defaultConnectString3, []string{"build"}, []string{"No app specified, using session app.", "datacsv << data", "Reload finished successfully"}, initTest{false, false}},
 		{"project 3 - get fields", defaultConnectString3, []string{"get", "fields"}, []string{"golden", "project3-fields.golden"}, initTest{false, false}},
 		{"err project 1 - invalid-catwalk-url", defaultConnectString1, []string{"catwalk", "--catwalk-url=not-a-valid-url"}, []string{"golden", "project1-catwalk-error.golden"}, initTest{false, false}},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"eval", "count(numbers)", "by", "xyz"}, []string{"golden", "err-2.golden"}, initTest{false, false}},
@@ -247,10 +247,10 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - get status", defaultConnectString1, []string{"get", "status"}, []string{"Connected to project1.qvf @ ", "The data model has 2 tables."}, initTest{true, true}},
 		{"list apps", defaultConnectString1, []string{"get", "apps"}, []string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title", "project1.qvf"}, initTest{true, true}},
 		{"list apps json", defaultConnectString1, []string{"get", "apps", "--json"}, []string{"\"id\": \"/apps/project1.qvf\","}, initTest{true, true}},
-		{"err 1", []string{"--engine=localhost:9999"}, []string{"get", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
+		{"err 1", []string{"--engine=localhost:9999"}, []string{"get", "fields"}, []string{"Please check the --engine parameter or your config file", "Error details: dial tcp"}, initTest{false, false}},
 
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
-		{"err jwt", []string{connectToEngine}, []string{"get", "apps"}, []string{"Error details:  401 from ws server: websocket: bad handshake"}, initTest{false, false}},
+		{"err jwt", []string{connectToEngine}, []string{"get", "apps"}, []string{"Error details: 401 from ws server: websocket: bad handshake"}, initTest{false, false}},
 		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"get", "apps"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
 	}
 
@@ -261,6 +261,7 @@ func TestCorectl(t *testing.T) {
 			defer teardownTest(t, tt)
 
 			args := append(tt.connectString, tt.command...)
+			args = append(args, "--test")
 			cmd := exec.Command(binaryPath, args...)
 
 			t.Log("\u001b[35m Executing command:" + strings.Join(cmd.Args, " ") + "\u001b[0m")
@@ -289,7 +290,7 @@ func TestCorectl(t *testing.T) {
 			} else {
 				for _, sub := range tt.expected {
 					if !strings.Contains(actual, sub) {
-						t.Fatalf("Output did not contain substring %v", sub)
+						t.Fatalf("Output: %v did not contain substring: %v", actual, sub)
 					}
 				}
 			}

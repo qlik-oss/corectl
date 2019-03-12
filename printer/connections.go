@@ -31,7 +31,7 @@ func PrintConnection(connection *enigma.Connection) {
 func jsonPrinter(v interface{}) {
 	buffer, err := json.Marshal(v)
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 	fmt.Println(prettyJSON(buffer))
 }

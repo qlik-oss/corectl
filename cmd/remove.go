@@ -40,7 +40,7 @@ var removeAppCmd = &cobra.Command{
 		app := viper.GetString("app")
 
 		if len(args) != 1 && app == "" {
-			fmt.Println("Expected an identifier of the app to delete.")
+			internal.Logger.Error("Expected an identifier of the app to delete.")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -68,7 +68,7 @@ var removeConnectionCmd = &cobra.Command{
 	},
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) != 1 {
-			fmt.Println("Expected an identifier of the connection to delete.")
+			internal.Logger.Error("Expected an identifier of the connection to delete.")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -76,7 +76,7 @@ var removeConnectionCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
 		err := state.Doc.DeleteConnection(rootCtx, args[0])
 		if err != nil {
-			internal.FatalError("Failed to remove connection", args[0])
+			internal.Logger.Fatal("Failed to remove connection", args[0])
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc, state.AppID)
@@ -97,7 +97,7 @@ var removeDimensionsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Expected atleast one dimension-id specify what dimension to remove from the app")
+			internal.Logger.Error("Expected atleast one dimension-id specify what dimension to remove from the app")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -105,9 +105,9 @@ var removeDimensionsCmd = &cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic dimension ", entity+" with error: "+err.Error())
+				internal.Logger.Fatal("Failed to remove generic dimension ", entity+" with error: "+err.Error())
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic dimension ", entity)
+				internal.Logger.Fatal("Failed to remove generic dimension ", entity)
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
@@ -128,7 +128,7 @@ var removeMeasuresCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Expected atleast one measure-id specify what measure to remove from the app")
+			internal.Logger.Error("Expected atleast one measure-id specify what measure to remove from the app")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -136,9 +136,9 @@ var removeMeasuresCmd = &cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic measure ", entity+" with error: "+err.Error())
+				internal.Logger.Fatal("Failed to remove generic measure ", entity+" with error: "+err.Error())
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic measure ", entity)
+				internal.Logger.Fatal("Failed to remove generic measure ", entity)
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
@@ -159,7 +159,7 @@ var removeObjectsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("Expected atleast one object-id specify what object to remove from the app")
+			internal.Logger.Error("Expected atleast one object-id specify what object to remove from the app")
 			ccmd.Usage()
 			os.Exit(1)
 		}
@@ -167,9 +167,9 @@ var removeObjectsCmd = &cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic object ", entity+" with error: "+err.Error())
+				internal.Logger.Fatal("Failed to remove generic object ", entity+" with error: "+err.Error())
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic object ", entity)
+				internal.Logger.Fatal("Failed to remove generic object ", entity)
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {

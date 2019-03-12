@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -32,23 +31,23 @@ var rootCmd = &cobra.Command{
 		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "version" {
 			return
 		}
-		internal.QliVerbose = viper.GetBool("verbose")
-		internal.LogTraffic = viper.GetBool("traffic")
+		internal.InitLogger(viper.GetString("log-level"), viper.GetBool("json"), viper.GetBool("test"))
+
 		if explicitConfigFile != "" {
 			viper.SetConfigFile(strings.TrimSpace(explicitConfigFile))
 			if err := viper.ReadInConfig(); err == nil {
-				internal.LogVerbose("Using config file: " + explicitConfigFile)
+				internal.Logger.Debug("Using config file: " + explicitConfigFile)
 			} else {
-				fmt.Println(err)
+				internal.Logger.Error(err)
 			}
 		} else {
 			viper.SetConfigName("corectl") // name of config file (without extension)
 			viper.SetConfigType("yml")
 			viper.AddConfigPath(".")
 			if err := viper.ReadInConfig(); err == nil {
-				internal.LogVerbose("Using config file in working directory")
+				internal.Logger.Debug("Using config file in working directory")
 			} else {
-				internal.LogVerbose("No config file")
+				internal.Logger.Debug("No config file")
 			}
 		}
 
@@ -70,17 +69,21 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		internal.Logger.Fatal(err)
 	}
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
-	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
-	rootCmd.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
-	viper.BindPFlag("traffic", rootCmd.PersistentFlags().Lookup("traffic"))
+	rootCmd.PersistentFlags().StringP("log-level", "l", "INFO", "Set logging level, one of; TRACE, DEBUG, INFO, WARN, ERROR, FATAL and PANIC. Logging levels DEBUG and TRACE includes JSON websocket traffic.")
+	viper.BindPFlag("log-level", rootCmd.PersistentFlags().Lookup("log-level"))
+
+	rootCmd.PersistentFlags().BoolP("json", "j", false, "Set logging format to JSON")
+	viper.BindPFlag("json", rootCmd.PersistentFlags().Lookup("json"))
+
+	rootCmd.PersistentFlags().Bool("test", false, "Used for testing, disables timestamps")
+	rootCmd.PersistentFlags().MarkHidden("test")
+	viper.BindPFlag("test", rootCmd.PersistentFlags().Lookup("test"))
 
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
 	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
@@ -139,10 +142,6 @@ func init() {
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
 	}
 
-	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
-		command.PersistentFlags().Bool("json", false, "Prints the information in json format")
-	}
-
 	for _, command := range []*cobra.Command{removeCmd} {
 		command.PersistentFlags().Bool("suppress", false, "Suppress all confirmation dialogues")
 	}
@@ -162,7 +161,7 @@ func GetRelativeParameter(paramName string) string {
 
 func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) {
 	if len(args) < 1 {
-		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
+		internal.Logger.Error("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
 		ccmd.Usage()
 		os.Exit(1)
 	}
@@ -172,7 +171,7 @@ func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) 
 
 func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
 	if len(args) < 1 {
-		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
+		internal.Logger.Error("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
 		ccmd.Usage()
 		os.Exit(1)
 	}
@@ -184,7 +183,7 @@ func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJ
 	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
 	allInfos, err := state.Doc.GetAllInfos(rootCtx)
 	if err != nil {
-		internal.FatalError(err)
+		internal.Logger.Fatal(err)
 	}
 	printer.PrintGenericEntities(allInfos, entityType, printAsJSON)
 }

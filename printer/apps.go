@@ -16,7 +16,7 @@ func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool) {
 	if printAsJSON {
 		buffer, err := json.Marshal(filterDocEntries(docList))
 		if err != nil {
-			internal.FatalError(err)
+			internal.Logger.Fatal(err)
 		}
 		fmt.Println(prettyJSON(buffer))
 	} else {

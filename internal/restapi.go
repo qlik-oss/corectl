@@ -2,7 +2,6 @@ package internal
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -14,13 +13,13 @@ func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
 	}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
+		Logger.Errorf("The HTTP request failed with error %s\n", err)
 		return nil, err
 	}
 	req.Header = headers
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
+		Logger.Errorf("The HTTP request failed with error %s\n", err)
 		return nil, err
 	}
 	defer response.Body.Close()

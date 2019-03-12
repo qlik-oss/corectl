@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -177,7 +176,7 @@ var setScriptCmd = &cobra.Command{
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
 		} else {
-			fmt.Println("Expected the path to a file containing the qlik script")
+			internal.Logger.Error("Expected the path to a file containing the qlik script")
 			ccmd.Usage()
 			os.Exit(1)
 		}

@@ -1,5 +1,5 @@
-No app specified, using session app.
-No REST metadata available.
+logseverity=info message="No app specified, using session app."
+logseverity=info message="No REST metadata available."
 Field        Uniq/Tot   RAM   Tags                 datacsv   Sample content
 a            1          11    $numeric, $integer   1/1       1   
 b            1          11    $numeric, $integer   1/1       2   
