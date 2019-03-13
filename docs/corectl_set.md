@@ -14,6 +14,7 @@ Sets one or several resources
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])
   -h, --help                     help for set
+      --no-data                  Open app without data
       --no-save                  Do not save the app
       --ttl string               Engine session time to live in seconds (default "30")
 ```

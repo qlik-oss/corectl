@@ -21,6 +21,7 @@ var setCmd = &cobra.Command{
 		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 		viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+		viper.BindPFlag("no-data", ccmd.PersistentFlags().Lookup("no-data"))
 	},
 }
 

@@ -20,6 +20,7 @@ var getCmd = &cobra.Command{
 		rootCmd.PersistentPreRun(rootCmd, args)
 		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+		viper.BindPFlag("no-data", ccmd.PersistentFlags().Lookup("no-data"))
 	},
 }
 

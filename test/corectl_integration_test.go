@@ -1,5 +1,3 @@
-// +build integration
-
 package test
 
 import (
@@ -232,6 +230,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - set script", defaultConnectString1, []string{"set", "script", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
 		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
+		{"project 1 - open app without data", []string{"--config=test/project1/corectl-alt.yml", "--ttl", "0", connectToEngine}, []string{"get", "connections", "--no-data", "--verbose"}, []string{"without data"}, initTest{true, true}},
 
 		// Project 2 has separate connections file
 		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},

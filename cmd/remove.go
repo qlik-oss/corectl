@@ -25,6 +25,7 @@ var removeCmd = &cobra.Command{
 		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 		viper.BindPFlag("headers", ccmd.PersistentFlags().Lookup("headers"))
 		viper.BindPFlag("suppress", ccmd.PersistentFlags().Lookup("suppress"))
+		viper.BindPFlag("no-data", ccmd.PersistentFlags().Lookup("no-data"))
 	},
 }
 

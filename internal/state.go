@@ -83,6 +83,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	engine := viper.GetString("engine")
 	appID := viper.GetString("app")
 	ttl := viper.GetString("ttl")
+	noData := viper.GetBool("no-data")
 
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appID, ttl, headers)
@@ -112,9 +113,13 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				FatalError(err)
 			}
 		} else {
-			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
+			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if doc != nil {
-				LogVerbose("App:  " + appID + "(opened)")
+				if noData {
+					LogVerbose("Opened app with id " + appID + " without data")
+				} else {
+					LogVerbose("Opened app with id " + appID)
+				}
 			} else if createAppIfMissing {
 				_, _, err = global.CreateApp(ctx, appID, "")
 				if err != nil {

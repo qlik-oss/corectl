@@ -98,6 +98,10 @@ func init() {
 		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
 	}
 
+	for _, command := range []*cobra.Command{getCmd, removeCmd, setCmd} {
+		command.PersistentFlags().Bool("no-data", false, "Open app without data")
+	}
+
 	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, setCmd, removeCmd} {
 		//not binding to viper since binding a map does not seem to work.
 		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
