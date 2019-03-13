@@ -199,7 +199,7 @@ func checkLatestVersion() {
 		}
 
 		fmt.Println("-------------------------------------------------")
-		fmt.Printf("Version %s is not latest, you should upgrade to %s \n", version, res.Current)
+		fmt.Printf("There is a new version available! Please upgrade for the latest features and bug fixes. You are on %s, latest version is %s. \n", version, res.Current)
 		fmt.Printf("To download the latest version you can use this command: \n")
 		fmt.Printf(`'%s'`, dwnl)
 		fmt.Println("\n-------------------------------------------------")
