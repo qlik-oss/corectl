@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path"
+	"runtime"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -10,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
+	"github.com/tcnksm/go-latest"
 )
 
 var buildCmd = &cobra.Command{
@@ -114,6 +117,11 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version of corectl",
 
 	Run: func(_ *cobra.Command, args []string) {
+
+		if version != "development build" {
+			checkLatestVersion()
+		}
+
 		fmt.Printf("corectl version: %s\n", version)
 	},
 }
@@ -165,5 +173,35 @@ func build(ccmd *cobra.Command, args []string) {
 
 	if state.AppID != "" {
 		internal.Save(ctx, state.Doc, state.AppID)
+	}
+}
+
+// Function for checking current version against latest released version on github
+func checkLatestVersion() {
+	githubTag := &latest.GithubTag{
+		Owner:      "qlik-oss",
+		Repository: "corectl",
+	}
+
+	res, err := latest.Check(githubTag, version)
+
+	if err == nil && res.Outdated {
+
+		// Find absolute path of executable
+		executable, _ := os.Executable()
+
+		// Format a download string depending on OS
+		var dwnl string
+		if runtime.GOOS == "windows" {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "%s" && rm ./corectl.zip`, res.Current, path.Dir(executable))
+		} else {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, res.Current, runtime.GOOS, path.Dir(executable))
+		}
+
+		fmt.Println("-------------------------------------------------")
+		fmt.Printf("There is a new version available! Please upgrade for the latest features and bug fixes. You are on %s, latest version is %s. \n", version, res.Current)
+		fmt.Printf("To download the latest version you can use this command: \n")
+		fmt.Printf(`'%s'`, dwnl)
+		fmt.Println("\n-------------------------------------------------")
 	}
 }
