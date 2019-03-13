@@ -34,7 +34,7 @@ var getAppsCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineStateWithoutApp(rootCtx, viper.GetString("engine"), viper.GetString("ttl"), headers)
+		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
 			internal.FatalError(err)
@@ -54,7 +54,7 @@ var getAssociationsCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
 		printer.PrintAssociations(data)
 	},
@@ -73,7 +73,7 @@ var getConnectionsCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
 			internal.FatalError(err)
@@ -99,7 +99,7 @@ var getConnectionCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
 			internal.FatalError(err)
@@ -184,7 +184,7 @@ var getFieldCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.PrintField(rootCtx, state.Doc, args[0])
 	},
 }
@@ -200,7 +200,7 @@ var getFieldsCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
 		printer.PrintFields(data, false)
 	},
@@ -217,7 +217,7 @@ var getKeysCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, true)
 		printer.PrintFields(data, true)
 	},
@@ -294,7 +294,7 @@ var getMetaCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
 		printer.PrintMetadata(data)
 	},
@@ -361,7 +361,7 @@ var getObjectLayoutCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.PrintGenericEntityLayout(state, args[0], "object")
 	},
 }
@@ -381,7 +381,7 @@ var getObjectDataCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.EvalObject(rootCtx, state.Doc, args[0])
 	},
 }
@@ -397,7 +397,7 @@ var getScriptCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
 			internal.FatalError(err)
@@ -417,12 +417,8 @@ var getStatusCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		engine := viper.GetString("engine")
-		if engine == "" {
-			engine = "localhost:9076"
-		}
-		state := internal.PrepareEngineState(rootCtx, engine, viper.GetString("app"), viper.GetString("ttl"), headers, false)
-		printer.PrintStatus(state, engine)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintStatus(state, viper.GetString("engine"))
 	},
 }
 
@@ -437,7 +433,7 @@ var getTablesCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
 		printer.PrintTables(data)
 	},
