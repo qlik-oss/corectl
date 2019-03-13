@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
+	"github.com/tcnksm/go-latest"
 )
 
 var buildCmd = &cobra.Command{
@@ -114,6 +115,11 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version of corectl",
 
 	Run: func(_ *cobra.Command, args []string) {
+
+		if version != "development build" {
+			checkLatestVersion()
+		}
+
 		fmt.Printf("corectl version: %s\n", version)
 	},
 }
@@ -165,5 +171,19 @@ func build(ccmd *cobra.Command, args []string) {
 
 	if state.AppID != "" {
 		internal.Save(ctx, state.Doc, state.AppID)
+	}
+}
+
+// Function for checking current version against latest released version on github
+func checkLatestVersion() {
+	githubTag := &latest.GithubTag{
+		Owner:      "qlik-oss",
+		Repository: "corectl",
+	}
+
+	res, err := latest.Check(githubTag, version)
+
+	if err == nil && res.Outdated {
+		fmt.Printf("*** Version %s is not latest, you should upgrade to %s ***\n", version, res.Current)
 	}
 }
