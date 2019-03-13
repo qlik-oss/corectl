@@ -114,7 +114,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version of corectl",
 
 	Run: func(_ *cobra.Command, args []string) {
-		fmt.Printf("corectl version %s\n", version)
+		fmt.Printf("corectl version: %s\n", version)
 	},
 }
 
