@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"runtime"
@@ -189,10 +188,7 @@ func checkLatestVersion() {
 	if err == nil && res.Outdated {
 
 		// Find absolute path of executable
-		executable, err := os.Executable()
-		if err != nil {
-			log.Fatal(err)
-		}
+		executable, _ := os.Executable()
 
 		// Format a download string depending on OS
 		var dwnl string
