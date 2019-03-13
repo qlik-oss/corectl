@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"path"
+	"runtime"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -184,6 +187,25 @@ func checkLatestVersion() {
 	res, err := latest.Check(githubTag, version)
 
 	if err == nil && res.Outdated {
-		fmt.Printf("*** Version %s is not latest, you should upgrade to %s ***\n", version, res.Current)
+
+		// Find absolute path of executable
+		executable, err := os.Executable()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Format a download string depending on OS
+		var dwnl string
+		if runtime.GOOS == "windows" {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "%s" && rm ./corectl.zip`, res.Current, path.Dir(executable))
+		} else {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, res.Current, runtime.GOOS, path.Dir(executable))
+		}
+
+		fmt.Println("-------------------------------------------------")
+		fmt.Printf("Version %s is not latest, you should upgrade to %s \n", version, res.Current)
+		fmt.Printf("To download the latest version you can use this command: \n")
+		fmt.Printf(`'%s'`, dwnl)
+		fmt.Println("\n-------------------------------------------------")
 	}
 }
