@@ -78,7 +78,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
 }
@@ -98,7 +98,7 @@ var reloadCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		silent := viper.GetBool("silent")
 
 		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
@@ -141,7 +141,7 @@ func init() {
 
 func build(ccmd *cobra.Command, args []string) {
 	ctx := rootCtx
-	state := internal.PrepareEngineState(ctx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+	state := internal.PrepareEngineState(ctx, headers, true)
 
 	separateConnectionsFile := ccmd.Flag("connections").Value.String()
 	if separateConnectionsFile == "" {

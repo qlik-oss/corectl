@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/qlik-oss/enigma-go"
+	"github.com/spf13/viper"
 )
 
 // State contains all needed info about the current app including a go context to use when communicating with the engine.
@@ -78,7 +79,11 @@ func DeleteApp(ctx context.Context, engine string, appID string, ttl string, hea
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-func PrepareEngineState(ctx context.Context, engine string, appID string, ttl string, headers http.Header, createAppIfMissing bool) *State {
+func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMissing bool) *State {
+	engine := viper.GetString("engine")
+	appID := viper.GetString("app")
+	ttl := viper.GetString("ttl")
+
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appID, ttl, headers)
 	if appID == "" {
@@ -165,7 +170,10 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 }
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
-func PrepareEngineStateWithoutApp(ctx context.Context, engine string, ttl string, headers http.Header) *State {
+func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
+	engine := viper.GetString("engine")
+	ttl := viper.GetString("ttl")
+
 	LogVerbose("---------- Connecting to engine ----------")
 
 	engineURL := buildWebSocketURL(engine, ttl)

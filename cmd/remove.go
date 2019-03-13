@@ -73,7 +73,7 @@ var removeConnectionCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		err := state.Doc.DeleteConnection(rootCtx, args[0])
 		if err != nil {
 			internal.FatalError("Failed to remove connection", args[0])
@@ -101,7 +101,7 @@ var removeDimensionsCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
@@ -132,7 +132,7 @@ var removeMeasuresCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
@@ -163,7 +163,7 @@ var removeObjectsCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {

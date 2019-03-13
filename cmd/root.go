@@ -167,7 +167,7 @@ func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) 
 		ccmd.Usage()
 		os.Exit(1)
 	}
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	printer.PrintGenericEntityProperties(state, args[0], entityType)
 }
 
@@ -177,12 +177,12 @@ func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
 		ccmd.Usage()
 		os.Exit(1)
 	}
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	printer.PrintGenericEntityLayout(state, args[0], entityType)
 }
 
 func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	allInfos, err := state.Doc.GetAllInfos(rootCtx)
 	if err != nil {
 		internal.FatalError(err)
