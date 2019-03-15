@@ -46,11 +46,11 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 
 Usage documentation and examples can be found [here](./docs/corectl.md).
 
-`corectl` provides autocompletion of commands for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
+`corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
 `. <(corectl completion bash)` or `. <(corectl completion zsh)`
 
-Autocompletion requires `jq` and `bash-completion` to be installed.
+Auto completion requires `jq` and `bash-completion` to be installed.
 
 ## Testing
 
