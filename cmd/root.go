@@ -21,11 +21,12 @@ var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Hidden:            true,
-	Use:               "corectl",
-	Short:             "",
-	Long:              `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
-	DisableAutoGenTag: true,
+	Hidden:                 true,
+	Use:                    "corectl",
+	Short:                  "",
+	Long:                   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+	DisableAutoGenTag:      true,
+	BashCompletionFunction: bashCompletionFunc,
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		// if help, version or generate-docs command, no prerun is needed.
@@ -86,6 +87,9 @@ func init() {
 	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
 	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
+
+		// Set annotation to run bash completion function for the config flag and only show .yaml or .yml files
+		command.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 	}
 
 	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
@@ -105,6 +109,8 @@ func init() {
 
 	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
 		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
+		// Set annotation to run bash completion function for the app flag
+		command.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
@@ -125,6 +131,8 @@ func init() {
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
+		// Set annotation to run bash completion function for the objects flag and only show .json files
+		command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, reloadCmd} {
@@ -138,6 +146,8 @@ func init() {
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+		// Set annotation to run bash completion function for the script flag and only show .qvs files
+		command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
 	}
 
 	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
@@ -189,3 +199,110 @@ func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJ
 	}
 	printer.PrintGenericEntities(allInfos, entityType, printAsJSON)
 }
+
+const bashCompletionFunc = `
+	__custom_func()
+	{
+		case ${last_command} in
+			corectl_get_dimension_properties | corectl_get_dimension_layout)
+				__corectl_get_dimensions
+				return
+				;;
+			corectl_get_measure_properties | corectl_get_measure_layout)
+				__corectl_get_measures
+				return
+				;;
+			corectl_get_object_data | corectl_get_object_properties | corectl_get_object_layout)
+				__corectl_get_objects
+				return
+				;;
+			corectl_get_connection)
+				__corectl_get_connections
+				return
+				;;
+			*)
+				;;
+		esac
+	}
+
+	__parse_flags()
+	{
+		local flags
+
+		for i in "${words[@]}"
+		do
+			case "$i" in
+				--config=* | -c=* | --app=* | -a=* | --engine=* | -e=*  )
+					flags+="$i "
+					;;
+				*)
+					;;
+			esac
+		done
+
+		echo "${flags}"
+	}
+
+	__parse_config_flag()
+	{
+		local config
+
+		for i in "${words[@]}"
+		do
+			case "$i" in
+				--config=* | -c=* )
+					config+="$i "
+					;;
+				*)
+					;;
+			esac
+		done
+
+		echo "${config}"
+	}
+
+	__corectl_get_dimensions()
+	{
+		local flags=$(__parse_flags)
+		local corectl_out
+		if corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null); then
+				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
+		fi
+	}
+
+	__corectl_get_measures()
+	{
+		local flags=$(__parse_flags)
+		local corectl_out
+		if corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null); then
+				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
+		fi
+	}
+
+	__corectl_get_objects()
+	{
+		local flags=$(__parse_flags)
+		local corectl_out
+		if corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null); then
+				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
+		fi
+	}
+
+	__corectl_get_connections()
+	{
+		local flags=$(__parse_flags)
+		local corectl_out
+		if corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null); then
+				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
+		fi
+	}
+
+	__corectl_get_apps()
+	{
+		local config=$(__parse_config_flag)
+		local corectl_out
+		if corectl_out=$(corectl get apps --json $config | jq  '.[] | .name' 2>/dev/null); then
+				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
+		fi
+	}
+`

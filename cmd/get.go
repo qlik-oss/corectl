@@ -15,7 +15,6 @@ var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Lists one or several resources",
 	Long:  "Lists one or several resources",
-
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
 		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
