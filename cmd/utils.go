@@ -239,9 +239,8 @@ func checkLatestVersion() {
 }
 
 // Code for generating zsh bash completion script
-const (
-	// Inspired by https://github.com/kubernetes/kubernetes/blob/master/pkg/kubectl/cmd/completion/completion.go
-	zshHead = `#compdef corectl
+// Inspired by https://github.com/kubernetes/kubernetes/blob/master/pkg/kubectl/cmd/completion/completion.go
+const zshHead = `#compdef corectl
 __corectl_bash_source() {
 	alias shopt=':'
 	alias _expand=_bash_expand
@@ -371,13 +370,12 @@ __corectl_convert_bash_to_zsh() {
 	<<'BASH_COMPLETION_EOF'
 `
 
-	zshTail = `
+const zshTail = `
 BASH_COMPLETION_EOF
 }
 __corectl_bash_source <(__corectl_convert_bash_to_zsh)
 _complete corectl 2>/dev/null
 `
-)
 
 // Function for generating zsh completion for corectl
 func genZshCompletion() {
