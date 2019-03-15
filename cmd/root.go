@@ -116,16 +116,22 @@ func init() {
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
+		// Set annotation to run bash completion function for the connections flag and only show .yml or .yaml files
+		command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
+		// Set annotation to run bash completion function for the dimensions flag and only show .json files
+		command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
+		// Set annotation to run bash completion function for the measures flag and only show .json files
+		command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
@@ -232,7 +238,7 @@ const bashCompletionFunc = `
 		for i in "${words[@]}"
 		do
 			case "$i" in
-				--config=* | -c=* | --app=* | -a=* | --engine=* | -e=*  )
+				--* | -* )
 					flags+="$i "
 					;;
 				*)
