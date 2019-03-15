@@ -231,7 +231,7 @@ const bashCompletionFunc = `
 		esac
 	}
 
-	__parse_flags()
+	__parse_all_flags()
 	{
 		local flags
 
@@ -269,7 +269,7 @@ const bashCompletionFunc = `
 
 	__corectl_get_dimensions()
 	{
-		local flags=$(__parse_flags)
+		local flags=$(__parse_all_flags)
 		local corectl_out
 		if corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null); then
 				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
@@ -278,7 +278,7 @@ const bashCompletionFunc = `
 
 	__corectl_get_measures()
 	{
-		local flags=$(__parse_flags)
+		local flags=$(__parse_all_flags)
 		local corectl_out
 		if corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null); then
 				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
@@ -287,7 +287,7 @@ const bashCompletionFunc = `
 
 	__corectl_get_objects()
 	{
-		local flags=$(__parse_flags)
+		local flags=$(__parse_all_flags)
 		local corectl_out
 		if corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null); then
 				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
@@ -296,7 +296,7 @@ const bashCompletionFunc = `
 
 	__corectl_get_connections()
 	{
-		local flags=$(__parse_flags)
+		local flags=$(__parse_all_flags)
 		local corectl_out
 		if corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null); then
 				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
