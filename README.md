@@ -42,9 +42,37 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 ./buildtohomebin
 ```
 
+## Examples
+
+This sections describes some normal uses cases and configuration that can be used with the `corectl` tool.
+
+To simply the usage of `corectl` the basic details for connecting to an engine instance and which apps or objects to interact with can be configured in a configuration file.
+We have added an example configuration file to this repo [here](./examples/corect.yml).
+
+`corectl` will automatically check for a `corectl.yml | corectl.yaml` file in your current directory. It is also possible to specify a configuration file using the `--config` or `-c` flag.
+
+Example configuration:
+```yaml
+engine: localhost:9076 # URL and port to running Qlik Associative Engine instance
+app: corectl-example.qvf # App name that the tool should open a session against. Default a session app will be used.
+script: ./script.qvs # Path to a script that should be set in the app
+connections: # Connections that should be created in the app
+  testdata: # Name of the connection
+    connectionstring: /data # Connectionstring (qConnectionString) of the connection. For a folder connector this is an absolute or relative path inside of the engine docker container.
+    type: folder # Type of connection
+objects:
+  - ./object-*.json # Path to objects that should be created from a json file. Accepts wildcards.
+```
+
+All of the configurations that are possible to specify in a configuration file is also possible to pass by command line flags. You can find all the supported commands and flags in the [Usage section](#usage).
+
+![](./examples/corectl_example.gif)
+
+Also check out the blog post about utilizing `corectl` and `catwalk` to build your data model [here](https://branch-blog.qlik.com/data-modelling-in-qlik-core-a2e657c7598d).
+
 ## Usage
 
-Usage documentation and examples can be found [here](./docs/corectl.md).
+Usage documentation can be found [here](./docs/corectl.md).
 
 ## Testing
 

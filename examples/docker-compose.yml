@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  qix-engine:
+    image: qlikcore/engine:12.345.0
+    ports:
+      - 9076:9076
+    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps
+    volumes:
+      - ../test/apps:/apps
+      - ../test/data:/data
