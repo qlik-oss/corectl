@@ -44,7 +44,7 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 
 ## Examples
 
-This sections describes some normal uses cases and configuration that can be used with the `corectl` tool.
+This sections describes some commands and configuration that can be used with the `corectl` tool.
 
 To simply the usage of `corectl` the basic details for connecting to an engine instance and which apps or objects to interact with can be configured in a configuration file.
 We have added an example configuration file to this repo [here](./examples/corect.yml).
@@ -64,7 +64,7 @@ objects:
   - ./object-*.json # Path to objects that should be created from a json file. Accepts wildcards.
 ```
 
-All of the configurations that are possible to specify in a configuration file is also possible to pass by command line flags. You can find all the supported commands and flags in the [Usage section](#usage).
+All of the configurations that are possible to specify in a configuration file is also possible to pass by command line flags. You can find all the supported commands and flags in the [usage section](#usage).
 
 ![](./examples/corectl_example.gif)
 
