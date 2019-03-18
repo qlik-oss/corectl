@@ -11,7 +11,7 @@ require (
 	github.com/kr/pretty v0.1.0
 	github.com/magiconair/properties v1.8.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
-	github.com/qlik-oss/enigma-go v0.0.0-20190311075429-944f28692fe9
+	github.com/qlik-oss/enigma-go v0.0.0-20190317164022-8859549f6867
 	github.com/russross/blackfriday v1.5.2 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.3.2
