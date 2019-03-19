@@ -58,13 +58,13 @@ app: corectl-example.qvf # App name that the tool should open a session against.
 script: ./script.qvs # Path to a script that should be set in the app
 connections: # Connections that should be created in the app
   testdata: # Name of the connection
-    connectionstring: /data # Connectionstring (qConnectionString) of the connection. For a folder connector this is an absolute or relative path inside of the engine docker container.
+    connectionstring: /data # Connectionstring (qConnectionString) of the connection.
     type: folder # Type of connection
 ```
 
 For more information regarding which additional options that are configurable are further described [here](./docs/corectl_config.md).
 
-![](./examples/corectl_example.gif)
+![](./examples/corectl-example.gif)
 
 Also check out the blog post about utilizing `corectl` and `catwalk` to build your data model [here](https://branch-blog.qlik.com/data-modelling-in-qlik-core-a2e657c7598d).
 

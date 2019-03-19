@@ -1,4 +1,4 @@
-engine: localhost:9076 # URL and port to running Qlik Associative Engine instance
+engine: localhost:9276 # URL and port to running Qlik Associative Engine instance
 app: corectl-example.qvf # App name that the tool should open a session against. Default a session app will be used.
 script: ./script.qvs # Path to a script that should be set in the app
 connections: # Connections that should be created in the app
