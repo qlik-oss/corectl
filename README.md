@@ -60,11 +60,9 @@ connections: # Connections that should be created in the app
   testdata: # Name of the connection
     connectionstring: /data # Connectionstring (qConnectionString) of the connection. For a folder connector this is an absolute or relative path inside of the engine docker container.
     type: folder # Type of connection
-objects:
-  - ./object-*.json # Path to objects that should be created from a json file. Accepts wildcards.
 ```
 
-All of the configurations that are possible to specify in a configuration file is also possible to pass by command line flags. You can find all the supported commands and flags in the [usage section](#usage).
+For more information regarding which additional options that are configurable are further described [here](./docs/corectl_config.md).
 
 ![](./examples/corectl_example.gif)
 
