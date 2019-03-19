@@ -34,15 +34,27 @@ headers:
 
 ### engine
 
-This property sets the URL to the engine instance that you want `corectl` to connect to by default.
+This property sets the URL to the engine instance that you want `corectl` to connect to by default. Can be overriden with the `-e` or `--engine` flag.
+
+```yaml
+engine: localhost:9076 
+```
 
 ### app
 
 This property describes the default app name that should be used for the commands. Typically used when working against a specific app on your engine instance. If you want to open a different app than configured in the file, you can also pass the `--app` or `-a` flag.
 
+```yaml
+app: project1.qvf
+```
+
 ### script
 
-An absolute or relative path to a script file. When specifiying a script in a configuration file and running e.g. the `build` command, then `corectl` will open an app, set the script and perform a reload.
+An absolute or relative path to a script file. When specifiying a script in a configuration file and running e.g. the `build` command, then `corectl` will open an app, set the script and perform a reload. Can be overriden using the `--script` flag.
+
+```yaml
+script: ./dummy-script.qvs
+```
 
 ### connections
 

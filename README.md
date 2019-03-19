@@ -49,7 +49,7 @@ This sections describes some commands and configuration that can be used with th
 To simply the usage of `corectl` the basic details for connecting to an engine instance and which apps or objects to interact with can be configured in a configuration file.
 We have added an example configuration file to this repo [here](./examples/corect.yml).
 
-`corectl` will automatically check for a `corectl.yml | corectl.yaml` file in your current directory. It is also possible to specify a configuration file using the `--config` or `-c` flag.
+`corectl` will automatically check for a `corectl.yml | corectl.yaml` file in your current directory.
 
 Example configuration:
 ```yaml
