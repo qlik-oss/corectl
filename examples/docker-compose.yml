@@ -7,4 +7,4 @@ services:
     command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps # Commands that is passed to the engine container
     volumes:
       - ../test/apps:/apps # Mounted folder that is used for storing apps
-      - ../test/data:/data # Mounted folder used to get data e.g. csv files into the container
+      - ./data:/data # Mounted folder used to get data e.g. csv files into the container
