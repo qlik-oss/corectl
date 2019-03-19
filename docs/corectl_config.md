@@ -37,7 +37,7 @@ headers:
 This property sets the URL to the engine instance that you want `corectl` to connect to by default. Can be overriden with the `-e` or `--engine` flag.
 
 ```yaml
-engine: localhost:9076 
+engine: localhost:9076
 ```
 
 ### app

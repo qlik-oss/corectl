@@ -46,10 +46,10 @@ Build the main.go file to a location on your path. You can use the buildtohomebi
 
 This sections describes some commands and configuration that can be used with the `corectl` tool.
 
-To simply the usage of `corectl` the basic details for connecting to an engine instance and which apps or objects to interact with can be configured in a configuration file.
-We have added an example configuration file to this repo [here](./examples/corect.yml).
+To simplify usage of `corectl`, basic configurations such as: engine connection details, app and objects, can be described in a configuration file.
+We have added an example configuration file to this repo [here](./examples/corectl.yml).
 
-`corectl` will automatically check for a `corectl.yml | corectl.yaml` file in your current directory.
+`corectl` will automatically check for a `corectl.yml | corectl.yaml` file in your current directory, removing the need to pass the config file using flags for each command.
 
 Example configuration:
 ```yaml
