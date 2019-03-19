@@ -4,10 +4,16 @@ Shows content of an generic dimension
 
 ### Synopsis
 
-Shows content of an generic dimension. If no subcommand is specified the properties will be shown. Example: corectl get dimension DIMENSION-ID --app my-app.qvf
+Shows content of an generic dimension. If no subcommand is specified the properties will be shown.
 
 ```
 corectl get dimension <dimension-id> [flags]
+```
+
+### Examples
+
+```
+corectl get dimension DIMENSION-ID --app my-app.qvf
 ```
 
 ### Options

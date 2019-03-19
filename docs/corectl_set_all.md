@@ -10,6 +10,13 @@ Sets the objects, measures, dimensions, connections and script in the current ap
 corectl set all [flags]
 ```
 
+### Examples
+
+```
+corectl set all
+corectl set all --app=my-app.qvf
+```
+
 ### Options
 
 ```

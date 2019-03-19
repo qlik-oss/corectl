@@ -10,6 +10,13 @@ Prints a list of all apps available in the current engine
 corectl get apps [flags]
 ```
 
+### Examples
+
+```
+corectl get apps
+corectl get apps --engine=localhost:9276
+```
+
 ### Options
 
 ```

@@ -4,10 +4,17 @@ Print tables summary
 
 ### Synopsis
 
-Prints tables summary
+Prints tables summary for the data model in an app
 
 ```
 corectl get tables [flags]
+```
+
+### Examples
+
+```
+corectl get tables
+corectl get tables --app=my-app.qvf
 ```
 
 ### Options

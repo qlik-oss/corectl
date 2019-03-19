@@ -4,10 +4,16 @@ Reloads the app.
 
 ### Synopsis
 
-Reloads the app. Example: corectl reload
+Reloads the app.
 
 ```
 corectl reload [flags]
+```
+
+### Examples
+
+```
+corectl reload
 ```
 
 ### Options

@@ -28,6 +28,8 @@ var setAllCmd = &cobra.Command{
 	Use:   "all",
 	Short: "Sets the objects, measures, dimensions, connections and script in the current app",
 	Long:  "Sets the objects, measures, dimensions, connections and script in the current app",
+	Example: `corectl set all
+corectl set all --app=my-app.qvf`,
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -59,9 +61,10 @@ var setAllCmd = &cobra.Command{
 }
 
 var setConnectionsCmd = &cobra.Command{
-	Use:   "connections <path-to-connections-file.yml>",
-	Short: "Sets or updates the connections in the current app",
-	Long:  "Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml",
+	Use:     "connections <path-to-connections-file.yml>",
+	Short:   "Sets or updates the connections in the current app",
+	Long:    "Sets or updates the connections in the current app",
+	Example: "corectl set connections ./my-connections.yml",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -85,9 +88,10 @@ var setConnectionsCmd = &cobra.Command{
 }
 
 var setDimensionsCmd = &cobra.Command{
-	Use:   "dimensions <glob-pattern-path-to-dimensions-files.json>",
-	Short: "Sets or updates the dimensions in the current app",
-	Long:  "Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json",
+	Use:     "dimensions <glob-pattern-path-to-dimensions-files.json>",
+	Short:   "Sets or updates the dimensions in the current app",
+	Long:    "Sets or updates the dimensions in the current app",
+	Example: "corectl set dimensions ./my-dimensions-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -108,9 +112,10 @@ var setDimensionsCmd = &cobra.Command{
 }
 
 var setMeasuresCmd = &cobra.Command{
-	Use:   "measures <glob-pattern-path-to-measures-files.json>",
-	Short: "Sets or updates the measures in the current app",
-	Long:  "Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json",
+	Use:     "measures <glob-pattern-path-to-measures-files.json>",
+	Short:   "Sets or updates the measures in the current app",
+	Long:    "Sets or updates the measures in the current app",
+	Example: "corectl set measures ./my-measures-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -133,8 +138,9 @@ var setMeasuresCmd = &cobra.Command{
 var setObjectsCmd = &cobra.Command{
 	Use:   "objects <glob-pattern-path-to-objects-files.json",
 	Short: "Sets or updates the objects in the current app",
-	Long: `Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json.
+	Long: `Sets or updates the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
+	Example: "corectl set objects ./my-objects-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -156,9 +162,10 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 }
 
 var setScriptCmd = &cobra.Command{
-	Use:   "script <path-to-script-file.yml>",
-	Short: "Sets the script in the current app",
-	Long:  "Sets the script in the current app. Example: corectl set script ./my-script-file",
+	Use:     "script <path-to-script-file.yml>",
+	Short:   "Sets the script in the current app",
+	Long:    "Sets the script in the current app",
+	Example: "corectl set script ./my-script-file",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)

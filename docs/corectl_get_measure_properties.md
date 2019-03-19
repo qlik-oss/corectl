@@ -4,10 +4,17 @@ Prints the properties of the generic measure
 
 ### Synopsis
 
-Prints the properties of the generic measure. Example: corectl get measure properties MEASURE-ID --app my-app.qvf
+Prints the properties of the generic measure in JSON format
 
 ```
 corectl get measure properties <measure-id> [flags]
+```
+
+### Examples
+
+```
+corectl get measure properties MEASURE-ID
+corectl get measure properties MEASURE-ID --app my-app.qvf
 ```
 
 ### Options

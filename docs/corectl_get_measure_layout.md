@@ -4,10 +4,17 @@ Evaluates the layout of an generic measure
 
 ### Synopsis
 
-Evaluates the layout of an generic measure. Example: corectl get measure layout MEASURE-ID --app my-app.qvf
+Evaluates the layout of an generic measure and prints in JSON format
 
 ```
 corectl get measure layout <measure-id> [flags]
+```
+
+### Examples
+
+```
+corectl get measure layout MEASURE-ID
+corectl get measure layout MEASURE-ID --app my-app.qvf
 ```
 
 ### Options
