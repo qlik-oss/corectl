@@ -1,10 +1,10 @@
 version: "3.3"
 services:
   qix-engine:
-    image: qlikcore/engine:12.345.0
+    image: qlikcore/engine:12.345.0   # Docker image and version
     ports:
-      - 9076:9076
-    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps
+      - 9076:9076 # Port exposing the engine on localhost
+    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps # Commands that is passed to the engine container
     volumes:
-      - ../test/apps:/apps
-      - ../test/data:/data
+      - ../test/apps:/apps # Mounted folder that is used for storing apps
+      - ../test/data:/data # Mounted folder used to get data e.g. csv files into the container
