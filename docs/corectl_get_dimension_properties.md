@@ -4,10 +4,16 @@ Prints the properties of the generic dimension
 
 ### Synopsis
 
-Prints the properties of the generic dimension. Example: corectl get dimension properties DIMENSION-ID --app my-app.qvf
+Prints the properties of the generic dimension
 
 ```
 corectl get dimension properties <dimension-id> [flags]
+```
+
+### Examples
+
+```
+corectl get dimension properties DIMENSION-ID --app my-app.qvf
 ```
 
 ### Options

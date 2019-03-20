@@ -4,10 +4,16 @@ Sets or updates the dimensions in the current app
 
 ### Synopsis
 
-Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json
+Sets or updates the dimensions in the current app
 
 ```
 corectl set dimensions <glob-pattern-path-to-dimensions-files.json> [flags]
+```
+
+### Examples
+
+```
+corectl set dimensions ./my-dimensions-glob-path.json
 ```
 
 ### Options

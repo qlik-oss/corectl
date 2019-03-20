@@ -4,10 +4,17 @@ Prints status info about the connection to engine and current app
 
 ### Synopsis
 
-Prints status info about the connection to engine and current app
+Prints status info about the connection to engine and current app, and also the status of the data model
 
 ```
 corectl get status [flags]
+```
+
+### Examples
+
+```
+corectl get status
+corectl get status --app=my-app.qvf
 ```
 
 ### Options

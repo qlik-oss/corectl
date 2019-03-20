@@ -4,10 +4,16 @@ Evaluates the hypercube layout of an generic object
 
 ### Synopsis
 
-Evaluates the hypercube layout of an generic object. Example: corectl get object layout OBJECT-ID --app my-app.qvf
+Evaluates the hypercube layout of an generic object in JSON format
 
 ```
 corectl get object layout <object-id> [flags]
+```
+
+### Examples
+
+```
+corectl get object layout OBJECT-ID --app my-app.qvf
 ```
 
 ### Options

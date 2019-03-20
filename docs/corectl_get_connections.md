@@ -14,6 +14,7 @@ corectl get connections [flags]
 
 ```
 corectl get connections
+corectl get connections --json
 ```
 
 ### Options

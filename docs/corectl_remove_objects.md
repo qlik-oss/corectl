@@ -4,10 +4,16 @@ Removes the specified generic objects in the current app
 
 ### Synopsis
 
-Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2
+Removes the specified generic objects in the current app
 
 ```
 corectl remove objects <object-id>... [flags]
+```
+
+### Examples
+
+```
+corectl remove objects ID-1 ID-2
 ```
 
 ### Options

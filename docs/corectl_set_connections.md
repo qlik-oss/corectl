@@ -4,10 +4,16 @@ Sets or updates the connections in the current app
 
 ### Synopsis
 
-Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml
+Sets or updates the connections in the current app
 
 ```
 corectl set connections <path-to-connections-file.yml> [flags]
+```
+
+### Examples
+
+```
+corectl set connections ./my-connections.yml
 ```
 
 ### Options
