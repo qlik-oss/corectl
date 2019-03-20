@@ -28,6 +28,13 @@ jobs:
           command: |
             ./corectl generate-docs
             git diff --exit-code --name-only docs/
+      - run:
+          name: Check if changes has been done to the CLI API
+          command: |
+            ./corectl generate-spec > spec.json
+            git diff --exit-code --name-only spec.json
+      - store_artifacts:
+          path: ./spec.json
       - setup_remote_docker
       - run:
           name: Run Integration Test

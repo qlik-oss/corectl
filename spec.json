@@ -1,0 +1,690 @@
+{
+  "Use": "corectl",
+  "Long": "Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
+  "Flags": {
+    "traffic": {
+      "Name": "traffic",
+      "Shorthand": "t",
+      "Usage": "Log JSON websocket traffic to stdout",
+      "DefValue": "false"
+    },
+    "verbose": {
+      "Name": "verbose",
+      "Shorthand": "v",
+      "Usage": "Logs extra information",
+      "DefValue": "false"
+    }
+  },
+  "Commands": {
+    "build": {
+      "Use": "build",
+      "Short": "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "connections": {
+          "Name": "connections",
+          "Usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+        },
+        "dimensions": {
+          "Name": "dimensions",
+          "Usage": "A list of generic dimension json paths"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "measures": {
+          "Name": "measures",
+          "Usage": "A list of generic measures json paths"
+        },
+        "objects": {
+          "Name": "objects",
+          "Usage": "A list of generic object json paths"
+        },
+        "script": {
+          "Name": "script",
+          "Usage": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
+        },
+        "silent": {
+          "Name": "silent",
+          "Usage": "Do not log reload progress",
+          "DefValue": "false"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      }
+    },
+    "catwalk": {
+      "Use": "catwalk",
+      "Short": "Opens the specified app in catwalk",
+      "Long": "Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "catwalk-url": {
+          "Name": "catwalk-url",
+          "Usage": "Url to an instance of catwalk, if not provided the qlik one will be used.",
+          "DefValue": "https://catwalk.core.qlik.com"
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        }
+      }
+    },
+    "eval": {
+      "Use": "eval",
+      "Short": "Evaluates a list of measures and dimensions",
+      "Long": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions.",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      }
+    },
+    "generate-docs": {
+      "Use": "generate-docs",
+      "Short": "Generate markdown docs based on cobra commands",
+      "Long": "Generate markdown docs based on cobra commands"
+    },
+    "generate-spec": {
+      "Use": "generate-spec",
+      "Short": "Generate API spec based on cobra commands",
+      "Long": "Generate API spec docs based on cobra commands",
+      "Flags": {
+        "help": {
+          "Name": "help",
+          "Shorthand": "h",
+          "Usage": "help for generate-spec",
+          "DefValue": "false"
+        }
+      }
+    },
+    "get": {
+      "Use": "get",
+      "Short": "Lists one or several resources",
+      "Long": "Lists one or several resources",
+      "Flags": {
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      },
+      "Commands": {
+        "apps": {
+          "Use": "apps",
+          "Short": "Prints a list of all apps available in the current engine",
+          "Long": "Prints a list of all apps available in the current engine",
+          "Flags": {
+            "json": {
+              "Name": "json",
+              "Usage": "Prints the information in json format",
+              "DefValue": "false"
+            }
+          }
+        },
+        "assoc": {
+          "Use": "assoc",
+          "Aliases": [
+            "associations"
+          ],
+          "Short": "Print table associations summary",
+          "Long": "Print table associations summary",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "connection": {
+          "Use": "connection",
+          "Short": "Shows the properties for a specific connection",
+          "Long": "Shows the properties for a specific connection",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "connections": {
+          "Use": "connections",
+          "Short": "Prints a list of all connections in the specified app",
+          "Long": "Prints a list of all connections in the specified app",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            },
+            "json": {
+              "Name": "json",
+              "Usage": "Prints the information in json format",
+              "DefValue": "false"
+            }
+          }
+        },
+        "dimension": {
+          "Use": "dimension",
+          "Short": "Shows content of an generic dimension",
+          "Long": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          },
+          "Commands": {
+            "layout": {
+              "Use": "layout",
+              "Short": "Evaluates the layout of an generic dimension",
+              "Long": "Evaluates the layout of an generic dimension"
+            },
+            "properties": {
+              "Use": "properties",
+              "Short": "Prints the properties of the generic dimension",
+              "Long": "Prints the properties of the generic dimension"
+            }
+          }
+        },
+        "dimensions": {
+          "Use": "dimensions",
+          "Short": "Prints a list of all generic dimensions in the current app",
+          "Long": "Prints a list of all generic dimensions in the current app",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            },
+            "json": {
+              "Name": "json",
+              "Usage": "Prints the information in json format",
+              "DefValue": "false"
+            }
+          }
+        },
+        "field": {
+          "Use": "field",
+          "Short": "Shows content of a field",
+          "Long": "Prints all the values for a specific field in your data model",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "fields": {
+          "Use": "fields",
+          "Short": "Print field list",
+          "Long": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "keys": {
+          "Use": "keys",
+          "Short": "Print key-only field list",
+          "Long": "Prints a fields list containing key-only fields",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "measure": {
+          "Use": "measure",
+          "Short": "Shows content of an generic measure",
+          "Long": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          },
+          "Commands": {
+            "layout": {
+              "Use": "layout",
+              "Short": "Evaluates the layout of an generic measure",
+              "Long": "Evaluates the layout of an generic measure and prints in JSON format"
+            },
+            "properties": {
+              "Use": "properties",
+              "Short": "Prints the properties of the generic measure",
+              "Long": "Prints the properties of the generic measure in JSON format"
+            }
+          }
+        },
+        "measures": {
+          "Use": "measures",
+          "Short": "Prints a list of all generic measures in the current app",
+          "Long": "Prints a list of all generic measures in the current app in either plain text or json",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            },
+            "json": {
+              "Name": "json",
+              "Usage": "Prints the information in json format",
+              "DefValue": "false"
+            }
+          }
+        },
+        "meta": {
+          "Use": "meta",
+          "Short": "Shows metadata about the app",
+          "Long": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "object": {
+          "Use": "object",
+          "Short": "Shows content of an generic object",
+          "Long": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          },
+          "Commands": {
+            "data": {
+              "Use": "data",
+              "Short": "Evaluates the hypercube data of an generic object",
+              "Long": "Evaluates the hypercube data of an generic object"
+            },
+            "layout": {
+              "Use": "layout",
+              "Short": "Evaluates the hypercube layout of an generic object",
+              "Long": "Evaluates the hypercube layout of an generic object in JSON format"
+            },
+            "properties": {
+              "Use": "properties",
+              "Short": "Prints the properties of the generic object",
+              "Long": "Prints the properties of the generic object in JSON format"
+            }
+          }
+        },
+        "objects": {
+          "Use": "objects",
+          "Short": "Prints a list of all generic objects in the current app",
+          "Long": "Prints a list of all generic objects in the current app in either plain text or JSON format",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            },
+            "json": {
+              "Name": "json",
+              "Usage": "Prints the information in json format",
+              "DefValue": "false"
+            }
+          }
+        },
+        "script": {
+          "Use": "script",
+          "Short": "Print the reload script",
+          "Long": "Fetches the script currently set in the app and prints it in plain text.",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "status": {
+          "Use": "status",
+          "Short": "Prints status info about the connection to engine and current app",
+          "Long": "Prints status info about the connection to engine and current app, and also the status of the data model",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        },
+        "tables": {
+          "Use": "tables",
+          "Short": "Print tables summary",
+          "Long": "Prints tables summary for the data model in an app",
+          "Flags": {
+            "app": {
+              "Name": "app",
+              "Shorthand": "a",
+              "Usage": "App name, if no app is specified a session app is used instead."
+            }
+          }
+        }
+      }
+    },
+    "help": {
+      "Use": "help",
+      "Short": "Help about any command",
+      "Long": "Help provides help for any command in the application.\nSimply type corectl help [path to command] for full details."
+    },
+    "reload": {
+      "Use": "reload",
+      "Short": "Reloads the app.",
+      "Long": "Reloads the app.",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "no-save": {
+          "Name": "no-save",
+          "Usage": "Do not save the app",
+          "DefValue": "false"
+        },
+        "silent": {
+          "Name": "silent",
+          "Usage": "Do not log reload progress",
+          "DefValue": "false"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      }
+    },
+    "remove": {
+      "Use": "remove",
+      "Short": "Remove entities (connections, dimensions, measures, objects) in the app or the app itself",
+      "Long": "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "suppress": {
+          "Name": "suppress",
+          "Usage": "Suppress all confirmation dialogues",
+          "DefValue": "false"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      },
+      "Commands": {
+        "app": {
+          "Use": "app",
+          "Short": "removes the specified app.",
+          "Long": "removes the specified app."
+        },
+        "connection": {
+          "Use": "connection",
+          "Short": "removes the specified connection.",
+          "Long": "removes the specified connection",
+          "Flags": {
+            "no-save": {
+              "Name": "no-save",
+              "Usage": "Do not save the app",
+              "DefValue": "false"
+            }
+          }
+        },
+        "dimensions": {
+          "Use": "dimensions",
+          "Short": "Removes the specified generic dimensions in the current app",
+          "Long": "Removes the specified generic dimensions in the current app",
+          "Flags": {
+            "no-save": {
+              "Name": "no-save",
+              "Usage": "Do not save the app",
+              "DefValue": "false"
+            }
+          }
+        },
+        "measures": {
+          "Use": "measures",
+          "Short": "Removes the specified generic measures in the current app",
+          "Long": "Removes the specified generic measures in the current app",
+          "Flags": {
+            "no-save": {
+              "Name": "no-save",
+              "Usage": "Do not save the app",
+              "DefValue": "false"
+            }
+          }
+        },
+        "objects": {
+          "Use": "objects",
+          "Short": "Removes the specified generic objects in the current app",
+          "Long": "Removes the specified generic objects in the current app",
+          "Flags": {
+            "no-save": {
+              "Name": "no-save",
+              "Usage": "Do not save the app",
+              "DefValue": "false"
+            }
+          }
+        }
+      }
+    },
+    "set": {
+      "Use": "set",
+      "Short": "Sets one or several resources",
+      "Long": "Sets one or several resources",
+      "Flags": {
+        "app": {
+          "Name": "app",
+          "Shorthand": "a",
+          "Usage": "App name, if no app is specified a session app is used instead."
+        },
+        "config": {
+          "Name": "config",
+          "Shorthand": "c",
+          "Usage": "path/to/config.yml where parameters can be set instead of on the command line"
+        },
+        "engine": {
+          "Name": "engine",
+          "Shorthand": "e",
+          "Usage": "URL to engine (default \"localhost:9076\")"
+        },
+        "headers": {
+          "Name": "headers",
+          "Usage": "Headers to use when connecting to qix engine",
+          "DefValue": "[]"
+        },
+        "no-save": {
+          "Name": "no-save",
+          "Usage": "Do not save the app",
+          "DefValue": "false"
+        },
+        "ttl": {
+          "Name": "ttl",
+          "Usage": "Engine session time to live in seconds",
+          "DefValue": "30"
+        }
+      },
+      "Commands": {
+        "all": {
+          "Use": "all",
+          "Short": "Sets the objects, measures, dimensions, connections and script in the current app",
+          "Long": "Sets the objects, measures, dimensions, connections and script in the current app",
+          "Flags": {
+            "connections": {
+              "Name": "connections",
+              "Usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+            },
+            "dimensions": {
+              "Name": "dimensions",
+              "Usage": "A list of generic dimension json paths"
+            },
+            "measures": {
+              "Name": "measures",
+              "Usage": "A list of generic measures json paths"
+            },
+            "objects": {
+              "Name": "objects",
+              "Usage": "A list of generic object json paths"
+            },
+            "script": {
+              "Name": "script",
+              "Usage": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
+            }
+          }
+        },
+        "connections": {
+          "Use": "connections",
+          "Short": "Sets or updates the connections in the current app",
+          "Long": "Sets or updates the connections in the current app",
+          "Flags": {
+            "connections": {
+              "Name": "connections",
+              "Usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+            }
+          }
+        },
+        "dimensions": {
+          "Use": "dimensions",
+          "Short": "Sets or updates the dimensions in the current app",
+          "Long": "Sets or updates the dimensions in the current app"
+        },
+        "measures": {
+          "Use": "measures",
+          "Short": "Sets or updates the measures in the current app",
+          "Long": "Sets or updates the measures in the current app"
+        },
+        "objects": {
+          "Use": "objects",
+          "Short": "Sets or updates the objects in the current app",
+          "Long": "Sets or updates the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format"
+        },
+        "script": {
+          "Use": "script",
+          "Short": "Sets the script in the current app",
+          "Long": "Sets the script in the current app"
+        }
+      }
+    },
+    "version": {
+      "Use": "version",
+      "Short": "Print the version of corectl"
+    }
+  }
+}
