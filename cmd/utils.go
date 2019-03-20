@@ -16,11 +16,9 @@ import (
 )
 
 var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
-	Long: `Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
-		
-`,
+	Use:     "build",
+	Short:   "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
+	Example: "corectl build --connections ./myconnections.yml --script ./myscript.qvs",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
 		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
@@ -87,9 +85,10 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 }
 
 var reloadCmd = &cobra.Command{
-	Use:   "reload",
-	Short: "Reloads the app.",
-	Long:  "Reloads the app. Example: corectl reload",
+	Use:     "reload",
+	Short:   "Reloads the app.",
+	Long:    "Reloads the app.",
+	Example: "corectl reload",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
@@ -113,8 +112,9 @@ var reloadCmd = &cobra.Command{
 }
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version of corectl",
+	Use:     "version",
+	Short:   "Print the version of corectl",
+	Example: "corectl version",
 
 	Run: func(_ *cobra.Command, args []string) {
 

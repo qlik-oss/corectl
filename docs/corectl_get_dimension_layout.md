@@ -4,10 +4,16 @@ Evaluates the layout of an generic dimension
 
 ### Synopsis
 
-Evaluates the layout of an generic dimension. Example: corectl get dimension layout DIMENSION-ID --app my-app.qvf
+Evaluates the layout of an generic dimension
 
 ```
 corectl get dimension layout <dimension-id> [flags]
+```
+
+### Examples
+
+```
+corectl get dimension layout DIMENSION-ID --app my-app.qvf
 ```
 
 ### Options

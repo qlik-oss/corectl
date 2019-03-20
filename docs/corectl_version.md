@@ -10,6 +10,12 @@ Print the version of corectl
 corectl version [flags]
 ```
 
+### Examples
+
+```
+corectl version
+```
+
 ### Options
 
 ```

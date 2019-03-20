@@ -4,10 +4,16 @@ Sets the script in the current app
 
 ### Synopsis
 
-Sets the script in the current app. Example: corectl set script ./my-script-file
+Sets the script in the current app
 
 ```
 corectl set script <path-to-script-file.yml> [flags]
+```
+
+### Examples
+
+```
+corectl set script ./my-script-file
 ```
 
 ### Options

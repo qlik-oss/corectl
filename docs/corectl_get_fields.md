@@ -4,10 +4,16 @@ Print field list
 
 ### Synopsis
 
-Print field list
+Prints all the fields in an app, and for each field also some sample content, tags and and number of values
 
 ```
 corectl get fields [flags]
+```
+
+### Examples
+
+```
+corectl get fields
 ```
 
 ### Options

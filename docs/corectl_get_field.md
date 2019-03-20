@@ -4,10 +4,16 @@ Shows content of a field
 
 ### Synopsis
 
-Shows content of a field
+Prints all the values for a specific field in your data model
 
 ```
 corectl get field <field name> [flags]
+```
+
+### Examples
+
+```
+corectl get field FIELD
 ```
 
 ### Options

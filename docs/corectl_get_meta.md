@@ -10,6 +10,13 @@ Lists tables, fields, associations along with metadata like memory consumption, 
 corectl get meta [flags]
 ```
 
+### Examples
+
+```
+corectl get meta
+corectl get meta --app my-app.qvf
+```
+
 ### Options
 
 ```
