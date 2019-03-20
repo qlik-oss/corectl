@@ -70,7 +70,9 @@ myfolderconnection:
     type: folder
 ```
 
-Depending on which type of connection that should be used there may be a need for additional values in your configuration. Below is another example where we configure an connection to a custom type connection e.g. a gRPC data connector.
+Depending on which type of connection that should be used there may be a need for additional values in your configuration. Below is another example where we configure an connection to a custom type connection e.g. a gRPC data connector. 
+
+When not specifying a `connectionstring` in your connection `corectl` build a one using the `type`, keys and values from the `settings` property. The exampe below will yield `CUSTOM CONNECT TO \"provider=testconnector;host=corectl-test-connector;\"`.
 
 ```yaml
 myconnection:
