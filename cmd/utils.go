@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -130,6 +132,69 @@ var generateDocsCmd = &cobra.Command{
 	},
 }
 
+type commandJSON struct {
+	Use         string                 `json:"Use"`
+	Aliases     []string               `json:"Aliases,omitempty"`
+	Short       string                 `json:"Short,omitempty"`
+	Long        string                 `json:"Long,omitempty"`
+	ValidArgs   []string               `json:"ValidArgs,omitempty"`
+	Deprecated  string                 `json:"Deprecated,omitempty"`
+	Annotations map[string]string      `json:"Annotations,omitempty"`
+	Flags       map[string]flagJSON    `json:"Flags,omitempty"`
+	SubCommands map[string]commandJSON `json:"Commands,omitempty"`
+}
+
+type flagJSON struct {
+	Name       string `json:"Name,omitempty"`
+	Shorthand  string `json:"Shorthand,omitempty"`
+	Usage      string `json:"Usage,omitempty"`
+	DefValue   string `json:"DefValue,omitempty"`
+	Deprecated string `json:"Deprecated,omitempty"`
+}
+
+func returnCmdspec(ccmd *cobra.Command) commandJSON {
+	ccmdJSON := commandJSON{
+		Use:         strings.Fields(ccmd.Use)[0],
+		Aliases:     ccmd.Aliases,
+		Short:       ccmd.Short,
+		Long:        ccmd.Long,
+		ValidArgs:   ccmd.ValidArgs,
+		Deprecated:  ccmd.Deprecated,
+		Annotations: ccmd.Annotations,
+		SubCommands: returnCommands(ccmd.Commands()),
+		Flags:       returnFlags(ccmd.LocalFlags()),
+	}
+	return ccmdJSON
+}
+
+func returnCommands(commands []*cobra.Command) map[string]commandJSON {
+	commadJSON := make(map[string]commandJSON)
+
+	for _, command := range commands {
+		commadJSON[strings.Fields(command.Use)[0]] = returnCmdspec(command)
+	}
+	return commadJSON
+}
+
+func returnFlags(flags *pflag.FlagSet) map[string]flagJSON {
+	flagsJSON := make(map[string]flagJSON)
+
+	flag := func(f *pflag.Flag) {
+		fJSON := flagJSON{
+			Name:       f.Name,
+			Shorthand:  f.Shorthand,
+			Usage:      f.Usage,
+			DefValue:   f.DefValue,
+			Deprecated: f.Deprecated,
+		}
+		flagsJSON[f.Name] = fJSON
+	}
+
+	flags.VisitAll(flag)
+
+	return flagsJSON
+}
+
 var generateAPIspecCmd = &cobra.Command{
 	Use:    "generate-API-spec",
 	Short:  "Generate API spec based on cobra commands",
@@ -137,12 +202,12 @@ var generateAPIspecCmd = &cobra.Command{
 	Hidden: true,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		fmt.Println("Generating API spec")
-		commands := rootCmd.Commands()
-
-		for _, command := range commands {
-			fmt.Println(command.Use)
+		var jsonData []byte
+		jsonData, err := json.MarshalIndent(returnCmdspec(rootCmd), "", "  ")
+		if err != nil {
+			fmt.Println(err)
 		}
+		fmt.Println(string(jsonData))
 	},
 }
 

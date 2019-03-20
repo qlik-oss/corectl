@@ -11,6 +11,7 @@ require (
 	github.com/qlik-oss/enigma-go v0.0.0-20190311075429-944f28692fe9
 	github.com/russross/blackfriday v1.5.2 // indirect
 	github.com/spf13/cobra v0.0.3
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.1
 	github.com/stretchr/testify v1.3.0
 	golang.org/x/sys v0.0.0-20190311071201-10058d7d4faa // indirect

@@ -29,7 +29,7 @@ var rootCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		// if help, version or generate-docs command, no prerun is needed.
-		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "version" {
+		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-API-spec" || ccmd.Use == "version" {
 			return
 		}
 		internal.QliVerbose = viper.GetBool("verbose")
