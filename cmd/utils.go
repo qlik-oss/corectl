@@ -140,25 +140,27 @@ var generateDocsCmd = &cobra.Command{
 	},
 }
 
-type commandJSON struct {
-	Use         string                 `json:"Use"`
-	Aliases     []string               `json:"Aliases,omitempty"`
-	Short       string                 `json:"Short,omitempty"`
-	Long        string                 `json:"Long,omitempty"`
-	ValidArgs   []string               `json:"ValidArgs,omitempty"`
-	Deprecated  string                 `json:"Deprecated,omitempty"`
-	Annotations map[string]string      `json:"Annotations,omitempty"`
-	Flags       map[string]flagJSON    `json:"Flags,omitempty"`
-	SubCommands map[string]commandJSON `json:"Commands,omitempty"`
-}
+type (
+	commandJSON struct {
+		Use         string                 `json:"Use"`
+		Aliases     []string               `json:"Aliases,omitempty"`
+		Short       string                 `json:"Short,omitempty"`
+		Long        string                 `json:"Long,omitempty"`
+		ValidArgs   []string               `json:"ValidArgs,omitempty"`
+		Deprecated  string                 `json:"Deprecated,omitempty"`
+		Annotations map[string]string      `json:"Annotations,omitempty"`
+		Flags       map[string]flagJSON    `json:"Flags,omitempty"`
+		SubCommands map[string]commandJSON `json:"Commands,omitempty"`
+	}
 
-type flagJSON struct {
-	Name       string `json:"Name,omitempty"`
-	Shorthand  string `json:"Shorthand,omitempty"`
-	Usage      string `json:"Usage,omitempty"`
-	DefValue   string `json:"DefValue,omitempty"`
-	Deprecated string `json:"Deprecated,omitempty"`
-}
+	flagJSON struct {
+		Name       string `json:"Name,omitempty"`
+		Shorthand  string `json:"Shorthand,omitempty"`
+		Usage      string `json:"Usage,omitempty"`
+		DefValue   string `json:"DefValue,omitempty"`
+		Deprecated string `json:"Deprecated,omitempty"`
+	}
+)
 
 func returnCmdspec(ccmd *cobra.Command) commandJSON {
 	ccmdJSON := commandJSON{
@@ -203,8 +205,8 @@ func returnFlags(flags *pflag.FlagSet) map[string]flagJSON {
 	return flagsJSON
 }
 
-var generateAPIspecCmd = &cobra.Command{
-	Use:    "generate-API-spec",
+var generateSpecCmd = &cobra.Command{
+	Use:    "generate-spec",
 	Short:  "Generate API spec based on cobra commands",
 	Long:   "Generate API spec docs based on cobra commands",
 	Hidden: true,
@@ -224,7 +226,7 @@ func init() {
 	rootCmd.AddCommand(catwalkCmd)
 	rootCmd.AddCommand(evalCmd)
 	rootCmd.AddCommand(generateDocsCmd)
-	rootCmd.AddCommand(generateAPIspecCmd)
+	rootCmd.AddCommand(generateSpecCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(reloadCmd)
 }
