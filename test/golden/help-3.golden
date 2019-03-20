@@ -1,7 +1,10 @@
-Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
+Reloads and saves the app after updating connections, dimensions, measures, objects and the script
 
 Usage:
   corectl build [flags]
+
+Examples:
+corectl build --connections ./myconnections.yml --script ./myscript.qvs
 
 Flags:
       --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!

@@ -4,10 +4,16 @@ Shows content of an generic object
 
 ### Synopsis
 
-Shows content of an generic object. If no subcommand is specified the properties will be shown. Example: corectl get object OBJECT-ID --app my-app.qvf
+Shows content of an generic object. If no subcommand is specified the properties will be shown.
 
 ```
 corectl get object <object-id> [flags]
+```
+
+### Examples
+
+```
+corectl get object OBJECT-ID --app my-app.qvf
 ```
 
 ### Options

@@ -10,6 +10,13 @@ Print table associations summary
 corectl get assoc [flags]
 ```
 
+### Examples
+
+```
+corectl get assoc
+corectl get associations
+```
+
 ### Options
 
 ```

@@ -4,10 +4,17 @@ Print the reload script
 
 ### Synopsis
 
-Print the reload script
+Fetches the script currently set in the app and prints it in plain text.
 
 ```
 corectl get script [flags]
+```
+
+### Examples
+
+```
+corectl get script
+corectl get script --app=my-app.qvf
 ```
 
 ### Options

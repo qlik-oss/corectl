@@ -4,10 +4,17 @@ Prints a list of all generic objects in the current app
 
 ### Synopsis
 
-Prints a list of all generic objects in the current app
+Prints a list of all generic objects in the current app in either plain text or JSON format
 
 ```
 corectl get objects [flags]
+```
+
+### Examples
+
+```
+corectl get objects
+corectl get objects --json --app=myapp.qvf
 ```
 
 ### Options

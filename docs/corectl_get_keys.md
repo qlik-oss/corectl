@@ -4,10 +4,16 @@ Print key-only field list
 
 ### Synopsis
 
-Print key-only field list
+Prints a fields list containing key-only fields
 
 ```
 corectl get keys [flags]
+```
+
+### Examples
+
+```
+corectl get keys
 ```
 
 ### Options

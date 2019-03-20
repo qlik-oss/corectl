@@ -4,7 +4,7 @@ removes the specified connection.
 
 ### Synopsis
 
-removes the specified connection.
+removes the specified connection
 
 ```
 corectl remove connection <connection-id> [flags]

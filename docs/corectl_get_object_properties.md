@@ -4,10 +4,16 @@ Prints the properties of the generic object
 
 ### Synopsis
 
-Prints the properties of the generic object. Example: corectl get object properties OBJECT-ID --app my-app.qvf
+Prints the properties of the generic object in JSON format
 
 ```
 corectl get object properties <object-id> [flags]
+```
+
+### Examples
+
+```
+corectl get object properties OBJECT-ID --app my-app.qvf
 ```
 
 ### Options

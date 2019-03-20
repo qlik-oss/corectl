@@ -41,24 +41,19 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 	connections, err := doc.GetConnections(ctx)
 
 	for name, configEntry := range connectionConfigEntries {
-		var connection *enigma.Connection
-		if configEntry.ConnectionString != "" {
-			connection = &enigma.Connection{
-				Name:             name,
-				Type:             configEntry.Type,
-				UserName:         "",
-				Password:         "",
-				ConnectionString: configEntry.ConnectionString,
-			}
-		} else {
-			connection = &enigma.Connection{
-				Name:             name,
-				Type:             configEntry.Type,
-				UserName:         configEntry.Username,
-				Password:         configEntry.Password,
-				ConnectionString: "CUSTOM CONNECT TO \"provider=" + configEntry.Type + ";" + flattenSettings(configEntry.Settings) + "\"",
-			}
+		var connection = &enigma.Connection{
+			Name:     name,
+			Type:     configEntry.Type,
+			UserName: configEntry.Username,
+			Password: configEntry.Password,
 		}
+
+		if configEntry.ConnectionString != "" {
+			connection.ConnectionString = configEntry.ConnectionString
+		} else {
+			connection.ConnectionString = "CUSTOM CONNECT TO \"provider=" + configEntry.Type + ";" + flattenSettings(configEntry.Settings) + "\""
+		}
+
 		if strings.HasPrefix(connection.Password, "${") && strings.HasSuffix(connection.Password, "}") {
 			varName := strings.TrimSuffix(strings.TrimPrefix(connection.Password, "${"), "}")
 			connection.Password = os.Getenv(varName)

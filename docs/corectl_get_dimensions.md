@@ -10,6 +10,12 @@ Prints a list of all generic dimensions in the current app
 corectl get dimensions [flags]
 ```
 
+### Examples
+
+```
+corectl get dimensions
+```
+
 ### Options
 
 ```

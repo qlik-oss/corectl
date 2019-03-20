@@ -4,12 +4,16 @@ Reloads and saves the app after updating connections, dimensions, measures, obje
 
 ### Synopsis
 
-Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
-		
-
+Reloads and saves the app after updating connections, dimensions, measures, objects and the script
 
 ```
 corectl build [flags]
+```
+
+### Examples
+
+```
+corectl build --connections ./myconnections.yml --script ./myscript.qvs
 ```
 
 ### Options

@@ -4,10 +4,16 @@ Shows content of an generic measure
 
 ### Synopsis
 
-Shows content of an generic measure. If no subcommand is specified the properties will be shown. Example: corectl get measure MEASURE-ID --app my-app.qvf
+Shows content of an generic measure. If no subcommand is specified the properties will be shown.
 
 ```
 corectl get measure <measure-id> [flags]
+```
+
+### Examples
+
+```
+corectl get measure MEASURE-ID --app my-app.qvf
 ```
 
 ### Options

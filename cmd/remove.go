@@ -56,7 +56,7 @@ var removeAppCmd = &cobra.Command{
 var removeConnectionCmd = &cobra.Command{
 	Use:     "connection <connection-id>",
 	Short:   "removes the specified connection.",
-	Long:    `removes the specified connection.`,
+	Long:    "removes the specified connection",
 	Example: "corectl remove connection CONNECTION-ID",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -82,9 +82,10 @@ var removeConnectionCmd = &cobra.Command{
 }
 
 var removeDimensionsCmd = &cobra.Command{
-	Use:   "dimensions <dimension-id>...",
-	Short: "Removes the specified generic dimensions in the current app",
-	Long:  "Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2",
+	Use:     "dimensions <dimension-id>...",
+	Short:   "Removes the specified generic dimensions in the current app",
+	Long:    "Removes the specified generic dimensions in the current app",
+	Example: "corectl remove dimension ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -113,9 +114,10 @@ var removeDimensionsCmd = &cobra.Command{
 }
 
 var removeMeasuresCmd = &cobra.Command{
-	Use:   "measures <measure-id>...",
-	Short: "Removes the specified generic measures in the current app",
-	Long:  "Removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2",
+	Use:     "measures <measure-id>...",
+	Short:   "Removes the specified generic measures in the current app",
+	Long:    "Removes the specified generic measures in the current app",
+	Example: "corectl remove measures ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -144,9 +146,10 @@ var removeMeasuresCmd = &cobra.Command{
 }
 
 var removeObjectsCmd = &cobra.Command{
-	Use:   "objects <object-id>...",
-	Short: "Removes the specified generic objects in the current app",
-	Long:  "Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2",
+	Use:     "objects <object-id>...",
+	Short:   "Removes the specified generic objects in the current app",
+	Long:    "Removes the specified generic objects in the current app",
+	Example: "corectl remove objects ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)

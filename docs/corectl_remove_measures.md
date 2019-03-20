@@ -4,10 +4,16 @@ Removes the specified generic measures in the current app
 
 ### Synopsis
 
-Removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2
+Removes the specified generic measures in the current app
 
 ```
 corectl remove measures <measure-id>... [flags]
+```
+
+### Examples
+
+```
+corectl remove measures ID-1 ID-2
 ```
 
 ### Options
