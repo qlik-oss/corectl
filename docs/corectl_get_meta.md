@@ -13,13 +13,13 @@ corectl get meta [flags]
 ### Options
 
 ```
-  -a, --app string   App name, if no app is specified a session app is used instead.
-  -h, --help         help for meta
+  -h, --help   help for meta
 ```
 
 ### Options inherited from parent commands
 
 ```
+  -a, --app string               App name, if no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to engine (default "localhost:9076")
       --headers stringToString   Headers to use when connecting to qix engine (default [])

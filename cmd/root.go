@@ -78,40 +78,29 @@ func Execute(mainVersion string) {
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
+	// Set annotation to run bash completion function for the config flag and only show .yaml or .yml files
+	rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
+
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
 	rootCmd.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	viper.BindPFlag("traffic", rootCmd.PersistentFlags().Lookup("traffic"))
 
-	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
+	rootCmd.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
+	viper.BindPFlag("engine", rootCmd.PersistentFlags().Lookup("engine"))
 
-		// Set annotation to run bash completion function for the config flag and only show .yaml or .yml files
-		command.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
-	}
+	rootCmd.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
+	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
-	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
+	//not binding to viper since binding a map does not seem to work.
+	rootCmd.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
 
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, setCmd, removeCmd} {
-		//not binding to viper since binding a map does not seem to work.
-		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
-		// Set annotation to run bash completion function for the app flag
-		command.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
-	}
+	rootCmd.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
+	viper.BindPFlag("app", rootCmd.PersistentFlags().Lookup("app"))
+	// Set annotation to run bash completion function for the app flag
+	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
@@ -207,108 +196,93 @@ func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJ
 }
 
 const bashCompletionFunc = `
+
 	__custom_func()
 	{
 		case ${last_command} in
 			corectl_get_dimension_properties | corectl_get_dimension_layout)
 				__corectl_get_dimensions
-				return
 				;;
 			corectl_get_measure_properties | corectl_get_measure_layout)
 				__corectl_get_measures
-				return
 				;;
 			corectl_get_object_data | corectl_get_object_properties | corectl_get_object_layout)
 				__corectl_get_objects
-				return
 				;;
 			corectl_get_connection)
 				__corectl_get_connections
-				return
 				;;
-			*)
+      *)
+				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
 				;;
 		esac
 	}
 
-	__parse_all_flags()
+  __extract_flags_to_forward()
 	{
-		local flags
-
-		for i in "${words[@]}"
-		do
-			case "$i" in
-				--* | -* )
-					flags+="$i "
-					;;
-				*)
-					;;
-			esac
-		done
-
-		echo "${flags}"
+    local forward_flags
+  	local result
+	  forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
+	  while [[ $# -gt 0 ]]; do
+  	  for i in "${forward_flags[@]}"
+			do
+				case $1 in
+  	    $i)
+    	    result+="$1=";
+      	  shift;
+        	result+="$1 "
+      	;;
+      	$i=*)
+        	result+="$1 "
+      	;;
+    	esac
+			done
+    	shift
+  	done
+    echo "$result";
 	}
 
-	__parse_config_flag()
-	{
-		local config
-
-		for i in "${words[@]}"
-		do
-			case "$i" in
-				--config=* | -c=* )
-					config+="$i "
-					;;
-				*)
-					;;
-			esac
-		done
-
-		echo "${config}"
-	}
+  __corect_render_compreply()
+  {
+		if [[ $? -eq 0 ]]; then
+				COMPREPLY+=( $( compgen -W "$1" -- "$cur" ) )
+		else 
+				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
+		fi
+  }
 
 	__corectl_get_dimensions()
 	{
-		local flags=$(__parse_all_flags)
-		local corectl_out
-		if corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null); then
-				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
-		fi
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_measures()
 	{
-		local flags=$(__parse_all_flags)
-		local corectl_out
-		if corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null); then
-				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
-		fi
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_objects()
 	{
-		local flags=$(__parse_all_flags)
-		local corectl_out
-		if corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null); then
-				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
-		fi
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null) 
+		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_connections()
 	{
-		local flags=$(__parse_all_flags)
-		local corectl_out
-		if corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null); then
-				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
-		fi
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_apps()
 	{
-		local config=$(__parse_config_flag)
-		local corectl_out
-		if corectl_out=$(corectl get apps --json $config | jq  '.[] | .name' 2>/dev/null); then
-				COMPREPLY+=( $( compgen -W "${corectl_out[*]}" -- "$cur" ) )
-		fi
+		local config=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get apps --json $config | jq  '.[] | .name' 2>/dev/null) 
+		__corect_render_compreply "${corectl_out[*]}"
 	}
 `

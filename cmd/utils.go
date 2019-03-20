@@ -24,9 +24,6 @@ var buildCmd = &cobra.Command{
 `,
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("silent", ccmd.PersistentFlags().Lookup("silent"))
 	},
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -42,8 +39,6 @@ var catwalkCmd = &cobra.Command{
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("catwalk-url", ccmd.PersistentFlags().Lookup("catwalk-url"))
 	},
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -71,9 +66,6 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -94,9 +86,7 @@ var reloadCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
+
 		viper.BindPFlag("silent", ccmd.PersistentFlags().Lookup("silent"))
 		viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 	},

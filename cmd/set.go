@@ -17,10 +17,7 @@ var setCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
 		viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 	},
 }
 

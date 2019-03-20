@@ -17,8 +17,6 @@ var getCmd = &cobra.Command{
 	Long:  "Lists one or several resources",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
 	},
 }
 
@@ -49,7 +47,6 @@ var getAssociationsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -67,7 +64,6 @@ var getConnectionsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
@@ -89,7 +85,6 @@ var getConnectionCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -114,7 +109,6 @@ var getDimensionsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
@@ -130,7 +124,6 @@ var getDimensionCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	//if no specific subcommand is used show the Dimensions properties
@@ -174,7 +167,6 @@ var getFieldCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -195,7 +187,6 @@ var getFieldsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -212,7 +203,6 @@ var getKeysCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -229,7 +219,6 @@ var getMeasuresCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
@@ -245,7 +234,6 @@ var getMeasureCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	//if no specific subcommand is used show the Measure properties
@@ -289,7 +277,6 @@ var getMetaCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -306,7 +293,6 @@ var getObjectsCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 		viper.BindPFlag("json", ccmd.PersistentFlags().Lookup("json"))
 	},
 
@@ -322,7 +308,6 @@ var getObjectCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	//if no specific subcommand is used show the objects properties
@@ -392,7 +377,6 @@ var getScriptCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -412,7 +396,6 @@ var getStatusCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -428,7 +411,6 @@ var getTablesCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		getCmd.PersistentPreRun(getCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {

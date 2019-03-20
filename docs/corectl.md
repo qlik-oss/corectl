@@ -13,9 +13,14 @@ corectl [flags]
 ### Options
 
 ```
-  -h, --help      help for corectl
-  -t, --traffic   Log JSON websocket traffic to stdout
-  -v, --verbose   Logs extra information
+  -a, --app string               App name, if no app is specified a session app is used instead.
+  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string            URL to engine (default "localhost:9076")
+      --headers stringToString   Headers to use when connecting to qix engine (default [])
+  -h, --help                     help for corectl
+  -t, --traffic                  Log JSON websocket traffic to stdout
+      --ttl string               Engine session time to live in seconds (default "30")
+  -v, --verbose                  Logs extra information
 ```
 
 ### SEE ALSO
