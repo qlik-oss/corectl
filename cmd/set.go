@@ -28,6 +28,8 @@ var setAllCmd = &cobra.Command{
 	Use:   "all",
 	Short: "Sets the objects, measures, dimensions, connections and script in the current app",
 	Long:  "Sets the objects, measures, dimensions, connections and script in the current app",
+	Example: `corectl set all
+corectl set all --app=my-app.qvf`,
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -35,7 +37,7 @@ var setAllCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		separateConnectionsFile := ccmd.Flag("connections").Value.String()
 		if separateConnectionsFile == "" {
 			separateConnectionsFile = GetRelativeParameter("connections")
@@ -59,9 +61,10 @@ var setAllCmd = &cobra.Command{
 }
 
 var setConnectionsCmd = &cobra.Command{
-	Use:   "connections <path-to-connections-file.yml>",
-	Short: "Sets or updates the connections in the current app",
-	Long:  "Sets or updates the connections in the current app. Example corectl set connections ./my-connections.yml",
+	Use:     "connections <path-to-connections-file.yml>",
+	Short:   "Sets or updates the connections in the current app",
+	Long:    "Sets or updates the connections in the current app",
+	Example: "corectl set connections ./my-connections.yml",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -69,7 +72,7 @@ var setConnectionsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		separateConnectionsFile := ""
 		if len(args) > 0 {
 			separateConnectionsFile = args[0]
@@ -85,9 +88,10 @@ var setConnectionsCmd = &cobra.Command{
 }
 
 var setDimensionsCmd = &cobra.Command{
-	Use:   "dimensions <glob-pattern-path-to-dimensions-files.json>",
-	Short: "Sets or updates the dimensions in the current app",
-	Long:  "Sets or updates the dimensions in the current app. Example corectl set dimensions ./my-dimensions-glob-path.json",
+	Use:     "dimensions <glob-pattern-path-to-dimensions-files.json>",
+	Short:   "Sets or updates the dimensions in the current app",
+	Long:    "Sets or updates the dimensions in the current app",
+	Example: "corectl set dimensions ./my-dimensions-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -99,7 +103,7 @@ var setDimensionsCmd = &cobra.Command{
 		if len(args) > 0 {
 			commandLineDimensions = args[0]
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc, state.AppID)
@@ -108,9 +112,10 @@ var setDimensionsCmd = &cobra.Command{
 }
 
 var setMeasuresCmd = &cobra.Command{
-	Use:   "measures <glob-pattern-path-to-measures-files.json>",
-	Short: "Sets or updates the measures in the current app",
-	Long:  "Sets or updates the measures in the current app. Example corectl set measures ./my-measures-glob-path.json",
+	Use:     "measures <glob-pattern-path-to-measures-files.json>",
+	Short:   "Sets or updates the measures in the current app",
+	Long:    "Sets or updates the measures in the current app",
+	Example: "corectl set measures ./my-measures-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -122,7 +127,7 @@ var setMeasuresCmd = &cobra.Command{
 		if len(args) > 0 {
 			commandLineMeasures = args[0]
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc, state.AppID)
@@ -133,8 +138,9 @@ var setMeasuresCmd = &cobra.Command{
 var setObjectsCmd = &cobra.Command{
 	Use:   "objects <glob-pattern-path-to-objects-files.json",
 	Short: "Sets or updates the objects in the current app",
-	Long: `Sets or updates the objects in the current app Example corectl set objects ./my-objects-glob-path.json.
+	Long: `Sets or updates the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
+	Example: "corectl set objects ./my-objects-glob-path.json",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -147,7 +153,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 			commandLineObjects = args[0]
 		}
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc, state.AppID)
@@ -156,9 +162,10 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 }
 
 var setScriptCmd = &cobra.Command{
-	Use:   "script <path-to-script-file.yml>",
-	Short: "Sets the script in the current app",
-	Long:  "Sets the script in the current app. Example: corectl set script ./my-script-file",
+	Use:     "script <path-to-script-file.yml>",
+	Short:   "Sets the script in the current app",
+	Long:    "Sets the script in the current app",
+	Example: "corectl set script ./my-script-file",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		setCmd.PersistentPreRun(setCmd, args)
@@ -166,7 +173,7 @@ var setScriptCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		scriptFile := ""
 		if len(args) > 0 {
 			scriptFile = args[0]

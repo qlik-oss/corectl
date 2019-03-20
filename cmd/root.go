@@ -68,7 +68,8 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(mainVersion string) {
+	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -166,7 +167,7 @@ func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) 
 		ccmd.Usage()
 		os.Exit(1)
 	}
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	printer.PrintGenericEntityProperties(state, args[0], entityType)
 }
 
@@ -176,12 +177,12 @@ func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
 		ccmd.Usage()
 		os.Exit(1)
 	}
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	printer.PrintGenericEntityLayout(state, args[0], entityType)
 }
 
 func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
-	state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+	state := internal.PrepareEngineState(rootCtx, headers, false)
 	allInfos, err := state.Doc.GetAllInfos(rootCtx)
 	if err != nil {
 		internal.FatalError(err)

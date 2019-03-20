@@ -4,10 +4,17 @@ Prints a list of all generic measures in the current app
 
 ### Synopsis
 
-Prints a list of all generic measures in the current app
+Prints a list of all generic measures in the current app in either plain text or json
 
 ```
 corectl get measures [flags]
+```
+
+### Examples
+
+```
+corectl get measures
+corectl get measures --json
 ```
 
 ### Options

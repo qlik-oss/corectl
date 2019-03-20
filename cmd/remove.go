@@ -60,7 +60,7 @@ var removeAppCmd = &cobra.Command{
 var removeConnectionCmd = &cobra.Command{
 	Use:     "connection <connection-id>",
 	Short:   "removes the specified connection.",
-	Long:    `removes the specified connection.`,
+	Long:    "removes the specified connection",
 	Example: "corectl remove connection CONNECTION-ID",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -73,7 +73,7 @@ var removeConnectionCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, true)
 		err := state.Doc.DeleteConnection(rootCtx, args[0])
 		if err != nil {
 			internal.FatalError("Failed to remove connection", args[0])
@@ -86,9 +86,10 @@ var removeConnectionCmd = &cobra.Command{
 }
 
 var removeDimensionsCmd = &cobra.Command{
-	Use:   "dimensions <dimension-id>...",
-	Short: "Removes the specified generic dimensions in the current app",
-	Long:  "Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2",
+	Use:     "dimensions <dimension-id>...",
+	Short:   "Removes the specified generic dimensions in the current app",
+	Long:    "Removes the specified generic dimensions in the current app",
+	Example: "corectl remove dimension ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -101,7 +102,7 @@ var removeDimensionsCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
@@ -117,9 +118,10 @@ var removeDimensionsCmd = &cobra.Command{
 }
 
 var removeMeasuresCmd = &cobra.Command{
-	Use:   "measures <measure-id>...",
-	Short: "Removes the specified generic measures in the current app",
-	Long:  "Removes the specified generic measures in the current app. Example: corectl remove measures ID-1 ID-2",
+	Use:     "measures <measure-id>...",
+	Short:   "Removes the specified generic measures in the current app",
+	Long:    "Removes the specified generic measures in the current app",
+	Example: "corectl remove measures ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -132,7 +134,7 @@ var removeMeasuresCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
@@ -148,9 +150,10 @@ var removeMeasuresCmd = &cobra.Command{
 }
 
 var removeObjectsCmd = &cobra.Command{
-	Use:   "objects <object-id>...",
-	Short: "Removes the specified generic objects in the current app",
-	Long:  "Removes the specified generic objects in the current app. Example: corectl remove objects ID-1 ID-2",
+	Use:     "objects <object-id>...",
+	Short:   "Removes the specified generic objects in the current app",
+	Long:    "Removes the specified generic objects in the current app",
+	Example: "corectl remove objects ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -163,7 +166,7 @@ var removeObjectsCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {

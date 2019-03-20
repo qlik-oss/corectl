@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
+	"runtime"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -12,14 +14,13 @@ import (
 	"github.com/spf13/cobra/doc"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"github.com/tcnksm/go-latest"
 )
 
 var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
-	Long: `Builds the app. Example: corectl build --connections ./myconnections.yml --script ./myscript.qvs
-		
-`,
+	Use:     "build",
+	Short:   "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
+	Example: "corectl build --connections ./myconnections.yml --script ./myscript.qvs",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
 		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
@@ -80,15 +81,16 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
 }
 
 var reloadCmd = &cobra.Command{
-	Use:   "reload",
-	Short: "Reloads the app.",
-	Long:  "Reloads the app. Example: corectl reload",
+	Use:     "reload",
+	Short:   "Reloads the app.",
+	Long:    "Reloads the app.",
+	Example: "corectl reload",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
@@ -100,7 +102,7 @@ var reloadCmd = &cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		silent := viper.GetBool("silent")
 
 		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
@@ -112,11 +114,17 @@ var reloadCmd = &cobra.Command{
 }
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version of corectl",
+	Use:     "version",
+	Short:   "Print the version of corectl",
+	Example: "corectl version",
 
 	Run: func(_ *cobra.Command, args []string) {
-		fmt.Printf("corectl version %s\n", version)
+
+		if version != "development build" {
+			checkLatestVersion()
+		}
+
+		fmt.Printf("corectl version: %s\n", version)
 	},
 }
 
@@ -223,7 +231,7 @@ func init() {
 
 func build(ccmd *cobra.Command, args []string) {
 	ctx := rootCtx
-	state := internal.PrepareEngineState(ctx, viper.GetString("engine"), viper.GetString("app"), viper.GetString("ttl"), headers, true)
+	state := internal.PrepareEngineState(ctx, headers, true)
 
 	separateConnectionsFile := ccmd.Flag("connections").Value.String()
 	if separateConnectionsFile == "" {
@@ -247,5 +255,35 @@ func build(ccmd *cobra.Command, args []string) {
 
 	if state.AppID != "" {
 		internal.Save(ctx, state.Doc, state.AppID)
+	}
+}
+
+// Function for checking current version against latest released version on github
+func checkLatestVersion() {
+	githubTag := &latest.GithubTag{
+		Owner:      "qlik-oss",
+		Repository: "corectl",
+	}
+
+	res, err := latest.Check(githubTag, version)
+
+	if err == nil && res.Outdated {
+
+		// Find absolute path of executable
+		executable, _ := os.Executable()
+
+		// Format a download string depending on OS
+		var dwnl string
+		if runtime.GOOS == "windows" {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "%s" && rm ./corectl.zip`, res.Current, path.Dir(executable))
+		} else {
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, res.Current, runtime.GOOS, path.Dir(executable))
+		}
+
+		fmt.Println("-------------------------------------------------")
+		fmt.Printf("There is a new version available! Please upgrade for the latest features and bug fixes. You are on %s, latest version is %s. \n", version, res.Current)
+		fmt.Printf("To download the latest version you can use this command: \n")
+		fmt.Printf(`'%s'`, dwnl)
+		fmt.Println("\n-------------------------------------------------")
 	}
 }

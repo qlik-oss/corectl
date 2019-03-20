@@ -4,10 +4,16 @@ Evaluates the hypercube data of an generic object
 
 ### Synopsis
 
-Evaluates the hypercube data of an generic object. Example: corectl get object data OBJECT-ID --app my-app.qvf
+Evaluates the hypercube data of an generic object
 
 ```
 corectl get object data <object-id> [flags]
+```
+
+### Examples
+
+```
+corectl get object data OBJECT-ID --app my-app.qvf
 ```
 
 ### Options

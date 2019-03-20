@@ -4,10 +4,16 @@ Removes the specified generic dimensions in the current app
 
 ### Synopsis
 
-Removes the specified generic dimensions in the current app. Example: corectl remove dimension ID-1 ID-2
+Removes the specified generic dimensions in the current app
 
 ```
 corectl remove dimensions <dimension-id>... [flags]
+```
+
+### Examples
+
+```
+corectl remove dimension ID-1 ID-2
 ```
 
 ### Options
