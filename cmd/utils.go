@@ -132,21 +132,19 @@ var generateDocsCmd = &cobra.Command{
 // completionCmd generates auto completion commands
 var completionCmd = &cobra.Command{
 	Use:       "completion <shell>",
-	Hidden:    true,
 	ValidArgs: []string{"zsh", "bash"},
 	Args:      cobra.MinimumNArgs(1),
 	Short:     "Generates auto completion scripts",
-	Long: `To load completion add the following to your ~/.bashrc or ~/.zshrc file
+	Long: `Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
+interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. 
+Note that jq and bash-completion are required and needs to be installed on your system.`,
+	Example: `   Add the following to your ~/.bashrc or ~/.zshrc file
 
-. <(corectl completion zsh)
+   . <(corectl completion zsh)
 
-or
+   or
 
-. <(corectl completion bash)
-
-If you are running on OSX you will also need to install bash-completion e.g through brew.
-brew install bash-completion
-`,
+   . <(corectl completion bash)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case args[0] == "bash":
@@ -229,7 +227,7 @@ func checkLatestVersion() {
 }
 
 // Code for generating zsh bash completion script
-// Inspired by https://github.com/kubernetes/kubernetes/blob/master/pkg/kubectl/cmd/completion/completion.go
+// Inspired by https://github.com/kubernetes/kubernetes/blob/e2c1f435516085ef17f222fb7f89cd3ba13aa944/pkg/kubectl/cmd/completion/completion.go
 const zshHead = `#compdef corectl
 __corectl_bash_source() {
 	alias shopt=':'

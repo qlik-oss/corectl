@@ -421,8 +421,8 @@ corectl get script --app=my-app.qvf`,
 
 var getStatusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Prints status info about the connection to engine and current app",
-	Long:  "Prints status info about the connection to engine and current app, and also the status of the data model",
+	Short: "Prints status info about the connection to the engine and current app",
+	Long:  "Prints status info about the connection to the engine and current app, and also the status of the data model",
 	Example: `corectl get status
 corectl get status --app=my-app.qvf`,
 

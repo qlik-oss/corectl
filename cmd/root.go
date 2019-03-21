@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 	Hidden:                 true,
 	Use:                    "corectl",
 	Short:                  "",
-	Long:                   `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+	Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 	DisableAutoGenTag:      true,
 	BashCompletionFunction: bashCompletionFunc,
 
@@ -88,14 +88,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	viper.BindPFlag("traffic", rootCmd.PersistentFlags().Lookup("traffic"))
 
-	rootCmd.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
+	rootCmd.PersistentFlags().StringP("engine", "e", "", "URL to the Qlik Associative Engine (default \"localhost:9076\")")
 	viper.BindPFlag("engine", rootCmd.PersistentFlags().Lookup("engine"))
 
-	rootCmd.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
+	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
 	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
 	//not binding to viper since binding a map does not seem to work.
-	rootCmd.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
+	rootCmd.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Http headers to use when connecting to Qlik Associative Engine")
 
 	rootCmd.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	viper.BindPFlag("app", rootCmd.PersistentFlags().Lookup("app"))

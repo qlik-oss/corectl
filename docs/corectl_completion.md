@@ -1,25 +1,32 @@
-## corectl get connection
+## corectl completion
 
-Shows the properties for a specific connection
+Generates auto completion scripts
 
 ### Synopsis
 
-Shows the properties for a specific connection
+Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
+interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. Note that jq and bash-completion are required and needs to be installed on your system.
 
 ```
-corectl get connection [flags]
+corectl completion <shell> [flags]
 ```
 
 ### Examples
 
 ```
-corectl get connection CONNECTION-ID
+   Add the following to your ~/.bashrc or ~/.zshrc file
+
+   . <(corectl completion zsh)
+
+   or
+
+   . <(corectl completion bash)
 ```
 
 ### Options
 
 ```
-  -h, --help   help for connection
+  -h, --help   help for completion
 ```
 
 ### Options inherited from parent commands
@@ -36,5 +43,5 @@ corectl get connection CONNECTION-ID
 
 ### SEE ALSO
 
-* [corectl get](corectl_get.md)	 - Lists one or several resources
+* [corectl](corectl.md)	 - 
 
