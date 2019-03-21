@@ -57,31 +57,32 @@ var removeAppCmd = &cobra.Command{
 	},
 }
 
-var removeConnectionCmd = &cobra.Command{
-	Use:     "connection <connection-id>",
-	Short:   "removes the specified connection.",
-	Long:    "removes the specified connection",
-	Example: "corectl remove connection CONNECTION-ID",
+var removeConnectionsCmd = &cobra.Command{
+	Use:     "connections <connection-id>...",
+	Short:   "Removes the specified connection(s)",
+	Long:    "Removes one or many connections from the app",
+	Example: "corectl remove connections ID-1 ID-2",
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
 		viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
 	},
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("Expected an identifier of the connection to delete.")
+		if len(args) < 1 {
+			fmt.Println("Expected at least one identifier of a connection to delete.")
 			ccmd.Usage()
 			os.Exit(1)
 		}
 
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		err := state.Doc.DeleteConnection(rootCtx, args[0])
-		if err != nil {
-			internal.FatalError("Failed to remove connection", args[0])
+		for _, connection := range args {
+			err := state.Doc.DeleteConnection(rootCtx, connection)
+			if err != nil {
+				internal.FatalError("Failed to remove connection: ", connection, " with error: ", err.Error())
+			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc, state.AppID)
 		}
-
 	},
 }
 
@@ -89,7 +90,7 @@ var removeDimensionsCmd = &cobra.Command{
 	Use:     "dimensions <dimension-id>...",
 	Short:   "Removes the specified generic dimensions in the current app",
 	Long:    "Removes the specified generic dimensions in the current app",
-	Example: "corectl remove dimension ID-1 ID-2",
+	Example: "corectl remove dimensions ID-1 ID-2",
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -184,7 +185,7 @@ var removeObjectsCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(removeCmd)
 	removeCmd.AddCommand(removeAppCmd)
-	removeCmd.AddCommand(removeConnectionCmd)
+	removeCmd.AddCommand(removeConnectionsCmd)
 	removeCmd.AddCommand(removeDimensionsCmd)
 	removeCmd.AddCommand(removeMeasuresCmd)
 	removeCmd.AddCommand(removeObjectsCmd)

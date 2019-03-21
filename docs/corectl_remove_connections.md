@@ -1,25 +1,25 @@
-## corectl remove dimensions
+## corectl remove connections
 
-Removes the specified generic dimensions in the current app
+Removes the specified connection(s)
 
 ### Synopsis
 
-Removes the specified generic dimensions in the current app
+Removes one or many connections from the app
 
 ```
-corectl remove dimensions <dimension-id>... [flags]
+corectl remove connections <connection-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove dimensions ID-1 ID-2
+corectl remove connections ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for dimensions
+  -h, --help      help for connections
       --no-save   Do not save the app
 ```
 

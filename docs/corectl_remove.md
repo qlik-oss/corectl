@@ -29,7 +29,7 @@ Remove one or mores generic entities (connections, dimensions, measures, objects
 
 * [corectl](corectl.md)	 - 
 * [corectl remove app](corectl_remove_app.md)	 - removes the specified app.
-* [corectl remove connection](corectl_remove_connection.md)	 - removes the specified connection.
+* [corectl remove connections](corectl_remove_connections.md)	 - Removes the specified connection(s)
 * [corectl remove dimensions](corectl_remove_dimensions.md)	 - Removes the specified generic dimensions in the current app
 * [corectl remove measures](corectl_remove_measures.md)	 - Removes the specified generic measures in the current app
 * [corectl remove objects](corectl_remove_objects.md)	 - Removes the specified generic objects in the current app
