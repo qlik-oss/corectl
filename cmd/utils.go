@@ -164,7 +164,7 @@ type (
 
 func returnCmdspec(ccmd *cobra.Command) commandJSON {
 	ccmdJSON := commandJSON{
-		Use:         strings.Fields(ccmd.Use)[0],
+		Use:         ccmd.Use,
 		Aliases:     ccmd.Aliases,
 		Short:       ccmd.Short,
 		Long:        ccmd.Long,

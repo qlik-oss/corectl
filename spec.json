@@ -100,7 +100,7 @@
       }
     },
     "eval": {
-      "Use": "eval",
+      "Use": "eval \u003cmeasure 1\u003e [\u003cmeasure 2...\u003e] by \u003cdimension 1\u003e [\u003cdimension 2...]",
       "Short": "Evaluates a list of measures and dimensions",
       "Long": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions.",
       "Flags": {
@@ -233,7 +233,7 @@
           }
         },
         "dimension": {
-          "Use": "dimension",
+          "Use": "dimension \u003cdimension-id\u003e",
           "Short": "Shows content of an generic dimension",
           "Long": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
           "Flags": {
@@ -245,12 +245,12 @@
           },
           "Commands": {
             "layout": {
-              "Use": "layout",
+              "Use": "layout \u003cdimension-id\u003e",
               "Short": "Evaluates the layout of an generic dimension",
               "Long": "Evaluates the layout of an generic dimension"
             },
             "properties": {
-              "Use": "properties",
+              "Use": "properties \u003cdimension-id\u003e",
               "Short": "Prints the properties of the generic dimension",
               "Long": "Prints the properties of the generic dimension"
             }
@@ -274,7 +274,7 @@
           }
         },
         "field": {
-          "Use": "field",
+          "Use": "field \u003cfield name\u003e",
           "Short": "Shows content of a field",
           "Long": "Prints all the values for a specific field in your data model",
           "Flags": {
@@ -310,7 +310,7 @@
           }
         },
         "measure": {
-          "Use": "measure",
+          "Use": "measure \u003cmeasure-id\u003e",
           "Short": "Shows content of an generic measure",
           "Long": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
           "Flags": {
@@ -322,12 +322,12 @@
           },
           "Commands": {
             "layout": {
-              "Use": "layout",
+              "Use": "layout \u003cmeasure-id\u003e",
               "Short": "Evaluates the layout of an generic measure",
               "Long": "Evaluates the layout of an generic measure and prints in JSON format"
             },
             "properties": {
-              "Use": "properties",
+              "Use": "properties \u003cmeasure-id\u003e",
               "Short": "Prints the properties of the generic measure",
               "Long": "Prints the properties of the generic measure in JSON format"
             }
@@ -363,7 +363,7 @@
           }
         },
         "object": {
-          "Use": "object",
+          "Use": "object \u003cobject-id\u003e",
           "Short": "Shows content of an generic object",
           "Long": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
           "Flags": {
@@ -375,17 +375,17 @@
           },
           "Commands": {
             "data": {
-              "Use": "data",
+              "Use": "data \u003cobject-id\u003e",
               "Short": "Evaluates the hypercube data of an generic object",
               "Long": "Evaluates the hypercube data of an generic object"
             },
             "layout": {
-              "Use": "layout",
+              "Use": "layout \u003cobject-id\u003e",
               "Short": "Evaluates the hypercube layout of an generic object",
               "Long": "Evaluates the hypercube layout of an generic object in JSON format"
             },
             "properties": {
-              "Use": "properties",
+              "Use": "properties \u003cobject-id\u003e",
               "Short": "Prints the properties of the generic object",
               "Long": "Prints the properties of the generic object in JSON format"
             }
@@ -447,7 +447,7 @@
       }
     },
     "help": {
-      "Use": "help",
+      "Use": "help [command]",
       "Short": "Help about any command",
       "Long": "Help provides help for any command in the application.\nSimply type corectl help [path to command] for full details."
     },
@@ -531,12 +531,12 @@
       },
       "Commands": {
         "app": {
-          "Use": "app",
+          "Use": "app \u003capp-id\u003e",
           "Short": "removes the specified app.",
           "Long": "removes the specified app."
         },
         "connection": {
-          "Use": "connection",
+          "Use": "connection \u003cconnection-id\u003e",
           "Short": "removes the specified connection.",
           "Long": "removes the specified connection",
           "Flags": {
@@ -548,7 +548,7 @@
           }
         },
         "dimensions": {
-          "Use": "dimensions",
+          "Use": "dimensions \u003cdimension-id\u003e...",
           "Short": "Removes the specified generic dimensions in the current app",
           "Long": "Removes the specified generic dimensions in the current app",
           "Flags": {
@@ -560,7 +560,7 @@
           }
         },
         "measures": {
-          "Use": "measures",
+          "Use": "measures \u003cmeasure-id\u003e...",
           "Short": "Removes the specified generic measures in the current app",
           "Long": "Removes the specified generic measures in the current app",
           "Flags": {
@@ -572,7 +572,7 @@
           }
         },
         "objects": {
-          "Use": "objects",
+          "Use": "objects \u003cobject-id\u003e...",
           "Short": "Removes the specified generic objects in the current app",
           "Long": "Removes the specified generic objects in the current app",
           "Flags": {
@@ -650,7 +650,7 @@
           }
         },
         "connections": {
-          "Use": "connections",
+          "Use": "connections \u003cpath-to-connections-file.yml\u003e",
           "Short": "Sets or updates the connections in the current app",
           "Long": "Sets or updates the connections in the current app",
           "Flags": {
@@ -661,22 +661,22 @@
           }
         },
         "dimensions": {
-          "Use": "dimensions",
+          "Use": "dimensions \u003cglob-pattern-path-to-dimensions-files.json\u003e",
           "Short": "Sets or updates the dimensions in the current app",
           "Long": "Sets or updates the dimensions in the current app"
         },
         "measures": {
-          "Use": "measures",
+          "Use": "measures \u003cglob-pattern-path-to-measures-files.json\u003e",
           "Short": "Sets or updates the measures in the current app",
           "Long": "Sets or updates the measures in the current app"
         },
         "objects": {
-          "Use": "objects",
+          "Use": "objects \u003cglob-pattern-path-to-objects-files.json",
           "Short": "Sets or updates the objects in the current app",
           "Long": "Sets or updates the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format"
         },
         "script": {
-          "Use": "script",
+          "Use": "script \u003cpath-to-script-file.yml\u003e",
           "Short": "Sets the script in the current app",
           "Long": "Sets the script in the current app"
         }
