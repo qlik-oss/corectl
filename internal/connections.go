@@ -12,10 +12,7 @@ import (
 func flattenSettings(settings map[string]string) string {
 	result := ""
 	for name, value := range settings {
-		if result != "" {
-			result += ";"
-		}
-		result += name + "=" + value
+		result += name + "=" + value + ";"
 	}
 	return result
 }
