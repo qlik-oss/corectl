@@ -13,7 +13,7 @@ corectl remove dimensions <dimension-id>... [flags]
 ### Examples
 
 ```
-corectl remove dimension ID-1 ID-2
+corectl remove dimensions ID-1 ID-2
 ```
 
 ### Options
