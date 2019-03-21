@@ -5,7 +5,8 @@ Generates auto completion scripts
 ### Synopsis
 
 Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. Note that jq and bash-completion are required and needs to be installed on your system.
+interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. 
+Note that jq and bash-completion are required and needs to be installed on your system.
 
 ```
 corectl completion <shell> [flags]
