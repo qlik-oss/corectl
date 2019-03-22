@@ -5,15 +5,41 @@
     "version": "development build",
     "license": "MIT"
   },
-  "clispec": "0.0.1",
+  "clispec": "0.1.0",
   "use": "corectl",
-  "long": "Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
+  "long": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
+  "x-qlik-stability": "experimental",
   "flags": {
+    "app": {
+      "name": "app",
+      "shorthand": "a",
+      "usage": "App name, if no app is specified a session app is used instead."
+    },
+    "config": {
+      "name": "config",
+      "shorthand": "c",
+      "usage": "path/to/config.yml where parameters can be set instead of on the command line"
+    },
+    "engine": {
+      "name": "engine",
+      "shorthand": "e",
+      "usage": "URL to the Qlik Associative Engine (default \"localhost:9076\")"
+    },
+    "headers": {
+      "name": "headers",
+      "usage": "Http headers to use when connecting to Qlik Associative Engine",
+      "default": "[]"
+    },
     "traffic": {
       "name": "traffic",
       "shorthand": "t",
       "usage": "Log JSON websocket traffic to stdout",
       "default": "false"
+    },
+    "ttl": {
+      "name": "ttl",
+      "usage": "Qlik Associative Engine session time to live in seconds",
+      "default": "30"
     },
     "verbose": {
       "name": "verbose",
@@ -27,16 +53,6 @@
       "use": "build",
       "short": "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
       "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
         "connections": {
           "name": "connections",
           "usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
@@ -44,16 +60,6 @@
         "dimensions": {
           "name": "dimensions",
           "usage": "A list of generic dimension json paths"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
         },
         "measures": {
           "name": "measures",
@@ -71,11 +77,6 @@
           "name": "silent",
           "usage": "Do not log reload progress",
           "default": "false"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
         }
       }
     },
@@ -84,59 +85,26 @@
       "short": "Opens the specified app in catwalk",
       "long": "Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
       "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
         "catwalk-url": {
           "name": "catwalk-url",
           "usage": "Url to an instance of catwalk, if not provided the qlik one will be used.",
           "default": "https://catwalk.core.qlik.com"
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
         }
       }
+    },
+    "completion": {
+      "use": "completion \u003cshell\u003e",
+      "short": "Generates auto completion scripts",
+      "long": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that jq and bash-completion are required and needs to be installed on your system.",
+      "validArgs": [
+        "zsh",
+        "bash"
+      ]
     },
     "eval": {
       "use": "eval \u003cmeasure 1\u003e [\u003cmeasure 2...\u003e] by \u003cdimension 1\u003e [\u003cdimension 2...]",
       "short": "Evaluates a list of measures and dimensions",
-      "long": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions.",
-      "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
-        }
-      }
+      "long": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
     },
     "generate-docs": {
       "use": "generate-docs",
@@ -160,28 +128,6 @@
       "use": "get",
       "short": "Lists one or several resources",
       "long": "Lists one or several resources",
-      "flags": {
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
-        }
-      },
       "commands": {
         "apps": {
           "use": "apps",
@@ -201,37 +147,18 @@
             "associations"
           ],
           "short": "Print table associations summary",
-          "long": "Print table associations summary",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Print table associations summary"
         },
         "connection": {
           "use": "connection",
           "short": "Shows the properties for a specific connection",
-          "long": "Shows the properties for a specific connection",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Shows the properties for a specific connection"
         },
         "connections": {
           "use": "connections",
           "short": "Prints a list of all connections in the specified app",
           "long": "Prints a list of all connections in the specified app",
           "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            },
             "json": {
               "name": "json",
               "usage": "Prints the information in json format",
@@ -243,13 +170,6 @@
           "use": "dimension \u003cdimension-id\u003e",
           "short": "Shows content of an generic dimension",
           "long": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          },
           "commands": {
             "layout": {
               "use": "layout \u003cdimension-id\u003e",
@@ -268,11 +188,6 @@
           "short": "Prints a list of all generic dimensions in the current app",
           "long": "Prints a list of all generic dimensions in the current app",
           "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            },
             "json": {
               "name": "json",
               "usage": "Prints the information in json format",
@@ -283,50 +198,22 @@
         "field": {
           "use": "field \u003cfield name\u003e",
           "short": "Shows content of a field",
-          "long": "Prints all the values for a specific field in your data model",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Prints all the values for a specific field in your data model"
         },
         "fields": {
           "use": "fields",
           "short": "Print field list",
-          "long": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values"
         },
         "keys": {
           "use": "keys",
           "short": "Print key-only field list",
-          "long": "Prints a fields list containing key-only fields",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Prints a fields list containing key-only fields"
         },
         "measure": {
           "use": "measure \u003cmeasure-id\u003e",
           "short": "Shows content of an generic measure",
           "long": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          },
           "commands": {
             "layout": {
               "use": "layout \u003cmeasure-id\u003e",
@@ -345,11 +232,6 @@
           "short": "Prints a list of all generic measures in the current app",
           "long": "Prints a list of all generic measures in the current app in either plain text or json",
           "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            },
             "json": {
               "name": "json",
               "usage": "Prints the information in json format",
@@ -360,26 +242,12 @@
         "meta": {
           "use": "meta",
           "short": "Shows metadata about the app",
-          "long": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc"
         },
         "object": {
           "use": "object \u003cobject-id\u003e",
           "short": "Shows content of an generic object",
           "long": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          },
           "commands": {
             "data": {
               "use": "data \u003cobject-id\u003e",
@@ -403,11 +271,6 @@
           "short": "Prints a list of all generic objects in the current app",
           "long": "Prints a list of all generic objects in the current app in either plain text or JSON format",
           "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            },
             "json": {
               "name": "json",
               "usage": "Prints the information in json format",
@@ -418,38 +281,17 @@
         "script": {
           "use": "script",
           "short": "Print the reload script",
-          "long": "Fetches the script currently set in the app and prints it in plain text.",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Fetches the script currently set in the app and prints it in plain text."
         },
         "status": {
           "use": "status",
-          "short": "Prints status info about the connection to engine and current app",
-          "long": "Prints status info about the connection to engine and current app, and also the status of the data model",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "short": "Prints status info about the connection to the engine and current app",
+          "long": "Prints status info about the connection to the engine and current app, and also the status of the data model"
         },
         "tables": {
           "use": "tables",
           "short": "Print tables summary",
-          "long": "Prints tables summary for the data model in an app",
-          "flags": {
-            "app": {
-              "name": "app",
-              "shorthand": "a",
-              "usage": "App name, if no app is specified a session app is used instead."
-            }
-          }
+          "long": "Prints tables summary for the data model in an app"
         }
       }
     },
@@ -463,26 +305,6 @@
       "short": "Reloads the app.",
       "long": "Reloads the app.",
       "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
-        },
         "no-save": {
           "name": "no-save",
           "usage": "Do not save the app",
@@ -492,11 +314,6 @@
           "name": "silent",
           "usage": "Do not log reload progress",
           "default": "false"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
         }
       }
     },
@@ -505,35 +322,10 @@
       "short": "Remove entities (connections, dimensions, measures, objects) in the app or the app itself",
       "long": "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
       "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
-        },
         "suppress": {
           "name": "suppress",
           "usage": "Suppress all confirmation dialogues",
           "default": "false"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
         }
       },
       "commands": {
@@ -542,10 +334,10 @@
           "short": "removes the specified app.",
           "long": "removes the specified app."
         },
-        "connection": {
-          "use": "connection \u003cconnection-id\u003e",
-          "short": "removes the specified connection.",
-          "long": "removes the specified connection",
+        "connections": {
+          "use": "connections \u003cconnection-id\u003e...",
+          "short": "Removes the specified connection(s)",
+          "long": "Removes one or many connections from the app",
           "flags": {
             "no-save": {
               "name": "no-save",
@@ -597,35 +389,10 @@
       "short": "Sets one or several resources",
       "long": "Sets one or several resources",
       "flags": {
-        "app": {
-          "name": "app",
-          "shorthand": "a",
-          "usage": "App name, if no app is specified a session app is used instead."
-        },
-        "config": {
-          "name": "config",
-          "shorthand": "c",
-          "usage": "path/to/config.yml where parameters can be set instead of on the command line"
-        },
-        "engine": {
-          "name": "engine",
-          "shorthand": "e",
-          "usage": "URL to engine (default \"localhost:9076\")"
-        },
-        "headers": {
-          "name": "headers",
-          "usage": "Headers to use when connecting to qix engine",
-          "default": "[]"
-        },
         "no-save": {
           "name": "no-save",
           "usage": "Do not save the app",
           "default": "false"
-        },
-        "ttl": {
-          "name": "ttl",
-          "usage": "Engine session time to live in seconds",
-          "default": "30"
         }
       },
       "commands": {
@@ -693,6 +460,5 @@
       "use": "version",
       "short": "Print the version of corectl"
     }
-  },
-  "x-qlik-stability": "experimental"
+  }
 }
