@@ -10,7 +10,7 @@ jobs:
           key: dependency-cache-{{ checksum "go.sum" }}
       - run:
           name: Build
-          command: go build
+          command: go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
       - save_cache:
           key: dependency-cache-{{ checksum "go.sum" }}
           paths:
