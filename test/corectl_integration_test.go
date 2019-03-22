@@ -137,7 +137,7 @@ func TestConnections(t *testing.T) {
 	assert.NotNil(t, connections[0].Id)
 
 	//verify that removing the connection works
-	removeEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connection", connections[0].Id)
+	removeEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connections", connections[0].Id)
 
 	//verify that there is no connections in the app anymore.
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connections")

@@ -1,25 +1,25 @@
-## corectl remove connection
+## corectl remove connections
 
-removes the specified connection.
+Removes the specified connection(s)
 
 ### Synopsis
 
-removes the specified connection
+Removes one or many connections from the app
 
 ```
-corectl remove connection <connection-id> [flags]
+corectl remove connections <connection-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove connection CONNECTION-ID
+corectl remove connections ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for connection
+  -h, --help      help for connections
       --no-save   Do not save the app
 ```
 
