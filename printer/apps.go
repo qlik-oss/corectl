@@ -12,13 +12,17 @@ import (
 )
 
 // PrintApps prints a list of apps and some meta to system out.
-func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool) {
+func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool, printAsBash bool) {
 	if printAsJSON {
 		buffer, err := json.Marshal(filterDocEntries(docList))
 		if err != nil {
 			internal.FatalError(err)
 		}
 		fmt.Println(prettyJSON(buffer))
+	} else if printAsBash {
+		for _, app := range docList {
+			fmt.Println(app.DocName)
+		}
 	} else {
 		docTable := tm.NewTable(0, 10, 3, ' ', 0)
 		fmt.Fprintf(docTable, "Id\tName\tLast-Reloaded\tReadOnly\tTitle\n")
