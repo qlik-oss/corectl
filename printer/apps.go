@@ -3,6 +3,7 @@ package printer
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -21,7 +22,7 @@ func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool, printAsBash boo
 		fmt.Println(prettyJSON(buffer))
 	} else if printAsBash {
 		for _, app := range docList {
-			fmt.Println(app.DocName)
+			PrintToBashComp(app.DocName)
 		}
 	} else {
 		docTable := tm.NewTable(0, 10, 3, ' ', 0)
@@ -70,4 +71,14 @@ func serialTimeToString(filetime enigma.Float64) time.Time {
 	unix := (filetime - 25569) * 86400
 	timestamp := time.Unix(int64(unix), 0).UTC()
 	return timestamp
+}
+
+// PrintToBashComp handles strings that should be included as options when using auto completion
+func PrintToBashComp(str string) {
+	if strings.Contains(str, " ") {
+		// If string includes whitespaces we need to add quotes
+		fmt.Printf("%q\n", str)
+	} else {
+		fmt.Println(str)
+	}
 }

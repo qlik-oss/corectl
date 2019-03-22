@@ -29,7 +29,7 @@ func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJ
 	} else if printAsBash {
 		for _, info := range allInfos {
 			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				fmt.Println(info.Id)
+				PrintToBashComp(info.Id)
 			}
 		}
 	} else {
