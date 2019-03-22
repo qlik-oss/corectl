@@ -116,9 +116,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 			if doc != nil {
 				LogVerbose("App:  " + appID + "(opened)")
 			} else if createAppIfMissing {
-				_, _, err = global.CreateApp(ctx, appID, "")
+				success, _, err := global.CreateApp(ctx, appID, "")
 				if err != nil {
 					FatalError(err)
+				}
+				if !success {
+					FatalError("Failed to create app with ID: " + appID)
 				}
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
