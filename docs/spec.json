@@ -1,383 +1,313 @@
 {
+  "name": "corectl",
   "info": {
     "title": "Specification for corectl",
-    "description": "Corectl contains various commands to interact with the Qlik Associative Engine.",
+    "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
     "version": "development build",
     "license": "MIT"
   },
   "clispec": "0.1.0",
-  "use": "corectl",
-  "long": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
+  "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
   "x-qlik-stability": "experimental",
   "flags": {
     "app": {
-      "name": "app",
-      "shorthand": "a",
-      "usage": "App name, if no app is specified a session app is used instead."
+      "alias": "a",
+      "description": "App name, if no app is specified a session app is used instead."
     },
     "config": {
-      "name": "config",
-      "shorthand": "c",
-      "usage": "path/to/config.yml where parameters can be set instead of on the command line"
+      "alias": "c",
+      "description": "path/to/config.yml where parameters can be set instead of on the command line"
     },
     "engine": {
-      "name": "engine",
-      "shorthand": "e",
-      "usage": "URL to the Qlik Associative Engine (default \"localhost:9076\")"
+      "alias": "e",
+      "description": "URL to the Qlik Associative Engine (default \"localhost:9076\")"
     },
     "headers": {
-      "name": "headers",
-      "usage": "Http headers to use when connecting to Qlik Associative Engine",
+      "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
     },
     "traffic": {
-      "name": "traffic",
-      "shorthand": "t",
-      "usage": "Log JSON websocket traffic to stdout",
+      "alias": "t",
+      "description": "Log JSON websocket traffic to stdout",
       "default": "false"
     },
     "ttl": {
-      "name": "ttl",
-      "usage": "Qlik Associative Engine session time to live in seconds",
+      "description": "Qlik Associative Engine session time to live in seconds",
       "default": "30"
     },
     "verbose": {
-      "name": "verbose",
-      "shorthand": "v",
-      "usage": "Logs extra information",
+      "alias": "v",
+      "description": "Logs extra information",
       "default": "false"
     }
   },
   "commands": {
     "build": {
-      "use": "build",
       "short": "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
       "flags": {
         "connections": {
-          "name": "connections",
-          "usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+          "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
         },
         "dimensions": {
-          "name": "dimensions",
-          "usage": "A list of generic dimension json paths"
+          "description": "A list of generic dimension json paths"
         },
         "measures": {
-          "name": "measures",
-          "usage": "A list of generic measures json paths"
+          "description": "A list of generic measures json paths"
         },
         "objects": {
-          "name": "objects",
-          "usage": "A list of generic object json paths"
+          "description": "A list of generic object json paths"
         },
         "script": {
-          "name": "script",
-          "usage": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
+          "description": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
         },
         "silent": {
-          "name": "silent",
-          "usage": "Do not log reload progress",
+          "description": "Do not log reload progress",
           "default": "false"
         }
       }
     },
     "catwalk": {
-      "use": "catwalk",
       "short": "Opens the specified app in catwalk",
-      "long": "Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
+      "description": "Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
       "flags": {
         "catwalk-url": {
-          "name": "catwalk-url",
-          "usage": "Url to an instance of catwalk, if not provided the qlik one will be used.",
+          "description": "Url to an instance of catwalk, if not provided the qlik one will be used.",
           "default": "https://catwalk.core.qlik.com"
         }
       }
     },
     "completion": {
-      "use": "completion \u003cshell\u003e",
       "short": "Generates auto completion scripts",
-      "long": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that jq and bash-completion are required and needs to be installed on your system.",
-      "validArgs": [
-        "zsh",
-        "bash"
-      ]
+      "description": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that jq and bash-completion are required and needs to be installed on your system."
     },
     "eval": {
-      "use": "eval \u003cmeasure 1\u003e [\u003cmeasure 2...\u003e] by \u003cdimension 1\u003e [\u003cdimension 2...]",
       "short": "Evaluates a list of measures and dimensions",
-      "long": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
+      "description": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
     },
     "generate-docs": {
-      "use": "generate-docs",
       "short": "Generate markdown docs based on cobra commands",
-      "long": "Generate markdown docs based on cobra commands"
+      "description": "Generate markdown docs based on cobra commands"
     },
     "generate-spec": {
-      "use": "generate-spec",
       "short": "Generate API spec based on cobra commands",
-      "long": "Generate API spec docs based on cobra commands",
+      "description": "Generate API spec docs based on cobra commands",
       "flags": {
         "help": {
-          "name": "help",
-          "shorthand": "h",
-          "usage": "help for generate-spec",
+          "alias": "h",
+          "description": "help for generate-spec",
           "default": "false"
         }
       }
     },
     "get": {
-      "use": "get",
       "short": "Lists one or several resources",
-      "long": "Lists one or several resources",
+      "description": "Lists one or several resources",
       "commands": {
         "apps": {
-          "use": "apps",
           "short": "Prints a list of all apps available in the current engine",
-          "long": "Prints a list of all apps available in the current engine",
+          "description": "Prints a list of all apps available in the current engine",
           "flags": {
             "json": {
-              "name": "json",
-              "usage": "Prints the information in json format",
+              "description": "Prints the information in json format",
               "default": "false"
             }
           }
         },
         "assoc": {
-          "use": "assoc",
           "aliases": [
             "associations"
           ],
           "short": "Print table associations summary",
-          "long": "Print table associations summary"
+          "description": "Print table associations summary"
         },
         "connection": {
-          "use": "connection",
           "short": "Shows the properties for a specific connection",
-          "long": "Shows the properties for a specific connection"
+          "description": "Shows the properties for a specific connection"
         },
         "connections": {
-          "use": "connections",
           "short": "Prints a list of all connections in the specified app",
-          "long": "Prints a list of all connections in the specified app",
+          "description": "Prints a list of all connections in the specified app",
           "flags": {
             "json": {
-              "name": "json",
-              "usage": "Prints the information in json format",
+              "description": "Prints the information in json format",
               "default": "false"
             }
           }
         },
         "dimension": {
-          "use": "dimension \u003cdimension-id\u003e",
           "short": "Shows content of an generic dimension",
-          "long": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
+          "description": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
           "commands": {
             "layout": {
-              "use": "layout \u003cdimension-id\u003e",
               "short": "Evaluates the layout of an generic dimension",
-              "long": "Evaluates the layout of an generic dimension"
+              "description": "Evaluates the layout of an generic dimension"
             },
             "properties": {
-              "use": "properties \u003cdimension-id\u003e",
               "short": "Prints the properties of the generic dimension",
-              "long": "Prints the properties of the generic dimension"
+              "description": "Prints the properties of the generic dimension"
             }
           }
         },
         "dimensions": {
-          "use": "dimensions",
           "short": "Prints a list of all generic dimensions in the current app",
-          "long": "Prints a list of all generic dimensions in the current app",
+          "description": "Prints a list of all generic dimensions in the current app",
           "flags": {
             "json": {
-              "name": "json",
-              "usage": "Prints the information in json format",
+              "description": "Prints the information in json format",
               "default": "false"
             }
           }
         },
         "field": {
-          "use": "field \u003cfield name\u003e",
           "short": "Shows content of a field",
-          "long": "Prints all the values for a specific field in your data model"
+          "description": "Prints all the values for a specific field in your data model"
         },
         "fields": {
-          "use": "fields",
           "short": "Print field list",
-          "long": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values"
+          "description": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values"
         },
         "keys": {
-          "use": "keys",
           "short": "Print key-only field list",
-          "long": "Prints a fields list containing key-only fields"
+          "description": "Prints a fields list containing key-only fields"
         },
         "measure": {
-          "use": "measure \u003cmeasure-id\u003e",
           "short": "Shows content of an generic measure",
-          "long": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
+          "description": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
           "commands": {
             "layout": {
-              "use": "layout \u003cmeasure-id\u003e",
               "short": "Evaluates the layout of an generic measure",
-              "long": "Evaluates the layout of an generic measure and prints in JSON format"
+              "description": "Evaluates the layout of an generic measure and prints in JSON format"
             },
             "properties": {
-              "use": "properties \u003cmeasure-id\u003e",
               "short": "Prints the properties of the generic measure",
-              "long": "Prints the properties of the generic measure in JSON format"
+              "description": "Prints the properties of the generic measure in JSON format"
             }
           }
         },
         "measures": {
-          "use": "measures",
           "short": "Prints a list of all generic measures in the current app",
-          "long": "Prints a list of all generic measures in the current app in either plain text or json",
+          "description": "Prints a list of all generic measures in the current app in either plain text or json",
           "flags": {
             "json": {
-              "name": "json",
-              "usage": "Prints the information in json format",
+              "description": "Prints the information in json format",
               "default": "false"
             }
           }
         },
         "meta": {
-          "use": "meta",
           "short": "Shows metadata about the app",
-          "long": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc"
+          "description": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc"
         },
         "object": {
-          "use": "object \u003cobject-id\u003e",
           "short": "Shows content of an generic object",
-          "long": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
+          "description": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
           "commands": {
             "data": {
-              "use": "data \u003cobject-id\u003e",
               "short": "Evaluates the hypercube data of an generic object",
-              "long": "Evaluates the hypercube data of an generic object"
+              "description": "Evaluates the hypercube data of an generic object"
             },
             "layout": {
-              "use": "layout \u003cobject-id\u003e",
               "short": "Evaluates the hypercube layout of an generic object",
-              "long": "Evaluates the hypercube layout of an generic object in JSON format"
+              "description": "Evaluates the hypercube layout of an generic object in JSON format"
             },
             "properties": {
-              "use": "properties \u003cobject-id\u003e",
               "short": "Prints the properties of the generic object",
-              "long": "Prints the properties of the generic object in JSON format"
+              "description": "Prints the properties of the generic object in JSON format"
             }
           }
         },
         "objects": {
-          "use": "objects",
           "short": "Prints a list of all generic objects in the current app",
-          "long": "Prints a list of all generic objects in the current app in either plain text or JSON format",
+          "description": "Prints a list of all generic objects in the current app in either plain text or JSON format",
           "flags": {
             "json": {
-              "name": "json",
-              "usage": "Prints the information in json format",
+              "description": "Prints the information in json format",
               "default": "false"
             }
           }
         },
         "script": {
-          "use": "script",
           "short": "Print the reload script",
-          "long": "Fetches the script currently set in the app and prints it in plain text."
+          "description": "Fetches the script currently set in the app and prints it in plain text."
         },
         "status": {
-          "use": "status",
           "short": "Prints status info about the connection to the engine and current app",
-          "long": "Prints status info about the connection to the engine and current app, and also the status of the data model"
+          "description": "Prints status info about the connection to the engine and current app, and also the status of the data model"
         },
         "tables": {
-          "use": "tables",
           "short": "Print tables summary",
-          "long": "Prints tables summary for the data model in an app"
+          "description": "Prints tables summary for the data model in an app"
         }
       }
     },
     "help": {
-      "use": "help [command]",
       "short": "Help about any command",
-      "long": "Help provides help for any command in the application.\nSimply type corectl help [path to command] for full details."
+      "description": "Help provides help for any command in the application.\nSimply type corectl help [path to command] for full details."
     },
     "reload": {
-      "use": "reload",
       "short": "Reloads the app.",
-      "long": "Reloads the app.",
+      "description": "Reloads the app.",
       "flags": {
         "no-save": {
-          "name": "no-save",
-          "usage": "Do not save the app",
+          "description": "Do not save the app",
           "default": "false"
         },
         "silent": {
-          "name": "silent",
-          "usage": "Do not log reload progress",
+          "description": "Do not log reload progress",
           "default": "false"
         }
       }
     },
     "remove": {
-      "use": "remove",
       "short": "Remove entities (connections, dimensions, measures, objects) in the app or the app itself",
-      "long": "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
+      "description": "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
       "flags": {
         "suppress": {
-          "name": "suppress",
-          "usage": "Suppress all confirmation dialogues",
+          "description": "Suppress all confirmation dialogues",
           "default": "false"
         }
       },
       "commands": {
         "app": {
-          "use": "app \u003capp-id\u003e",
           "short": "removes the specified app.",
-          "long": "removes the specified app."
+          "description": "removes the specified app."
         },
         "connections": {
-          "use": "connections \u003cconnection-id\u003e...",
           "short": "Removes the specified connection(s)",
-          "long": "Removes one or many connections from the app",
+          "description": "Removes one or many connections from the app",
           "flags": {
             "no-save": {
-              "name": "no-save",
-              "usage": "Do not save the app",
+              "description": "Do not save the app",
               "default": "false"
             }
           }
         },
         "dimensions": {
-          "use": "dimensions \u003cdimension-id\u003e...",
           "short": "Removes the specified generic dimensions in the current app",
-          "long": "Removes the specified generic dimensions in the current app",
+          "description": "Removes the specified generic dimensions in the current app",
           "flags": {
             "no-save": {
-              "name": "no-save",
-              "usage": "Do not save the app",
+              "description": "Do not save the app",
               "default": "false"
             }
           }
         },
         "measures": {
-          "use": "measures \u003cmeasure-id\u003e...",
           "short": "Removes the specified generic measures in the current app",
-          "long": "Removes the specified generic measures in the current app",
+          "description": "Removes the specified generic measures in the current app",
           "flags": {
             "no-save": {
-              "name": "no-save",
-              "usage": "Do not save the app",
+              "description": "Do not save the app",
               "default": "false"
             }
           }
         },
         "objects": {
-          "use": "objects \u003cobject-id\u003e...",
           "short": "Removes the specified generic objects in the current app",
-          "long": "Removes the specified generic objects in the current app",
+          "description": "Removes the specified generic objects in the current app",
           "flags": {
             "no-save": {
-              "name": "no-save",
-              "usage": "Do not save the app",
+              "description": "Do not save the app",
               "default": "false"
             }
           }
@@ -385,79 +315,64 @@
       }
     },
     "set": {
-      "use": "set",
       "short": "Sets one or several resources",
-      "long": "Sets one or several resources",
+      "description": "Sets one or several resources",
       "flags": {
         "no-save": {
-          "name": "no-save",
-          "usage": "Do not save the app",
+          "description": "Do not save the app",
           "default": "false"
         }
       },
       "commands": {
         "all": {
-          "use": "all",
           "short": "Sets the objects, measures, dimensions, connections and script in the current app",
-          "long": "Sets the objects, measures, dimensions, connections and script in the current app",
+          "description": "Sets the objects, measures, dimensions, connections and script in the current app",
           "flags": {
             "connections": {
-              "name": "connections",
-              "usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+              "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
             },
             "dimensions": {
-              "name": "dimensions",
-              "usage": "A list of generic dimension json paths"
+              "description": "A list of generic dimension json paths"
             },
             "measures": {
-              "name": "measures",
-              "usage": "A list of generic measures json paths"
+              "description": "A list of generic measures json paths"
             },
             "objects": {
-              "name": "objects",
-              "usage": "A list of generic object json paths"
+              "description": "A list of generic object json paths"
             },
             "script": {
-              "name": "script",
-              "usage": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
+              "description": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
             }
           }
         },
         "connections": {
-          "use": "connections \u003cpath-to-connections-file.yml\u003e",
           "short": "Sets or updates the connections in the current app",
-          "long": "Sets or updates the connections in the current app",
+          "description": "Sets or updates the connections in the current app",
           "flags": {
             "connections": {
-              "name": "connections",
-              "usage": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+              "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
             }
           }
         },
         "dimensions": {
-          "use": "dimensions \u003cglob-pattern-path-to-dimensions-files.json\u003e",
           "short": "Sets or updates the dimensions in the current app",
-          "long": "Sets or updates the dimensions in the current app"
+          "description": "Sets or updates the dimensions in the current app"
         },
         "measures": {
-          "use": "measures \u003cglob-pattern-path-to-measures-files.json\u003e",
           "short": "Sets or updates the measures in the current app",
-          "long": "Sets or updates the measures in the current app"
+          "description": "Sets or updates the measures in the current app"
         },
         "objects": {
-          "use": "objects \u003cglob-pattern-path-to-objects-files.json",
           "short": "Sets or updates the objects in the current app",
-          "long": "Sets or updates the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format"
+          "description": "Sets or updates the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format"
         },
         "script": {
-          "use": "script \u003cpath-to-script-file.yml\u003e",
           "short": "Sets the script in the current app",
-          "long": "Sets the script in the current app"
+          "description": "Sets the script in the current app"
         }
       }
     },
     "version": {
-      "use": "version",
       "short": "Print the version of corectl"
     }
   }

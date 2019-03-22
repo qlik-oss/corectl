@@ -12,22 +12,18 @@ import (
 
 type (
 	commandJSON struct {
-		Use        string   `json:"use"`
-		Aliases    []string `json:"aliases,omitempty"`
-		Short      string   `json:"short,omitempty"`
-		Long       string   `json:"long,omitempty"`
-		Stability  string   `json:"x-qlik-stability,omitempty"`
-		ValidArgs  []string `json:"validArgs,omitempty"`
-		Deprecated string   `json:"deprecated,omitempty"`
-		// Annotations map[string]string      `json:"annotations,omitempty"`
+		Aliases     []string               `json:"aliases,omitempty"`
+		Short       string                 `json:"short,omitempty"`
+		Long        string                 `json:"description,omitempty"`
+		Stability   string                 `json:"x-qlik-stability,omitempty"`
+		Deprecated  string                 `json:"deprecated,omitempty"`
 		Flags       map[string]flagJSON    `json:"flags,omitempty"`
 		SubCommands map[string]commandJSON `json:"commands,omitempty"`
 	}
 
 	flagJSON struct {
-		Name       string `json:"name,omitempty"`
-		Shorthand  string `json:"shorthand,omitempty"`
-		Usage      string `json:"usage,omitempty"`
+		Shorthand  string `json:"alias,omitempty"`
+		Usage      string `json:"description,omitempty"`
 		DefValue   string `json:"default,omitempty"`
 		Deprecated string `json:"deprecated,omitempty"`
 	}
@@ -40,6 +36,7 @@ type (
 	}
 
 	spec struct {
+		Name    string `json:"name,omitempty"`
 		Info    info   `json:"info,omitempty"`
 		Clispec string `json:"clispec,omitempty"`
 		commandJSON
@@ -48,13 +45,10 @@ type (
 
 func returnCmdspec(ccmd *cobra.Command) commandJSON {
 	ccmdJSON := commandJSON{
-		Use:        ccmd.Use,
-		Aliases:    ccmd.Aliases,
-		Short:      ccmd.Short,
-		Long:       ccmd.Long,
-		ValidArgs:  ccmd.ValidArgs,
-		Deprecated: ccmd.Deprecated,
-		// Annotations: ccmd.Annotations,
+		Aliases:     ccmd.Aliases,
+		Short:       ccmd.Short,
+		Long:        ccmd.Long,
+		Deprecated:  ccmd.Deprecated,
 		SubCommands: returnCommands(ccmd.Commands()),
 		Flags:       returnFlags(ccmd.LocalFlags()),
 		Stability:   returnStability(ccmd.Annotations),
@@ -80,7 +74,6 @@ func returnFlags(flags *pflag.FlagSet) map[string]flagJSON {
 
 	flag := func(f *pflag.Flag) {
 		fJSON := flagJSON{
-			Name:       f.Name,
 			Shorthand:  f.Shorthand,
 			Usage:      f.Usage,
 			DefValue:   f.DefValue,
@@ -104,9 +97,10 @@ var generateSpecCmd = &cobra.Command{
 		var jsonData []byte
 		spec := spec{
 			Clispec: "0.1.0",
+			Name:    rootCmd.Use,
 			Info: info{
 				Title:       "Specification for corectl",
-				Description: "Corectl contains various commands to interact with the Qlik Associative Engine.",
+				Description: rootCmd.Long,
 				Version:     version,
 				License:     "MIT",
 			},
