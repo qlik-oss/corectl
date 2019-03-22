@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -238,7 +238,7 @@ var generateSpecCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 		fmt.Println(string(jsonData))
-	})
+	},
 }
 
 // completionCmd generates auto completion commands
