@@ -14,6 +14,10 @@
       "alias": "a",
       "description": "App name, if no app is specified a session app is used instead."
     },
+    "bash": {
+      "description": "Bash flag used to adapt output to bash completion format",
+      "default": "false"
+    },
     "config": {
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"
@@ -78,7 +82,7 @@
     },
     "completion": {
       "short": "Generates auto completion scripts",
-      "description": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that jq and bash-completion are required and needs to be installed on your system."
+      "description": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that bash-completion is required and needs to be installed on your system."
     },
     "eval": {
       "short": "Evaluates a list of measures and dimensions",
