@@ -142,39 +142,58 @@ var generateDocsCmd = &cobra.Command{
 
 type (
 	commandJSON struct {
-		Use         string                 `json:"Use"`
-		Aliases     []string               `json:"Aliases,omitempty"`
-		Short       string                 `json:"Short,omitempty"`
-		Long        string                 `json:"Long,omitempty"`
-		ValidArgs   []string               `json:"ValidArgs,omitempty"`
-		Deprecated  string                 `json:"Deprecated,omitempty"`
-		Annotations map[string]string      `json:"Annotations,omitempty"`
-		Flags       map[string]flagJSON    `json:"Flags,omitempty"`
-		SubCommands map[string]commandJSON `json:"Commands,omitempty"`
+		Use        string   `json:"use"`
+		Aliases    []string `json:"aliases,omitempty"`
+		Short      string   `json:"short,omitempty"`
+		Long       string   `json:"long,omitempty"`
+		Stability  string   `json:"x-qlik-stability,omitempty"`
+		ValidArgs  []string `json:"validArgs,omitempty"`
+		Deprecated string   `json:"deprecated,omitempty"`
+		// Annotations map[string]string      `json:"annotations,omitempty"`
+		Flags       map[string]flagJSON    `json:"flags,omitempty"`
+		SubCommands map[string]commandJSON `json:"commands,omitempty"`
 	}
 
 	flagJSON struct {
-		Name       string `json:"Name,omitempty"`
-		Shorthand  string `json:"Shorthand,omitempty"`
-		Usage      string `json:"Usage,omitempty"`
-		DefValue   string `json:"DefValue,omitempty"`
-		Deprecated string `json:"Deprecated,omitempty"`
+		Name       string `json:"name,omitempty"`
+		Shorthand  string `json:"shorthand,omitempty"`
+		Usage      string `json:"usage,omitempty"`
+		DefValue   string `json:"default,omitempty"`
+		Deprecated string `json:"deprecated,omitempty"`
+	}
+
+	info struct {
+		Title       string `json:"title,omitempty"`
+		Description string `json:"description,omitempty"`
+		Version     string `json:"version"`
+		License     string `json:"license,omitempty"`
+	}
+
+	spec struct {
+		Info    info   `json:"info,omitempty"`
+		Clispec string `json:"clispec,omitempty"`
+		commandJSON
 	}
 )
 
 func returnCmdspec(ccmd *cobra.Command) commandJSON {
 	ccmdJSON := commandJSON{
-		Use:         ccmd.Use,
-		Aliases:     ccmd.Aliases,
-		Short:       ccmd.Short,
-		Long:        ccmd.Long,
-		ValidArgs:   ccmd.ValidArgs,
-		Deprecated:  ccmd.Deprecated,
-		Annotations: ccmd.Annotations,
+		Use:        ccmd.Use,
+		Aliases:    ccmd.Aliases,
+		Short:      ccmd.Short,
+		Long:       ccmd.Long,
+		ValidArgs:  ccmd.ValidArgs,
+		Deprecated: ccmd.Deprecated,
+		// Annotations: ccmd.Annotations,
 		SubCommands: returnCommands(ccmd.Commands()),
 		Flags:       returnFlags(ccmd.LocalFlags()),
+		Stability:   returnStability(ccmd.Annotations),
 	}
 	return ccmdJSON
+}
+
+func returnStability(annotations map[string]string) string {
+	return annotations["x-qlik-stability"]
 }
 
 func returnCommands(commands []*cobra.Command) map[string]commandJSON {
@@ -213,7 +232,17 @@ var generateSpecCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		var jsonData []byte
-		jsonData, err := json.MarshalIndent(returnCmdspec(rootCmd), "", "  ")
+		spec := spec{
+			Clispec: "0.1.0",
+			Info: info{
+				Title:       "Specification for corectl",
+				Description: "Corectl contains various commands to interact with the Qlik Associative Engine.",
+				Version:     version,
+				License:     "MIT",
+			},
+			commandJSON: returnCmdspec(rootCmd),
+		}
+		jsonData, err := json.MarshalIndent(spec, "", "  ")
 		if err != nil {
 			fmt.Println(err)
 		}

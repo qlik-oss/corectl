@@ -26,6 +26,9 @@ var rootCmd = &cobra.Command{
 	Short:             "",
 	Long:              `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 	DisableAutoGenTag: true,
+	Annotations: map[string]string{
+		"x-qlik-stability": "experimental",
+	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		// if help, version or generate-docs command, no prerun is needed.

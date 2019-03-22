@@ -27,12 +27,12 @@ jobs:
           name: Check if documentation needs to be updated
           command: |
             ./corectl generate-docs
-            git diff --exit-code --name-only docs/
+            git diff --exit-code --name-only docs/*.md
       - run:
           name: Check if changes has been done to the CLI API
           command: |
-            ./corectl generate-spec > spec.json
-            git diff --exit-code --name-only spec.json
+            ./corectl generate-spec > ./docs/spec.json
+            git diff --exit-code --name-only docs/spec.json
       - store_artifacts:
           path: ./spec.json
       - setup_remote_docker
