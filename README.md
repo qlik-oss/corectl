@@ -77,7 +77,7 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 `. <(corectl completion bash)` or `. <(corectl completion zsh)`
 
-Auto completion requires `jq` and `bash-completion` to be installed.
+Auto completion requires `bash-completion` to be installed.
 
 ## Testing
 
