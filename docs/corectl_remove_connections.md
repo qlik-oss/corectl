@@ -1,25 +1,25 @@
-## corectl remove connection
+## corectl remove connections
 
-removes the specified connection.
+Removes the specified connection(s)
 
 ### Synopsis
 
-removes the specified connection
+Removes one or many connections from the app
 
 ```
-corectl remove connection <connection-id> [flags]
+corectl remove connections <connection-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove connection CONNECTION-ID
+corectl remove connections ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for connection
+  -h, --help      help for connections
       --no-save   Do not save the app
 ```
 
@@ -28,11 +28,11 @@ corectl remove connection CONNECTION-ID
 ```
   -a, --app string               App name, if no app is specified a session app is used instead.
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
-  -e, --engine string            URL to engine (default "localhost:9076")
-      --headers stringToString   Headers to use when connecting to qix engine (default [])
+  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+      --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
-      --ttl string               Engine session time to live in seconds (default "30")
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
 ```
 

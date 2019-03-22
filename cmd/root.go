@@ -21,11 +21,12 @@ var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Hidden:            true,
-	Use:               "corectl",
-	Short:             "",
-	Long:              `Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
-	DisableAutoGenTag: true,
+	Hidden:                 true,
+	Use:                    "corectl",
+	Short:                  "",
+	Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+	DisableAutoGenTag:      true,
+	BashCompletionFunction: bashCompletionFunc,
 	Annotations: map[string]string{
 		"x-qlik-stability": "experimental",
 	},
@@ -80,67 +81,71 @@ func Execute(mainVersion string) {
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
+	// Set annotation to run bash completion function for the config flag and only show .yaml or .yml files
+	rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
+
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
 	rootCmd.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	viper.BindPFlag("traffic", rootCmd.PersistentFlags().Lookup("traffic"))
 
-	//Is it nicer to have one loop per argument or group the commands together if they all are used in the same commands?
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
-	}
+	rootCmd.PersistentFlags().StringP("engine", "e", "", "URL to the Qlik Associative Engine (default \"localhost:9076\")")
+	viper.BindPFlag("engine", rootCmd.PersistentFlags().Lookup("engine"))
 
-	//since several commands are using the same flag, the viper binding has to be done in the commands prerun function, otherwise they overwrite.
+	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
+	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringP("engine", "e", "", "URL to engine (default \"localhost:9076\")")
-	}
+	//not binding to viper since binding a map does not seem to work.
+	rootCmd.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Http headers to use when connecting to Qlik Associative Engine")
 
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().String("ttl", "30", "Engine session time to live in seconds")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, evalCmd, getCmd, reloadCmd, setCmd, removeCmd} {
-		//not binding to viper since binding a map does not seem to work.
-		command.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Headers to use when connecting to qix engine")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, catwalkCmd, evalCmd, getAssociationsCmd, getConnectionsCmd, getConnectionCmd, getDimensionsCmd, getDimensionCmd, getFieldsCmd, getKeysCmd, getFieldCmd, getMeasuresCmd, getMeasureCmd, getMetaCmd, getObjectsCmd, getObjectCmd, getScriptCmd, getStatusCmd, getTablesCmd, reloadCmd, removeCmd, setCmd} {
-		command.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
-	}
+	rootCmd.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
+	viper.BindPFlag("app", rootCmd.PersistentFlags().Lookup("app"))
+	// Set annotation to run bash completion function for the app flag
+	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
+		// Set annotation to run bash completion function for the connections flag and only show .yml or .yaml files
+		command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
+		// Set annotation to run bash completion function for the dimensions flag and only show .json files
+		command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
+		// Set annotation to run bash completion function for the measures flag and only show .json files
+		command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
+		// Set annotation to run bash completion function for the objects flag and only show .json files
+		command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, reloadCmd} {
 		command.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	}
 
-	for _, command := range []*cobra.Command{reloadCmd, removeConnectionCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
+	for _, command := range []*cobra.Command{reloadCmd, removeConnectionsCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
 		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+		// Set annotation to run bash completion function for the script flag and only show .qvs files
+		command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
 	}
 
 	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
@@ -192,3 +197,95 @@ func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJ
 	}
 	printer.PrintGenericEntities(allInfos, entityType, printAsJSON)
 }
+
+const bashCompletionFunc = `
+
+	__custom_func()
+	{
+		case ${last_command} in
+			corectl_get_dimension_properties | corectl_get_dimension_layout)
+				__corectl_get_dimensions
+				;;
+			corectl_get_measure_properties | corectl_get_measure_layout)
+				__corectl_get_measures
+				;;
+			corectl_get_object_data | corectl_get_object_properties | corectl_get_object_layout)
+				__corectl_get_objects
+				;;
+			corectl_get_connection)
+				__corectl_get_connections
+				;;
+      *)
+				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
+				;;
+		esac
+	}
+
+  __extract_flags_to_forward()
+	{
+    local forward_flags
+  	local result
+	  forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
+	  while [[ $# -gt 0 ]]; do
+  	  for i in "${forward_flags[@]}"
+			do
+				case $1 in
+  	    $i)
+    	    result+="$1=";
+      	  shift;
+        	result+="$1 "
+      	;;
+      	$i=*)
+        	result+="$1 "
+      	;;
+    	esac
+			done
+    	shift
+  	done
+    echo "$result";
+	}
+
+  __corect_render_compreply()
+  {
+		if [[ $? -eq 0 ]]; then
+				COMPREPLY+=( $( compgen -W "$1" -- "$cur" ) )
+		else 
+				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
+		fi
+  }
+
+	__corectl_get_dimensions()
+	{
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
+	}
+
+	__corectl_get_measures()
+	{
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
+	}
+
+	__corectl_get_objects()
+	{
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null) 
+		__corect_render_compreply "${corectl_out[*]}"
+	}
+
+	__corectl_get_connections()
+	{
+		local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		__corect_render_compreply "${corectl_out[*]}"
+	}
+
+	__corectl_get_apps()
+	{
+		local config=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out=$(corectl get apps --json $config | jq  '.[] | .name' 2>/dev/null) 
+		__corect_render_compreply "${corectl_out[*]}"
+	}
+`
