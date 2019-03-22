@@ -73,6 +73,12 @@ Also check out the blog post about utilizing `corectl` and `catwalk` to build yo
 
 Usage documentation can be found [here](./docs/corectl.md).
 
+`corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
+
+`. <(corectl completion bash)` or `. <(corectl completion zsh)`
+
+Auto completion requires `jq` and `bash-completion` to be installed.
+
 ## Testing
 
 The unit tests are run with the go test command:

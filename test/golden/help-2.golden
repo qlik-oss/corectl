@@ -1,4 +1,4 @@
-Corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information
+corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information
 
 Usage:
   corectl [flags]
@@ -7,6 +7,7 @@ Usage:
 Available Commands:
   build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
   catwalk       Opens the specified app in catwalk
+  completion    Generates auto completion scripts
   eval          Evaluates a list of measures and dimensions
   get           Lists one or several resources
   help          Help about any command
@@ -16,8 +17,13 @@ Available Commands:
   version       Print the version of corectl
 
 Flags:
-  -h, --help      help for corectl
-  -t, --traffic   Log JSON websocket traffic to stdout
-  -v, --verbose   Logs extra information
+  -a, --app string               App name, if no app is specified a session app is used instead.
+  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+      --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+  -h, --help                     help for corectl
+  -t, --traffic                  Log JSON websocket traffic to stdout
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
+  -v, --verbose                  Logs extra information
 
 Use "corectl [command] --help" for more information about a command.

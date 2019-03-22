@@ -20,10 +20,6 @@ var removeCmd = &cobra.Command{
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("app", ccmd.PersistentFlags().Lookup("app"))
-		viper.BindPFlag("engine", ccmd.PersistentFlags().Lookup("engine"))
-		viper.BindPFlag("ttl", ccmd.PersistentFlags().Lookup("ttl"))
-		viper.BindPFlag("headers", ccmd.PersistentFlags().Lookup("headers"))
 		viper.BindPFlag("suppress", ccmd.PersistentFlags().Lookup("suppress"))
 	},
 }
