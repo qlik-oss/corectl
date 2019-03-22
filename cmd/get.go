@@ -38,7 +38,7 @@ corectl get apps --engine=localhost:9276`,
 		if err != nil {
 			internal.FatalError(err)
 		}
-		printer.PrintApps(docList, viper.GetBool("json"))
+		printer.PrintApps(docList, viper.GetBool("json"), viper.GetBool("bash"))
 	},
 }
 
@@ -79,7 +79,7 @@ corectl get connections --json`,
 		if err != nil {
 			internal.FatalError(err)
 		}
-		printer.PrintConnections(connections, viper.GetBool("json"))
+		printer.PrintConnections(connections, viper.GetBool("json"), viper.GetBool("bash"))
 	},
 }
 

@@ -97,6 +97,10 @@ func init() {
 	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
 	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
+	rootCmd.PersistentFlags().Bool("bash", false, "Bash flag used to adapt output to bash completion format")
+	rootCmd.PersistentFlags().MarkHidden("bash")
+	viper.BindPFlag("bash", rootCmd.PersistentFlags().Lookup("bash"))
+
 	//not binding to viper since binding a map does not seem to work.
 	rootCmd.PersistentFlags().StringToStringVar(&headersMap, "headers", nil, "Http headers to use when connecting to Qlik Associative Engine")
 
@@ -195,7 +199,7 @@ func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJ
 	if err != nil {
 		internal.FatalError(err)
 	}
-	printer.PrintGenericEntities(allInfos, entityType, printAsJSON)
+	printer.PrintGenericEntities(allInfos, entityType, printAsJSON, viper.GetBool("bash"))
 }
 
 const bashCompletionFunc = `
@@ -230,10 +234,13 @@ const bashCompletionFunc = `
   	  for i in "${forward_flags[@]}"
 			do
 				case $1 in
-  	    $i)
-    	    result+="$1=";
-      	  shift;
-        	result+="$1 "
+				$i)
+					# If there is a flag with spacing we need to check that an arg is passed
+					if [[ $# -gt 1 ]]; then
+						result+="$1=";
+						shift;
+						result+="$1 "
+					fi
       	;;
       	$i=*)
         	result+="$1 "
@@ -257,35 +264,35 @@ const bashCompletionFunc = `
 	__corectl_get_dimensions()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get dimensions --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		local corectl_out=$(corectl get dimensions --bash $flags 2>/dev/null)
 		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_measures()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get measures --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		local corectl_out=$(corectl get measures --bash $flags 2>/dev/null)
 		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_objects()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get objects --json $flags | jq  '.[] | .qId' 2>/dev/null) 
+		local corectl_out=$(corectl get objects --bash $flags 2>/dev/null) 
 		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_connections()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get connections --json $flags | jq  '.[] | .qId' 2>/dev/null)
+		local corectl_out=$(corectl get connections --bash $flags 2>/dev/null)
 		__corect_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_apps()
 	{
 		local config=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get apps --json $config | jq  '.[] | .name' 2>/dev/null) 
+		local corectl_out=$(corectl get apps --bash $config 2>/dev/null) 
 		__corect_render_compreply "${corectl_out[*]}"
 	}
 `

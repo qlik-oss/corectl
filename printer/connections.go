@@ -10,9 +10,13 @@ import (
 )
 
 // PrintConnections prints a list of connections to standard out
-func PrintConnections(connections []*enigma.Connection, printAsJSON bool) {
+func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printAsBash bool) {
 	if printAsJSON {
 		jsonPrinter(connections)
+	} else if printAsBash {
+		for _, connection := range connections {
+			fmt.Println(connection.Id)
+		}
 	} else {
 		connectionsTable := tm.NewTable(0, 10, 3, ' ', 0)
 		fmt.Fprintf(connectionsTable, "Id\tName\n")

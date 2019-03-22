@@ -13,7 +13,7 @@ import (
 )
 
 // PrintGenericEntities prints a list of the id and type of all generic entities in the app
-func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJSON bool) {
+func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJSON bool, printAsBash bool) {
 	if printAsJSON {
 		specifiedEntityTypeInfos := []*enigma.NxInfo{}
 		for _, info := range allInfos {
@@ -26,7 +26,12 @@ func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJ
 			internal.FatalError(err)
 		}
 		fmt.Println(prettyJSON(buffer))
-
+	} else if printAsBash {
+		for _, info := range allInfos {
+			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
+				fmt.Println(info.Id)
+			}
+		}
 	} else {
 		entityTable := tm.NewTable(0, 10, 3, ' ', 0)
 		fmt.Fprintf(entityTable, "Id\tType\n")
