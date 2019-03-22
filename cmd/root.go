@@ -249,10 +249,10 @@ const bashCompletionFunc = `
     echo "$result";
 	}
 
-  __corect_render_compreply()
+  __corectl_render_compreply()
   {
 		if [[ $? -eq 0 ]]; then
-				COMPREPLY+=( $( compgen -W "$1" -- "$cur" ) )
+				COMPREPLY+=( "${1[@]}" )
 		else 
 				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
 		fi
@@ -262,34 +262,34 @@ const bashCompletionFunc = `
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get dimensions --bash $flags 2>/dev/null)
-		__corect_render_compreply "${corectl_out[*]}"
+		__corectl_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_measures()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get measures --bash $flags 2>/dev/null)
-		__corect_render_compreply "${corectl_out[*]}"
+		__corectl_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_objects()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get objects --bash $flags 2>/dev/null) 
-		__corect_render_compreply "${corectl_out[*]}"
+		__corectl_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_connections()
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get connections --bash $flags 2>/dev/null)
-		__corect_render_compreply "${corectl_out[*]}"
+		__corectl_render_compreply "${corectl_out[*]}"
 	}
 
 	__corectl_get_apps()
 	{
 		local config=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get apps --bash $config 2>/dev/null) 
-		__corect_render_compreply "${corectl_out[*]}"
+		__corectl_render_compreply "${corectl_out[*]}"
 	}
 `
