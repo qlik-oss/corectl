@@ -15,7 +15,7 @@ func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printA
 		jsonPrinter(connections)
 	} else if printAsBash {
 		for _, connection := range connections {
-			fmt.Println(connection.Id)
+			PrintToBashComp(connection.Id)
 		}
 	} else {
 		connectionsTable := tm.NewTable(0, 10, 3, ' ', 0)
