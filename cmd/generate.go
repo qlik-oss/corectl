@@ -36,10 +36,12 @@ type (
 	}
 
 	spec struct {
-		Name    string `json:"name,omitempty"`
-		Info    info   `json:"info,omitempty"`
-		Clispec string `json:"clispec,omitempty"`
-		commandJSON
+		Name        string                 `json:"name,omitempty"`
+		Info        info                   `json:"info,omitempty"`
+		Clispec     string                 `json:"clispec,omitempty"`
+		Stability   string                 `json:"x-qlik-stability,omitempty"`
+		Flags       map[string]flagJSON    `json:"flags,omitempty"`
+		SubCommands map[string]commandJSON `json:"commands,omitempty"`
 	}
 )
 
@@ -101,10 +103,12 @@ var generateSpecCmd = &cobra.Command{
 			Info: info{
 				Title:       "Specification for corectl",
 				Description: rootCmd.Long,
-				Version:     version,
+				Version:     strings.TrimPrefix(version, "v"),
 				License:     "MIT",
 			},
-			commandJSON: returnCmdspec(rootCmd),
+			SubCommands: returnCommands(rootCmd.Commands()),
+			Flags:       returnFlags(rootCmd.LocalFlags()),
+			Stability:   returnStability(rootCmd.Annotations),
 		}
 		jsonData, err := json.MarshalIndent(spec, "", "  ")
 		if err != nil {
