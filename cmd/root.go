@@ -88,7 +88,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	viper.BindPFlag("traffic", rootCmd.PersistentFlags().Lookup("traffic"))
 
-	rootCmd.PersistentFlags().StringP("engine", "e", "", "URL to the Qlik Associative Engine (default \"localhost:9076\")")
+	rootCmd.PersistentFlags().StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
 	viper.BindPFlag("engine", rootCmd.PersistentFlags().Lookup("engine"))
 
 	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
