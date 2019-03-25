@@ -23,7 +23,8 @@
     },
     "engine": {
       "alias": "e",
-      "description": "URL to the Qlik Associative Engine (default \"localhost:9076\")"
+      "description": "URL to the Qlik Associative Engine",
+      "default": "localhost:9076"
     },
     "headers": {
       "description": "Http headers to use when connecting to Qlik Associative Engine",
