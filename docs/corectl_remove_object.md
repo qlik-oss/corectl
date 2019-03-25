@@ -1,25 +1,26 @@
-## corectl remove measures
+## corectl remove object
 
-Removes the specified generic measures in the current app
+Remove one or many generic objects in the current app
 
 ### Synopsis
 
-Removes the specified generic measures in the current app
+Remove one or many generic objects in the current app
 
 ```
-corectl remove measures <measure-id>... [flags]
+corectl remove object <object-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove measures ID-1 ID-2
+corectl remove object ID-1
+corectl remove objects ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for measures
+  -h, --help      help for object
       --no-save   Do not save the app
 ```
 

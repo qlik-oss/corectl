@@ -1,25 +1,26 @@
-## corectl remove objects
+## corectl remove connection
 
-Removes the specified generic objects in the current app
+Remove the specified connection(s)
 
 ### Synopsis
 
-Removes the specified generic objects in the current app
+Remove one or many connections from the app
 
 ```
-corectl remove objects <object-id>... [flags]
+corectl remove connection <connection-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove objects ID-1 ID-2
+corectl remove connection ID-1
+corectl remove connections ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for objects
+  -h, --help      help for connection
       --no-save   Do not save the app
 ```
 
