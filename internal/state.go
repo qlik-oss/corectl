@@ -214,9 +214,6 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 
 //TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
 func TidyUpEngineURL(engine string) string {
-	if engine == "" {
-		engine = "localhost:9076"
-	}
 	var url string
 	if strings.HasPrefix(engine, "wss://") {
 		url = engine
