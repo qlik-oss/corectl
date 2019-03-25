@@ -12,8 +12,7 @@ import (
 
 type (
 	commandJSON struct {
-		Aliases     []string               `json:"aliases,omitempty"`
-		Short       string                 `json:"short,omitempty"`
+		Alias       string                 `json:"alias,omitempty"`
 		Long        string                 `json:"description,omitempty"`
 		Stability   string                 `json:"x-qlik-stability,omitempty"`
 		Deprecated  string                 `json:"deprecated,omitempty"`
@@ -47,8 +46,7 @@ type (
 
 func returnCmdspec(ccmd *cobra.Command) commandJSON {
 	ccmdJSON := commandJSON{
-		Aliases:     ccmd.Aliases,
-		Short:       ccmd.Short,
+		Alias:       returnAlias(ccmd.Aliases),
 		Long:        ccmd.Long,
 		Deprecated:  ccmd.Deprecated,
 		SubCommands: returnCommands(ccmd.Commands()),
@@ -56,6 +54,13 @@ func returnCmdspec(ccmd *cobra.Command) commandJSON {
 		Stability:   returnStability(ccmd.Annotations),
 	}
 	return ccmdJSON
+}
+
+func returnAlias(aliases []string) string {
+	if len(aliases) != 0 {
+		return aliases[0]
+	}
+	return ""
 }
 
 func returnStability(annotations map[string]string) string {
