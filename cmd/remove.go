@@ -53,11 +53,14 @@ var removeAppCmd = &cobra.Command{
 	},
 }
 
-var removeConnectionsCmd = &cobra.Command{
-	Use:     "connections <connection-id>...",
-	Short:   "Removes the specified connection(s)",
-	Long:    "Removes one or many connections from the app",
-	Example: "corectl remove connections ID-1 ID-2",
+var removeConnectionCmd = &cobra.Command{
+	Use:   "connection <connection-id>...",
+	Short: "Remove the specified connection(s)",
+	Long:  "Remove one or many connections from the app",
+	Example: `corectl remove connection ID-1
+corectl remove connections ID-1 ID-2`,
+	Aliases: []string{"connections"},
+
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
 		viper.BindPFlag("no-save", ccmd.PersistentFlags().Lookup("no-save"))
@@ -82,11 +85,13 @@ var removeConnectionsCmd = &cobra.Command{
 	},
 }
 
-var removeDimensionsCmd = &cobra.Command{
-	Use:     "dimensions <dimension-id>...",
-	Short:   "Removes the specified generic dimensions in the current app",
-	Long:    "Removes the specified generic dimensions in the current app",
-	Example: "corectl remove dimensions ID-1 ID-2",
+var removeDimensionCmd = &cobra.Command{
+	Use:   "dimension <dimension-id>...",
+	Short: "Remove one or many dimensions in the current app",
+	Long:  "Remove one or many dimensions in the current app",
+	Example: `corectl remove dimension ID-1
+corectl remove dimensions ID-1 ID-2`,
+	Aliases: []string{"dimensions"},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -114,11 +119,13 @@ var removeDimensionsCmd = &cobra.Command{
 	},
 }
 
-var removeMeasuresCmd = &cobra.Command{
-	Use:     "measures <measure-id>...",
-	Short:   "Removes the specified generic measures in the current app",
-	Long:    "Removes the specified generic measures in the current app",
-	Example: "corectl remove measures ID-1 ID-2",
+var removeMeasureCmd = &cobra.Command{
+	Use:   "measure <measure-id>...",
+	Short: "Removes one or many generic measures in the current app",
+	Long:  "Removes one or many generic measures in the current app",
+	Example: `corectl remove measure ID-1
+corectl remove measures ID-1 ID-2`,
+	Aliases: []string{"measures"},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -146,11 +153,13 @@ var removeMeasuresCmd = &cobra.Command{
 	},
 }
 
-var removeObjectsCmd = &cobra.Command{
-	Use:     "objects <object-id>...",
-	Short:   "Removes the specified generic objects in the current app",
-	Long:    "Removes the specified generic objects in the current app",
-	Example: "corectl remove objects ID-1 ID-2",
+var removeObjectCmd = &cobra.Command{
+	Use:   "object <object-id>...",
+	Short: "Remove one or many generic objects in the current app",
+	Long:  "Remove one or many generic objects in the current app",
+	Example: `corectl remove object ID-1
+corectl remove objects ID-1 ID-2`,
+	Aliases: []string{"objects"},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		removeCmd.PersistentPreRun(removeCmd, args)
@@ -181,10 +190,10 @@ var removeObjectsCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(removeCmd)
 	removeCmd.AddCommand(removeAppCmd)
-	removeCmd.AddCommand(removeConnectionsCmd)
-	removeCmd.AddCommand(removeDimensionsCmd)
-	removeCmd.AddCommand(removeMeasuresCmd)
-	removeCmd.AddCommand(removeObjectsCmd)
+	removeCmd.AddCommand(removeConnectionCmd)
+	removeCmd.AddCommand(removeDimensionCmd)
+	removeCmd.AddCommand(removeMeasureCmd)
+	removeCmd.AddCommand(removeObjectCmd)
 }
 
 func askForConfirmation(s string) bool {

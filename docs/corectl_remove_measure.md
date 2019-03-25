@@ -1,25 +1,26 @@
-## corectl remove connections
+## corectl remove measure
 
-Removes the specified connection(s)
+Removes one or many generic measures in the current app
 
 ### Synopsis
 
-Removes one or many connections from the app
+Removes one or many generic measures in the current app
 
 ```
-corectl remove connections <connection-id>... [flags]
+corectl remove measure <measure-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl remove connections ID-1 ID-2
+corectl remove measure ID-1
+corectl remove measures ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for connections
+  -h, --help      help for measure
       --no-save   Do not save the app
 ```
 
