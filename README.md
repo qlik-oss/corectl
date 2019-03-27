@@ -2,9 +2,9 @@
 [![Go Report Card](https://goreportcard.com/badge/qlik-oss/corectl)](https://goreportcard.com/report/qlik-oss/corectl)
 ![Latest Version](https://img.shields.io/github/release/qlik-oss/corectl.svg?style=flat)
 
-# Corectl (Experimental)
 <img src="./corectl.svg" alt="corectl" width="200"/>
 
+## (Experimental)
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 ---
@@ -13,7 +13,7 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 
 **Change _\<version\>_ below to the version you want to download.**
 
-E.G v0.0.4
+E.G v0.5.0
 
 On **Linux** and **OS X**
 
@@ -28,20 +28,6 @@ curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/
 ```
 
 You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
-
-## Development
-
-Either clone the repo or go get it:
-
-```bash
-go get -u github.com/qlik-oss/corectl
-```
-
-Build the main.go file to a location on your path. You can use the buildtohomebin script.
-
-```bash
-./buildtohomebin
-```
 
 ## Examples
 
@@ -79,7 +65,25 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 Auto completion requires `bash-completion` to be installed.
 
-## Testing
+
+# Development
+
+## Prerequisite
+- golang > 1.11
+
+## Build
+
+Fast and easy - corectl will be built into the `$GOPATH/bin` and executable directly from bash using `corectl`
+```bash
+go install
+```
+
+Build with latest release tag as version (handy when creating CLI API spec)
+```bash
+go install -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+```
+
+## Test
 
 The unit tests are run with the go test command:
 
