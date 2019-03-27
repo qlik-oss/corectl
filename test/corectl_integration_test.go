@@ -289,7 +289,7 @@ func TestCorectl(t *testing.T) {
 			} else {
 				for _, sub := range tt.expected {
 					if !strings.Contains(actual, sub) {
-						t.Fatalf("Output did not contain substring %v", sub)
+						t.Fatalf("Output did not contain substring '%v'\nReceived:\n%v", sub, actual)
 					}
 				}
 			}

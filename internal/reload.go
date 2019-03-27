@@ -21,12 +21,14 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 	// Log progress unless silent flag was passed in to the reload command
 	if !silent {
 		reloadDone := make(chan struct{})
+		loggingDone := make(chan struct{})
 		ctxWithReservedRequestID, reservedRequestID := doc.WithReservedRequestID(ctx)
 		go func() {
 			for {
 				select {
 				case <-reloadDone:
 					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
+					close(loggingDone)
 					return
 				default:
 					time.Sleep(1000)
@@ -38,6 +40,7 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 		}()
 		reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, false)
 		close(reloadDone)
+		<-loggingDone
 	} else {
 		reloadSuccessful, err = doc.DoReload(ctx, 0, false, false)
 		//fetch the progress but do nothing, othwerwise we will get it for the next non silent call
