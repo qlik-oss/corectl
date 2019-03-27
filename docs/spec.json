@@ -239,8 +239,9 @@
         "app": {
           "description": "removes the specified app."
         },
-        "connections": {
-          "description": "Removes one or many connections from the app",
+        "connection": {
+          "alias": "connections",
+          "description": "Remove one or many connections from the app",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
@@ -248,8 +249,9 @@
             }
           }
         },
-        "dimensions": {
-          "description": "Removes the specified generic dimensions in the current app",
+        "dimension": {
+          "alias": "dimensions",
+          "description": "Remove one or many dimensions in the current app",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
@@ -257,8 +259,9 @@
             }
           }
         },
-        "measures": {
-          "description": "Removes the specified generic measures in the current app",
+        "measure": {
+          "alias": "measures",
+          "description": "Removes one or many generic measures in the current app",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
@@ -266,8 +269,9 @@
             }
           }
         },
-        "objects": {
-          "description": "Removes the specified generic objects in the current app",
+        "object": {
+          "alias": "objects",
+          "description": "Remove one or many generic objects in the current app",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
