@@ -253,8 +253,12 @@ const bashCompletionFunc = `
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get dimensions --bash $flags 2>/dev/null)
-		if [[ $? -eq 0 ]]; then
-			COMPREPLY+="${corectl_out}";
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+		else
+  		COMPREPLY=()
 		fi;
 	}
 
@@ -262,8 +266,12 @@ const bashCompletionFunc = `
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get measures --bash $flags 2>/dev/null)
-		if [[ $? -eq 0 ]]; then
-			COMPREPLY+="${corectl_out}";
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+		else
+  		COMPREPLY=()
 		fi;
 	}
 
@@ -271,8 +279,12 @@ const bashCompletionFunc = `
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get objects --bash $flags 2>/dev/null) 
-		if [[ $? -eq 0 ]]; then
-			COMPREPLY+="${corectl_out}";
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+		else
+  		COMPREPLY=()
 		fi;
 	}
 
@@ -280,8 +292,12 @@ const bashCompletionFunc = `
 	{
 		local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get connections --bash $flags 2>/dev/null)
-		if [[ $? -eq 0 ]]; then
-			COMPREPLY+="${corectl_out}";
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+		else
+  		COMPREPLY=()
 		fi;
 	}
 
@@ -289,9 +305,12 @@ const bashCompletionFunc = `
 	{
 		local config=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out=$(corectl get apps --bash $config 2>/dev/null) 
-		if [[ $? -eq 0 ]]; then
-			COMPREPLY+="${corectl_out}";
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+		else
+  		COMPREPLY=()
 		fi;
 	}
-
 `
