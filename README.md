@@ -11,20 +11,16 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 
 ## Download
 
-**Change _\<version\>_ below to the version you want to download.**
-
-E.G v0.5.0
-
 On **Linux** and **OS X**
 
 ```bash
- curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
+ curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
 
 On **Windows** with git bash
 
 ```bash
-curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
+curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
 ```
 
 You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
@@ -69,7 +65,7 @@ Auto completion requires `bash-completion` to be installed.
 # Development
 
 ## Prerequisite
-- golang > 1.11
+- golang >= 1.11
 
 ## Build
 
@@ -78,9 +74,14 @@ Fast and easy - corectl will be built into the `$GOPATH/bin` and executable dire
 go install
 ```
 
+If you want to keep the previous installed version you can use `go build` and get the binary to the current working directory
+```bash
+go build
+```
+
 Build with latest release tag as version (handy when creating CLI API spec)
 ```bash
-go install -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
 ```
 
 ## Test
