@@ -1,25 +1,26 @@
-## corectl remove dimensions
+## corectl remove dimension
 
-Removes the specified generic dimensions in the current app
+Remove one or many dimensions in the current app
 
 ### Synopsis
 
-Removes the specified generic dimensions in the current app
+Remove one or many dimensions in the current app
 
 ```
-corectl remove dimensions <dimension-id>... [flags]
+corectl remove dimension <dimension-id>... [flags]
 ```
 
 ### Examples
 
 ```
+corectl remove dimension ID-1
 corectl remove dimensions ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for dimensions
+  -h, --help      help for dimension
       --no-save   Do not save the app
 ```
 

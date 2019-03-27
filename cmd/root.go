@@ -141,7 +141,7 @@ func init() {
 		command.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	}
 
-	for _, command := range []*cobra.Command{reloadCmd, removeConnectionsCmd, removeDimensionsCmd, removeMeasuresCmd, removeObjectsCmd, setCmd} {
+	for _, command := range []*cobra.Command{reloadCmd, removeConnectionCmd, removeDimensionCmd, removeMeasureCmd, removeObjectCmd, setCmd} {
 		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
 	}
 
