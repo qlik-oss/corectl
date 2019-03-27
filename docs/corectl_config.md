@@ -83,6 +83,29 @@ myconnection:
       host: corectl-test-connector
 ```
 
+#### Using a separate connections file 
+Optionally the `connections` property in the config file can reference a separate connections file by 
+specifying a path to a yaml file instead of an inline list of connections: 
+           
+ ``` yaml
+ connections: ./connections.yml
+ ```
+Connections are defined using the same format in the separate connections file:
+
+``` yaml
+connections:
+ myconnection:
+   type: testconnector
+   username: gwe
+   settings:
+     host: corectl-test-connector
+ myfolderconnection:
+   connectionstring: /data
+   type: folder
+```
+
+Note that when using the `--connections` command line option only the file reference format is supported.
+ 
 ### objects, measures and dimensions
 
 When for example generating apps it can be useful to create objects in an app from json files that are stored remotely or locally. The properties `objects`, `measures` and `dimensions` are arrays where you can set multiple files or using wildcards for paths to files. It is also possible to use nested json structures with this approach, and then multiple objects will be created in engine.
