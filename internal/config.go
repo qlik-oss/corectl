@@ -22,9 +22,30 @@ type ConnectionsConfigFile struct {
 	Connections map[string]ConnectionConfigEntry
 }
 
+// FileWithReferenceToConfigFile defines a config file with a path reference to an external connections.yml file.
+type FileWithReferenceToConfigFile struct {
+	Connections string
+}
+
+func ResolveConnectionsFileReferenceInConfigFile(projectPath string) string {
+	var configFileWithFileReference FileWithReferenceToConfigFile
+	source, err := ioutil.ReadFile(projectPath)
+	if err != nil {
+		return projectPath
+	}
+	err = yaml.Unmarshal(source, &configFileWithFileReference)
+	if err != nil {
+		return projectPath
+	}
+	if configFileWithFileReference.Connections == "" {
+		return projectPath
+	}
+	return RelativeToProject(projectPath, configFileWithFileReference.Connections)
+
+}
+
 // ReadConnectionsFile reads the connections config file from the supplied path.
 func ReadConnectionsFile(path string) ConnectionsConfigFile {
-
 	var config ConnectionsConfigFile
 	source, err := ioutil.ReadFile(path)
 	if err != nil {

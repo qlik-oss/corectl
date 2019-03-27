@@ -19,8 +19,7 @@ corectl set connections ./my-connections.yml
 ### Options
 
 ```
-      --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
-  -h, --help                 help for connections
+  -h, --help   help for connections
 ```
 
 ### Options inherited from parent commands

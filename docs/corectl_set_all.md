@@ -20,7 +20,7 @@ corectl set all --app=my-app.qvf
 ### Options
 
 ```
-      --connections string   path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!
+      --connections string   Path to a yml file containing the data connection definitions
       --dimensions string    A list of generic dimension json paths
   -h, --help                 help for all
       --measures string      A list of generic measures json paths

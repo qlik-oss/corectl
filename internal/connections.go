@@ -23,6 +23,11 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 
 	connectionConfigEntries := make(map[string]ConnectionConfigEntry)
 	if projectConfigFilePath != "" {
+
+		//First try to interpret the connections entry in the config file as a path.
+		//If the connections entry is a string it is interpreted as a path pointing to a separate connections file
+		//This is mainly to align with the way the --connections flag on the command line is treated.
+		projectConfigFilePath = ResolveConnectionsFileReferenceInConfigFile(projectConfigFilePath)
 		config := ReadConnectionsFile(projectConfigFilePath)
 		for name, configEntry := range config.Connections {
 			connectionConfigEntries[name] = configEntry
