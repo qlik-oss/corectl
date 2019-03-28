@@ -79,7 +79,7 @@ corectl remove connections ID-1 ID-2`,
 				internal.FatalError("Failed to remove connection: ", connection, " with error: ", err.Error())
 			}
 		}
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -113,7 +113,7 @@ corectl remove dimensions ID-1 ID-2`,
 				internal.FatalError("Failed to remove generic dimension ", entity)
 			}
 		}
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -147,7 +147,7 @@ corectl remove measures ID-1 ID-2`,
 				internal.FatalError("Failed to remove generic measure ", entity)
 			}
 		}
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -181,7 +181,7 @@ corectl remove objects ID-1 ID-2`,
 				internal.FatalError("Failed to remove generic object ", entity)
 			}
 		}
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

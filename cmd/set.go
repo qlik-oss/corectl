@@ -51,7 +51,7 @@ corectl set all --app=my-app.qvf`,
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
 		}
 
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -78,7 +78,7 @@ var setConnectionsCmd = &cobra.Command{
 			separateConnectionsFile = GetRelativeParameter("connections")
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -102,7 +102,7 @@ var setDimensionsCmd = &cobra.Command{
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -126,7 +126,7 @@ var setMeasuresCmd = &cobra.Command{
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -152,7 +152,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -185,7 +185,7 @@ var setScriptCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

@@ -96,7 +96,7 @@ var reloadCmd = &cobra.Command{
 
 		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
 
-		if state.AppName != "" && !viper.GetBool("no-save") {
+		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
