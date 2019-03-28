@@ -81,9 +81,9 @@ func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID i
 }
 
 // Save calls DoSave on the app and prints "Done" if it succeeded or "Save failed" to system out.
-func Save(ctx context.Context, doc *enigma.Doc, path string) {
+func Save(ctx context.Context, doc *enigma.Doc) {
 	fmt.Print("Saving app... ")
-	err := doc.DoSave(ctx, path)
+	err := doc.DoSave(ctx, "")
 	if err == nil {
 		fmt.Println("Done")
 	} else {

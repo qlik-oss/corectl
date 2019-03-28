@@ -1,0 +1,7 @@
+engine: localhost:9276
+app: project4.qvf
+script: ./script.qvs
+connections:
+  testdata:
+    connectionstring: /data
+    type: folder

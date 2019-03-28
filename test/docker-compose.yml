@@ -15,6 +15,15 @@ services:
     ports:
       - 9176:9076
     command: -S AcceptEULA=${ACCEPT_EULA}  -S SystemLogVerbosity=5 -S LicenseServiceUrl="doesnotexit:9090"
+  qix-engine-3:
+    container_name: qix-engine-3
+    image: qlikcore/engine:12.345.0
+    ports:
+      - 9276:9076
+    command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps -S EnableABAC=1 -S SystemAllowRulePath=/rules/rules.txt
+    volumes:
+      - ./data:/data
+      - ./rules:/rules
   corectl-test-connector:
     container_name: corectl-test-connector
     build: testconnector
