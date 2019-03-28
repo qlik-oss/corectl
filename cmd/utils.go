@@ -157,6 +157,31 @@ Note that bash-completion is required and needs to be installed on your system.`
 	},
 }
 
+// Set annotation to run bash completion function for files (not compatible git bash)
+func addFileRelatedBashAnnotations() {
+	rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
+	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
+		command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
+	}
+
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
+	}
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
+		command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
+	}
+}
+
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(catwalkCmd)

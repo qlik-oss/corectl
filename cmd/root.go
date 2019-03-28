@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -79,8 +80,6 @@ func Execute(mainVersion string) {
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
-	// Set annotation to run bash completion function for the config flag and only show .yaml or .yml files
-	rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
 	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
@@ -103,35 +102,25 @@ func init() {
 
 	rootCmd.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	viper.BindPFlag("app", rootCmd.PersistentFlags().Lookup("app"))
-	// Set annotation to run bash completion function for the app flag
-	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
-		// Set annotation to run bash completion function for the connections flag and only show .yml or .yaml files
-		command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
-		// Set annotation to run bash completion function for the dimensions flag and only show .json files
-		command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
-		// Set annotation to run bash completion function for the measures flag and only show .json files
-		command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
-		// Set annotation to run bash completion function for the objects flag and only show .json files
-		command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, reloadCmd} {
@@ -145,8 +134,6 @@ func init() {
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
 		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
-		// Set annotation to run bash completion function for the script flag and only show .qvs files
-		command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
 	}
 
 	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
@@ -156,8 +143,11 @@ func init() {
 	for _, command := range []*cobra.Command{removeCmd} {
 		command.PersistentFlags().Bool("suppress", false, "Suppress all confirmation dialogues")
 	}
-
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
+
+	if runtime.GOOS != "windows" {
+		addFileRelatedBashAnnotations()
+	}
 }
 
 // GetRelativeParameter returns a parameter from the config file.
