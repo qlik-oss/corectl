@@ -2,46 +2,28 @@
 [![Go Report Card](https://goreportcard.com/badge/qlik-oss/corectl)](https://goreportcard.com/report/qlik-oss/corectl)
 ![Latest Version](https://img.shields.io/github/release/qlik-oss/corectl.svg?style=flat)
 
-# Corectl (Experimental)
 <img src="./corectl.svg" alt="corectl" width="200"/>
 
+## (Experimental)
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 ---
 
 ## Download
 
-**Change _\<version\>_ below to the version you want to download.**
-
-E.G v0.0.4
-
 On **Linux** and **OS X**
 
 ```bash
- curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
+ curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
 
 On **Windows** with git bash
 
 ```bash
-curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/<version>/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
+curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
 ```
 
 You can also download the binary manually from [releases](https://github.com/qlik-oss/corectl/releases).
-
-## Development
-
-Either clone the repo or go get it:
-
-```bash
-go get -u github.com/qlik-oss/corectl
-```
-
-Build the main.go file to a location on your path. You can use the buildtohomebin script.
-
-```bash
-./buildtohomebin
-```
 
 ## Examples
 
@@ -79,7 +61,30 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 Auto completion requires `bash-completion` to be installed.
 
-## Testing
+
+# Development
+
+## Prerequisite
+- golang >= 1.11
+
+## Build
+
+Fast and easy - corectl will be built into the `$GOPATH/bin` and executable directly from bash using `corectl`
+```bash
+go install
+```
+
+If you want to keep the previous installed version you can use `go build` and get the binary to the current working directory
+```bash
+go build
+```
+
+Build with latest release tag as version (handy when creating CLI API spec)
+```bash
+go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+```
+
+## Test
 
 The unit tests are run with the go test command:
 

@@ -105,9 +105,9 @@ func init() {
 	// Set annotation to run bash completion function
 	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
+	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("connections", "", "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!")
+		command.PersistentFlags().String("connections", "", "Path to a yml file containing the data connection definitions")
 	}
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {

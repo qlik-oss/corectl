@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "update golden files")
+var update = flag.Bool("update", true, "update golden files")
 
 var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
 var engine2IP = flag.String("engine2IP", "localhost:9176", "dir of package containing embedded files")
@@ -91,7 +91,7 @@ func setupEntities(connectToEngine string, configPath string, entityType string,
 func removeEntities(t *testing.T, connectToEngine string, configPath string, entityType string, entityId string) {
 	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "remove", entityType, entityId}...)
 	output, _ := cmd.CombinedOutput()
-	assert.Equal(t, "Saving...Done\n\n", string(output))
+	assert.Equal(t, "Saving app... Done\n\n", string(output))
 }
 
 func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, entityType string) {
@@ -204,7 +204,7 @@ func TestCorectl(t *testing.T) {
 		{"help 2", emptyConnectString, []string{"help"}, []string{"golden", "help-2.golden"}, initTest{false, false}},
 		{"help 3", emptyConnectString, []string{"help", "build"}, []string{"golden", "help-3.golden"}, initTest{false, false}},
 
-		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
+		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 1 - get tables", defaultConnectString1, []string{"get", "tables"}, []string{"golden", "project1-tables.golden"}, initTest{true, true}},
 		{"project 1 - get assoc", defaultConnectString1, []string{"get", "assoc"}, []string{"golden", "project1-assoc.golden"}, initTest{true, true}},
 		{"project 1 - get fields", defaultConnectString1, []string{"get", "fields"}, []string{"golden", "project1-fields.golden"}, initTest{true, true}},
@@ -234,8 +234,8 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
 
 		// Project 2 has separate connections file
-		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
-		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
+		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
+		{"project 2 - build with connections 2", []string{connectToEngine, "--config=test/project2/corectl-connectionsref.yml"}, []string{"build"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
 
 		{"project 3 - build ", defaultConnectString3, []string{"build"}, []string{"No app specified, using session app.", "datacsv << data 1 Lines fetched", "Reload finished successfully"}, initTest{false, false}},
