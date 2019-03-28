@@ -148,6 +148,8 @@ func init() {
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
 
 	if runtime.GOOS != "windows" {
+		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
+		// we instead rely on the default bash behavior
 		addFileRelatedBashAnnotations()
 	}
 }
@@ -241,68 +243,43 @@ const bashCompletionFunc = `
     echo "$result";
 	}
 
-	__corectl_get_dimensions()
-	{
-		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get dimensions --bash $flags 2>/dev/null)
+  __corectl_call_corectl() 
+  {
+    local flags=$(__extract_flags_to_forward ${words[@]})
+		local corectl_out
+		local errorcode
+		corectl_out=$(corectl $1 $flags 2>/dev/null)
 		errorcode=$?
 		if [[ errorcode -eq 0 ]]; then
   		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
+  		COMPREPLY=( $(compgen -W "${corectl_out}" -- "$cur") )
 		else
   		COMPREPLY=()
 		fi;
+  }
+
+	__corectl_get_dimensions()
+	{
+		__corectl_call_corectl "get dimensions --bash"
 	}
 
 	__corectl_get_measures()
 	{
-		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get measures --bash $flags 2>/dev/null)
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
+		__corectl_call_corectl "get measures --bash"
 	}
 
 	__corectl_get_objects()
 	{
-		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get objects --bash $flags 2>/dev/null) 
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
+		__corectl_call_corectl "get objects --bash"
 	}
 
 	__corectl_get_connections()
 	{
-		local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get connections --bash $flags 2>/dev/null)
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
+		__corectl_call_corectl "get connections --bash"
 	}
 
 	__corectl_get_apps()
 	{
-		local config=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out=$(corectl get apps --bash $config 2>/dev/null) 
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out[*]}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
+		__corectl_call_corectl "get apps --bash"
 	}
 `
