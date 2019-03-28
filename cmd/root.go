@@ -102,6 +102,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
 	viper.BindPFlag("app", rootCmd.PersistentFlags().Lookup("app"))
+	// Set annotation to run bash completion function
+	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
 	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
 		// Don't bind these to viper since paths are treated separately to support relative paths!
