@@ -1,17 +1,19 @@
 package printer
 
 import (
-	"fmt"
+	"os"
 
-	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/corectl/internal"
 )
 
 // PrintAssociations prints a list of associations to system out.
 func PrintAssociations(data *internal.ModelMetadata) {
 
-	keyList := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(keyList, "Field(s)\tLinked tables\n")
+	writer := tablewriter.NewWriter(os.Stdout)
+	writer.SetAutoFormatHeaders(false)
+	writer.SetHeader([]string{"Field(s)", "Linked tables"})
+
 	for _, key := range data.SourceKeys {
 		fieldInfo := ""
 		for f, field := range key.KeyFields {
@@ -27,7 +29,7 @@ func PrintAssociations(data *internal.ModelMetadata) {
 			}
 			tableInfo += table
 		}
-		fmt.Fprintf(keyList, "%s\t%s\n", fieldInfo, tableInfo)
+		writer.Append([]string{fieldInfo, tableInfo})
 	}
-	fmt.Print(keyList)
+	writer.Render()
 }

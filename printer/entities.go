@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
 )
@@ -33,14 +35,16 @@ func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJ
 			}
 		}
 	} else {
-		entityTable := tm.NewTable(0, 10, 3, ' ', 0)
-		fmt.Fprintf(entityTable, "Id\tType\n")
+		writer := tablewriter.NewWriter(os.Stdout)
+		writer.SetAutoFormatHeaders(false)
+		writer.SetHeader([]string{"Id", "Type"})
+
 		for _, info := range allInfos {
 			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				fmt.Fprintf(entityTable, "%s\t%s\n", info.Id, info.Type)
+				writer.Append([]string{info.Id, info.Type})
 			}
 		}
-		fmt.Print(entityTable)
+		writer.Render()
 	}
 }
 

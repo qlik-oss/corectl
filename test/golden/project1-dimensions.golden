@@ -1,2 +1,5 @@
-Id                  Type
-numbers-dimension   dimension
++-------------------+-----------+
+|        Id         |   Type    |
++-------------------+-----------+
+| numbers-dimension | dimension |
++-------------------+-----------+

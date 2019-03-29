@@ -1,20 +1,22 @@
 package printer
 
 import (
-	"fmt"
-	tm "github.com/buger/goterm"
+	"os"
+	"strconv"
+
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/corectl/internal"
 )
 
 // PrintTables prints a list of tables along with meta data to system out.
 func PrintTables(data *internal.ModelMetadata) {
-	tableList2 := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(tableList2, "Name\tRow count\tRAM\tFields\n")
+	writer := tablewriter.NewWriter(os.Stdout)
+	writer.SetHeader([]string{"Name", "Row count", "RAM", "Fields"})
+	writer.SetAutoFormatHeaders(false)
+	writer.SetRowLine(true)
 	for _, table := range data.Tables {
-
-		fmt.Fprintf(tableList2, "%s\t%d\t%s\t%s\n", table.Name, table.NoOfRows, table.MemUsage(), data.FieldsInTableTexts[table.Name])
+		writer.Append([]string{table.Name, strconv.Itoa(table.NoOfRows), table.MemUsage(), data.FieldsInTableTexts[table.Name]})
 	}
-	fmt.Fprintf(tableList2, "\t\t\n")
-	fmt.Fprintf(tableList2, "Total RAM \t\t%s\n", data.MemUsage())
-	fmt.Print(tableList2)
+	writer.SetFooter([]string{"", "Total RAM", data.MemUsage(), ""})
+	writer.Render()
 }

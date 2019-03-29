@@ -2,10 +2,12 @@ package printer
 
 import (
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
+	"os"
 	"strings"
 
-	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/enigma-go"
+
 	"github.com/qlik-oss/corectl/internal"
 )
 
@@ -21,43 +23,48 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 
 // PrintFields prints a table sof fields along with various metadata to system out.
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
-	fieldList := tm.NewTable(0, 10, 3, ' ', 0)
-	fmt.Fprintf(fieldList, "Field\tUniq/Tot\tRAM\tTags\t")
+	writer := tablewriter.NewWriter(os.Stdout)
+
+	headers := []string{"Field", "Uniq/Tot", "RAM", "Tags"}
+	// For each table we should also add a header
 	for _, table := range data.Tables {
-		fmt.Fprintf(fieldList, "%s\t", table.Name)
+		headers = append(headers, table.Name)
 	}
+
+	// Add a sample content header if samples exists
 	if data.SampleContentByFieldName != nil {
-		fmt.Fprintf(fieldList, "Sample content")
+		headers = append(headers, "Sample content")
 	}
-	fmt.Fprintf(fieldList, "\n")
+	writer.SetAutoFormatHeaders(false)
+	writer.SetHeader(headers)
+
+	// Add rows
+	writer.SetRowLine(true)
 	for _, field := range data.Fields {
 		if field != nil && !field.IsSystem && (!keyOnly || isKey(field)) {
-
 			total := uniqueAndTotal(field)
-			fmt.Fprintf(fieldList, "%s\t%s\t%s\t%s\t", field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", "))
-			//fieldInfo := data.FieldSourceTableInfoByName[field.Name]
+			rows := []string{field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", ")}
 			for _, fieldInTable := range field.FieldInTable {
-				fmt.Fprintf(fieldList, "%s\t", fieldInTableToText(fieldInTable))
+				rows = append(rows, fieldInTableToText(fieldInTable))
 			}
 			if data.SampleContentByFieldName != nil {
-				fmt.Fprintf(fieldList, "%s\t", data.SampleContentByFieldName[field.Name])
+				rows = append(rows, data.SampleContentByFieldName[field.Name])
 			}
-			fmt.Fprintf(fieldList, "\n")
+			writer.Append(rows)
 		}
 	}
 
-	fmt.Fprintf(fieldList, "\t\t\t")
-	for range data.Tables {
-		fmt.Fprintf(fieldList, "\t")
-	}
-
-	fmt.Fprintf(fieldList, "\n")
-	fmt.Fprintf(fieldList, "Total RAM \t\t%s\t", data.MemUsage())
+	// Add total ram as footer
+	footers := []string{"Total RAM", "", data.MemUsage(), ""}
 	for _, table := range data.Tables {
-		fmt.Fprintf(fieldList, "\t%s", table.MemUsage())
+		footers = append(footers, table.MemUsage())
 	}
+	if data.SampleContentByFieldName != nil {
+		footers = append(footers, "")
+	}
+	writer.SetFooter(footers)
 
-	fmt.Print(fieldList, "\n\n")
+	writer.Render()
 }
 
 func isKey(field *internal.FieldModel) bool {

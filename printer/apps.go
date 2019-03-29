@@ -3,12 +3,14 @@ package printer
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/qlik-oss/corectl/internal"
 
-	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -25,12 +27,14 @@ func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool, printAsBash boo
 			PrintToBashComp(app.DocName)
 		}
 	} else {
-		docTable := tm.NewTable(0, 10, 3, ' ', 0)
-		fmt.Fprintf(docTable, "Id\tName\tLast-Reloaded\tReadOnly\tTitle\n")
+		writer := tablewriter.NewWriter(os.Stdout)
+		writer.SetAutoFormatHeaders(false)
+		writer.SetHeader([]string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title"})
+
 		for _, doc := range docList {
-			fmt.Fprintf(docTable, "%s\t%s\t%s\t%t\t%s\n", doc.DocId, doc.DocName, doc.LastReloadTime, doc.ReadOnly, doc.Title)
+			writer.Append([]string{doc.DocId, doc.DocName, doc.LastReloadTime, strconv.FormatBool(doc.ReadOnly), doc.Title})
 		}
-		fmt.Print(docTable)
+		writer.Render()
 	}
 }
 

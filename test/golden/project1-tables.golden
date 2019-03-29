@@ -1,5 +1,9 @@
-Name         Row count   RAM   Fields
-TableA       5           18    numbers, abcs
-TableB       5           18    numbers, xyz
-                         
-Total RAM                279
++--------+-----------+-----+---------------+
+|  Name  | Row count | RAM |    Fields     |
++--------+-----------+-----+---------------+
+| TableA |         5 |  18 | numbers, abcs |
++--------+-----------+-----+---------------+
+| TableB |         5 |  18 | numbers, xyz  |
++--------+-----------+-----+---------------+
+|          Total RAM | 279 |                
++--------+-----------+-----+---------------+
