@@ -20,10 +20,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "update golden files")
+var update = flag.Bool("update", true, "update golden files")
 
-var engineIP = flag.String("engineIP", "localhost:9076", "dir of package containing embedded files")
-var engine2IP = flag.String("engine2IP", "localhost:9176", "dir of package containing embedded files")
+var engineIP = flag.String("engineIP", "localhost:9076", "URL to first engine instance in docker-compose.yml i.e qix-engine-1")
+var engine2IP = flag.String("engine2IP", "localhost:9176", "URL to second engine instance in docker-compose.yml i.e qix-engine-2")
+var engine3IP = flag.String("engine3IP", "localhost:9276", "URL to third engine instance in docker-compose.yml i.e qix-engine-3")
 
 func getBinaryName() string {
 	if runtime.GOOS == "windows" {
@@ -91,7 +92,7 @@ func setupEntities(connectToEngine string, configPath string, entityType string,
 func removeEntities(t *testing.T, connectToEngine string, configPath string, entityType string, entityId string) {
 	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "remove", entityType, entityId}...)
 	output, _ := cmd.CombinedOutput()
-	assert.Equal(t, "Saving...Done\n\n", string(output))
+	assert.Equal(t, "Saving app... Done\n\n", string(output))
 }
 
 func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, entityType string) {
@@ -193,6 +194,7 @@ type test struct {
 func TestCorectl(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
 	connectToEngineWithInccorectLicenseService := "--engine=" + *engine2IP
+	connectToEngineABAC := "--engine=" + *engine3IP
 
 	// General
 	emptyConnectString := []string{}
@@ -204,7 +206,7 @@ func TestCorectl(t *testing.T) {
 		{"help 2", emptyConnectString, []string{"help"}, []string{"golden", "help-2.golden"}, initTest{false, false}},
 		{"help 3", emptyConnectString, []string{"help", "build"}, []string{"golden", "help-3.golden"}, initTest{false, false}},
 
-		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
+		{"project 1 - build", defaultConnectString1, []string{"build"}, []string{"Connected", "TableA <<  5 Lines fetched", "TableB <<  5 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 1 - get tables", defaultConnectString1, []string{"get", "tables"}, []string{"golden", "project1-tables.golden"}, initTest{true, true}},
 		{"project 1 - get assoc", defaultConnectString1, []string{"get", "assoc"}, []string{"golden", "project1-assoc.golden"}, initTest{true, true}},
 		{"project 1 - get fields", defaultConnectString1, []string{"get", "fields"}, []string{"golden", "project1-fields.golden"}, initTest{true, true}},
@@ -234,7 +236,8 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"get", "script", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
 
 		// Project 2 has separate connections file
-		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving...Done"}, initTest{false, true}},
+		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
+		{"project 2 - build with connections 2", []string{connectToEngine, "--config=test/project2/corectl-connectionsref.yml"}, []string{"build"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"get", "object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
 
@@ -252,6 +255,11 @@ func TestCorectl(t *testing.T) {
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
 		{"err jwt", []string{connectToEngine}, []string{"get", "apps"}, []string{"Error details:  401 from ws server: websocket: bad handshake"}, initTest{false, false}},
 		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"get", "apps"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
+
+		// Verifying corectl against an engine running with ABAC enabled
+		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"get", "status"}, []string{"Connected to project4.qvf @ ", "The data model has 1 tables."}, initTest{true, true}},
+		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"get", "apps"}, []string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title", "project4.qvf"}, initTest{true, true}},
+		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"get", "meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
 	}
 
 	for _, tt := range tests {

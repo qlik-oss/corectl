@@ -21,6 +21,7 @@ type State struct {
 	Doc     *enigma.Doc
 	Ctx     context.Context
 	Global  *enigma.Global
+	AppName string
 	AppID   string
 	MetaURL string
 	Verbose bool
@@ -40,12 +41,12 @@ func logConnectError(err error, engine string) {
 	os.Exit(1)
 }
 
-func connectToEngine(ctx context.Context, engine string, appID string, ttl string, headers http.Header) *enigma.Global {
+func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {
 	engineURL := buildWebSocketURL(engine, ttl)
 	LogVerbose("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
-		sessionID := getSessionID(appID)
+		sessionID := getSessionID(appName)
 		LogVerbose("SessionId: " + sessionID)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
@@ -67,26 +68,30 @@ func connectToEngine(ctx context.Context, engine string, appID string, ttl strin
 }
 
 //DeleteApp removes the specified app from the engine.
-func DeleteApp(ctx context.Context, engine string, appID string, ttl string, headers http.Header) {
-	global := connectToEngine(ctx, engine, appID, ttl, headers)
+func DeleteApp(ctx context.Context, engine string, appName string, ttl string, headers http.Header) {
+	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
 		FatalError(err)
 	} else if !succ {
-		FatalError("Failed to delete app " + appID)
+		FatalError("Failed to delete app with name: " + appName + " and ID: " + appID)
 	}
+	setAppIDToKnownApps(engine, appName, appID, true)
 }
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
 func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMissing bool) *State {
 	engine := viper.GetString("engine")
-	appID := viper.GetString("app")
+	appName := viper.GetString("app")
+
 	ttl := viper.GetString("ttl")
+	var appID string
 
 	LogVerbose("---------- Connecting to app ----------")
-	global := connectToEngine(ctx, engine, appID, ttl, headers)
-	if appID == "" {
+	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	if appName == "" {
 		fmt.Println("No app specified, using session app.")
 	}
 	sessionMessages := global.SessionMessageChannel()
@@ -98,13 +103,14 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
-		if appID != "" {
-			LogVerbose("App: " + appID + "(reconnected)")
+		if appName != "" {
+			appID, _ = applyNameToIDTransformation(engine, appName)
+			LogVerbose("App with name: " + appName + " and id: " + appID + "(reconnected)")
 		} else {
 			LogVerbose("Session app (reconnected)")
 		}
 	} else {
-		if appID == "" {
+		if appName == "" {
 			doc, err = global.CreateSessionApp(ctx)
 			if doc != nil {
 				LogVerbose("Session app (new)")
@@ -112,23 +118,26 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				FatalError(err)
 			}
 		} else {
+			appID, _ = applyNameToIDTransformation(engine, appName)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 			if doc != nil {
-				LogVerbose("App:  " + appID + "(opened)")
+				LogVerbose("App with name: " + appName + " and id: " + appID + "(opened)")
 			} else if createAppIfMissing {
-				success, _, err := global.CreateApp(ctx, appID, "")
+				success, appID, err := global.CreateApp(ctx, appName, "")
 				if err != nil {
 					FatalError(err)
 				}
 				if !success {
-					FatalError("Failed to create app with ID: " + appID)
+					FatalError("Failed to create app with name: " + appName)
 				}
+				// Write app id to config
+				setAppIDToKnownApps(engine, appName, appID, false)
 				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
 				if err != nil {
 					FatalError(err)
 				}
 				if doc != nil {
-					LogVerbose("Document: " + appID + "(new)")
+					LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
 				}
 			} else {
 				FatalError(err)
@@ -142,6 +151,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	return &State{
 		Doc:     doc,
 		Global:  global,
+		AppName: appName,
 		AppID:   appID,
 		Ctx:     ctx,
 		MetaURL: metaURL,
@@ -206,6 +216,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	return &State{
 		Doc:     nil,
 		Global:  global,
+		AppName: "",
 		AppID:   "",
 		Ctx:     ctx,
 		MetaURL: "",
