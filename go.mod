@@ -13,6 +13,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/qlik-oss/enigma-go v0.0.0-20190317164022-8859549f6867
 	github.com/spf13/cobra v0.0.3
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.3.0
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e

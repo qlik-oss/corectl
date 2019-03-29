@@ -28,10 +28,13 @@ var rootCmd = &cobra.Command{
 	Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 	DisableAutoGenTag:      true,
 	BashCompletionFunction: bashCompletionFunc,
+	Annotations: map[string]string{
+		"x-qlik-stability": "experimental",
+	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
 		// if help, version or generate-docs command, no prerun is needed.
-		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "version" {
+		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-spec" || ccmd.Use == "version" {
 			return
 		}
 		internal.QliVerbose = viper.GetBool("verbose")

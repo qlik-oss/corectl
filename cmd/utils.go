@@ -11,7 +11,6 @@ import (
 	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
-	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 	"github.com/tcnksm/go-latest"
 )
@@ -117,18 +116,6 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var generateDocsCmd = &cobra.Command{
-	Use:    "generate-docs",
-	Short:  "Generate markdown docs based on cobra commands",
-	Long:   "Generate markdown docs based on cobra commands",
-	Hidden: true,
-
-	Run: func(ccmd *cobra.Command, args []string) {
-		fmt.Println("Generating documentation")
-		doc.GenMarkdownTree(rootCmd, "./docs")
-	},
-}
-
 // completionCmd generates auto completion commands
 var completionCmd = &cobra.Command{
 	Use:       "completion <shell>",
@@ -185,7 +172,6 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(catwalkCmd)
 	rootCmd.AddCommand(evalCmd)
-	rootCmd.AddCommand(generateDocsCmd)
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(reloadCmd)
 	rootCmd.AddCommand(completionCmd)
