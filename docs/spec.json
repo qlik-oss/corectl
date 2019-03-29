@@ -30,6 +30,10 @@
       "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
     },
+    "no-data": {
+      "description": "Open app without data",
+      "default": "false"
+    },
     "traffic": {
       "alias": "t",
       "description": "Log JSON websocket traffic to stdout",
