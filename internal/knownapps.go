@@ -21,7 +21,7 @@ func applyNameToIDTransformation(engineURL string, appName string) (appID string
 		return appName, false
 	}
 
-	if id, ok := apps[engineURL][appName]; ok {
+	if id, exists := apps[engineURL][appName]; exists {
 		LogVerbose("Found id: " + id + " for app with name: " + appName + " @" + engineURL)
 		return id, true
 	}
@@ -53,14 +53,13 @@ func setAppIDToKnownApps(engineURL string, appName string, appID string, remove 
 
 	// Either remove or add an entry
 	if remove {
-		_, exists := apps[engineURL][appName]
-		if exists {
+		if _, exists := apps[engineURL][appName]; exists {
 			delete(apps[engineURL], appName)
 			LogVerbose("Removed app with name: " + appName + " and id: " + appID + " @" + engineURL + " from known apps")
 		}
 	} else {
 		if apps[engineURL] == nil {
-			apps[engineURL] = make(map[string]string)
+			apps[engineURL] = map[string]string{}
 		}
 		apps[engineURL][appName] = appID
 		LogVerbose("Added app with name: " + appName + " and id: " + appID + " @" + engineURL + " to known apps")
@@ -68,7 +67,10 @@ func setAppIDToKnownApps(engineURL string, appName string, appID string, remove 
 
 	// Write to knownApps.yml
 	out, _ := yaml.Marshal(apps)
-	_ = ioutil.WriteFile(knownAppsFilePath, out, 0644)
+
+	if err := ioutil.WriteFile(knownAppsFilePath, out, 0644); err != nil {
+		FatalError("Failed to write to knownApps.yml: " + err.Error())
+	}
 }
 
 // Create a knownApps.yml if one does not exist
