@@ -3,7 +3,7 @@
   "info": {
     "title": "Specification for corectl",
     "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "MIT"
   },
   "clispec": "0.1.0",
@@ -49,7 +49,7 @@
     "build": {
       "flags": {
         "connections": {
-          "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+          "description": "Path to a yml file containing the data connection definitions"
         },
         "dimensions": {
           "description": "A list of generic dimension json paths"
@@ -294,7 +294,7 @@
           "description": "Sets the objects, measures, dimensions, connections and script in the current app",
           "flags": {
             "connections": {
-              "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
+              "description": "Path to a yml file containing the data connection definitions"
             },
             "dimensions": {
               "description": "A list of generic dimension json paths"
@@ -311,12 +311,7 @@
           }
         },
         "connections": {
-          "description": "Sets or updates the connections in the current app",
-          "flags": {
-            "connections": {
-              "description": "path/to/connections.yml that contains connections that are used in the reload. Note that when specifying connections in the config file they are specified inline, not as a file reference!"
-            }
-          }
+          "description": "Sets or updates the connections in the current app"
         },
         "dimensions": {
           "description": "Sets or updates the dimensions in the current app"
