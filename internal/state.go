@@ -10,6 +10,7 @@ import (
 	neturl "net/url"
 	"os"
 	"os/user"
+	"strconv"
 	"strings"
 
 	"github.com/qlik-oss/enigma-go"
@@ -85,8 +86,9 @@ func DeleteApp(ctx context.Context, engine string, appName string, ttl string, h
 func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMissing bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
-
 	ttl := viper.GetString("ttl")
+	noData := viper.GetBool("no-data")
+
 	var appID string
 
 	LogVerbose("---------- Connecting to app ----------")
@@ -119,9 +121,13 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 			}
 		} else {
 			appID, _ = applyNameToIDTransformation(engine, appName)
-			doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
+			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if doc != nil {
-				LogVerbose("App with name: " + appName + " and id: " + appID + "(opened)")
+				if noData {
+					LogVerbose("Opened app with name: " + appName + " and id: " + appID + " without data")
+				} else {
+					LogVerbose("Opened app with name: " + appName + " and id: " + appID)
+				}
 			} else if createAppIfMissing {
 				success, appID, err := global.CreateApp(ctx, appName, "")
 				if err != nil {
@@ -132,7 +138,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				}
 				// Write app id to config
 				setAppIDToKnownApps(engine, appName, appID, false)
-				doc, err = global.OpenDoc(ctx, appID, "", "", "", false)
+				doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 				if err != nil {
 					FatalError(err)
 				}
@@ -256,6 +262,10 @@ func buildMetadataURL(engine string, appID string) string {
 }
 
 func getSessionID(appID string) string {
+	// If no-data or ttl flag is used the user should not get the default session id
+	noData := viper.GetBool("no-data")
+	ttl := viper.GetString("ttl")
+
 	currentUser, err := user.Current()
 	if err != nil {
 		FatalError(err)
@@ -264,7 +274,7 @@ func getSessionID(appID string) string {
 	if err != nil {
 		FatalError(err)
 	}
-	sessionID := base64.StdEncoding.EncodeToString([]byte("Corectl-" + currentUser.Username + "-" + hostName + "-" + appID))
+	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
 }
 

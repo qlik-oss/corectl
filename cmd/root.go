@@ -96,6 +96,9 @@ func init() {
 	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
 	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
+	rootCmd.PersistentFlags().Bool("no-data", false, "Open app without data")
+	viper.BindPFlag("no-data", rootCmd.PersistentFlags().Lookup("no-data"))
+
 	rootCmd.PersistentFlags().Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	rootCmd.PersistentFlags().MarkHidden("bash")
 	viper.BindPFlag("bash", rootCmd.PersistentFlags().Lookup("bash"))

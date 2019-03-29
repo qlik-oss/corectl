@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/qlik-oss/enigma-go"
+	"github.com/spf13/viper"
 )
 
 // Reload reloads the app and prints the progress to system out. If true is supplied to skipTransientLogs
@@ -82,8 +83,17 @@ func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID i
 
 // Save calls DoSave on the app and prints "Done" if it succeeded or "Save failed" to system out.
 func Save(ctx context.Context, doc *enigma.Doc) {
-	fmt.Print("Saving app... ")
-	err := doc.DoSave(ctx, "")
+	noData := viper.GetBool("no-data")
+	var err error
+
+	// If app is opened without data we should only save the objects
+	if noData {
+		fmt.Print("Saving objects in app... ")
+		err = doc.SaveObjects(ctx)
+	} else {
+		fmt.Print("Saving app... ")
+		err = doc.DoSave(ctx, "")
+	}
 	if err == nil {
 		fmt.Println("Done")
 	} else {
