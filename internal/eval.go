@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
-	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -29,7 +28,6 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 			}},
 		},
 	})
-	grid := tm.NewTable(0, 10, 3, ' ', 0)
 	layout, err := object.GetLayout(ctx)
 
 	if err != nil {
@@ -43,23 +41,23 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(grid, strings.Join(dims, "\t"))
-	fmt.Fprintf(grid, "\t")
-	fmt.Fprintf(grid, strings.Join(measures, "\t"))
-	fmt.Fprintf(grid, "\n")
-	// Get hypercube layout
+	writer := tablewriter.NewWriter(os.Stdout)
+	writer.SetAutoFormatHeaders(false)
+
+	headers := append(dims, measures...)
+	writer.SetHeader(headers)
+	writer.SetAlignment(tablewriter.ALIGN_LEFT)
+
 	for _, page := range layout.HyperCube.DataPages {
 		for _, row := range page.Matrix {
-			for r, cell := range row {
-				if r < len(row)-1 {
-					fmt.Fprintf(grid, "%s\t", cell.Text)
-				} else {
-					fmt.Fprintf(grid, "%s\n", cell.Text)
-				}
+			data := []string{}
+			for _, cell := range row {
+				data = append(data, cell.Text)
 			}
+			writer.Append(data)
 		}
 	}
-	fmt.Print(grid)
+	writer.Render()
 }
 
 func argumentsToMeasuresAndDims(args []string) ([]string, []string) {

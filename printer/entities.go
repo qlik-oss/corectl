@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	tm "github.com/buger/goterm"
 	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
@@ -139,28 +138,29 @@ func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 }
 
 func printHypercube(hypercube *enigma.HyperCube) {
-	grid := tm.NewTable(0, 10, 3, ' ', 0)
+	writer := tablewriter.NewWriter(os.Stdout)
 
+	headers := []string{}
 	for _, dim := range hypercube.DimensionInfo {
-		fmt.Fprintf(grid, "%s\t", dim.FallbackTitle)
+		headers = append(headers, dim.FallbackTitle)
 	}
 	for _, mes := range hypercube.MeasureInfo {
-		fmt.Fprintf(grid, "%s\t", mes.FallbackTitle)
+		headers = append(headers, mes.FallbackTitle)
 	}
-	fmt.Fprint(grid, "\n")
+
+	writer.SetAutoFormatHeaders(false)
+	writer.SetHeader(headers)
 
 	for _, page := range hypercube.DataPages {
 		for _, row := range page.Matrix {
-			for r, cell := range row {
-				if r < len(row)-1 {
-					fmt.Fprintf(grid, "%s\t", cell.Text)
-				} else {
-					fmt.Fprintf(grid, "%s\n", cell.Text)
-				}
+			data := []string{}
+			for _, cell := range row {
+				data = append(data, cell.Text)
 			}
+			writer.Append(data)
 		}
 	}
-	fmt.Println(grid.String())
+	writer.Render()
 }
 
 func getAllHyperCubes(path string, jsonMap map[string]interface{}, resultCubeMap map[string]*enigma.HyperCube) {
