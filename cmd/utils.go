@@ -97,7 +97,7 @@ var reloadCmd = &cobra.Command{
 		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
 
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -215,8 +215,8 @@ func build(ccmd *cobra.Command, args []string) {
 
 	internal.Reload(ctx, state.Doc, state.Global, silent, true)
 
-	if state.AppID != "" {
-		internal.Save(ctx, state.Doc, state.AppID)
+	if state.AppName != "" {
+		internal.Save(ctx, state.Doc)
 	}
 }
 

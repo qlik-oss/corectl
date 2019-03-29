@@ -74,7 +74,7 @@ corectl get connections --json`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
 			internal.FatalError(err)
@@ -99,7 +99,7 @@ var getConnectionCmd = &cobra.Command{
 			ccmd.Usage()
 			os.Exit(1)
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
 			internal.FatalError(err)

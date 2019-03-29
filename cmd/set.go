@@ -52,7 +52,7 @@ corectl set all --app=my-app.qvf`,
 		}
 
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -79,7 +79,7 @@ var setConnectionsCmd = &cobra.Command{
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -103,7 +103,7 @@ var setDimensionsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -127,7 +127,7 @@ var setMeasuresCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -153,7 +153,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -186,7 +186,7 @@ var setScriptCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }

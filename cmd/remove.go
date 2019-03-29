@@ -72,7 +72,7 @@ corectl remove connections ID-1 ID-2`,
 			os.Exit(1)
 		}
 
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, connection := range args {
 			err := state.Doc.DeleteConnection(rootCtx, connection)
 			if err != nil {
@@ -80,7 +80,7 @@ corectl remove connections ID-1 ID-2`,
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -114,7 +114,7 @@ corectl remove dimensions ID-1 ID-2`,
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -148,7 +148,7 @@ corectl remove measures ID-1 ID-2`,
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }
@@ -182,7 +182,7 @@ corectl remove objects ID-1 ID-2`,
 			}
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc, state.AppID)
+			internal.Save(rootCtx, state.Doc)
 		}
 	},
 }

@@ -11,8 +11,8 @@ import (
 //PrintStatus prints the name of the app and the engine corectl is connected to.
 // It also prints if the data model is empty or not
 func PrintStatus(state *internal.State, engine string) {
-	if state.AppID != "" {
-		fmt.Println("Connected to " + state.AppID + " @ " + engine)
+	if state.AppName != "" {
+		fmt.Println("Connected to " + state.AppName + " @ " + engine)
 	} else {
 		fmt.Println("Connected to session app @ " + engine)
 	}
