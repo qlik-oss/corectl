@@ -11,12 +11,12 @@ require (
 	github.com/magiconair/properties v1.8.0
 	github.com/olekukonko/tablewriter v0.0.1
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
-	github.com/qlik-oss/enigma-go v0.0.0-20190317164022-8859549f6867
+	github.com/qlik-oss/enigma-go v0.0.0-20190401060423-aa24bfadc3bf
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.3.0
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
-	golang.org/x/sys v0.0.0-20190323004555-f49334f85ddc // indirect
+	golang.org/x/sys v0.0.0-20190330005740-9eb1bfa1ce65 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
