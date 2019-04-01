@@ -1,2 +1,5 @@
-Field(s)   Linked tables
-numbers    TableA <--> TableB
++----------+--------------------+
+| Field(s) |   Linked tables    |
++----------+--------------------+
+| numbers  | TableA <--> TableB |
++----------+--------------------+

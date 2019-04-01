@@ -1,4 +1,7 @@
-Id          Type
-measure-1   measure
-measure-2   measure
-measure-3   measure
++-----------+---------+
+|    Id     |  Type   |
++-----------+---------+
+| measure-1 | measure |
+| measure-2 | measure |
+| measure-3 | measure |
++-----------+---------+

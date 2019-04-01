@@ -3,8 +3,9 @@ package printer
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
-	tm "github.com/buger/goterm"
+	"github.com/olekukonko/tablewriter"
 	"github.com/qlik-oss/corectl/internal"
 	enigma "github.com/qlik-oss/enigma-go"
 )
@@ -18,12 +19,14 @@ func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printA
 			PrintToBashComp(connection.Id)
 		}
 	} else {
-		connectionsTable := tm.NewTable(0, 10, 3, ' ', 0)
-		fmt.Fprintf(connectionsTable, "Id\tName\n")
+		writer := tablewriter.NewWriter(os.Stdout)
+		writer.SetAutoFormatHeaders(false)
+		writer.SetHeader([]string{"Id", "Name", "Type"})
+
 		for _, connection := range connections {
-			fmt.Fprintf(connectionsTable, "%s\t%s\n", connection.Id, connection.Name)
+			writer.Append([]string{connection.Id, connection.Name, connection.Type})
 		}
-		fmt.Print(connectionsTable)
+		writer.Render()
 	}
 }
 
