@@ -19,6 +19,8 @@ corectl [flags]
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
   -h, --help                     help for corectl
       --no-data                  Open app without data
+      --no-save                  Do not save the app
+      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
@@ -26,13 +28,24 @@ corectl [flags]
 
 ### SEE ALSO
 
+* [corectl all](corectl_all.md)	 - Sets the objects, measures, dimensions, connections and script in the current app
+* [corectl app](corectl_app.md)	 - Explore and manage the app
+* [corectl assoc](corectl_assoc.md)	 - Print table associations summary
 * [corectl build](corectl_build.md)	 - Reloads and saves the app after updating connections, dimensions, measures, objects and the script
 * [corectl catwalk](corectl_catwalk.md)	 - Opens the specified app in catwalk
 * [corectl completion](corectl_completion.md)	 - Generates auto completion scripts
+* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
 * [corectl eval](corectl_eval.md)	 - Evaluates a list of measures and dimensions
-* [corectl get](corectl_get.md)	 - Lists one or several resources
+* [corectl field](corectl_field.md)	 - Shows content of a field
+* [corectl fields](corectl_fields.md)	 - Print field list
+* [corectl keys](corectl_keys.md)	 - Print key-only field list
+* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl meta](corectl_meta.md)	 - Shows metadata about the app
+* [corectl object](corectl_object.md)	 - Explore and manage generic objects
 * [corectl reload](corectl_reload.md)	 - Reloads the app.
-* [corectl remove](corectl_remove.md)	 - Remove entities (connections, dimensions, measures, objects) in the app or the app itself
-* [corectl set](corectl_set.md)	 - Sets one or several resources
+* [corectl script](corectl_script.md)	 - Explore and manage the script
+* [corectl status](corectl_status.md)	 - Prints status info about the connection to the engine and current app
+* [corectl tables](corectl_tables.md)	 - Print tables summary
 * [corectl version](corectl_version.md)	 - Print the version of corectl
 

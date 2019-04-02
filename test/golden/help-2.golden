@@ -4,16 +4,31 @@ Usage:
   corectl [flags]
   corectl [command]
 
-Available Commands:
+Basic Commands:
+  all           Sets the objects, measures, dimensions, connections and script in the current app
+  assoc         Print table associations summary
   build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
+  eval          Evaluates a list of measures and dimensions
+  field         Shows content of a field
+  fields        Print field list
+  keys          Print key-only field list
+  meta          Shows metadata about the app
+  reload        Reloads the app.
+  tables        Print tables summary
+
+Advanced Commands:
+  app           Explore and manage the app
+  connection    Explore and manage connections
+  dimension     Explore and manage dimensions
+  measure       Explore and manage measures
+  object        Explore and manage generic objects
+  script        Explore and manage the script
+
+Other Commands:
   catwalk       Opens the specified app in catwalk
   completion    Generates auto completion scripts
-  eval          Evaluates a list of measures and dimensions
-  get           Lists one or several resources
   help          Help about any command
-  reload        Reloads the app.
-  remove        Remove entities (connections, dimensions, measures, objects) in the app or the app itself
-  set           Sets one or several resources
+  status        Prints status info about the connection to the engine and current app
   version       Print the version of corectl
 
 Flags:
@@ -23,6 +38,8 @@ Flags:
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
   -h, --help                     help for corectl
       --no-data                  Open app without data
+      --no-save                  Do not save the app
+      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information

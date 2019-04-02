@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -28,6 +27,7 @@ var rootCmd = &cobra.Command{
 	Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
 	DisableAutoGenTag:      true,
 	BashCompletionFunction: bashCompletionFunc,
+
 	Annotations: map[string]string{
 		"x-qlik-stability": "experimental",
 	},
@@ -82,6 +82,33 @@ func Execute(mainVersion string) {
 }
 
 func init() {
+
+	// Common commands
+	rootCmd.AddCommand(getTablesCmd)
+	rootCmd.AddCommand(getFieldsCmd)
+	rootCmd.AddCommand(getAssociationsCmd)
+	rootCmd.AddCommand(getKeysCmd)
+	rootCmd.AddCommand(buildCmd)
+	rootCmd.AddCommand(evalCmd)
+	rootCmd.AddCommand(reloadCmd)
+	rootCmd.AddCommand(setAllCmd)
+	rootCmd.AddCommand(getFieldCmd)
+	rootCmd.AddCommand(getMetaCmd)
+
+	// Subcommands
+	rootCmd.AddCommand(measureCmd)
+	rootCmd.AddCommand(dimensionCmd)
+	rootCmd.AddCommand(objectCmd)
+	rootCmd.AddCommand(connectionCmd)
+	rootCmd.AddCommand(scriptCmd)
+	rootCmd.AddCommand(appCmd)
+
+	// Other
+	rootCmd.AddCommand(catwalkCmd)
+	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(getStatusCmd)
+
 	rootCmd.PersistentFlags().StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Logs extra information")
@@ -96,8 +123,14 @@ func init() {
 	rootCmd.PersistentFlags().String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
 	viper.BindPFlag("ttl", rootCmd.PersistentFlags().Lookup("ttl"))
 
+	rootCmd.PersistentFlags().Bool("suppress", false, "Suppress all confirmation dialogues")
+	viper.BindPFlag("suppress", rootCmd.PersistentFlags().Lookup("suppress"))
+
 	rootCmd.PersistentFlags().Bool("no-data", false, "Open app without data")
 	viper.BindPFlag("no-data", rootCmd.PersistentFlags().Lookup("no-data"))
+
+	rootCmd.PersistentFlags().Bool("no-save", false, "Do not save the app")
+	viper.BindPFlag("no-save", rootCmd.PersistentFlags().Lookup("no-save"))
 
 	rootCmd.PersistentFlags().Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	rootCmd.PersistentFlags().MarkHidden("bash")
@@ -111,46 +144,10 @@ func init() {
 	// Set annotation to run bash completion function
 	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("connections", "", "Path to a yml file containing the data connection definitions")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("measures", "", "A list of generic measures json paths")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("objects", "", "A list of generic object json paths")
-	}
-
 	for _, command := range []*cobra.Command{buildCmd, reloadCmd} {
 		command.PersistentFlags().Bool("silent", false, "Do not log reload progress")
 	}
 
-	for _, command := range []*cobra.Command{reloadCmd, removeConnectionCmd, removeDimensionCmd, removeMeasureCmd, removeObjectCmd, setCmd} {
-		command.PersistentFlags().Bool("no-save", false, "Do not save the app")
-	}
-
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		// Don't bind these to viper since paths are treated separately to support relative paths!
-		command.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
-	}
-
-	for _, command := range []*cobra.Command{getAppsCmd, getConnectionsCmd, getDimensionsCmd, getMeasuresCmd, getObjectsCmd} {
-		command.PersistentFlags().Bool("json", false, "Prints the information in json format")
-	}
-
-	for _, command := range []*cobra.Command{removeCmd} {
-		command.PersistentFlags().Bool("suppress", false, "Suppress all confirmation dialogues")
-	}
 	catwalkCmd.PersistentFlags().String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
 
 	if runtime.GOOS != "windows" {
@@ -158,6 +155,8 @@ func init() {
 		// we instead rely on the default bash behavior
 		addFileRelatedBashAnnotations()
 	}
+
+	patchRootCommandUsageTemplate()
 }
 
 // GetRelativeParameter returns a parameter from the config file.
@@ -168,124 +167,24 @@ func GetRelativeParameter(paramName string) string {
 		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
 	}
 	return ""
+
 }
 
-func getEntityProperties(ccmd *cobra.Command, args []string, entityType string) {
-	if len(args) < 1 {
-		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
-		ccmd.Usage()
-		os.Exit(1)
-	}
-	state := internal.PrepareEngineState(rootCtx, headers, false)
-	printer.PrintGenericEntityProperties(state, args[0], entityType)
+func patchRootCommandUsageTemplate() {
+	var originalUsageSnippet = `Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}`
+
+	var rootSnippetMainSection = `Basic Commands:{{range .Commands}}{{if (and .IsAvailableCommand (eq (index .Annotations "command_category") ""))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}
+
+Advanced Commands:{{range .Commands}}{{if (and (or .IsAvailableCommand (eq .Name "help")) (eq (index .Annotations "command_category") "sub"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}
+
+Other Commands:{{range .Commands}}{{if (and (or .IsAvailableCommand (eq .Name "help")) (or (eq (index .Annotations "command_category") "other") (eq .Name "help")))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}`
+
+	var newUsageSnippet = `{{if (eq .Name "corectl")}}` + rootSnippetMainSection + `{{else}}` + originalUsageSnippet + "{{end}}"
+
+	var patchedUsageTemplate = strings.Replace(rootCmd.UsageTemplate(), originalUsageSnippet, newUsageSnippet, 1)
+	rootCmd.SetUsageTemplate(patchedUsageTemplate)
 }
-
-func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
-	if len(args) < 1 {
-		fmt.Println("Expected an " + entityType + " id to specify what " + entityType + " to use as a parameter")
-		ccmd.Usage()
-		os.Exit(1)
-	}
-	state := internal.PrepareEngineState(rootCtx, headers, false)
-	printer.PrintGenericEntityLayout(state, args[0], entityType)
-}
-
-func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
-	state := internal.PrepareEngineState(rootCtx, headers, false)
-	allInfos, err := state.Doc.GetAllInfos(rootCtx)
-	if err != nil {
-		internal.FatalError(err)
-	}
-	printer.PrintGenericEntities(allInfos, entityType, printAsJSON, viper.GetBool("bash"))
-}
-
-const bashCompletionFunc = `
-
-	__custom_func()
-	{
-		case ${last_command} in
-			corectl_get_dimension_properties | corectl_get_dimension_layout)
-				__corectl_get_dimensions
-				;;
-			corectl_get_measure_properties | corectl_get_measure_layout)
-				__corectl_get_measures
-				;;
-			corectl_get_object_data | corectl_get_object_properties | corectl_get_object_layout)
-				__corectl_get_objects
-				;;
-			corectl_get_connection)
-				__corectl_get_connections
-				;;
-      *)
-				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
-				;;
-		esac
-	}
-
-  __extract_flags_to_forward()
-	{
-    local forward_flags
-  	local result
-	  forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
-	  while [[ $# -gt 0 ]]; do
-  	  for i in "${forward_flags[@]}"
-			do
-				case $1 in
-				$i)
-					# If there is a flag with spacing we need to check that an arg is passed
-					if [[ $# -gt 1 ]]; then
-						result+="$1=";
-						shift;
-						result+="$1 "
-					fi
-      	;;
-      	$i=*)
-        	result+="$1 "
-      	;;
-    	esac
-			done
-    	shift
-  	done
-    echo "$result";
-	}
-
-  __corectl_call_corectl() 
-  {
-    local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out
-		local errorcode
-		corectl_out=$(corectl $1 $flags 2>/dev/null)
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
-  }
-
-	__corectl_get_dimensions()
-	{
-		__corectl_call_corectl "get dimensions --bash"
-	}
-
-	__corectl_get_measures()
-	{
-		__corectl_call_corectl "get measures --bash"
-	}
-
-	__corectl_get_objects()
-	{
-		__corectl_call_corectl "get objects --bash"
-	}
-
-	__corectl_get_connections()
-	{
-		__corectl_call_corectl "get connections --bash"
-	}
-
-	__corectl_get_apps()
-	{
-		__corectl_call_corectl "get apps --bash"
-	}
-`

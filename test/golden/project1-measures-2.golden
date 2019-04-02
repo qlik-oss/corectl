@@ -1,7 +1,14 @@
-+-----------+---------+
-|    Id     |  Type   |
-+-----------+---------+
-| measure-1 | measure |
-| measure-2 | measure |
-| measure-3 | measure |
-+-----------+---------+
+[
+   {
+      "qId": "measure-1",
+      "qType": "measure"
+   },
+   {
+      "qId": "measure-2",
+      "qType": "measure"
+   },
+   {
+      "qId": "measure-3",
+      "qType": "measure"
+   }
+]

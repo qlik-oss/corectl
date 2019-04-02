@@ -1,0 +1,39 @@
+## corectl object
+
+Explore and manage generic objects
+
+### Synopsis
+
+Explore and manage generic objects
+
+### Options
+
+```
+  -h, --help   help for object
+```
+
+### Options inherited from parent commands
+
+```
+  -a, --app string               App name, if no app is specified a session app is used instead.
+  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+      --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --no-data                  Open app without data
+      --no-save                  Do not save the app
+      --suppress                 Suppress all confirmation dialogues
+  -t, --traffic                  Log JSON websocket traffic to stdout
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
+  -v, --verbose                  Logs extra information
+```
+
+### SEE ALSO
+
+* [corectl](corectl.md)	 - 
+* [corectl object data](corectl_object_data.md)	 - Evaluates the hypercube data of an generic object
+* [corectl object layout](corectl_object_layout.md)	 - Evaluates the hypercube layout of an generic object
+* [corectl object ls](corectl_object_ls.md)	 - Prints a list of all generic objects in the current app
+* [corectl object properties](corectl_object_properties.md)	 - Prints the properties of the generic object
+* [corectl object remove](corectl_object_remove.md)	 - Remove one or many generic objects in the current app
+* [corectl object set](corectl_object_set.md)	 - Sets or updates the objects in the current app
+

@@ -1,0 +1,37 @@
+## corectl connection
+
+Explore and manage connections
+
+### Synopsis
+
+Explore and manage connections
+
+### Options
+
+```
+  -h, --help   help for connection
+```
+
+### Options inherited from parent commands
+
+```
+  -a, --app string               App name, if no app is specified a session app is used instead.
+  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+      --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --no-data                  Open app without data
+      --no-save                  Do not save the app
+      --suppress                 Suppress all confirmation dialogues
+  -t, --traffic                  Log JSON websocket traffic to stdout
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
+  -v, --verbose                  Logs extra information
+```
+
+### SEE ALSO
+
+* [corectl](corectl.md)	 - 
+* [corectl connection get](corectl_connection_get.md)	 - Shows the properties for a specific connection
+* [corectl connection ls](corectl_connection_ls.md)	 - Prints a list of all connections in the specified app
+* [corectl connection remove](corectl_connection_remove.md)	 - Remove the specified connection(s)
+* [corectl connection set](corectl_connection_set.md)	 - Sets or updates the connections in the current app
+

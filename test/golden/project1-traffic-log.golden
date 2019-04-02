@@ -1,10 +1,25 @@
-<-- {"jsonrpc":"2.0","method":"OnConnected","params":{"qSessionState":"SESSION_ATTACHED"}}
---> {"jsonrpc":"2.0","delta":false,"method":"GetActiveDoc","handle":-1,"id":1,"params":[]}
-<-- {"jsonrpc":"2.0","id":1,"result":{"qReturn":{"qType":"Doc","qHandle":1,"qGenericId":"/apps/project1.qvf"}}}
---> {"jsonrpc":"2.0","delta":false,"method":"GetScript","handle":1,"id":2,"params":[]}
-<-- {"jsonrpc":"2.0","id":2,"result":{"qScript":"LIB CONNECT TO myconnection;\n\nTableA:\nSELECT A;\n"}}
-LIB CONNECT TO myconnection;
+Explore and manage the script
 
-TableA:
-SELECT A;
+Usage:
+  corectl script [command]
 
+Available Commands:
+  script      Sets the script in the current app
+  script      Print the reload script
+
+Flags:
+  -h, --help   help for script
+
+Global Flags:
+  -a, --app string               App name, if no app is specified a session app is used instead.
+  -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+      --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --no-data                  Open app without data
+      --no-save                  Do not save the app
+      --suppress                 Suppress all confirmation dialogues
+  -t, --traffic                  Log JSON websocket traffic to stdout
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
+  -v, --verbose                  Logs extra information
+
+Use "corectl script [command] --help" for more information about a command.
