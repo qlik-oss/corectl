@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var setDimensionsCmd = &cobra.Command{
+var setDimensionsCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "set <glob-pattern-path-to-dimensions-files.json>",
 	Short:   "Sets or updates the dimensions in the current app",
 	Long:    "Sets or updates the dimensions in the current app",
@@ -26,9 +26,9 @@ var setDimensionsCmd = &cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var removeDimensionCmd = &cobra.Command{
+var removeDimensionCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "remove <dimension-id>...",
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",
@@ -53,16 +53,16 @@ var removeDimensionCmd = &cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var getDimensionsCmd = &cobra.Command{
+var listDimensionsCmd = &cobra.Command{
 	Use:     "ls",
 	Short:   "Prints a list of all generic dimensions in the current app",
 	Long:    "Prints a list of all generic dimensions in the current app",
 	Example: "corectl dimension list",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntities(ccmd, args, "dimension", !viper.GetBool("bash"))
+		listEntities(ccmd, args, "dimension", !viper.GetBool("bash"))
 	},
 }
 
@@ -98,9 +98,5 @@ var dimensionCmd = &cobra.Command{
 }
 
 func init() {
-	dimensionCmd.AddCommand(setDimensionsCmd)
-	dimensionCmd.AddCommand(getDimensionsCmd)
-	dimensionCmd.AddCommand(getDimensionLayoutCmd)
-	dimensionCmd.AddCommand(getDimensionPropertiesCmd)
-	dimensionCmd.AddCommand(removeDimensionCmd)
+	dimensionCmd.AddCommand(listDimensionsCmd, setDimensionsCmd, getDimensionPropertiesCmd, getDimensionLayoutCmd, removeDimensionCmd)
 }

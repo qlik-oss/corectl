@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var setMeasuresCmd = &cobra.Command{
+var setMeasuresCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "set <glob-pattern-path-to-measures-files.json>",
 	Short:   "Sets or updates the measures in the current app",
 	Long:    "Sets or updates the measures in the current app",
@@ -26,9 +26,9 @@ var setMeasuresCmd = &cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var removeMeasureCmd = &cobra.Command{
+var removeMeasureCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "remove <measure-id>...",
 	Short:   "Removes one or many generic measures in the current app",
 	Long:    "Removes one or many generic measures in the current app",
@@ -53,9 +53,9 @@ var removeMeasureCmd = &cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var getMeasuresCmd = &cobra.Command{
+var listMeasuresCmd = &cobra.Command{
 	Use:   "ls",
 	Short: "Prints a list of all generic measures in the current app",
 	Long:  "Prints a list of all generic measures in the current app in either plain text or json",
@@ -63,7 +63,7 @@ var getMeasuresCmd = &cobra.Command{
 corectl measure list --json`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntities(ccmd, args, "measure", !viper.GetBool("bash"))
+		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
 	},
 }
 
@@ -101,9 +101,5 @@ var measureCmd = &cobra.Command{
 }
 
 func init() {
-	measureCmd.AddCommand(setMeasuresCmd)
-	measureCmd.AddCommand(getMeasuresCmd)
-	measureCmd.AddCommand(getMeasureLayoutCmd)
-	measureCmd.AddCommand(getMeasurePropertiesCmd)
-	measureCmd.AddCommand(removeMeasureCmd)
+	measureCmd.AddCommand(listMeasuresCmd, setMeasuresCmd, getMeasureLayoutCmd, getMeasurePropertiesCmd, removeMeasureCmd)
 }

@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-var setObjectsCmd = &cobra.Command{
+var setObjectsCmd = withCommonLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-objects-files.json",
 	Short: "Sets or updates the objects in the current app",
 	Long: `Sets or updates the objects in the current app.
@@ -29,9 +29,9 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var removeObjectCmd = &cobra.Command{
+var removeObjectCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "remove <object-id>...",
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",
@@ -56,9 +56,9 @@ var removeObjectCmd = &cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}
+}, "no-save")
 
-var getObjectsCmd = &cobra.Command{
+var listObjectsCmd = &cobra.Command{
 	Use:   "ls",
 	Short: "Prints a list of all generic objects in the current app",
 	Long:  "Prints a list of all generic objects in the current app in either plain text or JSON format",
@@ -66,7 +66,7 @@ var getObjectsCmd = &cobra.Command{
 corectl get objects --json --app=myapp.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntities(ccmd, args, "object", !viper.GetBool("bash"))
+		listEntities(ccmd, args, "object", !viper.GetBool("bash"))
 	},
 }
 
@@ -125,10 +125,5 @@ var objectCmd = &cobra.Command{
 }
 
 func init() {
-	objectCmd.AddCommand(setObjectsCmd)
-	objectCmd.AddCommand(getObjectsCmd)
-	objectCmd.AddCommand(getObjectDataCmd)
-	objectCmd.AddCommand(getObjectLayoutCmd)
-	objectCmd.AddCommand(getObjectPropertiesCmd)
-	objectCmd.AddCommand(removeObjectCmd)
+	objectCmd.AddCommand(setObjectsCmd, listObjectsCmd, getObjectDataCmd, getObjectLayoutCmd, getObjectPropertiesCmd, removeObjectCmd)
 }

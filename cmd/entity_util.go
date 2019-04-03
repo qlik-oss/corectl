@@ -29,7 +29,7 @@ func getEntityLayout(ccmd *cobra.Command, args []string, entityType string) {
 	printer.PrintGenericEntityLayout(state, args[0], entityType)
 }
 
-func getEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
+func listEntities(ccmd *cobra.Command, args []string, entityType string, printAsJSON bool) {
 	state := internal.PrepareEngineState(rootCtx, headers, false)
 	allInfos, err := state.Doc.GetAllInfos(rootCtx)
 	if err != nil {

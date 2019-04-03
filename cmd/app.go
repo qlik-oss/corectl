@@ -26,7 +26,7 @@ corectl apps --engine=localhost:9276`,
 	},
 }
 
-var removeAppCmd = &cobra.Command{
+var removeAppCmd = withCommonLocalFlags(&cobra.Command{
 	Use:     "remove <app-id>",
 	Short:   "removes the specified app.",
 	Long:    `removes the specified app.`,
@@ -51,7 +51,7 @@ var removeAppCmd = &cobra.Command{
 			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, viper.GetString("ttl"), headers)
 		}
 	},
-}
+}, "suppress")
 
 var appCmd = &cobra.Command{
 	Use:   "app",
@@ -64,6 +64,4 @@ var appCmd = &cobra.Command{
 
 func init() {
 	appCmd.AddCommand(getAppsCmd, removeAppCmd)
-
-	getAppsCmd.PersistentFlags()
 }

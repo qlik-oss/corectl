@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"runtime"
 )
 
 // completionCmd generates auto completion commands
@@ -26,7 +27,9 @@ Note that bash-completion is required and needs to be installed on your system.`
 	Annotations: map[string]string{
 		"command_category": "other",
 	},
-
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		//Prevent root command
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case args[0] == "bash":
@@ -39,27 +42,33 @@ Note that bash-completion is required and needs to be installed on your system.`
 	},
 }
 
-// Set annotation to run bash completion function for files (not compatible git bash)
-func addFileRelatedBashAnnotations() {
-	rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
+func addCompletionAnnotations() {
+	// Set annotation to run bash completion function
+	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd, setConnectionsCmd} {
-		command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
-	}
+	if runtime.GOOS != "windows" {
+		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
+		// we instead rely on the default bash behavior
+		rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
-	}
+		for _, command := range []*cobra.Command{buildCmd, setConnectionsCmd} {
+			command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
+		}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
-	}
+		for _, command := range []*cobra.Command{buildCmd} {
+			command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
+		}
 
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
-	}
-	for _, command := range []*cobra.Command{buildCmd, setAllCmd} {
-		command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
+		for _, command := range []*cobra.Command{buildCmd} {
+			command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
+		}
+
+		for _, command := range []*cobra.Command{buildCmd} {
+			command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
+		}
+		for _, command := range []*cobra.Command{buildCmd} {
+			command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
+		}
 	}
 }
 

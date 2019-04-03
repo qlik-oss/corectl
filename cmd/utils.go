@@ -3,7 +3,6 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -33,7 +32,7 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var getStatusCmd = &cobra.Command{
+var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Prints status info about the connection to the engine and current app",
 	Long:  "Prints status info about the connection to the engine and current app, and also the status of the data model",
@@ -46,33 +45,6 @@ corectl get status --app=my-app.qvf`,
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.PrintStatus(state, viper.GetString("engine"))
-	},
-}
-
-var catwalkCmd = &cobra.Command{
-	Use:   "catwalk",
-	Short: "Opens the specified app in catwalk",
-	Long:  `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
-	Example: `corectl catwalk --app my-app.qvf
-corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
-	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-		rootCmd.PersistentPreRun(rootCmd, args)
-		viper.BindPFlag("catwalk-url", ccmd.PersistentFlags().Lookup("catwalk-url"))
-	},
-	Annotations: map[string]string{
-		"command_category": "other",
-	},
-	Run: func(ccmd *cobra.Command, args []string) {
-		catwalkURL := viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/apps/" + viper.GetString("app")
-		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			fmt.Println("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
-			os.Exit(1)
-		}
-		err := browser.OpenURL(catwalkURL)
-		if err != nil {
-			fmt.Println("Could not open URL", err)
-			os.Exit(1)
-		}
 	},
 }
 
