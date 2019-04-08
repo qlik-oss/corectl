@@ -38,8 +38,6 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		internal.ValidateConfigFile(explicitConfigFile)
-		internal.QliVerbose = viper.GetBool("verbose")
-		internal.LogTraffic = viper.GetBool("traffic")
 
 		if len(headersMap) == 0 {
 			headersMap = viper.GetStringMapString("headers")

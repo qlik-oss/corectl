@@ -60,32 +60,42 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 	return config
 }
 
+// ValidateConfigFile checks that the config file does not contain any unknown properties
+// and then, if the config is valid, reads it.
 func ValidateConfigFile(explicitConfigFile string) {
+	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
 		explicitConfigFile = strings.TrimSpace(explicitConfigFile)
-		ValidateProps(explicitConfigFile)
+		validateProps(explicitConfigFile)
 		viper.SetConfigFile(explicitConfigFile)
 		if err := viper.ReadInConfig(); err == nil {
+			configFile = explicitConfigFile
 			LogVerbose("Using config file: " + explicitConfigFile)
 		} else {
-			fmt.Println(err)
+			FatalError(err)
 		}
 	} else {
-		if _, err := os.Stat("corectl.yml"); !os.IsNotExist(err) { //TODO: this doesn't find .yaml files
-			ValidateProps("corectl.yml")
-			viper.SetConfigName("corectl") // name of config file (without extension)
-			viper.SetConfigType("yml")
-			viper.AddConfigPath(".")
-			if err := viper.ReadInConfig(); err == nil {
-				LogVerbose("Using config file in working directory")
+		configFile = findConfigFile("corectl") // name of config file (without extension)
+		if configFile != "" {
+			validateProps(configFile)
+			viper.SetConfigFile(configFile)
+			if err := viper.ReadInConfig(); err != nil {
+				FatalError("Failed to read config file " + configFile)
 			}
-		} else {
-			LogVerbose("No config file")
 		}
 	}
+	QliVerbose = viper.GetBool("verbose")
+	LogTraffic = viper.GetBool("traffic")
+	if configFile != "" {
+		LogVerbose("Using config file: " + configFile)
+	} else {
+		LogVerbose("No config file")
+	}
+
 }
 
-func ValidateProps(configPath string) {
+// validateProps reads a config file by 
+func validateProps(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalError("Could not find config file:", configPath)
@@ -111,4 +121,15 @@ func ValidateProps(configPath string) {
 		errorMessage := fmt.Sprintf("Found invalid config properties: %v", invalidProps)
 		FatalError(errorMessage)
 	}
+}
+
+// findConfigFile finds a file with the given fileName with yml or yaml extension.
+func findConfigFile(fileName string) string {
+	configFile := ""
+	if _, err := os.Stat(fileName + ".yml"); !os.IsNotExist(err) {
+		configFile = fileName + ".yml"
+	} else if _, err := os.Stat(fileName + ".yaml"); !os.IsNotExist(err) {
+		configFile = fileName + ".yaml"
+	}
+	return configFile
 }
