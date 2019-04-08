@@ -19,8 +19,6 @@ corectl [flags]
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
   -h, --help                     help for corectl
       --no-data                  Open app without data
-      --no-save                  Do not save the app
-      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
@@ -28,7 +26,6 @@ corectl [flags]
 
 ### SEE ALSO
 
-* [corectl all](corectl_all.md)	 - Sets the objects, measures, dimensions, connections and script in the current app
 * [corectl app](corectl_app.md)	 - Explore and manage the app
 * [corectl assoc](corectl_assoc.md)	 - Print table associations summary
 * [corectl build](corectl_build.md)	 - Reloads and saves the app after updating connections, dimensions, measures, objects and the script

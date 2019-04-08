@@ -19,7 +19,8 @@ corectl measure remove ID-1 ID-2
 ### Options
 
 ```
-  -h, --help   help for remove
+  -h, --help      help for remove
+      --no-save   Do not save the app
 ```
 
 ### Options inherited from parent commands
@@ -30,8 +31,6 @@ corectl measure remove ID-1 ID-2
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --no-data                  Open app without data
-      --no-save                  Do not save the app
-      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information

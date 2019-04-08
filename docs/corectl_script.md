@@ -20,8 +20,6 @@ Explore and manage the script
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --no-data                  Open app without data
-      --no-save                  Do not save the app
-      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
@@ -30,6 +28,6 @@ Explore and manage the script
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl script script](corectl_script_script.md)	 - Sets the script in the current app
-* [corectl script script](corectl_script_script.md)	 - Print the reload script
+* [corectl script get](corectl_script_get.md)	 - Print the reload script
+* [corectl script set](corectl_script_set.md)	 - Sets the script in the current app
 

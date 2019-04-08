@@ -23,9 +23,11 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
       --dimensions string    A list of generic dimension json paths
   -h, --help                 help for build
       --measures string      A list of generic measures json paths
+      --no-reload            Do not run the reload script
+      --no-save              Do not save the app
       --objects string       A list of generic object json paths
       --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
-      --silent               Do not log reload progress
+      --silent               Do not log reload output
 ```
 
 ### Options inherited from parent commands
@@ -36,8 +38,6 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --no-data                  Open app without data
-      --no-save                  Do not save the app
-      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information

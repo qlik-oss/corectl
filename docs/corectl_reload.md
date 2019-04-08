@@ -19,8 +19,14 @@ corectl reload
 ### Options
 
 ```
-  -h, --help     help for reload
-      --silent   Do not log reload progress
+      --connections string   Path to a yml file containing the data connection definitions
+      --dimensions string    A list of generic dimension json paths
+  -h, --help                 help for reload
+      --measures string      A list of generic measures json paths
+      --no-save              Do not save the app
+      --objects string       A list of generic object json paths
+      --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
+      --silent               Do not log reload output
 ```
 
 ### Options inherited from parent commands
@@ -31,8 +37,6 @@ corectl reload
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --no-data                  Open app without data
-      --no-save                  Do not save the app
-      --suppress                 Suppress all confirmation dialogues
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
   -v, --verbose                  Logs extra information
