@@ -1,0 +1,17 @@
+engin: localhost:9076
+scrip: ./script.qvs
+apps: invalid-app.qvf
+connection: 
+  testdata:
+    connectionstring: /data
+    type: folder
+header:
+  authorization: "Hello"
+object:
+  - ./object-*.json
+measure:
+  - ./measure-*.json
+dimension:
+  - ./dimension-*.json
+verbos: true
+trafic: true
