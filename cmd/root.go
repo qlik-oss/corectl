@@ -133,6 +133,5 @@ func init() {
 
 	initGlobalFlags(rootCmd.PersistentFlags())
 	patchRootCommandUsageTemplate()
-	addCompletionAnnotations()
 
 }

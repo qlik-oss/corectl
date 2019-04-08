@@ -117,7 +117,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 	},
 }
 
-var catwalkCmd = withCommonLocalFlags(&cobra.Command{
+var catwalkCmd = withLocalFlags(&cobra.Command{
 	Use:   "catwalk",
 	Short: "Opens the specified app in catwalk",
 	Long:  `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,

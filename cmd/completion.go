@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
-	"runtime"
 )
 
 // completionCmd generates auto completion commands
@@ -40,36 +39,6 @@ Note that bash-completion is required and needs to be installed on your system.`
 			fmt.Printf("%s is not a supported shell", args[0])
 		}
 	},
-}
-
-func addCompletionAnnotations() {
-	// Set annotation to run bash completion function
-	rootCmd.PersistentFlags().SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
-
-	if runtime.GOOS != "windows" {
-		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
-		// we instead rely on the default bash behavior
-		rootCmd.PersistentFlags().SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
-
-		for _, command := range []*cobra.Command{buildCmd, setConnectionsCmd} {
-			command.PersistentFlags().SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
-		}
-
-		for _, command := range []*cobra.Command{buildCmd} {
-			command.PersistentFlags().SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
-		}
-
-		for _, command := range []*cobra.Command{buildCmd} {
-			command.PersistentFlags().SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
-		}
-
-		for _, command := range []*cobra.Command{buildCmd} {
-			command.PersistentFlags().SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
-		}
-		for _, command := range []*cobra.Command{buildCmd} {
-			command.PersistentFlags().SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
-		}
-	}
 }
 
 const bashCompletionFunc = `

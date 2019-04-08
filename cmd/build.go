@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var buildCmd = withCommonLocalFlags(&cobra.Command{
+var buildCmd = withLocalFlags(&cobra.Command{
 	Use:     "build",
 	Short:   "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
 	Example: "corectl build --connections ./myconnections.yml --script ./myscript.qvs",
@@ -19,7 +19,7 @@ var buildCmd = withCommonLocalFlags(&cobra.Command{
 
 		separateConnectionsFile := ccmd.Flag("connections").Value.String()
 		if separateConnectionsFile == "" {
-			separateConnectionsFile = GetRelativeParameter("connections")
+			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
 		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
@@ -27,7 +27,7 @@ var buildCmd = withCommonLocalFlags(&cobra.Command{
 		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
 		scriptFile := ccmd.Flag("script").Value.String()
 		if scriptFile == "" {
-			scriptFile = GetRelativeParameter("script")
+			scriptFile = getPathFlagFromConfigFile("script")
 		}
 		if scriptFile != "" {
 			internal.SetScript(ctx, state.Doc, scriptFile)
@@ -42,9 +42,9 @@ var buildCmd = withCommonLocalFlags(&cobra.Command{
 			internal.Save(ctx, state.Doc)
 		}
 	},
-}, "no-reload", "silent", "no-save")
+}, "script", "connections", "dimensions", "measures", "objects", "no-reload", "silent", "no-save")
 
-var reloadCmd = withCommonLocalFlags(&cobra.Command{
+var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
 	Short:   "Reloads the app.",
 	Long:    "Reloads the app.",
@@ -63,18 +63,4 @@ var reloadCmd = withCommonLocalFlags(&cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}, "silent", "no-save")
-
-func init() {
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	buildCmd.PersistentFlags().String("connections", "", "Path to a yml file containing the data connection definitions")
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	buildCmd.PersistentFlags().String("dimensions", "", "A list of generic dimension json paths")
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	buildCmd.PersistentFlags().String("measures", "", "A list of generic measures json paths")
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	buildCmd.PersistentFlags().String("objects", "", "A list of generic object json paths")
-	// Don't bind these to viper since paths are treated separately to support relative paths!
-	buildCmd.PersistentFlags().String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
-
-}
+}, "script", "connections", "dimensions", "measures", "objects", "silent", "no-save")

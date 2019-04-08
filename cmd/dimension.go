@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var setDimensionsCmd = withCommonLocalFlags(&cobra.Command{
+var setDimensionsCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <glob-pattern-path-to-dimensions-files.json>",
 	Short:   "Sets or updates the dimensions in the current app",
 	Long:    "Sets or updates the dimensions in the current app",
@@ -28,7 +28,7 @@ var setDimensionsCmd = withCommonLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var removeDimensionCmd = withCommonLocalFlags(&cobra.Command{
+var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Use:     "remove <dimension-id>...",
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",

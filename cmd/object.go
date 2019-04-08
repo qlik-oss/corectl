@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-var setObjectsCmd = withCommonLocalFlags(&cobra.Command{
+var setObjectsCmd = withLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-objects-files.json",
 	Short: "Sets or updates the objects in the current app",
 	Long: `Sets or updates the objects in the current app.
@@ -31,7 +31,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	},
 }, "no-save")
 
-var removeObjectCmd = withCommonLocalFlags(&cobra.Command{
+var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Use:     "remove <object-id>...",
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",

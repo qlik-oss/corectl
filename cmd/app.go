@@ -26,7 +26,7 @@ corectl apps --engine=localhost:9276`,
 	},
 }
 
-var removeAppCmd = withCommonLocalFlags(&cobra.Command{
+var removeAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "remove <app-id>",
 	Short:   "removes the specified app.",
 	Long:    `removes the specified app.`,

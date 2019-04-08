@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var setScriptCmd = withCommonLocalFlags(&cobra.Command{
+var setScriptCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <path-to-script-file.yml>",
 	Short:   "Sets the script in the current app",
 	Long:    "Sets the script in the current app",
@@ -22,7 +22,7 @@ var setScriptCmd = withCommonLocalFlags(&cobra.Command{
 			scriptFile = args[0]
 		}
 		if scriptFile == "" {
-			scriptFile = GetRelativeParameter("script")
+			scriptFile = getPathFlagFromConfigFile("script")
 		}
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)

@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var setMeasuresCmd = withCommonLocalFlags(&cobra.Command{
+var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <glob-pattern-path-to-measures-files.json>",
 	Short:   "Sets or updates the measures in the current app",
 	Long:    "Sets or updates the measures in the current app",
@@ -28,7 +28,7 @@ var setMeasuresCmd = withCommonLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var removeMeasureCmd = withCommonLocalFlags(&cobra.Command{
+var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Use:     "remove <measure-id>...",
 	Short:   "Removes one or many generic measures in the current app",
 	Long:    "Removes one or many generic measures in the current app",

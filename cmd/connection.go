@@ -22,7 +22,7 @@ var setConnectionsCmd = &cobra.Command{
 			separateConnectionsFile = args[0]
 		}
 		if separateConnectionsFile == "" {
-			separateConnectionsFile = GetRelativeParameter("connections")
+			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
 		if state.AppID != "" && !viper.GetBool("no-save") {
