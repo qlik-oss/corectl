@@ -37,25 +37,7 @@ var rootCmd = &cobra.Command{
 		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-spec" || ccmd.Use == "version" {
 			return
 		}
-		internal.QliVerbose = viper.GetBool("verbose")
-		internal.LogTraffic = viper.GetBool("traffic")
-		if explicitConfigFile != "" {
-			viper.SetConfigFile(strings.TrimSpace(explicitConfigFile))
-			if err := viper.ReadInConfig(); err == nil {
-				internal.LogVerbose("Using config file: " + explicitConfigFile)
-			} else {
-				fmt.Println(err)
-			}
-		} else {
-			viper.SetConfigName("corectl") // name of config file (without extension)
-			viper.SetConfigType("yml")
-			viper.AddConfigPath(".")
-			if err := viper.ReadInConfig(); err == nil {
-				internal.LogVerbose("Using config file in working directory")
-			} else {
-				internal.LogVerbose("No config file")
-			}
-		}
+		internal.ReadConfigFile(explicitConfigFile)
 
 		if len(headersMap) == 0 {
 			headersMap = viper.GetStringMapString("headers")
