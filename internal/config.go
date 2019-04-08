@@ -7,6 +7,7 @@ import (
 	"strings"
 	"gopkg.in/yaml.v2"
 	"github.com/spf13/viper"
+	leven "github.com/texttheater/golang-levenshtein/levenshtein"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
@@ -110,14 +111,28 @@ func validateProps(configPath string) {
 		FatalError(err)
 	}
 	invalidProps := []string{}
+	suggestions := map[string]string{}
 	for key, _ := range configProps {
 		if _, ok := validProps[key]; !ok {
-			invalidProps = append(invalidProps, key)
+			if suggestion := getSuggestion(key, validProps); suggestion != "" {
+				suggestions[key] = suggestion
+			} else {
+				invalidProps = append(invalidProps, fmt.Sprintf("'%s'", key)) // For pretty printing
+			}
 		}
 	}
-	if len(invalidProps) > 0 {
-		errorMessage := fmt.Sprintf("Found invalid config properties: %v", invalidProps)
-		FatalError(errorMessage)
+	if len(invalidProps) + len(suggestions) > 0 {
+		errorMessage := []string{}
+		errorMessage = append(errorMessage,
+			fmt.Sprintf("Found the following invalid properties when validating the config file '%s':", configPath))
+		for key, value := range suggestions {
+			errorMessage = append(errorMessage, fmt.Sprintf("  '%s': did you mean '%s'?", key, value))
+		}
+		if len(invalidProps) > 0 {
+			errorMessage = append(errorMessage,
+				fmt.Sprintf("Not even corectl can interpret: %s", strings.Join(invalidProps, ", ")))
+		}
+		FatalError(strings.Join(errorMessage, "\n"))
 	}
 }
 
@@ -129,5 +144,20 @@ func findConfigFile(fileName string) string {
 	} else if _, err := os.Stat(fileName + ".yaml"); !os.IsNotExist(err) {
 		configFile = fileName + ".yaml"
 	}
-	return configFile
+	return configFile //TODO: Return absolute path!
+}
+
+// getSuggestion finds the closest matching property within the distance limit
+func getSuggestion(word string, validProps map[string]struct{}) string {
+	op := leven.DefaultOptions // Default is cost 1 for del & ins, and 2 for substitution
+	limit := 4
+	min, suggestion := limit, ""
+	for key, _ := range validProps {
+		dist := leven.DistanceForStrings([]rune(word), []rune(key), op)
+		if dist < min {
+			min = dist
+			suggestion = key
+		}
+	}
+	return suggestion
 }
