@@ -60,9 +60,9 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 	return config
 }
 
-// ValidateConfigFile checks that the config file does not contain any unknown properties
+// ReadConfigFile checks that the config file does not contain any unknown properties
 // and then, if the config is valid, reads it.
-func ValidateConfigFile(explicitConfigFile string) {
+func ReadConfigFile(explicitConfigFile string) {
 	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
 		explicitConfigFile = strings.TrimSpace(explicitConfigFile)
@@ -70,7 +70,6 @@ func ValidateConfigFile(explicitConfigFile string) {
 		viper.SetConfigFile(explicitConfigFile)
 		if err := viper.ReadInConfig(); err == nil {
 			configFile = explicitConfigFile
-			LogVerbose("Using config file: " + explicitConfigFile)
 		} else {
 			FatalError(err)
 		}
@@ -91,7 +90,6 @@ func ValidateConfigFile(explicitConfigFile string) {
 	} else {
 		LogVerbose("No config file")
 	}
-
 }
 
 // validateProps reads a config file by 

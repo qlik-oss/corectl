@@ -37,7 +37,7 @@ var rootCmd = &cobra.Command{
 		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-spec" || ccmd.Use == "version" {
 			return
 		}
-		internal.ValidateConfigFile(explicitConfigFile)
+		internal.ReadConfigFile(explicitConfigFile)
 
 		if len(headersMap) == 0 {
 			headersMap = viper.GetStringMapString("headers")
