@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"github.com/spf13/viper"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
+	"path/filepath"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
@@ -66,7 +67,10 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 func ReadConfigFile(explicitConfigFile string) {
 	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
-		explicitConfigFile = strings.TrimSpace(explicitConfigFile)
+		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
+		if err != nil {
+			FatalError(err)
+		}
 		validateProps(explicitConfigFile)
 		viper.SetConfigFile(explicitConfigFile)
 		if err := viper.ReadInConfig(); err == nil {
@@ -137,6 +141,7 @@ func validateProps(configPath string) {
 }
 
 // findConfigFile finds a file with the given fileName with yml or yaml extension.
+// Returns absolute path
 func findConfigFile(fileName string) string {
 	configFile := ""
 	if _, err := os.Stat(fileName + ".yml"); !os.IsNotExist(err) {
@@ -144,10 +149,14 @@ func findConfigFile(fileName string) string {
 	} else if _, err := os.Stat(fileName + ".yaml"); !os.IsNotExist(err) {
 		configFile = fileName + ".yaml"
 	}
-	return configFile //TODO: Return absolute path!
+	configFile, err := filepath.Abs(configFile) // Convert to abs path
+	if err != nil {
+		FatalError(err)
+	}
+	return configFile
 }
 
-// getSuggestion finds the closest matching property within the distance limit
+// getSuggestion finds the best matching property within the specified Levenshtein distance limit
 func getSuggestion(word string, validProps map[string]struct{}) string {
 	op := leven.DefaultOptions // Default is cost 1 for del & ins, and 2 for substitution
 	limit := 4
