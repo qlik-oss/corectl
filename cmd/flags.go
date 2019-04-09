@@ -60,6 +60,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 
 	// Set annotation to run bash completion function
 	globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
+	globalFlags.SetAnnotation("engine", cobra.BashCompCustom, []string{"__corectl_get_local_engines"})
 
 	if runtime.GOOS != "windows" {
 		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows

@@ -130,6 +130,21 @@ const bashCompletionFunc = `
 	{
 		__corectl_call_corectl "app ls --bash"
 	}
+
+	__corectl_get_local_engines()
+	{
+		local docker_out
+		local errorcode
+		docker_out=$(docker ps 2>/dev/null | grep /engine:|sed \ 's/.*0.0.0.0:/localhost:/g'|sed 's/->.*//g')
+		errorcode=$?
+		if [[ errorcode -eq 0 ]]; then
+  		local IFS=$'\n'
+  		COMPREPLY=( $(compgen -W "${docker_out}" -- "$cur") )
+		else
+  		COMPREPLY=()
+		fi;
+	}
+
 `
 
 // Code for generating zsh bash completion script
