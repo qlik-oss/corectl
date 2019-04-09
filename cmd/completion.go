@@ -46,16 +46,16 @@ const bashCompletionFunc = `
 	__custom_func()
 	{
 		case ${last_command} in
-			corectl_get_dimension_properties | corectl_get_dimension_layout)
+			corectl_dimension_properties | corectl_dimension_layout)
 				__corectl_get_dimensions
 				;;
-			corectl_get_measure_properties | corectl_get_measure_layout)
+			corectl_measure_properties | corectl_measure_layout)
 				__corectl_get_measures
 				;;
-			corectl_get_object_data | corectl_get_object_properties | corectl_get_object_layout)
+			corectl_object_data | corectl_object_properties | corectl_object_layout)
 				__corectl_get_objects
 				;;
-			corectl_get_connection)
+			corectl_connection_get)
 				__corectl_get_connections
 				;;
       *)

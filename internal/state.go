@@ -88,12 +88,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appName := viper.GetString("app")
 	ttl := viper.GetString("ttl")
 	noData := viper.GetBool("no-data")
-
+	bashMode := viper.GetBool("bash")
 	var appID string
 
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appName, ttl, headers)
-	if appName == "" {
+	if appName == "" && !bashMode {
 		fmt.Println("No app specified, using session app.")
 	}
 	sessionMessages := global.SessionMessageChannel()
