@@ -6,7 +6,7 @@ Usage:
 
 App Building Commands:
   build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
-  reload        Reloads the app.
+  reload        Reloads and saves the app.
 
 App Analysis Commands:
   assoc         Print table associations summary

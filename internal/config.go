@@ -110,7 +110,7 @@ func validateProps(configPath string) {
 		FatalError(err)
 	}
 	invalidProps := []string{}
-	for key, _ := range configProps {
+	for key := range configProps {
 		if _, ok := validProps[key]; !ok {
 			invalidProps = append(invalidProps, key)
 		}

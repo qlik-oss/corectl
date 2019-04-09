@@ -179,7 +179,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 			return errors.New(parsedEvent["qSessionState"])
 		}
 	}
-	return errors.New("Session closed before reciving OnConnected message")
+	return errors.New("Session closed before reciving OnConnected message.")
 }
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {

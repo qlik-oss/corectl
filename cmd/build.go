@@ -46,8 +46,8 @@ var buildCmd = withLocalFlags(&cobra.Command{
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
-	Short:   "Reloads the app.",
-	Long:    "Reloads the app.",
+	Short:   "Reloads and saves the app.",
+	Long:    "Reloads and saves the app.",
 	Example: "corectl reload",
 	Annotations: map[string]string{
 		"command_category": "build",
@@ -63,4 +63,4 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}, "script", "connections", "dimensions", "measures", "objects", "silent", "no-save")
+}, "silent", "no-save")

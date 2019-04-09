@@ -86,7 +86,7 @@ func initLocalFlags() {
 	localFlags.String("dimensions", "", "A list of generic dimension json paths")
 	localFlags.String("measures", "", "A list of generic measures json paths")
 	localFlags.String("objects", "", "A list of generic object json paths")
-	localFlags.String("script", "", "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded")
+	localFlags.String("script", "", "Path to a qvs file containing the app data reload script")
 
 	if runtime.GOOS != "windows" {
 		// Set annotation to run bash completion function

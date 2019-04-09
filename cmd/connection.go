@@ -37,7 +37,6 @@ var removeConnectionCmd = &cobra.Command{
 	Long:  "Remove one or many connections from the app",
 	Example: `corectl remove connection ID-1
 corectl remove connections ID-1 ID-2`,
-	Aliases: []string{"connections"},
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -61,8 +60,8 @@ corectl remove connections ID-1 ID-2`,
 
 var getConnectionsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "Prints a list of all connections in the specified app",
-	Long:  "Prints a list of all connections in the specified app",
+	Short: "Prints a list of all connections in the current app",
+	Long:  "Prints a list of all connections in the current app",
 	Example: `corectl get connections
 corectl get connections`,
 
