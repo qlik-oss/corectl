@@ -93,7 +93,7 @@ func ReadConfigFile(explicitConfigFile string) {
 	if configFile != "" {
 		LogVerbose("Using config file: " + configFile)
 	} else {
-		LogVerbose("No config file")
+		LogVerbose("No config file specified, using default values.")
 	}
 }
 
@@ -128,13 +128,17 @@ func validateProps(configPath string) {
 	if len(invalidProps) + len(suggestions) > 0 {
 		errorMessage := []string{}
 		errorMessage = append(errorMessage,
-			fmt.Sprintf("Found the following invalid properties when validating the config file '%s':", configPath))
+			fmt.Sprintf("Corectl found invalid properties when validating the config file '%s'.", configPath))
 		for key, value := range suggestions {
 			errorMessage = append(errorMessage, fmt.Sprintf("  '%s': did you mean '%s'?", key, value))
 		}
 		if len(invalidProps) > 0 {
+			prepend := "M" // Capitalize M if there were no suggestions
+			if len(suggestions) > 0 {
+				prepend = "Also, m" // Add also if there were suggestions
+			}
 			errorMessage = append(errorMessage,
-				fmt.Sprintf("Not even corectl can interpret: %s", strings.Join(invalidProps, ", ")))
+				fmt.Sprintf("%systerious properties: %s", prepend, strings.Join(invalidProps, ", ")))
 		}
 		FatalError(strings.Join(errorMessage, "\n"))
 	}
@@ -149,9 +153,12 @@ func findConfigFile(fileName string) string {
 	} else if _, err := os.Stat(fileName + ".yaml"); !os.IsNotExist(err) {
 		configFile = fileName + ".yaml"
 	}
-	configFile, err := filepath.Abs(configFile) // Convert to abs path
-	if err != nil {
-		FatalError(err)
+	if configFile != "" {
+		absConfig, err := filepath.Abs(configFile) // Convert to abs path
+		if err != nil {
+			FatalError(err)
+		}
+		configFile = absConfig
 	}
 	return configFile
 }
