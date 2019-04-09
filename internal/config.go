@@ -128,7 +128,7 @@ func validateProps(configPath string) {
 	if len(invalidProps) + len(suggestions) > 0 {
 		errorMessage := []string{}
 		errorMessage = append(errorMessage,
-			fmt.Sprintf("Corectl found invalid properties when validating the config file '%s'.", configPath))
+			fmt.Sprintf("corectl found invalid properties when validating the config file '%s'.", configPath))
 		for key, value := range suggestions {
 			errorMessage = append(errorMessage, fmt.Sprintf("  '%s': did you mean '%s'?", key, value))
 		}
