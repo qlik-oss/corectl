@@ -40,7 +40,7 @@ corectl [flags]
 * [corectl measure](corectl_measure.md)	 - Explore and manage measures
 * [corectl meta](corectl_meta.md)	 - Shows metadata about the app
 * [corectl object](corectl_object.md)	 - Explore and manage generic objects
-* [corectl reload](corectl_reload.md)	 - Reloads the app.
+* [corectl reload](corectl_reload.md)	 - Reloads and saves the app.
 * [corectl script](corectl_script.md)	 - Explore and manage the script
 * [corectl status](corectl_status.md)	 - Prints status info about the connection to the engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables summary

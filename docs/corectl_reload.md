@@ -1,10 +1,10 @@
 ## corectl reload
 
-Reloads the app.
+Reloads and saves the app.
 
 ### Synopsis
 
-Reloads the app.
+Reloads and saves the app.
 
 ```
 corectl reload [flags]
@@ -19,14 +19,9 @@ corectl reload
 ### Options
 
 ```
-      --connections string   Path to a yml file containing the data connection definitions
-      --dimensions string    A list of generic dimension json paths
-  -h, --help                 help for reload
-      --measures string      A list of generic measures json paths
-      --no-save              Do not save the app
-      --objects string       A list of generic object json paths
-      --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
-      --silent               Do not log reload output
+  -h, --help      help for reload
+      --no-save   Do not save the app
+      --silent    Do not log reload output
 ```
 
 ### Options inherited from parent commands

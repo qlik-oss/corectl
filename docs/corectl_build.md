@@ -26,7 +26,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
       --no-reload            Do not run the reload script
       --no-save              Do not save the app
       --objects string       A list of generic object json paths
-      --script string        path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded
+      --script string        Path to a qvs file containing the app data reload script
       --silent               Do not log reload output
 ```
 

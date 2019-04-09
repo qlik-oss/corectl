@@ -1,10 +1,10 @@
 ## corectl connection ls
 
-Prints a list of all connections in the specified app
+Prints a list of all connections in the current app
 
 ### Synopsis
 
-Prints a list of all connections in the specified app
+Prints a list of all connections in the current app
 
 ```
 corectl connection ls [flags]
