@@ -267,7 +267,7 @@ func TestCorectl(t *testing.T) {
 
 		// Verifying config validation
 		{"err invalid 1", []string{"--config=test/project3/corectl-invalid.yml ", connectToEngine}, []string{"build"}, []string{"apps", "header", "object", "measure", "verbos", "trafic", "connection", "dimension"}, initTest{false, false}},
-		{"err invalid 2", []string{"--config=test/project3/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"Found invalid config properties: [header]"}, initTest{false, false}},
+		{"err invalid 2", []string{"--config=test/project3/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"'header': did you mean 'headers'?", "test/project3/corectl-invalid2.yml"}, initTest{false, false}},
 	}
 
 	for _, tt := range tests {

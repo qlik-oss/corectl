@@ -3,9 +3,11 @@ package internal
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	leven "github.com/texttheater/golang-levenshtein/levenshtein"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -65,7 +67,10 @@ func ReadConnectionsFile(path string) ConnectionsConfigFile {
 func ReadConfigFile(explicitConfigFile string) {
 	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
-		explicitConfigFile = strings.TrimSpace(explicitConfigFile)
+		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
+		if err != nil {
+			FatalError(err)
+		}
 		validateProps(explicitConfigFile)
 		viper.SetConfigFile(explicitConfigFile)
 		if err := viper.ReadInConfig(); err == nil {
@@ -88,7 +93,7 @@ func ReadConfigFile(explicitConfigFile string) {
 	if configFile != "" {
 		LogVerbose("Using config file: " + configFile)
 	} else {
-		LogVerbose("No config file")
+		LogVerbose("No config file specified, using default values.")
 	}
 }
 
@@ -110,18 +115,37 @@ func validateProps(configPath string) {
 		FatalError(err)
 	}
 	invalidProps := []string{}
-	for key := range configProps {
+	suggestions := map[string]string{}
+	for key, _ := range configProps {
 		if _, ok := validProps[key]; !ok {
-			invalidProps = append(invalidProps, key)
+			if suggestion := getSuggestion(key, validProps); suggestion != "" {
+				suggestions[key] = suggestion
+			} else {
+				invalidProps = append(invalidProps, fmt.Sprintf("'%s'", key)) // For pretty printing
+			}
 		}
 	}
-	if len(invalidProps) > 0 {
-		errorMessage := fmt.Sprintf("Found invalid config properties: %v", invalidProps)
-		FatalError(errorMessage)
+	if len(invalidProps)+len(suggestions) > 0 {
+		errorMessage := []string{}
+		errorMessage = append(errorMessage,
+			fmt.Sprintf("corectl found invalid properties when validating the config file '%s'.", configPath))
+		for key, value := range suggestions {
+			errorMessage = append(errorMessage, fmt.Sprintf("  '%s': did you mean '%s'?", key, value))
+		}
+		if len(invalidProps) > 0 {
+			prepend := "M" // Capitalize M if there were no suggestions
+			if len(suggestions) > 0 {
+				prepend = "Also, m" // Add also if there were suggestions
+			}
+			errorMessage = append(errorMessage,
+				fmt.Sprintf("%systerious properties: %s", prepend, strings.Join(invalidProps, ", ")))
+		}
+		FatalError(strings.Join(errorMessage, "\n"))
 	}
 }
 
 // findConfigFile finds a file with the given fileName with yml or yaml extension.
+// Returns absolute path
 func findConfigFile(fileName string) string {
 	configFile := ""
 	if _, err := os.Stat(fileName + ".yml"); !os.IsNotExist(err) {
@@ -129,5 +153,27 @@ func findConfigFile(fileName string) string {
 	} else if _, err := os.Stat(fileName + ".yaml"); !os.IsNotExist(err) {
 		configFile = fileName + ".yaml"
 	}
+	if configFile != "" {
+		absConfig, err := filepath.Abs(configFile) // Convert to abs path
+		if err != nil {
+			FatalError(err)
+		}
+		configFile = absConfig
+	}
 	return configFile
+}
+
+// getSuggestion finds the best matching property within the specified Levenshtein distance limit
+func getSuggestion(word string, validProps map[string]struct{}) string {
+	op := leven.DefaultOptions // Default is cost 1 for del & ins, and 2 for substitution
+	limit := 4
+	min, suggestion := limit, ""
+	for key, _ := range validProps {
+		dist := leven.DistanceForStrings([]rune(word), []rune(key), op)
+		if dist < min {
+			min = dist
+			suggestion = key
+		}
+	}
+	return suggestion
 }
