@@ -202,7 +202,7 @@ func TestCorectl(t *testing.T) {
 	// General
 	emptyConnectString := []string{}
 	defaultConnectString1 := []string{"--config=test/project1/corectl.yml", connectToEngine}
-	defaultConnectString3 := []string{"--config=test/project3/corectl.yml ", connectToEngine}
+	defaultConnectString3 := []string{"--config=test/project3/corectl.yml", connectToEngine, "--verbose=false", "--traffic=false"} // Config validation
 
 	tests := []test{
 		{"help 1", emptyConnectString, []string{""}, []string{"golden", "help-1.golden"}, initTest{false, false}},
@@ -264,6 +264,10 @@ func TestCorectl(t *testing.T) {
 		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to project4.qvf @ ", "The data model has 1 tables."}, initTest{true, true}},
 		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls"}, []string{"\"title\": \"project4.qvf\","}, initTest{true, true}},
 		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
+
+		// Verifying config validation
+		{"err invalid 1", []string{"--config=test/project3/corectl-invalid.yml ", connectToEngine}, []string{"build"}, []string{"apps", "header", "object", "measure", "verbos", "trafic", "connection", "dimension"}, initTest{false, false}},
+		{"err invalid 2", []string{"--config=test/project3/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"Found invalid config properties: [header]"}, initTest{false, false}},
 	}
 
 	for _, tt := range tests {
