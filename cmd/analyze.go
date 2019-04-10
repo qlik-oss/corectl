@@ -14,10 +14,10 @@ import (
 var getAssociationsCmd = &cobra.Command{
 	Use:     "assoc",
 	Aliases: []string{"associations"},
-	Short:   "Print table associations summary",
-	Long:    "Print table associations summary",
-	Example: `corectl get assoc
-corectl get associations`,
+	Short:   "Print table associations",
+	Long:    "Print table associations",
+	Example: `corectl assoc
+corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -28,10 +28,10 @@ corectl get associations`,
 
 var getTablesCmd = &cobra.Command{
 	Use:   "tables",
-	Short: "Print tables summary",
-	Long:  "Prints tables summary for the data model in an app",
-	Example: `corectl get tables
-corectl get tables --app=my-app.qvf`,
+	Short: "Print tables",
+	Long:  "Print tables for the data model in an app",
+	Example: `corectl tables
+corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -42,10 +42,10 @@ corectl get tables --app=my-app.qvf`,
 
 var getMetaCmd = &cobra.Command{
 	Use:   "meta",
-	Short: "Shows metadata about the app",
-	Long:  "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc",
+	Short: "Print tables, fields and associations",
+	Long:  "Print tables, fields, associations along with metadata like memory consumption, field cardinality etc",
 	Example: `corectl meta
-corectl get meta --app my-app.qvf`,
+corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -54,11 +54,11 @@ corectl get meta --app my-app.qvf`,
 	},
 }
 
-var getFieldCmd = &cobra.Command{
-	Use:     "field <field name>",
-	Short:   "Shows content of a field",
-	Long:    "Prints all the values for a specific field in your data model",
-	Example: "corectl get field FIELD",
+var getValuesCmd = &cobra.Command{
+	Use:     "values <field name>",
+	Short:   "Print the top values of a field",
+	Long:    "Print all the values for a specific field in your data model",
+	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) != 1 {
@@ -67,15 +67,15 @@ var getFieldCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		internal.PrintField(rootCtx, state.Doc, args[0])
+		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
 	},
 }
 
 var getFieldsCmd = &cobra.Command{
 	Use:     "fields",
 	Short:   "Print field list",
-	Long:    "Prints all the fields in an app, and for each field also some sample content, tags and and number of values",
-	Example: "corectl get fields",
+	Long:    "Print all the fields in an app, and for each field also some sample content, tags and and number of values",
+	Example: "corectl fields",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -87,8 +87,8 @@ var getFieldsCmd = &cobra.Command{
 var getKeysCmd = &cobra.Command{
 	Use:     "keys",
 	Short:   "Print key-only field list",
-	Long:    "Prints a fields list containing key-only fields",
-	Example: "corectl get keys",
+	Long:    "Print a fields list containing key-only fields",
+	Example: "corectl keys",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -99,8 +99,8 @@ var getKeysCmd = &cobra.Command{
 
 var evalCmd = &cobra.Command{
 	Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
-	Short: "Evaluates a list of measures and dimensions",
-	Long:  `Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
+	Short: "Evaluate a list of measures and dimensions",
+	Long:  `Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
 	Example: `corectl eval "Count(a)" // returns the number of values in field "a"
 corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
@@ -119,8 +119,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 var catwalkCmd = withLocalFlags(&cobra.Command{
 	Use:   "catwalk",
-	Short: "Opens the specified app in catwalk",
-	Long:  `Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
+	Short: "Open the specified app in catwalk",
+	Long:  `Open the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
 	Example: `corectl catwalk --app my-app.qvf
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 

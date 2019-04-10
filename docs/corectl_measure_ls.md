@@ -1,10 +1,10 @@
 ## corectl measure ls
 
-Prints a list of all generic measures in the current app
+Print a list of all generic measures in the current app
 
 ### Synopsis
 
-Prints a list of all generic measures in the current app in either plain text or json
+Print a list of all generic measures in the current app
 
 ```
 corectl measure ls [flags]
@@ -13,8 +13,7 @@ corectl measure ls [flags]
 ### Examples
 
 ```
-corectl get measures
-corectl measure list --json
+corectl measure ls
 ```
 
 ### Options

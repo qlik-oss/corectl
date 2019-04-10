@@ -1,10 +1,10 @@
 ## corectl app remove
 
-removes the specified app.
+Remove the specified app.
 
 ### Synopsis
 
-removes the specified app.
+Remove the specified app.
 
 ```
 corectl app remove <app-id> [flags]
@@ -13,7 +13,8 @@ corectl app remove <app-id> [flags]
 ### Examples
 
 ```
-corectl remove app APP-ID
+corectl app remove
+corectl app remove APP-ID
 ```
 
 ### Options
@@ -38,5 +39,5 @@ corectl remove app APP-ID
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage the app
+* [corectl app](corectl_app.md)	 - Explore and manage apps
 

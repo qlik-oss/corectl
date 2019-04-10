@@ -28,9 +28,9 @@ Explore and manage measures
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl measure layout](corectl_measure_layout.md)	 - Evaluates the layout of an generic measure
-* [corectl measure ls](corectl_measure_ls.md)	 - Prints a list of all generic measures in the current app
-* [corectl measure properties](corectl_measure_properties.md)	 - Prints the properties of the generic measure
-* [corectl measure remove](corectl_measure_remove.md)	 - Removes one or many generic measures in the current app
-* [corectl measure set](corectl_measure_set.md)	 - Sets or updates the measures in the current app
+* [corectl measure layout](corectl_measure_layout.md)	 - Evaluate the layout of an generic measure
+* [corectl measure ls](corectl_measure_ls.md)	 - Print a list of all generic measures in the current app
+* [corectl measure properties](corectl_measure_properties.md)	 - Print the properties of the generic measure
+* [corectl measure remove](corectl_measure_remove.md)	 - Remove one or many generic measures in the current app
+* [corectl measure set](corectl_measure_set.md)	 - Set or update the measures in the current app
 

@@ -1,10 +1,10 @@
 ## corectl catwalk
 
-Opens the specified app in catwalk
+Open the specified app in catwalk
 
 ### Synopsis
 
-Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.
+Open the specified app in catwalk. If no app is specified the catwalk hub will be opened.
 
 ```
 corectl catwalk [flags]

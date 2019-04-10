@@ -1,10 +1,10 @@
 ## corectl connection ls
 
-Prints a list of all connections in the current app
+Print a list of all connections in the current app
 
 ### Synopsis
 
-Prints a list of all connections in the current app
+Print a list of all connections in the current app
 
 ```
 corectl connection ls [flags]
@@ -13,8 +13,7 @@ corectl connection ls [flags]
 ### Examples
 
 ```
-corectl get connections
-corectl get connections
+corectl connection ls
 ```
 
 ### Options

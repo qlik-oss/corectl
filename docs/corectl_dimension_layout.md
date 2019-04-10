@@ -1,10 +1,10 @@
 ## corectl dimension layout
 
-Evaluates the layout of an generic dimension
+Evaluate the layout of an generic dimension
 
 ### Synopsis
 
-Evaluates the layout of an generic dimension
+Evaluate the layout of an generic dimension
 
 ```
 corectl dimension layout <dimension-id> [flags]
@@ -13,7 +13,7 @@ corectl dimension layout <dimension-id> [flags]
 ### Examples
 
 ```
-corectl dimension layout DIMENSION-ID --app my-app.qvf
+corectl dimension layout DIMENSION-ID
 ```
 
 ### Options

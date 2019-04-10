@@ -1,10 +1,10 @@
 ## corectl app ls
 
-Prints a list of all apps available in the current engine
+Print a list of all apps available in the current engine
 
 ### Synopsis
 
-Prints a list of all apps available in the current engine
+Print a list of all apps available in the current engine
 
 ```
 corectl app ls [flags]
@@ -13,8 +13,7 @@ corectl app ls [flags]
 ### Examples
 
 ```
-corectl get apps
-corectl apps --engine=localhost:9276
+corectl app ls
 ```
 
 ### Options
@@ -38,5 +37,5 @@ corectl apps --engine=localhost:9276
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage the app
+* [corectl app](corectl_app.md)	 - Explore and manage apps
 

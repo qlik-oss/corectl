@@ -1,10 +1,10 @@
 ## corectl reload
 
-Reloads and saves the app.
+Reload and save the app
 
 ### Synopsis
 
-Reloads and saves the app.
+Reload and save the app
 
 ```
 corectl reload [flags]

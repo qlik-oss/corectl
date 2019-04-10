@@ -1,10 +1,10 @@
 ## corectl assoc
 
-Print table associations summary
+Print table associations
 
 ### Synopsis
 
-Print table associations summary
+Print table associations
 
 ```
 corectl assoc [flags]
@@ -13,8 +13,8 @@ corectl assoc [flags]
 ### Examples
 
 ```
-corectl get assoc
-corectl get associations
+corectl assoc
+corectl associations
 ```
 
 ### Options

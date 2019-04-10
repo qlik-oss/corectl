@@ -5,21 +5,21 @@ Usage:
   corectl [command]
 
 App Building Commands:
-  build         Reloads and saves the app after updating connections, dimensions, measures, objects and the script
-  reload        Reloads and saves the app.
+  build         Reload and save the app after updating connections, dimensions, measures, objects and the script
+  reload        Reload and save the app
 
 App Analysis Commands:
-  assoc         Print table associations summary
-  catwalk       Opens the specified app in catwalk
-  eval          Evaluates a list of measures and dimensions
-  field         Shows content of a field
+  assoc         Print table associations
+  catwalk       Open the specified app in catwalk
+  eval          Evaluate a list of measures and dimensions
   fields        Print field list
   keys          Print key-only field list
-  meta          Shows metadata about the app
-  tables        Print tables summary
+  meta          Print tables, fields and associations
+  tables        Print tables
+  values        Print the top values of a field
 
 Advanced Commands:
-  app           Explore and manage the app
+  app           Explore and manage apps
   connection    Explore and manage connections
   dimension     Explore and manage dimensions
   measure       Explore and manage measures
@@ -27,13 +27,13 @@ Advanced Commands:
   script        Explore and manage the script
 
 Other Commands:
-  completion    Generates auto completion scripts
+  completion    Generate auto completion scripts
   help          Help about any command
-  status        Prints status info about the connection to the engine and current app
+  status        Print status info about the connection to the engine and current app
   version       Print the version of corectl
 
 Flags:
-  -a, --app string               App name, if no app is specified a session app is used instead.
+  -a, --app string               App name, if no app is specified a session app is used instead
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
@@ -41,6 +41,6 @@ Flags:
       --no-data                  Open app without data
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
-  -v, --verbose                  Logs extra information
+  -v, --verbose                  Log extra information
 
 Use "corectl [command] --help" for more information about a command.

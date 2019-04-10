@@ -213,7 +213,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - get tables", defaultConnectString1, []string{"tables"}, []string{"golden", "project1-tables.golden"}, initTest{true, true}},
 		{"project 1 - get assoc", defaultConnectString1, []string{"assoc"}, []string{"golden", "project1-assoc.golden"}, initTest{true, true}},
 		{"project 1 - get fields", defaultConnectString1, []string{"fields"}, []string{"golden", "project1-fields.golden"}, initTest{true, true}},
-		{"project 1 - get field numbers", defaultConnectString1, []string{"field", "numbers"}, []string{"golden", "project1-field-numbers.golden"}, initTest{true, true}},
+		{"project 1 - get field numbers", defaultConnectString1, []string{"values", "numbers"}, []string{"golden", "project1-values-numbers.golden"}, initTest{true, true}},
 		{"project 1 - get meta", defaultConnectString1, []string{"meta"}, []string{"golden", "project1-meta.golden"}, initTest{true, true}},
 		{"project 1 - eval", defaultConnectString1, []string{"eval", "count(numbers)", "by", "xyz"}, []string{"golden", "project1-eval-1.golden"}, initTest{true, true}},
 		{"project 1 - eval", defaultConnectString1, []string{"eval", "count(numbers)"}, []string{"golden", "project1-eval-2.golden"}, initTest{true, true}},

@@ -1,10 +1,10 @@
 ## corectl object set
 
-Sets or updates the objects in the current app
+Set or update the objects in the current app
 
 ### Synopsis
 
-Sets or updates the objects in the current app.
+Set or update the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format
 
 ```
@@ -14,6 +14,7 @@ corectl object set <glob-pattern-path-to-objects-files.json [flags]
 ### Examples
 
 ```
+corectl object set
 corectl object set ./my-objects-glob-path.json
 ```
 

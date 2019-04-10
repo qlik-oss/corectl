@@ -1,10 +1,10 @@
 ## corectl dimension properties
 
-Prints the properties of the generic dimension
+Print the properties of the generic dimension
 
 ### Synopsis
 
-Prints the properties of the generic dimension
+Print the properties of the generic dimension
 
 ```
 corectl dimension properties <dimension-id> [flags]
@@ -13,7 +13,7 @@ corectl dimension properties <dimension-id> [flags]
 ### Examples
 
 ```
-corectl dimension properties DIMENSION-ID --app my-app.qvf
+corectl dimension properties DIMENSION-ID
 ```
 
 ### Options

@@ -1,10 +1,10 @@
 ## corectl build
 
-Reloads and saves the app after updating connections, dimensions, measures, objects and the script
+Reload and save the app after updating connections, dimensions, measures, objects and the script
 
 ### Synopsis
 
-Reloads and saves the app after updating connections, dimensions, measures, objects and the script
+Reload and save the app after updating connections, dimensions, measures, objects and the script
 
 ```
 corectl build [flags]
@@ -13,6 +13,7 @@ corectl build [flags]
 ### Examples
 
 ```
+corectl build
 corectl build --connections ./myconnections.yml --script ./myscript.qvs
 ```
 

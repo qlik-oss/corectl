@@ -10,9 +10,9 @@ import (
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <path-to-script-file.yml>",
-	Short:   "Sets the script in the current app",
-	Long:    "Sets the script in the current app",
-	Example: "corectl set script ./my-script-file",
+	Short:   "Set the script in the current app",
+	Long:    "Set the script in the current app",
+	Example: "corectl script set ./my-script-file.qvs",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -38,11 +38,10 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 }, "no-save")
 
 var getScriptCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Print the reload script",
-	Long:  "Fetches the script currently set in the app and prints it in plain text.",
-	Example: `corectl get script
-corectl get script --app=my-app.qvf`,
+	Use:     "get",
+	Short:   "Print the reload script",
+	Long:    "Print the reload script currently set in the app",
+	Example: `corectl script get`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)

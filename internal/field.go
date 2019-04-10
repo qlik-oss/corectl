@@ -7,8 +7,8 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-// PrintField prints the first few rows of a field to system out.
-func PrintField(ctx context.Context, doc *enigma.Doc, fieldName string) {
+// PrintFieldValues prints the first few rows of a field to system out.
+func PrintFieldValues(ctx context.Context, doc *enigma.Doc, fieldName string) {
 	ensureModelExists(ctx, doc)
 	fmt.Print(getFieldContentAsTable(ctx, doc, fieldName, 100))
 }
@@ -89,7 +89,7 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 		for _, row := range page.Matrix {
 			for _, cell := range row {
 				if cell.Frequency != "1" && cell.Frequency != "" {
-					result = append(result, cell.Text+"("+cell.Frequency+")")
+					result = append(result, cell.Text+"("+cell.Frequency+"x)")
 				} else {
 					result = append(result, cell.Text)
 				}

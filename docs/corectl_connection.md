@@ -28,8 +28,8 @@ Explore and manage connections
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl connection get](corectl_connection_get.md)	 - Shows the properties for a specific connection
-* [corectl connection ls](corectl_connection_ls.md)	 - Prints a list of all connections in the current app
+* [corectl connection get](corectl_connection_get.md)	 - Show the properties for a specific connection
+* [corectl connection ls](corectl_connection_ls.md)	 - Print a list of all connections in the current app
 * [corectl connection remove](corectl_connection_remove.md)	 - Remove the specified connection(s)
-* [corectl connection set](corectl_connection_set.md)	 - Sets or updates the connections in the current app
+* [corectl connection set](corectl_connection_set.md)	 - Set or update the connections in the current app
 

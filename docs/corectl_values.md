@@ -1,25 +1,25 @@
-## corectl field
+## corectl values
 
-Shows content of a field
+Print the top values of a field
 
 ### Synopsis
 
-Prints all the values for a specific field in your data model
+Print all the values for a specific field in your data model
 
 ```
-corectl field <field name> [flags]
+corectl values <field name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl get field FIELD
+corectl values FIELD
 ```
 
 ### Options
 
 ```
-  -h, --help   help for field
+  -h, --help   help for values
 ```
 
 ### Options inherited from parent commands

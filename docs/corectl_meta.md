@@ -1,10 +1,10 @@
 ## corectl meta
 
-Shows metadata about the app
+Print tables, fields and associations
 
 ### Synopsis
 
-Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc
+Print tables, fields, associations along with metadata like memory consumption, field cardinality etc
 
 ```
 corectl meta [flags]
@@ -14,7 +14,7 @@ corectl meta [flags]
 
 ```
 corectl meta
-corectl get meta --app my-app.qvf
+corectl meta --app my-app.qvf
 ```
 
 ### Options

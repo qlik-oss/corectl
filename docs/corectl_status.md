@@ -1,10 +1,10 @@
 ## corectl status
 
-Prints status info about the connection to the engine and current app
+Print status info about the connection to the engine and current app
 
 ### Synopsis
 
-Prints status info about the connection to the engine and current app, and also the status of the data model
+Print status info about the connection to the engine and current app, and also the status of the data model
 
 ```
 corectl status [flags]
@@ -13,8 +13,8 @@ corectl status [flags]
 ### Examples
 
 ```
-corectl get status
-corectl get status --app=my-app.qvf
+corectl status
+corectl status --app=my-app.qvf
 ```
 
 ### Options

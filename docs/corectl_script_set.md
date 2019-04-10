@@ -1,10 +1,10 @@
 ## corectl script set
 
-Sets the script in the current app
+Set the script in the current app
 
 ### Synopsis
 
-Sets the script in the current app
+Set the script in the current app
 
 ```
 corectl script set <path-to-script-file.yml> [flags]
@@ -13,7 +13,7 @@ corectl script set <path-to-script-file.yml> [flags]
 ### Examples
 
 ```
-corectl set script ./my-script-file
+corectl script set ./my-script-file.qvs
 ```
 
 ### Options

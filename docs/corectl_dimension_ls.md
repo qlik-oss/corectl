@@ -1,10 +1,10 @@
 ## corectl dimension ls
 
-Prints a list of all generic dimensions in the current app
+Print a list of all generic dimensions in the current app
 
 ### Synopsis
 
-Prints a list of all generic dimensions in the current app
+Print a list of all generic dimensions in the current app
 
 ```
 corectl dimension ls [flags]
@@ -13,7 +13,7 @@ corectl dimension ls [flags]
 ### Examples
 
 ```
-corectl dimension list
+corectl dimension ls
 ```
 
 ### Options

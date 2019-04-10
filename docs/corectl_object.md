@@ -28,10 +28,10 @@ Explore and manage generic objects
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl object data](corectl_object_data.md)	 - Evaluates the hypercube data of an generic object
-* [corectl object layout](corectl_object_layout.md)	 - Evaluates the hypercube layout of an generic object
-* [corectl object ls](corectl_object_ls.md)	 - Prints a list of all generic objects in the current app
-* [corectl object properties](corectl_object_properties.md)	 - Prints the properties of the generic object
+* [corectl object data](corectl_object_data.md)	 - Evaluate the hypercube data of a generic object
+* [corectl object layout](corectl_object_layout.md)	 - Evaluate the hypercube layout of the generic object
+* [corectl object ls](corectl_object_ls.md)	 - Print a list of all generic objects in the current app
+* [corectl object properties](corectl_object_properties.md)	 - Print the properties of the generic object
 * [corectl object remove](corectl_object_remove.md)	 - Remove one or many generic objects in the current app
-* [corectl object set](corectl_object_set.md)	 - Sets or updates the objects in the current app
+* [corectl object set](corectl_object_set.md)	 - Set or update the objects in the current app
 

@@ -9,10 +9,11 @@ import (
 )
 
 var setMeasuresCmd = withLocalFlags(&cobra.Command{
-	Use:     "set <glob-pattern-path-to-measures-files.json>",
-	Short:   "Sets or updates the measures in the current app",
-	Long:    "Sets or updates the measures in the current app",
-	Example: "corectl measure set ./my-measures-glob-path.json",
+	Use:   "set <glob-pattern-path-to-measures-files.json>",
+	Short: "Set or update the measures in the current app",
+	Long:  "Set or update the measures in the current app",
+	Example: `corectl measure set
+corectl measure set ./my-measures-glob-path.json`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -30,8 +31,8 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 
 var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Use:     "remove <measure-id>...",
-	Short:   "Removes one or many generic measures in the current app",
-	Long:    "Removes one or many generic measures in the current app",
+	Short:   "Remove one or many generic measures in the current app",
+	Long:    "Remove one or many generic measures in the current app",
 	Example: `corectl measure remove ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -56,11 +57,10 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 }, "no-save")
 
 var listMeasuresCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "Prints a list of all generic measures in the current app",
-	Long:  "Prints a list of all generic measures in the current app in either plain text or json",
-	Example: `corectl get measures
-corectl measure list --json`,
+	Use:     "ls",
+	Short:   "Print a list of all generic measures in the current app",
+	Long:    "Print a list of all generic measures in the current app",
+	Example: `corectl measure ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
@@ -68,11 +68,10 @@ corectl measure list --json`,
 }
 
 var getMeasurePropertiesCmd = &cobra.Command{
-	Use:   "properties <measure-id>",
-	Short: "Prints the properties of the generic measure",
-	Long:  "Prints the properties of the generic measure in JSON format",
-	Example: `corectl get measure properties MEASURE-ID
-corectl measure properties MEASURE-ID --app my-app.qvf`,
+	Use:     "properties <measure-id>",
+	Short:   "Print the properties of the generic measure",
+	Long:    "Print the properties of the generic measure",
+	Example: `corectl measure properties MEASURE-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "measure")
@@ -80,11 +79,10 @@ corectl measure properties MEASURE-ID --app my-app.qvf`,
 }
 
 var getMeasureLayoutCmd = &cobra.Command{
-	Use:   "layout <measure-id>",
-	Short: "Evaluates the layout of an generic measure",
-	Long:  "Evaluates the layout of an generic measure and prints in JSON format",
-	Example: `corectl get measure layout MEASURE-ID
-corectl measure layout MEASURE-ID --app my-app.qvf`,
+	Use:     "layout <measure-id>",
+	Short:   "Evaluate the layout of an generic measure",
+	Long:    "Evaluate the layout of an generic measure and prints in JSON format",
+	Example: `corectl measure layout MEASURE-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityLayout(ccmd, args, "measure")
@@ -101,5 +99,5 @@ var measureCmd = &cobra.Command{
 }
 
 func init() {
-	measureCmd.AddCommand(listMeasuresCmd, setMeasuresCmd, getMeasureLayoutCmd, getMeasurePropertiesCmd, removeMeasureCmd)
+	measureCmd.AddCommand(listMeasuresCmd, setMeasuresCmd, getMeasurePropertiesCmd, getMeasureLayoutCmd, removeMeasureCmd)
 }

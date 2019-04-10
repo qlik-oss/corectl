@@ -1,10 +1,10 @@
 ## corectl connection get
 
-Shows the properties for a specific connection
+Show the properties for a specific connection
 
 ### Synopsis
 
-Shows the properties for a specific connection
+Show the properties for a specific connection
 
 ```
 corectl connection get [flags]
@@ -13,7 +13,7 @@ corectl connection get [flags]
 ### Examples
 
 ```
-corectl get connection CONNECTION-ID
+corectl connection get CONNECTION-ID
 ```
 
 ### Options

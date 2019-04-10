@@ -94,7 +94,7 @@ func init() {
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(evalCmd)
 	rootCmd.AddCommand(reloadCmd)
-	rootCmd.AddCommand(getFieldCmd)
+	rootCmd.AddCommand(getValuesCmd)
 	rootCmd.AddCommand(getMetaCmd)
 
 	// Subcommands

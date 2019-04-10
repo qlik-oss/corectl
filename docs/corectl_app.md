@@ -1,10 +1,10 @@
 ## corectl app
 
-Explore and manage the app
+Explore and manage apps
 
 ### Synopsis
 
-Explore and manage the app
+Explore and manage apps
 
 ### Options
 
@@ -28,6 +28,6 @@ Explore and manage the app
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl app ls](corectl_app_ls.md)	 - Prints a list of all apps available in the current engine
-* [corectl app remove](corectl_app_remove.md)	 - removes the specified app.
+* [corectl app ls](corectl_app_ls.md)	 - Print a list of all apps available in the current engine
+* [corectl app remove](corectl_app_remove.md)	 - Remove the specified app.
 

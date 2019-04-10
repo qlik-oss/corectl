@@ -34,10 +34,10 @@ var versionCmd = &cobra.Command{
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Prints status info about the connection to the engine and current app",
-	Long:  "Prints status info about the connection to the engine and current app, and also the status of the data model",
-	Example: `corectl get status
-corectl get status --app=my-app.qvf`,
+	Short: "Print status info about the connection to the engine and current app",
+	Long:  "Print status info about the connection to the engine and current app, and also the status of the data model",
+	Example: `corectl status
+corectl status --app=my-app.qvf`,
 	Annotations: map[string]string{
 		"command_category": "other",
 	},

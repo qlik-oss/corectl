@@ -1,10 +1,10 @@
 ## corectl object properties
 
-Prints the properties of the generic object
+Print the properties of the generic object
 
 ### Synopsis
 
-Prints the properties of the generic object in JSON format
+Print the properties of the generic object in JSON format
 
 ```
 corectl object properties <object-id> [flags]
@@ -13,7 +13,7 @@ corectl object properties <object-id> [flags]
 ### Examples
 
 ```
-corectl object properties OBJECT-ID --app my-app.qvf
+corectl object properties OBJECT-ID
 ```
 
 ### Options

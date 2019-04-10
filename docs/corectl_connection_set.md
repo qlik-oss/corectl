@@ -1,10 +1,10 @@
 ## corectl connection set
 
-Sets or updates the connections in the current app
+Set or update the connections in the current app
 
 ### Synopsis
 
-Sets or updates the connections in the current app
+Set or update the connections in the current app
 
 ```
 corectl connection set <path-to-connections-file.yml> [flags]
@@ -13,7 +13,8 @@ corectl connection set <path-to-connections-file.yml> [flags]
 ### Examples
 
 ```
-corectl set connections ./my-connections.yml
+corectl connection set
+corectl connection set ./my-connections.yml
 ```
 
 ### Options

@@ -12,8 +12,8 @@ var completionCmd = &cobra.Command{
 	Use:       "completion <shell>",
 	ValidArgs: []string{"zsh", "bash"},
 	Args:      cobra.MinimumNArgs(1),
-	Short:     "Generates auto completion scripts",
-	Long: `Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
+	Short:     "Generate auto completion scripts",
+	Long: `Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
 interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. 
 Note that bash-completion is required and needs to be installed on your system.`,
 	Example: `   Add the following to your ~/.bashrc or ~/.zshrc file

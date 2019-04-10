@@ -1,10 +1,10 @@
 ## corectl object ls
 
-Prints a list of all generic objects in the current app
+Print a list of all generic objects in the current app
 
 ### Synopsis
 
-Prints a list of all generic objects in the current app in either plain text or JSON format
+Print a list of all generic objects in the current app
 
 ```
 corectl object ls [flags]
@@ -13,8 +13,7 @@ corectl object ls [flags]
 ### Examples
 
 ```
-corectl object list
-corectl get objects --json --app=myapp.qvf
+corectl object ls
 ```
 
 ### Options

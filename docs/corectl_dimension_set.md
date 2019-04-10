@@ -1,10 +1,10 @@
 ## corectl dimension set
 
-Sets or updates the dimensions in the current app
+Set or update the dimensions in the current app
 
 ### Synopsis
 
-Sets or updates the dimensions in the current app
+Set or update the dimensions in the current app
 
 ```
 corectl dimension set <glob-pattern-path-to-dimensions-files.json> [flags]
@@ -13,7 +13,8 @@ corectl dimension set <glob-pattern-path-to-dimensions-files.json> [flags]
 ### Examples
 
 ```
-corectl set dimensions ./my-dimensions-glob-path.json
+corectl dimension set
+corectl dimension set ./my-dimensions-glob-path.json
 ```
 
 ### Options

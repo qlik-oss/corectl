@@ -1,10 +1,10 @@
 ## corectl tables
 
-Print tables summary
+Print tables
 
 ### Synopsis
 
-Prints tables summary for the data model in an app
+Print tables for the data model in an app
 
 ```
 corectl tables [flags]
@@ -13,8 +13,8 @@ corectl tables [flags]
 ### Examples
 
 ```
-corectl get tables
-corectl get tables --app=my-app.qvf
+corectl tables
+corectl tables --app=my-app.qvf
 ```
 
 ### Options

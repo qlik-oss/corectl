@@ -13,8 +13,9 @@ corectl connection remove <connection-id>... [flags]
 ### Examples
 
 ```
-corectl remove connection ID-1
-corectl remove connections ID-1 ID-2
+corectl connection remove
+corectl connection remove ID-1
+corectl connection remove ID-1 ID-2
 ```
 
 ### Options

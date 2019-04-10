@@ -9,10 +9,11 @@ import (
 )
 
 var setDimensionsCmd = withLocalFlags(&cobra.Command{
-	Use:     "set <glob-pattern-path-to-dimensions-files.json>",
-	Short:   "Sets or updates the dimensions in the current app",
-	Long:    "Sets or updates the dimensions in the current app",
-	Example: "corectl set dimensions ./my-dimensions-glob-path.json",
+	Use:   "set <glob-pattern-path-to-dimensions-files.json>",
+	Short: "Set or update the dimensions in the current app",
+	Long:  "Set or update the dimensions in the current app",
+	Example: `corectl dimension set
+corectl dimension set ./my-dimensions-glob-path.json`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -57,9 +58,9 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 
 var listDimensionsCmd = &cobra.Command{
 	Use:     "ls",
-	Short:   "Prints a list of all generic dimensions in the current app",
-	Long:    "Prints a list of all generic dimensions in the current app",
-	Example: "corectl dimension list",
+	Short:   "Print a list of all generic dimensions in the current app",
+	Long:    "Print a list of all generic dimensions in the current app",
+	Example: "corectl dimension ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "dimension", !viper.GetBool("bash"))
@@ -68,9 +69,9 @@ var listDimensionsCmd = &cobra.Command{
 
 var getDimensionPropertiesCmd = &cobra.Command{
 	Use:     "properties <dimension-id>",
-	Short:   "Prints the properties of the generic dimension",
-	Long:    "Prints the properties of the generic dimension",
-	Example: "corectl dimension properties DIMENSION-ID --app my-app.qvf",
+	Short:   "Print the properties of the generic dimension",
+	Long:    "Print the properties of the generic dimension",
+	Example: "corectl dimension properties DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "dimension")
@@ -79,9 +80,9 @@ var getDimensionPropertiesCmd = &cobra.Command{
 
 var getDimensionLayoutCmd = &cobra.Command{
 	Use:     "layout <dimension-id>",
-	Short:   "Evaluates the layout of an generic dimension",
-	Long:    "Evaluates the layout of an generic dimension",
-	Example: "corectl dimension layout DIMENSION-ID --app my-app.qvf",
+	Short:   "Evaluate the layout of an generic dimension",
+	Long:    "Evaluate the layout of an generic dimension",
+	Example: "corectl dimension layout DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityLayout(ccmd, args, "dimension")

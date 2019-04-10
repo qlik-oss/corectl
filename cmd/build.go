@@ -7,9 +7,10 @@ import (
 )
 
 var buildCmd = withLocalFlags(&cobra.Command{
-	Use:     "build",
-	Short:   "Reloads and saves the app after updating connections, dimensions, measures, objects and the script",
-	Example: "corectl build --connections ./myconnections.yml --script ./myscript.qvs",
+	Use:   "build",
+	Short: "Reload and save the app after updating connections, dimensions, measures, objects and the script",
+	Example: `corectl build
+corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	Annotations: map[string]string{
 		"command_category": "build",
 	},
@@ -46,8 +47,8 @@ var buildCmd = withLocalFlags(&cobra.Command{
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
-	Short:   "Reloads and saves the app.",
-	Long:    "Reloads and saves the app.",
+	Short:   "Reload and save the app",
+	Long:    "Reload and save the app",
 	Example: "corectl reload",
 	Annotations: map[string]string{
 		"command_category": "build",

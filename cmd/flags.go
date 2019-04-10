@@ -41,10 +41,10 @@ func withLocalFlags(ccmd *cobra.Command, localFlagNames ...string) *cobra.Comman
 
 func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	// bound to viper
-	globalFlags.BoolP("verbose", "v", false, "Logs extra information")
+	globalFlags.BoolP("verbose", "v", false, "Log extra information")
 	globalFlags.BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
 	globalFlags.StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
-	globalFlags.StringP("app", "a", "", "App name, if no app is specified a session app is used instead.")
+	globalFlags.StringP("app", "a", "", "App name, if no app is specified a session app is used instead")
 	globalFlags.String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
 	globalFlags.Bool("no-data", false, "Open app without data")
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
@@ -75,7 +75,7 @@ func initLocalFlags() {
 	localFlags.Bool("silent", false, "Do not log reload output")
 	localFlags.Bool("no-reload", false, "Do not run the reload script")
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
-	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used.")
+	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

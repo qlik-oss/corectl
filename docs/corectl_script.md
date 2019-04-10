@@ -29,5 +29,5 @@ Explore and manage the script
 
 * [corectl](corectl.md)	 - 
 * [corectl script get](corectl_script_get.md)	 - Print the reload script
-* [corectl script set](corectl_script_set.md)	 - Sets the script in the current app
+* [corectl script set](corectl_script_set.md)	 - Set the script in the current app
 

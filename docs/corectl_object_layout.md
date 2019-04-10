@@ -1,10 +1,10 @@
 ## corectl object layout
 
-Evaluates the hypercube layout of an generic object
+Evaluate the hypercube layout of the generic object
 
 ### Synopsis
 
-Evaluates the hypercube layout of an generic object in JSON format
+Evaluate the hypercube layout of the generic object
 
 ```
 corectl object layout <object-id> [flags]
@@ -13,7 +13,7 @@ corectl object layout <object-id> [flags]
 ### Examples
 
 ```
-corectl object layout OBJECT-ID --app my-app.qvf
+corectl object layout OBJECT-ID
 ```
 
 ### Options

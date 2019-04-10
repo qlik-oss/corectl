@@ -10,11 +10,10 @@ import (
 )
 
 var getAppsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "Prints a list of all apps available in the current engine",
-	Long:  "Prints a list of all apps available in the current engine",
-	Example: `corectl get apps
-corectl apps --engine=localhost:9276`,
+	Use:     "ls",
+	Short:   "Print a list of all apps available in the current engine",
+	Long:    "Print a list of all apps available in the current engine",
+	Example: `corectl app ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers)
@@ -27,10 +26,11 @@ corectl apps --engine=localhost:9276`,
 }
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
-	Use:     "remove <app-id>",
-	Short:   "removes the specified app.",
-	Long:    `removes the specified app.`,
-	Example: "corectl remove app APP-ID",
+	Use:   "remove <app-id>",
+	Short: "Remove the specified app",
+	Long:  `Remove the specified app`,
+	Example: `corectl app remove
+corectl app remove APP-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := viper.GetString("app")
@@ -55,8 +55,8 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 
 var appCmd = &cobra.Command{
 	Use:   "app",
-	Short: "Explore and manage the app",
-	Long:  "Explore and manage the app",
+	Short: "Explore and manage apps",
+	Long:  "Explore and manage apps",
 	Annotations: map[string]string{
 		"command_category": "sub",
 	},

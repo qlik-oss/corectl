@@ -1,10 +1,10 @@
 ## corectl object data
 
-Evaluates the hypercube data of an generic object
+Evaluate the hypercube data of a generic object
 
 ### Synopsis
 
-Evaluates the hypercube data of an generic object
+Evaluate the hypercube data of a generic object
 
 ```
 corectl object data <object-id> [flags]
@@ -13,7 +13,7 @@ corectl object data <object-id> [flags]
 ### Examples
 
 ```
-corectl object data OBJECT-ID --app my-app.qvf
+corectl object data OBJECT-ID
 ```
 
 ### Options

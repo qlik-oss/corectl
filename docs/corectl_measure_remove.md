@@ -1,10 +1,10 @@
 ## corectl measure remove
 
-Removes one or many generic measures in the current app
+Remove one or many generic measures in the current app
 
 ### Synopsis
 
-Removes one or many generic measures in the current app
+Remove one or many generic measures in the current app
 
 ```
 corectl measure remove <measure-id>... [flags]

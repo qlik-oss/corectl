@@ -11,10 +11,11 @@ import (
 
 var setObjectsCmd = withLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-objects-files.json",
-	Short: "Sets or updates the objects in the current app",
-	Long: `Sets or updates the objects in the current app.
+	Short: "Set or update the objects in the current app",
+	Long: `Set or update the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
-	Example: "corectl object set ./my-objects-glob-path.json",
+	Example: `corectl object set
+corectl object set ./my-objects-glob-path.json`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -59,11 +60,10 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 }, "no-save")
 
 var listObjectsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "Prints a list of all generic objects in the current app",
-	Long:  "Prints a list of all generic objects in the current app in either plain text or JSON format",
-	Example: `corectl object list
-corectl get objects --json --app=myapp.qvf`,
+	Use:     "ls",
+	Short:   "Print a list of all generic objects in the current app",
+	Long:    "Print a list of all generic objects in the current app",
+	Example: `corectl object ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "object", !viper.GetBool("bash"))
@@ -72,9 +72,9 @@ corectl get objects --json --app=myapp.qvf`,
 
 var getObjectPropertiesCmd = &cobra.Command{
 	Use:     "properties <object-id>",
-	Short:   "Prints the properties of the generic object",
-	Long:    "Prints the properties of the generic object in JSON format",
-	Example: "corectl object properties OBJECT-ID --app my-app.qvf",
+	Short:   "Print the properties of the generic object",
+	Long:    "Print the properties of the generic object in JSON format",
+	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "object")
@@ -83,9 +83,9 @@ var getObjectPropertiesCmd = &cobra.Command{
 
 var getObjectLayoutCmd = &cobra.Command{
 	Use:     "layout <object-id>",
-	Short:   "Evaluates the hypercube layout of an generic object",
-	Long:    "Evaluates the hypercube layout of an generic object in JSON format",
-	Example: "corectl object layout OBJECT-ID --app my-app.qvf",
+	Short:   "Evaluate the hypercube layout of the generic object",
+	Long:    "Evaluate the hypercube layout of the generic object",
+	Example: "corectl object layout OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -100,9 +100,9 @@ var getObjectLayoutCmd = &cobra.Command{
 
 var getObjectDataCmd = &cobra.Command{
 	Use:     "data <object-id>",
-	Short:   "Evaluates the hypercube data of an generic object",
-	Long:    "Evaluates the hypercube data of an generic object",
-	Example: "corectl object data OBJECT-ID --app my-app.qvf",
+	Short:   "Evaluate the hypercube data of a generic object",
+	Long:    "Evaluate the hypercube data of a generic object",
+	Example: "corectl object data OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -125,5 +125,5 @@ var objectCmd = &cobra.Command{
 }
 
 func init() {
-	objectCmd.AddCommand(setObjectsCmd, listObjectsCmd, getObjectDataCmd, getObjectLayoutCmd, getObjectPropertiesCmd, removeObjectCmd)
+	objectCmd.AddCommand(listObjectsCmd, setObjectsCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, removeObjectCmd)
 }

@@ -4,7 +4,7 @@ Print key-only field list
 
 ### Synopsis
 
-Prints a fields list containing key-only fields
+Print a fields list containing key-only fields
 
 ```
 corectl keys [flags]
@@ -13,7 +13,7 @@ corectl keys [flags]
 ### Examples
 
 ```
-corectl get keys
+corectl keys
 ```
 
 ### Options

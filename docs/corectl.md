@@ -26,23 +26,23 @@ corectl [flags]
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage the app
-* [corectl assoc](corectl_assoc.md)	 - Print table associations summary
-* [corectl build](corectl_build.md)	 - Reloads and saves the app after updating connections, dimensions, measures, objects and the script
-* [corectl catwalk](corectl_catwalk.md)	 - Opens the specified app in catwalk
-* [corectl completion](corectl_completion.md)	 - Generates auto completion scripts
+* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl assoc](corectl_assoc.md)	 - Print table associations
+* [corectl build](corectl_build.md)	 - Reload and save the app after updating connections, dimensions, measures, objects and the script
+* [corectl catwalk](corectl_catwalk.md)	 - Open the specified app in catwalk
+* [corectl completion](corectl_completion.md)	 - Generate auto completion scripts
 * [corectl connection](corectl_connection.md)	 - Explore and manage connections
 * [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
-* [corectl eval](corectl_eval.md)	 - Evaluates a list of measures and dimensions
-* [corectl field](corectl_field.md)	 - Shows content of a field
+* [corectl eval](corectl_eval.md)	 - Evaluate a list of measures and dimensions
 * [corectl fields](corectl_fields.md)	 - Print field list
 * [corectl keys](corectl_keys.md)	 - Print key-only field list
 * [corectl measure](corectl_measure.md)	 - Explore and manage measures
-* [corectl meta](corectl_meta.md)	 - Shows metadata about the app
+* [corectl meta](corectl_meta.md)	 - Print tables, fields and associations
 * [corectl object](corectl_object.md)	 - Explore and manage generic objects
-* [corectl reload](corectl_reload.md)	 - Reloads and saves the app.
+* [corectl reload](corectl_reload.md)	 - Reload and save the app
 * [corectl script](corectl_script.md)	 - Explore and manage the script
-* [corectl status](corectl_status.md)	 - Prints status info about the connection to the engine and current app
-* [corectl tables](corectl_tables.md)	 - Print tables summary
+* [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
+* [corectl tables](corectl_tables.md)	 - Print tables
+* [corectl values](corectl_values.md)	 - Print the top values of a field
 * [corectl version](corectl_version.md)	 - Print the version of corectl
 

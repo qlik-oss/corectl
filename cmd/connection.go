@@ -10,10 +10,11 @@ import (
 )
 
 var setConnectionsCmd = &cobra.Command{
-	Use:     "set <path-to-connections-file.yml>",
-	Short:   "Sets or updates the connections in the current app",
-	Long:    "Sets or updates the connections in the current app",
-	Example: "corectl set connections ./my-connections.yml",
+	Use:   "set <path-to-connections-file.yml>",
+	Short: "Set or update the connections in the current app",
+	Long:  "Set or update the connections in the current app",
+	Example: `corectl connection set
+corectl connection set ./my-connections.yml`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, true)
@@ -35,8 +36,9 @@ var removeConnectionCmd = &cobra.Command{
 	Use:   "remove <connection-id>...",
 	Short: "Remove the specified connection(s)",
 	Long:  "Remove one or many connections from the app",
-	Example: `corectl remove connection ID-1
-corectl remove connections ID-1 ID-2`,
+	Example: `corectl connection remove
+corectl connection remove ID-1
+corectl connection remove ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -59,11 +61,10 @@ corectl remove connections ID-1 ID-2`,
 }
 
 var getConnectionsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "Prints a list of all connections in the current app",
-	Long:  "Prints a list of all connections in the current app",
-	Example: `corectl get connections
-corectl get connections`,
+	Use:     "ls",
+	Short:   "Print a list of all connections in the current app",
+	Long:    "Print a list of all connections in the current app",
+	Example: `corectl connection ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -77,9 +78,9 @@ corectl get connections`,
 
 var getConnectionCmd = &cobra.Command{
 	Use:     "get",
-	Short:   "Shows the properties for a specific connection",
-	Long:    "Shows the properties for a specific connection",
-	Example: "corectl get connection CONNECTION-ID",
+	Short:   "Show the properties for a specific connection",
+	Long:    "Show the properties for a specific connection",
+	Example: "corectl connection get CONNECTION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) != 1 {

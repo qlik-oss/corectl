@@ -4,7 +4,7 @@ Print field list
 
 ### Synopsis
 
-Prints all the fields in an app, and for each field also some sample content, tags and and number of values
+Print all the fields in an app, and for each field also some sample content, tags and and number of values
 
 ```
 corectl fields [flags]
@@ -13,7 +13,7 @@ corectl fields [flags]
 ### Examples
 
 ```
-corectl get fields
+corectl fields
 ```
 
 ### Options
