@@ -11,7 +11,7 @@
   "flags": {
     "app": {
       "alias": "a",
-      "description": "App name, if no app is specified a session app is used instead."
+      "description": "App name, if no app is specified a session app is used instead"
     },
     "bash": {
       "description": "Bash flag used to adapt output to bash completion format",
@@ -45,7 +45,7 @@
     },
     "verbose": {
       "alias": "v",
-      "description": "Logs extra information",
+      "description": "Log extra information",
       "default": "false"
     }
   },
@@ -57,7 +57,7 @@
           "description": "Print a list of all apps available in the current engine"
         },
         "remove": {
-          "description": "Remove the specified app.",
+          "description": "Remove the specified app",
           "flags": {
             "suppress": {
               "description": "Suppress confirmation dialogue",
@@ -106,7 +106,7 @@
       "description": "Open the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
       "flags": {
         "catwalk-url": {
-          "description": "Url to an instance of catwalk, if not provided the qlik one will be used.",
+          "description": "Url to an instance of catwalk, if not provided the qlik one will be used",
           "default": "https://catwalk.core.qlik.com"
         }
       }
