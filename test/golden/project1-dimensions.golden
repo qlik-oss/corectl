@@ -1,5 +1,6 @@
-+-------------------+-----------+
-|        Id         |   Type    |
-+-------------------+-----------+
-| numbers-dimension | dimension |
-+-------------------+-----------+
+[
+   {
+      "qId": "numbers-dimension",
+      "qType": "dimension"
+   }
+]

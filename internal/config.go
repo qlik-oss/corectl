@@ -2,13 +2,13 @@ package internal
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"strings"
-	"gopkg.in/yaml.v2"
 	"github.com/spf13/viper"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
@@ -97,15 +97,15 @@ func ReadConfigFile(explicitConfigFile string) {
 	}
 }
 
-// validateProps reads a config file by 
+// validateProps reads a config file by
 func validateProps(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalError("Could not find config file:", configPath)
 	}
 	validProps := map[string]struct{}{ // This "set" contains the valid property names
-		"app":{}, "engine":{}, "measures":{}, "script": {},
-		"dimensions":{}, "objects":{}, "connections":{},
+		"app": {}, "engine": {}, "measures": {}, "script": {},
+		"dimensions": {}, "objects": {}, "connections": {},
 		"headers": {}, "verbose": {}, "traffic": {},
 		"no-data": {}, "bash": {},
 	}
@@ -125,7 +125,7 @@ func validateProps(configPath string) {
 			}
 		}
 	}
-	if len(invalidProps) + len(suggestions) > 0 {
+	if len(invalidProps)+len(suggestions) > 0 {
 		errorMessage := []string{}
 		errorMessage = append(errorMessage,
 			fmt.Sprintf("corectl found invalid properties when validating the config file '%s'.", configPath))
