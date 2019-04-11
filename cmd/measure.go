@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -63,20 +64,26 @@ var listMeasuresCmd = &cobra.Command{
 	Example: `corectl measure ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		items := internal.ListMeasures(state.Ctx, state.Doc)
+		if viper.GetBool("bash") {
+			printer.PrintBash(items)
+		} else {
+			printer.PrintJson(items)
+		}
 	},
 }
 
-var getMeasurePropertiesCmd = &cobra.Command{
+var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <measure-id>",
 	Short:   "Print the properties of the generic measure",
 	Long:    "Print the properties of the generic measure",
 	Example: `corectl measure properties MEASURE-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "measure")
+		getEntityProperties(ccmd, args, "measure", viper.GetBool("minimum"))
 	},
-}
+}, "minimum")
 
 var getMeasureLayoutCmd = &cobra.Command{
 	Use:     "layout <measure-id>",

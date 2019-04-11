@@ -66,20 +66,26 @@ var listObjectsCmd = &cobra.Command{
 	Example: `corectl object ls`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		listEntities(ccmd, args, "object", !viper.GetBool("bash"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		items := internal.ListObjects(state.Ctx, state.Doc)
+		if viper.GetBool("bash") {
+			printer.PrintBash(items)
+		} else {
+			printer.PrintJson(items)
+		}
 	},
 }
 
-var getObjectPropertiesCmd = &cobra.Command{
+var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <object-id>",
 	Short:   "Print the properties of the generic object",
 	Long:    "Print the properties of the generic object in JSON format",
 	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "object")
+		getEntityProperties(ccmd, args, "object", viper.GetBool("minimum"))
 	},
-}
+}, "minimum")
 
 var getObjectLayoutCmd = &cobra.Command{
 	Use:     "layout <object-id>",

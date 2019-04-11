@@ -1,6 +1,6 @@
 [
-   {
-      "qId": "numbers-dimension",
-      "qType": "dimension"
-   }
+  {
+    "title": "",
+    "qId": "numbers-dimension"
+  }
 ]

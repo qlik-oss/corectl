@@ -1,6 +1,7 @@
 [
-   {
-      "qId": "my-hypercube",
-      "qType": "my-hypercube"
-   }
+  {
+    "title": "",
+    "qId": "my-hypercube",
+    "qType": "my-hypercube"
+  }
 ]

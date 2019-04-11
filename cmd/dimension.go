@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -63,20 +64,26 @@ var listDimensionsCmd = &cobra.Command{
 	Example: "corectl dimension ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		listEntities(ccmd, args, "dimension", !viper.GetBool("bash"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		items := internal.ListDimensions(state.Ctx, state.Doc)
+		if viper.GetBool("bash") {
+			printer.PrintBash(items)
+		} else {
+			printer.PrintJson(items)
+		}
 	},
 }
 
-var getDimensionPropertiesCmd = &cobra.Command{
+var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <dimension-id>",
 	Short:   "Print the properties of the generic dimension",
 	Long:    "Print the properties of the generic dimension",
 	Example: "corectl dimension properties DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "dimension")
+		getEntityProperties(ccmd, args, "dimension", viper.GetBool("minimum"))
 	},
-}
+}, "minimum")
 
 var getDimensionLayoutCmd = &cobra.Command{
 	Use:     "layout <dimension-id>",

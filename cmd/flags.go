@@ -76,6 +76,7 @@ func initLocalFlags() {
 	localFlags.Bool("no-reload", false, "Do not run the reload script")
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
+	localFlags.Bool("minimum", false, "Only print properties required by engine")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

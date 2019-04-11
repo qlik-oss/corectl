@@ -1,10 +1,10 @@
 [
-   {
-      "qId": "measure-1",
-      "qType": "measure"
-   },
-   {
-      "qId": "measure-2",
-      "qType": "measure"
-   }
+  {
+    "title": "",
+    "qId": "measure-1"
+  },
+  {
+    "title": "",
+    "qId": "measure-2"
+  }
 ]
