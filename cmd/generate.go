@@ -134,8 +134,3 @@ var generateDocsCmd = &cobra.Command{
 		doc.GenMarkdownTree(rootCmd, "./docs")
 	},
 }
-
-func init() {
-	rootCmd.AddCommand(generateDocsCmd)
-	rootCmd.AddCommand(generateSpecCmd)
-}

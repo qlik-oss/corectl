@@ -25,11 +25,7 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	writer := tablewriter.NewWriter(os.Stdout)
 
-	headers := []string{"Field", "Uniq/Tot", "RAM", "Tags"}
-	// For each table we should also add a header
-	for _, table := range data.Tables {
-		headers = append(headers, table.Name)
-	}
+	headers := []string{"Field", "Uniq/Tot", "RAM", "Tags", "Tables"}
 
 	// Add a sample content header if samples exists
 	if data.SampleContentByFieldName != nil {
@@ -43,27 +39,24 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	for _, field := range data.Fields {
 		if field != nil && !field.IsSystem && (!keyOnly || isKey(field)) {
 			total := uniqueAndTotal(field)
-			rows := []string{field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", ")}
-			for _, fieldInTable := range field.FieldInTable {
-				rows = append(rows, fieldInTableToText(fieldInTable))
+			cells := []string{field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", ")}
+			tablesPresence := ""
+			for tableIndex, fieldInTable := range field.FieldInTable {
+				if fieldInTable != nil {
+					tablesPresence += data.Tables[tableIndex].Name + ": " + fieldInTableToText(fieldInTable) + "\n"
+				}
 			}
+			cells = append(cells, tablesPresence)
 			if data.SampleContentByFieldName != nil {
-				rows = append(rows, data.SampleContentByFieldName[field.Name])
+				cells = append(cells, data.SampleContentByFieldName[field.Name])
 			}
-			writer.Append(rows)
+			writer.Append(cells)
 		}
 	}
 
 	// Add total ram as footer
-	footers := []string{"Total RAM", "", data.MemUsage(), ""}
-	for _, table := range data.Tables {
-		footers = append(footers, table.MemUsage())
-	}
-	if data.SampleContentByFieldName != nil {
-		footers = append(footers, "")
-	}
+	footers := []string{"Total RAM", "-", data.MemUsage(), "-", "-", "-"}
 	writer.SetFooter(footers)
-
 	writer.Render()
 }
 

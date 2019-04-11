@@ -8,10 +8,10 @@ import (
 // PrintMetadata prints fields tables and associations to system out.
 func PrintMetadata(data *internal.ModelMetadata) {
 
-	fmt.Println("---------- Fields ----------")
+	fmt.Println("*** Fields ***")
 	PrintFields(data, false)
-	fmt.Println("---------- Tables ----------")
+	fmt.Println("\n*** Tables ***")
 	PrintTables(data)
-	fmt.Println("---------- Associations ----------")
+	fmt.Println("\n*** Associations ***")
 	PrintAssociations(data)
 }

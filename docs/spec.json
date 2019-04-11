@@ -11,7 +11,7 @@
   "flags": {
     "app": {
       "alias": "a",
-      "description": "App name, if no app is specified a session app is used instead."
+      "description": "App name, if no app is specified a session app is used instead"
     },
     "bash": {
       "description": "Bash flag used to adapt output to bash completion format",
@@ -45,11 +45,32 @@
     },
     "verbose": {
       "alias": "v",
-      "description": "Logs extra information",
+      "description": "Log extra information",
       "default": "false"
     }
   },
   "commands": {
+    "app": {
+      "description": "Explore and manage apps",
+      "commands": {
+        "ls": {
+          "description": "Print a list of all apps available in the current engine"
+        },
+        "remove": {
+          "description": "Remove the specified app",
+          "flags": {
+            "suppress": {
+              "description": "Suppress confirmation dialogue",
+              "default": "false"
+            }
+          }
+        }
+      }
+    },
+    "assoc": {
+      "alias": "associations",
+      "description": "Print table associations"
+    },
     "build": {
       "flags": {
         "connections": {
@@ -61,32 +82,92 @@
         "measures": {
           "description": "A list of generic measures json paths"
         },
+        "no-reload": {
+          "description": "Do not run the reload script",
+          "default": "false"
+        },
+        "no-save": {
+          "description": "Do not save the app",
+          "default": "false"
+        },
         "objects": {
           "description": "A list of generic object json paths"
         },
         "script": {
-          "description": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
+          "description": "Path to a qvs file containing the app data reload script"
         },
         "silent": {
-          "description": "Do not log reload progress",
+          "description": "Do not log reload output",
           "default": "false"
         }
       }
     },
     "catwalk": {
-      "description": "Opens the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
+      "description": "Open the specified app in catwalk. If no app is specified the catwalk hub will be opened.",
       "flags": {
         "catwalk-url": {
-          "description": "Url to an instance of catwalk, if not provided the qlik one will be used.",
+          "description": "Url to an instance of catwalk, if not provided the qlik one will be used",
           "default": "https://catwalk.core.qlik.com"
         }
       }
     },
     "completion": {
-      "description": "Generates a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that bash-completion is required and needs to be installed on your system."
+      "description": "Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that bash-completion is required and needs to be installed on your system."
+    },
+    "connection": {
+      "description": "Explore and manage connections",
+      "commands": {
+        "get": {
+          "description": "Show the properties for a specific connection"
+        },
+        "ls": {
+          "description": "Print a list of all connections in the current app"
+        },
+        "remove": {
+          "description": "Remove one or many connections from the app"
+        },
+        "set": {
+          "description": "Set or update the connections in the current app"
+        }
+      }
+    },
+    "dimension": {
+      "description": "Explore and manage dimensions",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic dimension"
+        },
+        "ls": {
+          "description": "Print a list of all generic dimensions in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic dimension"
+        },
+        "remove": {
+          "description": "Remove one or many dimensions in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the dimensions in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
     },
     "eval": {
-      "description": "Evaluates a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
+      "description": "Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
+    },
+    "fields": {
+      "description": "Print all the fields in an app, and for each field also some sample content, tags and and number of values"
     },
     "generate-docs": {
       "description": "Generate markdown docs based on cobra commands"
@@ -101,180 +182,63 @@
         }
       }
     },
-    "get": {
-      "description": "Lists one or several resources",
-      "commands": {
-        "apps": {
-          "description": "Prints a list of all apps available in the current engine",
-          "flags": {
-            "json": {
-              "description": "Prints the information in json format",
-              "default": "false"
-            }
-          }
-        },
-        "assoc": {
-          "alias": "associations",
-          "description": "Print table associations summary"
-        },
-        "connection": {
-          "description": "Shows the properties for a specific connection"
-        },
-        "connections": {
-          "description": "Prints a list of all connections in the specified app",
-          "flags": {
-            "json": {
-              "description": "Prints the information in json format",
-              "default": "false"
-            }
-          }
-        },
-        "dimension": {
-          "description": "Shows content of an generic dimension. If no subcommand is specified the properties will be shown.",
-          "commands": {
-            "layout": {
-              "description": "Evaluates the layout of an generic dimension"
-            },
-            "properties": {
-              "description": "Prints the properties of the generic dimension"
-            }
-          }
-        },
-        "dimensions": {
-          "description": "Prints a list of all generic dimensions in the current app",
-          "flags": {
-            "json": {
-              "description": "Prints the information in json format",
-              "default": "false"
-            }
-          }
-        },
-        "field": {
-          "description": "Prints all the values for a specific field in your data model"
-        },
-        "fields": {
-          "description": "Prints all the fields in an app, and for each field also some sample content, tags and and number of values"
-        },
-        "keys": {
-          "description": "Prints a fields list containing key-only fields"
-        },
-        "measure": {
-          "description": "Shows content of an generic measure. If no subcommand is specified the properties will be shown.",
-          "commands": {
-            "layout": {
-              "description": "Evaluates the layout of an generic measure and prints in JSON format"
-            },
-            "properties": {
-              "description": "Prints the properties of the generic measure in JSON format"
-            }
-          }
-        },
-        "measures": {
-          "description": "Prints a list of all generic measures in the current app in either plain text or json",
-          "flags": {
-            "json": {
-              "description": "Prints the information in json format",
-              "default": "false"
-            }
-          }
-        },
-        "meta": {
-          "description": "Lists tables, fields, associations along with metadata like memory consumption, field cardinality etc"
-        },
-        "object": {
-          "description": "Shows content of an generic object. If no subcommand is specified the properties will be shown.",
-          "commands": {
-            "data": {
-              "description": "Evaluates the hypercube data of an generic object"
-            },
-            "layout": {
-              "description": "Evaluates the hypercube layout of an generic object in JSON format"
-            },
-            "properties": {
-              "description": "Prints the properties of the generic object in JSON format"
-            }
-          }
-        },
-        "objects": {
-          "description": "Prints a list of all generic objects in the current app in either plain text or JSON format",
-          "flags": {
-            "json": {
-              "description": "Prints the information in json format",
-              "default": "false"
-            }
-          }
-        },
-        "script": {
-          "description": "Fetches the script currently set in the app and prints it in plain text."
-        },
-        "status": {
-          "description": "Prints status info about the connection to the engine and current app, and also the status of the data model"
-        },
-        "tables": {
-          "description": "Prints tables summary for the data model in an app"
-        }
-      }
-    },
     "help": {
       "description": "Help provides help for any command in the application.\nSimply type corectl help [path to command] for full details."
     },
-    "reload": {
-      "description": "Reloads the app.",
-      "flags": {
-        "no-save": {
-          "description": "Do not save the app",
-          "default": "false"
+    "keys": {
+      "description": "Print a fields list containing key-only fields"
+    },
+    "measure": {
+      "description": "Explore and manage measures",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic measure and prints in JSON format"
         },
-        "silent": {
-          "description": "Do not log reload progress",
-          "default": "false"
+        "ls": {
+          "description": "Print a list of all generic measures in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic measure"
+        },
+        "remove": {
+          "description": "Remove one or many generic measures in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the measures in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
         }
       }
     },
-    "remove": {
-      "description": "Remove one or mores generic entities (connections, dimensions, measures, objects) in the app",
-      "flags": {
-        "suppress": {
-          "description": "Suppress all confirmation dialogues",
-          "default": "false"
-        }
-      },
+    "meta": {
+      "description": "Print tables, fields, associations along with metadata like memory consumption, field cardinality etc"
+    },
+    "object": {
+      "description": "Explore and manage generic objects",
       "commands": {
-        "app": {
-          "description": "removes the specified app."
+        "data": {
+          "description": "Evaluate the hypercube data of a generic object"
         },
-        "connection": {
-          "alias": "connections",
-          "description": "Remove one or many connections from the app",
-          "flags": {
-            "no-save": {
-              "description": "Do not save the app",
-              "default": "false"
-            }
-          }
+        "layout": {
+          "description": "Evaluate the hypercube layout of the generic object"
         },
-        "dimension": {
-          "alias": "dimensions",
-          "description": "Remove one or many dimensions in the current app",
-          "flags": {
-            "no-save": {
-              "description": "Do not save the app",
-              "default": "false"
-            }
-          }
+        "ls": {
+          "description": "Print a list of all generic objects in the current app"
         },
-        "measure": {
-          "alias": "measures",
-          "description": "Removes one or many generic measures in the current app",
-          "flags": {
-            "no-save": {
-              "description": "Do not save the app",
-              "default": "false"
-            }
-          }
+        "properties": {
+          "description": "Print the properties of the generic object in JSON format"
         },
-        "object": {
-          "alias": "objects",
+        "remove": {
           "description": "Remove one or many generic objects in the current app",
           "flags": {
             "no-save": {
@@ -282,54 +246,56 @@
               "default": "false"
             }
           }
+        },
+        "set": {
+          "description": "Set or update the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
         }
       }
     },
-    "set": {
-      "description": "Sets one or several resources",
+    "reload": {
+      "description": "Reload and save the app",
       "flags": {
         "no-save": {
           "description": "Do not save the app",
           "default": "false"
-        }
-      },
-      "commands": {
-        "all": {
-          "description": "Sets the objects, measures, dimensions, connections and script in the current app",
-          "flags": {
-            "connections": {
-              "description": "Path to a yml file containing the data connection definitions"
-            },
-            "dimensions": {
-              "description": "A list of generic dimension json paths"
-            },
-            "measures": {
-              "description": "A list of generic measures json paths"
-            },
-            "objects": {
-              "description": "A list of generic object json paths"
-            },
-            "script": {
-              "description": "path/to/reload-script.qvs that contains a qlik reload script. If omitted the last specified reload script for the current app is reloaded"
-            }
-          }
         },
-        "connections": {
-          "description": "Sets or updates the connections in the current app"
-        },
-        "dimensions": {
-          "description": "Sets or updates the dimensions in the current app"
-        },
-        "measures": {
-          "description": "Sets or updates the measures in the current app"
-        },
-        "objects": {
-          "description": "Sets or updates the objects in the current app.\nThe JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format"
-        },
-        "script": {
-          "description": "Sets the script in the current app"
+        "silent": {
+          "description": "Do not log reload output",
+          "default": "false"
         }
       }
+    },
+    "script": {
+      "description": "Explore and manage the script",
+      "commands": {
+        "get": {
+          "description": "Print the reload script currently set in the app"
+        },
+        "set": {
+          "description": "Set the script in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
+    },
+    "status": {
+      "description": "Print status info about the connection to the engine and current app, and also the status of the data model"
+    },
+    "tables": {
+      "description": "Print tables for the data model in an app"
+    },
+    "values": {
+      "description": "Print all the values for a specific field in your data model"
     },
     "version": {}
   }

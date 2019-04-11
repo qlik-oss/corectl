@@ -13,6 +13,7 @@ func PrintAssociations(data *internal.ModelMetadata) {
 	writer := tablewriter.NewWriter(os.Stdout)
 	writer.SetAutoFormatHeaders(false)
 	writer.SetHeader([]string{"Field(s)", "Linked tables"})
+	writer.SetRowLine(true)
 
 	for _, key := range data.SourceKeys {
 		fieldInfo := ""
