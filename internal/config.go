@@ -2,14 +2,18 @@ package internal
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
-	leven "github.com/texttheater/golang-levenshtein/levenshtein"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/viper"
+	leven "github.com/texttheater/golang-levenshtein/levenshtein"
+	"gopkg.in/yaml.v2"
 )
+
+// ConfigDir represents the directory of the config file used.
+var ConfigDir string
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
 type ConnectionConfigEntry struct {
@@ -20,36 +24,46 @@ type ConnectionConfigEntry struct {
 	Settings         map[string]string
 }
 
-// ConnectionsConfigFile defines the content of a connections yml file.
-type ConnectionsConfigFile struct {
+// ConnectionsConfig defines the content of a connections yml file.
+type ConnectionsConfig struct {
 	Connections map[string]ConnectionConfigEntry
 }
 
-// FileWithReferenceToConfigFile defines a config file with a path reference to an external connections.yml file.
-type FileWithReferenceToConfigFile struct {
-	Connections string
+// GetConnectionsConfig returns a the current connections configuration.
+func GetConnectionsConfig() ConnectionsConfig {
+	var config ConnectionsConfig
+	conn := viper.Get("connections")
+	switch conn.(type) {
+	case string:
+		connFile := RelativeToProject(conn.(string))
+		config = ReadConnectionsFile(connFile)
+	case map[string]interface{}:
+		connMap := conn.(map[string]interface{})
+		fmt.Println(connMap)
+		err := reMarshal(connMap, &config.Connections)
+		if err != nil {
+			FatalError(err)
+		}
+	}
+	fmt.Println(config)
+	return config
 }
 
-func ResolveConnectionsFileReferenceInConfigFile(projectPath string) string {
-	var configFileWithFileReference FileWithReferenceToConfigFile
-	source, err := ioutil.ReadFile(projectPath)
+func reMarshal(m map[string]interface{}, ref interface{}) error {
+	bytes, err := yaml.Marshal(m)
 	if err != nil {
-		return projectPath
+		return err
 	}
-	err = yaml.Unmarshal(source, &configFileWithFileReference)
+	err = yaml.Unmarshal(bytes, ref)
 	if err != nil {
-		return projectPath
+		return err
 	}
-	if configFileWithFileReference.Connections == "" {
-		return projectPath
-	}
-	return RelativeToProject(projectPath, configFileWithFileReference.Connections)
-
+	return nil
 }
 
 // ReadConnectionsFile reads the connections config file from the supplied path.
-func ReadConnectionsFile(path string) ConnectionsConfigFile {
-	var config ConnectionsConfigFile
+func ReadConnectionsFile(path string) ConnectionsConfig {
+	var config ConnectionsConfig
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
 		FatalError("Could not find connections file:", path)
@@ -91,6 +105,7 @@ func ReadConfigFile(explicitConfigFile string) {
 	QliVerbose = viper.GetBool("verbose")
 	LogTraffic = viper.GetBool("traffic")
 	if configFile != "" {
+		ConfigDir = filepath.Dir(configFile)
 		LogVerbose("Using config file: " + configFile)
 	} else {
 		LogVerbose("No config file specified, using default values.")

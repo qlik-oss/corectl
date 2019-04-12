@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"runtime"
 )
 
 var localFlags pflag.FlagSet
@@ -17,7 +18,7 @@ var initialized bool
 func getPathFlagFromConfigFile(paramName string) string {
 	pathInConfigFile := viper.GetString(paramName)
 	if pathInConfigFile != "" {
-		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
+		return internal.RelativeToProject(pathInConfigFile)
 	}
 	return ""
 }

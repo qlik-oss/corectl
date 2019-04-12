@@ -25,7 +25,7 @@ corectl connection set ./my-connections.yml`,
 		if separateConnectionsFile == "" {
 			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
-		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
+		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile)
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

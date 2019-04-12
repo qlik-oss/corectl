@@ -22,7 +22,7 @@ corectl dimension set ./my-dimensions-glob-path.json`,
 			commandLineDimensions = args[0]
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineDimensions, "dimension")
+		internal.SetupEntities(rootCtx, state.Doc, commandLineDimensions, "dimension")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
