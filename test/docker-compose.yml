@@ -9,6 +9,9 @@ services:
     volumes:
       - ./apps:/apps
       - ./data:/data
+    environment:
+      - CORECTL_TEST_CONNECT=corectl-test-connect
+      - ENGINE_URL=localhost:9076
   qix-engine-2:
     container_name: qix-engine-2
     image: qlikcore/engine:12.350.0
