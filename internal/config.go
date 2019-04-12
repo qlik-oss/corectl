@@ -39,16 +39,15 @@ func GetConnectionsConfig() ConnectionsConfig {
 		config = ReadConnectionsFile(connFile)
 	case map[string]interface{}:
 		connMap := conn.(map[string]interface{})
-		fmt.Println(connMap)
 		err := reMarshal(connMap, &config.Connections)
 		if err != nil {
 			FatalError(err)
 		}
 	}
-	fmt.Println(config)
 	return config
 }
 
+// reMarshal takes a map and tries to fit it to a struct
 func reMarshal(m map[string]interface{}, ref interface{}) error {
 	bytes, err := yaml.Marshal(m)
 	if err != nil {
