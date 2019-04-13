@@ -199,6 +199,9 @@ func TestCorectl(t *testing.T) {
 	connectToEngineWithInccorectLicenseService := "--engine=" + *engine2IP
 	connectToEngineABAC := "--engine=" + *engine3IP
 
+	//Setup env vars for project 1
+	os.Setenv("CORECTL_TEST_CONNECT", "corectl-test-connect")
+	os.Setenv("ENGINE_URL", "localhost:9076")
 	// General
 	emptyConnectString := []string{}
 	defaultConnectString1 := []string{"--config=test/project1/corectl.yml", connectToEngine}
