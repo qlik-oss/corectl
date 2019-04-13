@@ -2,13 +2,14 @@ package internal
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
-	leven "github.com/texttheater/golang-levenshtein/levenshtein"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/viper"
+	leven "github.com/texttheater/golang-levenshtein/levenshtein"
+	"gopkg.in/yaml.v2"
 )
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
@@ -29,6 +30,9 @@ type ConnectionsConfigFile struct {
 type FileWithReferenceToConfigFile struct {
 	Connections string
 }
+
+// validProps is the set of valid config properties.
+var validProps map[string]struct{} = map[string]struct{}{}
 
 func ResolveConnectionsFileReferenceInConfigFile(projectPath string) string {
 	var configFileWithFileReference FileWithReferenceToConfigFile
@@ -97,17 +101,16 @@ func ReadConfigFile(explicitConfigFile string) {
 	}
 }
 
+// AddValidProp adds the given property to the set of valid properties.
+func AddValidProp(propName string) {
+	validProps[propName] = struct{}{}
+}
+
 // validateProps reads a config file by
 func validateProps(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalError("Could not find config file:", configPath)
-	}
-	validProps := map[string]struct{}{ // This "set" contains the valid property names
-		"app": {}, "engine": {}, "measures": {}, "script": {},
-		"dimensions": {}, "objects": {}, "connections": {},
-		"headers": {}, "verbose": {}, "traffic": {},
-		"no-data": {}, "bash": {},
 	}
 	configProps := map[string]interface{}{}
 	err = yaml.Unmarshal(source, &configProps)
