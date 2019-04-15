@@ -79,11 +79,6 @@ If you want to keep the previous installed version you can use `go build` and ge
 go build
 ```
 
-Build with latest release tag as version (handy when creating CLI API spec)
-```bash
-go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
-```
-
 ## Test
 
 The unit tests are run with the go test command:
@@ -129,9 +124,12 @@ To regenerate the documentation:
 
 `corectl generate-docs`
 
-To regenerate the api spec:
-
-`corectl generate-spec > docs/spec.json`
+To regenerate the api spec, first build with latest release
+tag as version and then generate the spec using:
+```bash
+go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+./corectl generate-spec > docs/spec.json
+```
 
 ## Contributing
 
