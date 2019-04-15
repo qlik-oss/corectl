@@ -203,7 +203,7 @@ func TestCorectl(t *testing.T) {
 	connectToEngineABAC := "--engine=" + *engine3IP
 
 	//Setup env vars for project 1
-	os.Setenv("CORECTL_TEST_CONNECT", "corectl-test-connect")
+	os.Setenv("CORECTL_TEST_CONNECT", "corectl-test-connector")
 	os.Setenv("ENGINE_URL", "localhost:9076")
 	// General
 	emptyConnectString := []string{}
