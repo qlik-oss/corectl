@@ -25,7 +25,7 @@ type ConnectionConfigEntry struct {
 	Settings         map[string]string
 }
 
-// ConnectionsConfig defines the content of a connections yml file.
+// ConnectionsConfig represents how the connections are configured. 
 type ConnectionsConfig struct {
 	Connections map[string]ConnectionConfigEntry
 }
@@ -47,6 +47,9 @@ func GetConnectionsConfig() ConnectionsConfig {
 	}
 	return config
 }
+
+// validProps is the set of valid config properties.
+var validProps map[string]struct{} = map[string]struct{}{}
 
 // reMarshal takes a map and tries to fit it to a struct
 func reMarshal(m map[string]interface{}, ref interface{}) error {
@@ -102,6 +105,11 @@ func ReadConfigFile(explicitConfigFile string) {
 	}
 }
 
+// AddValidProp adds the given property to the set of valid properties.
+func AddValidProp(propName string) {
+	validProps[propName] = struct{}{}
+}
+
 // setConfigFile reads in a config file and processes it before providing viper with it.
 func setConfigFile(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
@@ -150,12 +158,6 @@ func findConfigFile(fileName string) string {
 // validateProps checks if there are unknown properties in the config
 // configPath is passed for error logging purposes.
 func validateProps(config map[interface{}]interface{}, configPath string) {
-	validProps := map[string]struct{}{ // This "set" contains the valid property names
-		"app": {}, "engine": {}, "measures": {}, "script": {},
-		"dimensions": {}, "objects": {}, "connections": {},
-		"headers": {}, "verbose": {}, "traffic": {},
-		"no-data": {}, "bash": {},
-	}
 	invalidProps := []string{}
 	suggestions := map[string]string{}
 	for key := range config {
