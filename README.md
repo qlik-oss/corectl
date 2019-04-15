@@ -122,7 +122,9 @@ Example:
 The usage documentation is generated using [`cobra/doc`](https://github.com/spf13/cobra/blob/master/doc/md_docs.md).
 To regenerate the documentation:
 
-`corectl generate-docs`
+```bash
+corectl generate-docs
+```
 
 To regenerate the api spec, first build with latest release
 tag as version and then generate the spec using:
