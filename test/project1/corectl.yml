@@ -1,4 +1,4 @@
-engine: localhost:9076
+engine: ${ENGINE_URL}
 app: project1.qvf
 script: ./script.qvs
 connections:
@@ -6,7 +6,7 @@ connections:
     type: testconnector
     username: gwe
     settings:
-      host: corectl-test-connector
+      host: ${CORECTL_TEST_CONNECT}
 objects:
   - ./object-*.json
 measures:

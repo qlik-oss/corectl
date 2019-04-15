@@ -129,6 +129,9 @@ func TestNestedObjectSupport(t *testing.T) {
 }
 
 func TestConnections(t *testing.T) {
+	//setup env var for project 2
+	os.Setenv("CONN_TYPE", "folder")
+
 	//create the connection
 	connectToEngine := "--engine=" + *engineIP
 	output := setupEntities(connectToEngine, "--config=test/project2/corectl.yml", "connection", "--connections=test/project2/connections.yml")
@@ -199,6 +202,9 @@ func TestCorectl(t *testing.T) {
 	connectToEngineWithInccorectLicenseService := "--engine=" + *engine2IP
 	connectToEngineABAC := "--engine=" + *engine3IP
 
+	//Setup env vars for project 1
+	os.Setenv("CORECTL_TEST_CONNECT", "corectl-test-connector")
+	os.Setenv("ENGINE_URL", "localhost:9076")
 	// General
 	emptyConnectString := []string{}
 	defaultConnectString1 := []string{"--config=test/project1/corectl.yml", connectToEngine}
