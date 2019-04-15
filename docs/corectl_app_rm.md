@@ -1,26 +1,27 @@
-## corectl object remove
+## corectl app rm
 
-Remove one or many generic objects in the current app
+Remove the specified app
 
 ### Synopsis
 
-Remove one or many generic objects in the current app
+Remove the specified app
 
 ```
-corectl object remove <object-id>... [flags]
+corectl app rm <app-id> [flags]
 ```
 
 ### Examples
 
 ```
-corectl object remove ID-1 ID-2
+corectl app rm
+corectl app rm APP-ID
 ```
 
 ### Options
 
 ```
-  -h, --help      help for remove
-      --no-save   Do not save the app
+  -h, --help       help for rm
+      --suppress   Suppress confirmation dialogue
 ```
 
 ### Options inherited from parent commands
@@ -38,5 +39,5 @@ corectl object remove ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl app](corectl_app.md)	 - Explore and manage apps
 

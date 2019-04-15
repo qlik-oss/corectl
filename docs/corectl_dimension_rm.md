@@ -1,27 +1,26 @@
-## corectl connection remove
+## corectl dimension rm
 
-Remove the specified connection(s)
+Remove one or many dimensions in the current app
 
 ### Synopsis
 
-Remove one or many connections from the app
+Remove one or many dimensions in the current app
 
 ```
-corectl connection remove <connection-id>... [flags]
+corectl dimension rm <dimension-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl connection remove
-corectl connection remove ID-1
-corectl connection remove ID-1 ID-2
+corectl dimension rm ID-1
 ```
 
 ### Options
 
 ```
-  -h, --help   help for remove
+  -h, --help      help for rm
+      --no-save   Do not save the app
 ```
 
 ### Options inherited from parent commands
@@ -39,5 +38,5 @@ corectl connection remove ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
 

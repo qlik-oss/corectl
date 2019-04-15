@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var setObjectsCmd = withLocalFlags(&cobra.Command{
@@ -33,10 +34,10 @@ corectl object set ./my-objects-glob-path.json`,
 }, "no-save")
 
 var removeObjectCmd = withLocalFlags(&cobra.Command{
-	Use:     "remove <object-id>...",
+	Use:     "rm <object-id>...",
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",
-	Example: `corectl object remove ID-1 ID-2`,
+	Example: `corectl object rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {

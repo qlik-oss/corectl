@@ -56,7 +56,7 @@
         "ls": {
           "description": "Print a list of all apps available in the current engine"
         },
-        "remove": {
+        "rm": {
           "description": "Remove the specified app",
           "flags": {
             "suppress": {
@@ -123,7 +123,7 @@
         "ls": {
           "description": "Print a list of all connections in the current app"
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many connections from the app"
         },
         "set": {
@@ -143,7 +143,7 @@
         "properties": {
           "description": "Print the properties of the generic dimension"
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many dimensions in the current app",
           "flags": {
             "no-save": {
@@ -200,7 +200,7 @@
         "properties": {
           "description": "Print the properties of the generic measure"
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many generic measures in the current app",
           "flags": {
             "no-save": {
@@ -238,7 +238,7 @@
         "properties": {
           "description": "Print the properties of the generic object in JSON format"
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many generic objects in the current app",
           "flags": {
             "no-save": {

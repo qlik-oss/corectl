@@ -100,5 +100,4 @@ func Save(ctx context.Context, doc *enigma.Doc) {
 		fmt.Println("Save failed")
 	}
 	fmt.Println()
-
 }

@@ -1,27 +1,26 @@
-## corectl app remove
+## corectl measure rm
 
-Remove the specified app
+Remove one or many generic measures in the current app
 
 ### Synopsis
 
-Remove the specified app
+Remove one or many generic measures in the current app
 
 ```
-corectl app remove <app-id> [flags]
+corectl measure rm <measure-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl app remove
-corectl app remove APP-ID
+corectl measure rm ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help       help for remove
-      --suppress   Suppress confirmation dialogue
+  -h, --help      help for rm
+      --no-save   Do not save the app
 ```
 
 ### Options inherited from parent commands
@@ -39,5 +38,5 @@ corectl app remove APP-ID
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl measure](corectl_measure.md)	 - Explore and manage measures
 

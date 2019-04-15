@@ -1,25 +1,25 @@
-## corectl dimension remove
+## corectl object rm
 
-Remove one or many dimensions in the current app
+Remove one or many generic objects in the current app
 
 ### Synopsis
 
-Remove one or many dimensions in the current app
+Remove one or many generic objects in the current app
 
 ```
-corectl dimension remove <dimension-id>... [flags]
+corectl object rm <object-id>... [flags]
 ```
 
 ### Examples
 
 ```
-corectl dimension remove ID-1
+corectl object rm ID-1 ID-2
 ```
 
 ### Options
 
 ```
-  -h, --help      help for remove
+  -h, --help      help for rm
       --no-save   Do not save the app
 ```
 
@@ -38,5 +38,5 @@ corectl dimension remove ID-1
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl object](corectl_object.md)	 - Explore and manage generic objects
 

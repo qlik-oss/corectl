@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var setDimensionsCmd = withLocalFlags(&cobra.Command{
@@ -30,10 +31,10 @@ corectl dimension set ./my-dimensions-glob-path.json`,
 }, "no-save")
 
 var removeDimensionCmd = withLocalFlags(&cobra.Command{
-	Use:     "remove <dimension-id>...",
+	Use:     "rm <dimension-id>...",
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",
-	Example: `corectl dimension remove ID-1`,
+	Example: `corectl dimension rm ID-1`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
