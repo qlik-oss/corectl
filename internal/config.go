@@ -24,7 +24,7 @@ type ConnectionConfigEntry struct {
 	Settings         map[string]string
 }
 
-// ConnectionsConfig defines the content of a connections yml file.
+// ConnectionsConfig represents how the connections are configured. 
 type ConnectionsConfig struct {
 	Connections map[string]ConnectionConfigEntry
 }
