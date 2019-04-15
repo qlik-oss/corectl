@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var setConnectionsCmd = &cobra.Command{
@@ -33,12 +34,12 @@ corectl connection set ./my-connections.yml`,
 }
 
 var removeConnectionCmd = &cobra.Command{
-	Use:   "remove <connection-id>...",
+	Use:   "rm <connection-id>...",
 	Short: "Remove the specified connection(s)",
 	Long:  "Remove one or many connections from the app",
-	Example: `corectl connection remove
-corectl connection remove ID-1
-corectl connection remove ID-1 ID-2`,
+	Example: `corectl connection rm
+corectl connection rm ID-1
+corectl connection rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {

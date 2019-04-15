@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var getAppsCmd = &cobra.Command{
@@ -26,11 +27,11 @@ var getAppsCmd = &cobra.Command{
 }
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
-	Use:   "remove <app-id>",
+	Use:   "rm <app-id>",
 	Short: "Remove the specified app",
 	Long:  `Remove the specified app`,
-	Example: `corectl app remove
-corectl app remove APP-ID`,
+	Example: `corectl app rm
+corectl app rm APP-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := viper.GetString("app")

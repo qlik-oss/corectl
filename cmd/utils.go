@@ -3,16 +3,17 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/printer"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"github.com/tcnksm/go-latest"
 	"log"
 	"os"
 	"path"
 	"runtime"
 	"strings"
+
+	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/tcnksm/go-latest"
 )
 
 var versionCmd = &cobra.Command{

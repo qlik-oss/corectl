@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var setMeasuresCmd = withLocalFlags(&cobra.Command{
@@ -30,10 +31,10 @@ corectl measure set ./my-measures-glob-path.json`,
 }, "no-save")
 
 var removeMeasureCmd = withLocalFlags(&cobra.Command{
-	Use:     "remove <measure-id>...",
+	Use:     "rm <measure-id>...",
 	Short:   "Remove one or many generic measures in the current app",
 	Long:    "Remove one or many generic measures in the current app",
-	Example: `corectl measure remove ID-1 ID-2`,
+	Example: `corectl measure rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {

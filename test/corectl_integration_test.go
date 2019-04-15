@@ -92,7 +92,7 @@ func setupEntities(connectToEngine string, configPath string, entityType string,
 }
 
 func removeEntities(t *testing.T, connectToEngine string, configPath string, entityType string, entityId string) {
-	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "remove", entityId}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "rm", entityId}...)
 	output, _ := cmd.CombinedOutput()
 	assert.Equal(t, "Saving app... Done\n\n", string(output))
 }
@@ -125,7 +125,7 @@ func TestNestedObjectSupport(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "object")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "remove", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", "project2.qvf"}...)
 }
 
 func TestConnections(t *testing.T) {
@@ -150,7 +150,7 @@ func TestConnections(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connection")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "remove", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", "project2.qvf"}...)
 }
 
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
@@ -171,7 +171,7 @@ func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
 		if tt.initTest.teardown == true {
 			t.Log("\u001b[96m *** Teardown *** \u001b[0m")
 
-			args := append(tt.connectString, []string{"app", "remove", "--suppress"}...)
+			args := append(tt.connectString, []string{"app", "rm", "--suppress"}...)
 			cmd := exec.Command(binaryPath, args...)
 
 			t.Log("\u001b[35m Executing command:" + strings.Join(cmd.Args, " ") + "\u001b[0m")
@@ -236,7 +236,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - reload without progress and without save", defaultConnectString1, []string{"reload", "--silent", "--no-save"}, []string{"golden", "project1-reload-silent-no-save.golden"}, initTest{true, true}},
 		{"project 1 - set measures", defaultConnectString1, []string{"measure", "set", "test/project1/not-following-glob-pattern-measure.json", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - get measures 2", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "ls"}, []string{"golden", "project1-measures-2.golden"}, initTest{true, true}},
-		{"project 1 - remove measures", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "remove", "measure-3", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
+		{"project 1 - remove measures", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "rm", "measure-3", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - check measures after removal", defaultConnectString1, []string{"measure", "ls"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
 		{"project 1 - set script", defaultConnectString1, []string{"script", "set", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
@@ -267,7 +267,7 @@ func TestCorectl(t *testing.T) {
 		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"app", "ls"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
 
 		// Verifying corectl against an engine running with ABAC enabled
-		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to project4.qvf @ ", "The data model has 1 tables."}, initTest{true, true}},
+		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to project4.qvf @ ", "The data model has 1 table."}, initTest{true, true}},
 		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls"}, []string{"\"title\": \"project4.qvf\","}, initTest{true, true}},
 		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
 
