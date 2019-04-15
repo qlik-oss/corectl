@@ -4,7 +4,7 @@ script: ./script.qvs
 connections:
   myconnection:
     type: testconnector
-    username: gwe 
+    username: gwe
     settings:
       host: ${CORECTL_TEST_CONNECT}
 objects:
