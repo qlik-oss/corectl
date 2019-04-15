@@ -1,15 +1,27 @@
-## corectl dimension
+## corectl app rm
 
-Explore and manage dimensions
+Remove the specified app
 
 ### Synopsis
 
-Explore and manage dimensions
+Remove the specified app
+
+```
+corectl app rm <app-id> [flags]
+```
+
+### Examples
+
+```
+corectl app rm
+corectl app rm APP-ID
+```
 
 ### Options
 
 ```
-  -h, --help   help for dimension
+  -h, --help       help for rm
+      --suppress   Suppress confirmation dialogue
 ```
 
 ### Options inherited from parent commands
@@ -27,10 +39,5 @@ Explore and manage dimensions
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl dimension layout](corectl_dimension_layout.md)	 - Evaluate the layout of an generic dimension
-* [corectl dimension ls](corectl_dimension_ls.md)	 - Print a list of all generic dimensions in the current app
-* [corectl dimension properties](corectl_dimension_properties.md)	 - Print the properties of the generic dimension
-* [corectl dimension rm](corectl_dimension_rm.md)	 - Remove one or many dimensions in the current app
-* [corectl dimension set](corectl_dimension_set.md)	 - Set or update the dimensions in the current app
+* [corectl app](corectl_app.md)	 - Explore and manage apps
 

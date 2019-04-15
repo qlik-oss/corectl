@@ -29,5 +29,5 @@ Explore and manage apps
 
 * [corectl](corectl.md)	 - 
 * [corectl app ls](corectl_app_ls.md)	 - Print a list of all apps available in the current engine
-* [corectl app remove](corectl_app_remove.md)	 - Remove the specified app
+* [corectl app rm](corectl_app_rm.md)	 - Remove the specified app
 
