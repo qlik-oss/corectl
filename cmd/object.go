@@ -25,7 +25,7 @@ corectl object set ./my-objects-glob-path.json`,
 		}
 
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineObjects, "object")
+		internal.SetupEntities(rootCtx, state.Doc, commandLineObjects, "object")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

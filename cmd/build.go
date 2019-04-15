@@ -22,10 +22,10 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 		if separateConnectionsFile == "" {
 			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
-		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile)
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("dimensions").Value.String(), "dimension")
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("measures").Value.String(), "measure")
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("objects").Value.String(), "object")
 		scriptFile := ccmd.Flag("script").Value.String()
 		if scriptFile == "" {
 			scriptFile = getPathFlagFromConfigFile("script")

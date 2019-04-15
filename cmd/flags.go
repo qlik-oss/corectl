@@ -18,7 +18,7 @@ var initialized bool
 func getPathFlagFromConfigFile(paramName string) string {
 	pathInConfigFile := viper.GetString(paramName)
 	if pathInConfigFile != "" {
-		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
+		return internal.RelativeToProject(pathInConfigFile)
 	}
 	return ""
 }

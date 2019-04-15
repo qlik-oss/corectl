@@ -22,7 +22,7 @@ corectl measure set ./my-measures-glob-path.json`,
 			commandLineMeasures = args[0]
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, viper.ConfigFileUsed(), commandLineMeasures, "measure")
+		internal.SetupEntities(rootCtx, state.Doc, commandLineMeasures, "measure")
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
