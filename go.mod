@@ -18,6 +18,6 @@ require (
 	github.com/stretchr/testify v1.3.0
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e
-	golang.org/x/sys v0.0.0-20190407153405-4b34438f7a67 // indirect
+	golang.org/x/sys v0.0.0-20190413005110-97732733099d // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
