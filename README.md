@@ -129,6 +129,10 @@ To regenerate the documentation:
 
 `corectl generate-docs`
 
+To regenerate the api spec:
+
+`corectl generate-spec > docs/spec.json`
+
 ## Contributing
 
 We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source)
