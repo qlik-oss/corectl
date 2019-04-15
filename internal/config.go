@@ -1,13 +1,13 @@
 package internal
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-	"bytes"
-	"errors"
 
 	"github.com/spf13/viper"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
@@ -18,7 +18,7 @@ import (
 var ConfigDir string
 
 // validProps is the set of valid config properties.
-var validProps map[string]struct{} = map[string]struct{}{}
+var validProps = map[string]struct{}{}
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
 type ConnectionConfigEntry struct {
@@ -29,7 +29,7 @@ type ConnectionConfigEntry struct {
 	Settings         map[string]string
 }
 
-// ConnectionsConfig represents how the connections are configured. 
+// ConnectionsConfig represents how the connections are configured.
 type ConnectionsConfig struct {
 	Connections map[string]ConnectionConfigEntry
 }
@@ -69,7 +69,7 @@ func reMarshal(m map[string]interface{}, ref interface{}) error {
 // returns error if non-string was present in input map
 func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 	strMap := map[string]interface{}{}
-	for k, v := range(m) {
+	for k, v := range m {
 		if s, ok := k.(string); ok {
 			strMap[s] = v
 		} else {
@@ -220,19 +220,19 @@ func validateProps(config map[interface{}]interface{}, configPath string) {
 func subEnvVars(m *map[interface{}]interface{}) {
 	for k, v := range *m {
 		switch v.(type) {
-			case string:
-				envVar := v.(string)
-				if strings.HasPrefix(envVar, "${") && strings.HasSuffix(envVar, "}") {
-					envVar = strings.TrimSuffix(strings.TrimPrefix(envVar, "${"), "}")
-					if val := os.Getenv(envVar); val != "" {
-						(*m)[k] = val
-					} else {
-						FatalError(fmt.Sprintf("Environment variable '%s' not found.", envVar))
-					}
+		case string:
+			envVar := v.(string)
+			if strings.HasPrefix(envVar, "${") && strings.HasSuffix(envVar, "}") {
+				envVar = strings.TrimSuffix(strings.TrimPrefix(envVar, "${"), "}")
+				if val := os.Getenv(envVar); val != "" {
+					(*m)[k] = val
+				} else {
+					FatalError(fmt.Sprintf("Environment variable '%s' not found.", envVar))
 				}
-			case map[interface{}]interface{}:
-				m2 := v.(map[interface{}]interface{})
-				subEnvVars(&m2)
+			}
+		case map[interface{}]interface{}:
+			m2 := v.(map[interface{}]interface{})
+			subEnvVars(&m2)
 		}
 	}
 }
