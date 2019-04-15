@@ -129,6 +129,9 @@ func TestNestedObjectSupport(t *testing.T) {
 }
 
 func TestConnections(t *testing.T) {
+	//setup env var for project 2
+	os.Setenv("CONN_TYPE", "folder")
+
 	//create the connection
 	connectToEngine := "--engine=" + *engineIP
 	output := setupEntities(connectToEngine, "--config=test/project2/corectl.yml", "connection", "--connections=test/project2/connections.yml")

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"bytes"
+	"errors"
 
 	"github.com/spf13/viper"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
@@ -15,6 +16,9 @@ import (
 
 // ConfigDir represents the directory of the config file used.
 var ConfigDir string
+
+// validProps is the set of valid config properties.
+var validProps map[string]struct{} = map[string]struct{}{}
 
 // ConnectionConfigEntry defines the content of a connection in either the project config yml file or a connections yml file.
 type ConnectionConfigEntry struct {
@@ -48,9 +52,6 @@ func GetConnectionsConfig() ConnectionsConfig {
 	return config
 }
 
-// validProps is the set of valid config properties.
-var validProps map[string]struct{} = map[string]struct{}{}
-
 // reMarshal takes a map and tries to fit it to a struct
 func reMarshal(m map[string]interface{}, ref interface{}) error {
 	bytes, err := yaml.Marshal(m)
@@ -64,16 +65,37 @@ func reMarshal(m map[string]interface{}, ref interface{}) error {
 	return nil
 }
 
+// convertMap turns {} -> {} map into string -> {} map
+// returns error if non-string was present in input map
+func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
+	strMap := map[string]interface{}{}
+	for k, v := range(m) {
+		if s, ok := k.(string); ok {
+			strMap[s] = v
+		} else {
+			return strMap, errors.New("Non-string found in map")
+		}
+	}
+	return strMap, nil
+}
+
 // ReadConnectionsFile reads the connections config file from the supplied path.
 func ReadConnectionsFile(path string) ConnectionsConfig {
-	var config ConnectionsConfig
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
 		FatalError("Could not find connections file:", path)
 	}
-	err = yaml.Unmarshal(source, &config)
+	var config ConnectionsConfig
+	tempConfig := map[interface{}]interface{}{}
+	err = yaml.Unmarshal(source, &tempConfig)
 	if err != nil {
 		FatalError(err)
+	}
+	subEnvVars(&tempConfig)
+	if strConfig, err := convertMap(tempConfig); err == nil {
+		reMarshal(strConfig, &config)
+	} else {
+		FatalError("Found non-string property in:", path)
 	}
 	return config
 }
