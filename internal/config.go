@@ -47,6 +47,9 @@ func GetConnectionsConfig() ConnectionsConfig {
 	return config
 }
 
+// validProps is the set of valid config properties.
+var validProps map[string]struct{} = map[string]struct{}{}
+
 // reMarshal takes a map and tries to fit it to a struct
 func reMarshal(m map[string]interface{}, ref interface{}) error {
 	bytes, err := yaml.Marshal(m)
@@ -111,17 +114,16 @@ func ReadConfigFile(explicitConfigFile string) {
 	}
 }
 
+// AddValidProp adds the given property to the set of valid properties.
+func AddValidProp(propName string) {
+	validProps[propName] = struct{}{}
+}
+
 // validateProps reads a config file by
 func validateProps(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalError("Could not find config file:", configPath)
-	}
-	validProps := map[string]struct{}{ // This "set" contains the valid property names
-		"app": {}, "engine": {}, "measures": {}, "script": {},
-		"dimensions": {}, "objects": {}, "connections": {},
-		"headers": {}, "verbose": {}, "traffic": {},
-		"no-data": {}, "bash": {},
 	}
 	configProps := map[string]interface{}{}
 	err = yaml.Unmarshal(source, &configProps)

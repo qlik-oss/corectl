@@ -68,6 +68,11 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 		// we instead rely on the default bash behavior
 		globalFlags.SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 	}
+
+	// Add all global flags to the set of valid config properties.
+	globalFlags.VisitAll(func(flag *pflag.Flag) {
+		internal.AddValidProp(flag.Name)
+	})
 }
 
 func initLocalFlags() {
@@ -100,4 +105,9 @@ func initLocalFlags() {
 		localFlags.SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
 	}
+
+	// Add all local flags to the set of valid config properties.
+	localFlags.VisitAll(func(flag *pflag.Flag) {
+		internal.AddValidProp(flag.Name)
+	})
 }
