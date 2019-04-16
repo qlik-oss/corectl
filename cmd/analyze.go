@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"fmt"
+	"strings"
+
 	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"strings"
 )
 
 var getAssociationsCmd = &cobra.Command{
@@ -18,6 +17,8 @@ var getAssociationsCmd = &cobra.Command{
 	Long:    "Print table associations",
 	Example: `corectl assoc
 corectl associations`,
+
+	Args: cobra.ExactArgs(0),
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -33,6 +34,8 @@ var getTablesCmd = &cobra.Command{
 	Example: `corectl tables
 corectl tables --app=my-app.qvf`,
 
+	Args: cobra.ExactArgs(0),
+
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
@@ -47,6 +50,8 @@ var getMetaCmd = &cobra.Command{
 	Example: `corectl meta
 corectl meta --app my-app.qvf`,
 
+	Args: cobra.ExactArgs(0),
+
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
@@ -60,12 +65,9 @@ var getValuesCmd = &cobra.Command{
 	Long:    "Print all the values for a specific field in your data model",
 	Example: "corectl values FIELD",
 
+	Args: cobra.ExactArgs(1),
+
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("Expected a field name as parameter")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
 	},
@@ -76,6 +78,8 @@ var getFieldsCmd = &cobra.Command{
 	Short:   "Print field list",
 	Long:    "Print all the fields in an app, and for each field also some sample content, tags and and number of values",
 	Example: "corectl fields",
+
+	Args: cobra.ExactArgs(0),
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -89,6 +93,8 @@ var getKeysCmd = &cobra.Command{
 	Short:   "Print key-only field list",
 	Long:    "Print a fields list containing key-only fields",
 	Example: "corectl keys",
+
+	Args: cobra.ExactArgs(0),
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -106,12 +112,9 @@ corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
+	Args: cobra.MinimumNArgs(1),
+
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Expected at least one dimension or measure")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
@@ -124,16 +127,16 @@ var catwalkCmd = withLocalFlags(&cobra.Command{
 	Example: `corectl catwalk --app my-app.qvf
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
+	Args: cobra.ExactArgs(0),
+
 	Run: func(ccmd *cobra.Command, args []string) {
 		catwalkURL := viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/apps/" + viper.GetString("app")
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			fmt.Println("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
-			os.Exit(1)
+			internal.FatalError("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
 		}
 		err := browser.OpenURL(catwalkURL)
 		if err != nil {
-			fmt.Println("Could not open URL", err)
-			os.Exit(1)
+			internal.FatalError("Could not open URL", err)
 		}
 	},
 }, "catwalk-url")

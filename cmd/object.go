@@ -18,13 +18,9 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	Example: `corectl object set
 corectl object set ./my-objects-glob-path.json`,
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
-
-		commandLineObjects := ""
-		if len(args) > 0 {
-			commandLineObjects = args[0]
-		}
-
+		commandLineObjects := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, commandLineObjects, "object")
 		if state.AppID != "" && !viper.GetBool("no-save") {
@@ -39,6 +35,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Long:    "Remove one or many generic objects in the current app",
 	Example: `corectl object rm ID-1 ID-2`,
 
+	Args: cobra.MinimumNArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected atleast one object-id specify what object to remove from the app")
@@ -66,6 +63,7 @@ var listObjectsCmd = &cobra.Command{
 	Long:    "Print a list of all generic objects in the current app",
 	Example: `corectl object ls`,
 
+	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "object", !viper.GetBool("bash"))
 	},
@@ -77,6 +75,7 @@ var getObjectPropertiesCmd = &cobra.Command{
 	Long:    "Print the properties of the generic object in JSON format",
 	Example: "corectl object properties OBJECT-ID",
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "object")
 	},
@@ -88,6 +87,7 @@ var getObjectLayoutCmd = &cobra.Command{
 	Long:    "Evaluate the hypercube layout of the generic object",
 	Example: "corectl object layout OBJECT-ID",
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected an object id specify what object to use as a parameter")
@@ -105,6 +105,7 @@ var getObjectDataCmd = &cobra.Command{
 	Long:    "Evaluate the hypercube data of a generic object",
 	Example: "corectl object data OBJECT-ID",
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected an object id specify what object to use as a parameter")

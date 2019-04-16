@@ -23,6 +23,8 @@ var versionCmd = &cobra.Command{
 	Annotations: map[string]string{
 		"command_category": "other",
 	},
+
+	Args: cobra.ExactArgs(0),
 	Run: func(_ *cobra.Command, args []string) {
 
 		if version != "development build" {
@@ -43,6 +45,7 @@ corectl status --app=my-app.qvf`,
 		"command_category": "other",
 	},
 
+	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.PrintStatus(state, viper.GetString("engine"))

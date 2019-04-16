@@ -14,6 +14,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	Annotations: map[string]string{
 		"command_category": "build",
 	},
+	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		ctx := rootCtx
 		state := internal.PrepareEngineState(ctx, headers, true)
@@ -53,7 +54,7 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 	Annotations: map[string]string{
 		"command_category": "build",
 	},
-
+	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		silent := viper.GetBool("silent")

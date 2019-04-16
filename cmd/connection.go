@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -14,17 +11,14 @@ var setConnectionsCmd = &cobra.Command{
 	Use:   "set <path-to-connections-file.yml>",
 	Short: "Set or update the connections in the current app",
 	Long:  "Set or update the connections in the current app",
-	Example: `corectl connection set
-corectl connection set ./my-connections.yml`,
+	Example: `corectl connection set ./my-connections.yml`,
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		separateConnectionsFile := ""
-		if len(args) > 0 {
-			separateConnectionsFile = args[0]
-		}
+		separateConnectionsFile := args[0]
 		if separateConnectionsFile == "" {
-			separateConnectionsFile = getPathFlagFromConfigFile("connections")
+			internal.FatalError("Error: No connection file specified.")
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile)
 		if state.AppID != "" && !viper.GetBool("no-save") {
@@ -41,13 +35,8 @@ var removeConnectionCmd = &cobra.Command{
 corectl connection rm ID-1
 corectl connection rm ID-1 ID-2`,
 
+	Args: cobra.MinimumNArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Expected at least one identifier of a connection to delete.")
-			ccmd.Usage()
-			os.Exit(1)
-		}
-
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, connection := range args {
 			err := state.Doc.DeleteConnection(rootCtx, connection)
@@ -67,6 +56,7 @@ var getConnectionsCmd = &cobra.Command{
 	Long:    "Print a list of all connections in the current app",
 	Example: `corectl connection ls`,
 
+	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connections, err := state.Doc.GetConnections(rootCtx)
@@ -78,17 +68,13 @@ var getConnectionsCmd = &cobra.Command{
 }
 
 var getConnectionCmd = &cobra.Command{
-	Use:     "get",
+	Use:     "get <connection-id>",
 	Short:   "Show the properties for a specific connection",
 	Long:    "Show the properties for a specific connection",
 	Example: "corectl connection get CONNECTION-ID",
 
+	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("Expected a connection name as parameter")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
