@@ -1,6 +1,6 @@
 engin: localhost:9076
 scrip: ./script.qvs
-apps: invalid-app.qvf
+apps: corectl_test_app.qvf 
 connection: 
   testdata:
     connectionstring: /data

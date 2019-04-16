@@ -1,5 +1,3 @@
-// +build integration
-
 package test
 
 import (
@@ -21,6 +19,8 @@ import (
 )
 
 var update = flag.Bool("update", false, "update golden files")
+
+var testAppName = "corectl_test_app.qvf"
 
 var engineIP = flag.String("engineIP", "localhost:9076", "URL to first engine instance in docker-compose.yml i.e qix-engine-1")
 var engine2IP = flag.String("engine2IP", "localhost:9176", "URL to second engine instance in docker-compose.yml i.e qix-engine-2")
@@ -125,7 +125,7 @@ func TestNestedObjectSupport(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "object")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", testAppName}...)
 }
 
 func TestConnections(t *testing.T) {
@@ -150,7 +150,7 @@ func TestConnections(t *testing.T) {
 	verifyNoEntities(t, connectToEngine, "--config=test/project2/corectl.yml", "connection")
 
 	//remove the app as clean-up (Otherwise we might share sessions when we use that app again.)
-	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", "project2.qvf"}...)
+	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", testAppName}...)
 }
 
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
@@ -164,26 +164,17 @@ func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
 		if err != nil {
 			t.Fatalf("Unable to create app: %s\n", output)
 		}
-
 	}
 
 	return func(t *testing.T, tt test) {
 		if tt.initTest.teardown == true {
 			t.Log("\u001b[96m *** Teardown *** \u001b[0m")
 
-			args := append(tt.connectString, "app", "ls")
+			args := append(tt.connectString, []string{"app", "rm", testAppName, "--suppress"}...)
 			cmd := exec.Command(binaryPath, args...)
-			output, err := cmd.CombinedOutput()
-			apps := []map[string]interface{}{}
-			json.Unmarshal(output, &apps)
-			appName := apps[0]["name"].(string)
-
-			args = append(tt.connectString, []string{"app", "rm", appName, "--suppress"}...)
-			cmd = exec.Command(binaryPath, args...)
 
 			t.Log("\u001b[35m Executing command:" + strings.Join(cmd.Args, " ") + "\u001b[0m")
-			output, err = cmd.CombinedOutput()
-
+			output, err := cmd.CombinedOutput()
 			if err != nil {
 				t.Fatalf("Unable to delete app: %s\n", output)
 			}
@@ -254,7 +245,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - save objects in app opened without data", []string{"--config=test/project1/corectl.yml", "--ttl", "0", connectToEngine}, []string{"build", "--no-data"}, []string{"Saving objects in app... Done"}, initTest{false, true}},
 
 		// Project 2 has separate connections file
-		{"project 2 - build with connections", []string{connectToEngine, "-a=project2.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
+		{"project 2 - build with connections", []string{connectToEngine, "-a=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 2 - build with connections 2", []string{connectToEngine, "--config=test/project2/corectl-connectionsref.yml"}, []string{"build"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
@@ -263,10 +254,10 @@ func TestCorectl(t *testing.T) {
 		{"project 3 - get fields", defaultConnectString3, []string{"fields"}, []string{"golden", "project3-fields.golden"}, initTest{false, false}},
 		{"err project 1 - invalid-catwalk-url", defaultConnectString1, []string{"catwalk", "--catwalk-url=not-a-valid-url"}, []string{"golden", "project1-catwalk-error.golden"}, initTest{false, false}},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"eval", "count(numbers)", "by", "xyz"}, []string{"golden", "err-2.golden"}, initTest{false, false}},
-		{"err 3", []string{connectToEngine, "--app=project1.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"object", "data", "nosuchobject"}, []string{"golden", "err-3.golden"}, initTest{true, true}},
+		{"err 3", []string{connectToEngine, "--app=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"object", "data", "nosuchobject"}, []string{"golden", "err-3.golden"}, initTest{true, true}},
 
-		{"project 1 - get status", defaultConnectString1, []string{"status"}, []string{"Connected to project1.qvf @ ", "The data model has 2 tables."}, initTest{true, true}},
-		{"list apps json", defaultConnectString1, []string{"app", "ls"}, []string{"\"id\": \"/apps/project1.qvf\","}, initTest{true, true}},
+		{"project 1 - get status", defaultConnectString1, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 2 tables."}, initTest{true, true}},
+		{"list apps json", defaultConnectString1, []string{"app", "ls"}, []string{"\"id\": \"/apps/" + testAppName + "\","}, initTest{true, true}},
 		{"err 1", []string{"--engine=localhost:9999"}, []string{"fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
 
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
@@ -274,8 +265,8 @@ func TestCorectl(t *testing.T) {
 		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"app", "ls"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
 
 		// Verifying corectl against an engine running with ABAC enabled
-		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to project4.qvf @ ", "The data model has 1 table."}, initTest{true, true}},
-		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls"}, []string{"\"title\": \"project4.qvf\","}, initTest{true, true}},
+		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 1 table."}, initTest{true, true}},
+		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls"}, []string{"\"title\": \"" + testAppName + "\","}, initTest{true, true}},
 		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
 
 		// Verifying config validation
