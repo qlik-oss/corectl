@@ -9,7 +9,7 @@ import (
 )
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
-	Use:     "set <path-to-script-file.yml>",
+	Use:     "set <path-to-script-file.qvs>",
 	Short:   "Set the script in the current app",
 	Long:    "Set the script in the current app",
 	Example: "corectl script set ./my-script-file.qvs",
