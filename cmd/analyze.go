@@ -60,7 +60,7 @@ var getValuesCmd = &cobra.Command{
 	Use:     "values <field name>",
 	Args: cobra.ExactArgs(1),
 	Short:   "Print the top values of a field",
-	Long:    "Print all the values for a specific field in your data model",
+	Long:    "Print the top values for a specific field in your data model",
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
