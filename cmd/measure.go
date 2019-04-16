@@ -8,11 +8,11 @@ import (
 
 var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-measures-files.json>",
+	Args: cobra.ExactArgs(1),
 	Short: "Set or update the measures in the current app",
 	Long:  "Set or update the measures in the current app",
 	Example: `corectl measure set ./my-measures-glob-path.json`,
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 
 		commandLineMeasures := args[0]
@@ -26,11 +26,11 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 
 var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <measure-id>...",
+	Args: cobra.MinimumNArgs(1),
 	Short:   "Remove one or many generic measures in the current app",
 	Long:    "Remove one or many generic measures in the current app",
 	Example: `corectl measure rm ID-1 ID-2`,
 
-	Args: cobra.MinimumNArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
@@ -49,11 +49,11 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 
 var listMeasuresCmd = &cobra.Command{
 	Use:     "ls",
+	Args: cobra.ExactArgs(0),
 	Short:   "Print a list of all generic measures in the current app",
 	Long:    "Print a list of all generic measures in the current app",
 	Example: `corectl measure ls`,
 
-	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
 	},
@@ -61,11 +61,11 @@ var listMeasuresCmd = &cobra.Command{
 
 var getMeasurePropertiesCmd = &cobra.Command{
 	Use:     "properties <measure-id>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic measure",
 	Long:    "Print the properties of the generic measure",
 	Example: `corectl measure properties MEASURE-ID`,
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "measure")
 	},
@@ -73,11 +73,11 @@ var getMeasurePropertiesCmd = &cobra.Command{
 
 var getMeasureLayoutCmd = &cobra.Command{
 	Use:     "layout <measure-id>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Evaluate the layout of an generic measure",
 	Long:    "Evaluate the layout of an generic measure and prints in JSON format",
 	Example: `corectl measure layout MEASURE-ID`,
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityLayout(ccmd, args, "measure")
 	},

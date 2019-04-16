@@ -10,11 +10,11 @@ import (
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <path-to-script-file.qvs>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Set the script in the current app",
 	Long:    "Set the script in the current app",
 	Example: "corectl script set ./my-script-file.qvs",
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 
 		state := internal.PrepareEngineState(rootCtx, headers, true)
@@ -32,11 +32,11 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 var getScriptCmd = &cobra.Command{
 	Use:     "get",
+	Args: cobra.ExactArgs(0),
 	Short:   "Print the reload script",
 	Long:    "Print the reload script currently set in the app",
 	Example: `corectl script get`,
 
-	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		script, err := state.Doc.GetScript(rootCtx)

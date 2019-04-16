@@ -12,13 +12,13 @@ import (
 
 var setObjectsCmd = withLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-objects-files.json",
+	Args: cobra.ExactArgs(1),
 	Short: "Set or update the objects in the current app",
 	Long: `Set or update the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
 	Example: `corectl object set
 corectl object set ./my-objects-glob-path.json`,
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineObjects := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
@@ -31,11 +31,11 @@ corectl object set ./my-objects-glob-path.json`,
 
 var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <object-id>...",
+	Args: cobra.MinimumNArgs(1),
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",
 	Example: `corectl object rm ID-1 ID-2`,
 
-	Args: cobra.MinimumNArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected atleast one object-id specify what object to remove from the app")
@@ -59,11 +59,11 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 
 var listObjectsCmd = &cobra.Command{
 	Use:     "ls",
+	Args: cobra.ExactArgs(0),
 	Short:   "Print a list of all generic objects in the current app",
 	Long:    "Print a list of all generic objects in the current app",
 	Example: `corectl object ls`,
 
-	Args: cobra.ExactArgs(0),
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "object", !viper.GetBool("bash"))
 	},
@@ -71,11 +71,11 @@ var listObjectsCmd = &cobra.Command{
 
 var getObjectPropertiesCmd = &cobra.Command{
 	Use:     "properties <object-id>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic object",
 	Long:    "Print the properties of the generic object in JSON format",
 	Example: "corectl object properties OBJECT-ID",
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "object")
 	},
@@ -83,11 +83,11 @@ var getObjectPropertiesCmd = &cobra.Command{
 
 var getObjectLayoutCmd = &cobra.Command{
 	Use:     "layout <object-id>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Evaluate the hypercube layout of the generic object",
 	Long:    "Evaluate the hypercube layout of the generic object",
 	Example: "corectl object layout OBJECT-ID",
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected an object id specify what object to use as a parameter")
@@ -101,11 +101,11 @@ var getObjectLayoutCmd = &cobra.Command{
 
 var getObjectDataCmd = &cobra.Command{
 	Use:     "data <object-id>",
+	Args: cobra.ExactArgs(1),
 	Short:   "Evaluate the hypercube data of a generic object",
 	Long:    "Evaluate the hypercube data of a generic object",
 	Example: "corectl object data OBJECT-ID",
 
-	Args: cobra.ExactArgs(1),
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("Expected an object id specify what object to use as a parameter")
