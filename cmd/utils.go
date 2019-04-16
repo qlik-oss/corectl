@@ -18,7 +18,7 @@ import (
 
 var versionCmd = &cobra.Command{
 	Use:     "version",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print the version of corectl",
 	Example: "corectl version",
 	Annotations: map[string]string{
@@ -37,7 +37,7 @@ var versionCmd = &cobra.Command{
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Args: cobra.ExactArgs(0),
+	Args:  cobra.ExactArgs(0),
 	Short: "Print status info about the connection to the engine and current app",
 	Long:  "Print status info about the connection to the engine and current app, and also the status of the data model",
 	Example: `corectl status

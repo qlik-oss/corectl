@@ -8,7 +8,7 @@ import (
 
 var buildCmd = withLocalFlags(&cobra.Command{
 	Use:   "build",
-	Args: cobra.ExactArgs(0),
+	Args:  cobra.ExactArgs(0),
 	Short: "Reload and save the app after updating connections, dimensions, measures, objects and the script",
 	Example: `corectl build
 corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
@@ -49,7 +49,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Reload and save the app",
 	Long:    "Reload and save the app",
 	Example: "corectl reload",

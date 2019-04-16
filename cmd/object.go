@@ -12,7 +12,7 @@ import (
 
 var setObjectsCmd = withLocalFlags(&cobra.Command{
 	Use:   "set <glob-pattern-path-to-objects-files.json",
-	Args: cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(1),
 	Short: "Set or update the objects in the current app",
 	Long: `Set or update the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
@@ -31,7 +31,7 @@ corectl object set ./my-objects-glob-path.json`,
 
 var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <object-id>...",
-	Args: cobra.MinimumNArgs(1),
+	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",
 	Example: `corectl object rm ID-1 ID-2`,
@@ -59,7 +59,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 
 var listObjectsCmd = &cobra.Command{
 	Use:     "ls",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic objects in the current app",
 	Long:    "Print a list of all generic objects in the current app",
 	Example: `corectl object ls`,
@@ -71,7 +71,7 @@ var listObjectsCmd = &cobra.Command{
 
 var getObjectPropertiesCmd = &cobra.Command{
 	Use:     "properties <object-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic object",
 	Long:    "Print the properties of the generic object in JSON format",
 	Example: "corectl object properties OBJECT-ID",
@@ -83,7 +83,7 @@ var getObjectPropertiesCmd = &cobra.Command{
 
 var getObjectLayoutCmd = &cobra.Command{
 	Use:     "layout <object-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the hypercube layout of the generic object",
 	Long:    "Evaluate the hypercube layout of the generic object",
 	Example: "corectl object layout OBJECT-ID",
@@ -101,7 +101,7 @@ var getObjectLayoutCmd = &cobra.Command{
 
 var getObjectDataCmd = &cobra.Command{
 	Use:     "data <object-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the hypercube data of a generic object",
 	Long:    "Evaluate the hypercube data of a generic object",
 	Example: "corectl object data OBJECT-ID",

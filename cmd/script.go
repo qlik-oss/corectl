@@ -10,7 +10,7 @@ import (
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <path-to-script-file.qvs>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Set the script in the current app",
 	Long:    "Set the script in the current app",
 	Example: "corectl script set ./my-script-file.qvs",
@@ -32,7 +32,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 var getScriptCmd = &cobra.Command{
 	Use:     "get",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print the reload script",
 	Long:    "Print the reload script currently set in the app",
 	Example: `corectl script get`,

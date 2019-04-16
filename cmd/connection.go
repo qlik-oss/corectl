@@ -8,10 +8,10 @@ import (
 )
 
 var setConnectionsCmd = &cobra.Command{
-	Use:   "set <path-to-connections-file.yml>",
-	Args: cobra.ExactArgs(1),
-	Short: "Set or update the connections in the current app",
-	Long:  "Set or update the connections in the current app",
+	Use:     "set <path-to-connections-file.yml>",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Set or update the connections in the current app",
+	Long:    "Set or update the connections in the current app",
 	Example: `corectl connection set ./my-connections.yml`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -29,7 +29,7 @@ var setConnectionsCmd = &cobra.Command{
 
 var removeConnectionCmd = &cobra.Command{
 	Use:   "rm <connection-id>...",
-	Args: cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(1),
 	Short: "Remove the specified connection(s)",
 	Long:  "Remove one or many connections from the app",
 	Example: `corectl connection rm
@@ -52,7 +52,7 @@ corectl connection rm ID-1 ID-2`,
 
 var getConnectionsCmd = &cobra.Command{
 	Use:     "ls",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all connections in the current app",
 	Long:    "Print a list of all connections in the current app",
 	Example: `corectl connection ls`,
@@ -69,7 +69,7 @@ var getConnectionsCmd = &cobra.Command{
 
 var getConnectionCmd = &cobra.Command{
 	Use:     "get <connection-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Show the properties for a specific connection",
 	Long:    "Show the properties for a specific connection",
 	Example: "corectl connection get CONNECTION-ID",

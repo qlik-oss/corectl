@@ -11,7 +11,7 @@ import (
 
 var getAppsCmd = &cobra.Command{
 	Use:     "ls",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all apps available in the current engine",
 	Long:    "Print a list of all apps available in the current engine",
 	Example: `corectl app ls`,
@@ -27,10 +27,10 @@ var getAppsCmd = &cobra.Command{
 }
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
-	Use:   "rm <app-id>",
-	Args: cobra.ExactArgs(1),
-	Short: "Remove the specified app",
-	Long:  `Remove the specified app`,
+	Use:     "rm <app-id>",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Remove the specified app",
+	Long:    `Remove the specified app`,
 	Example: `corectl app rm APP-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {

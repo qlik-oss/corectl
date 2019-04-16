@@ -7,10 +7,10 @@ import (
 )
 
 var setDimensionsCmd = withLocalFlags(&cobra.Command{
-	Use:   "set <glob-pattern-path-to-dimensions-files.json>",
-	Args: cobra.ExactArgs(1),
-	Short: "Set or update the dimensions in the current app",
-	Long:  "Set or update the dimensions in the current app",
+	Use:     "set <glob-pattern-path-to-dimensions-files.json>",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Set or update the dimensions in the current app",
+	Long:    "Set or update the dimensions in the current app",
 	Example: `corectl dimension set ./my-dimensions-glob-path.json`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -26,7 +26,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 
 var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <dimension-id>...",
-	Args: cobra.MinimumNArgs(1),
+	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",
 	Example: `corectl dimension rm ID-1`,
@@ -49,7 +49,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 
 var listDimensionsCmd = &cobra.Command{
 	Use:     "ls",
-	Args: cobra.ExactArgs(0),
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic dimensions in the current app",
 	Long:    "Print a list of all generic dimensions in the current app",
 	Example: "corectl dimension ls",
@@ -61,7 +61,7 @@ var listDimensionsCmd = &cobra.Command{
 
 var getDimensionPropertiesCmd = &cobra.Command{
 	Use:     "properties <dimension-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic dimension",
 	Long:    "Print the properties of the generic dimension",
 	Example: "corectl dimension properties DIMENSION-ID",
@@ -73,7 +73,7 @@ var getDimensionPropertiesCmd = &cobra.Command{
 
 var getDimensionLayoutCmd = &cobra.Command{
 	Use:     "layout <dimension-id>",
-	Args: cobra.ExactArgs(1),
+	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the layout of an generic dimension",
 	Long:    "Evaluate the layout of an generic dimension",
 	Example: "corectl dimension layout DIMENSION-ID",
