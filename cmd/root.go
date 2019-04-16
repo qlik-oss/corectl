@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -57,7 +56,6 @@ var rootCmd = &cobra.Command{
 func Execute(mainVersion string) {
 	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }

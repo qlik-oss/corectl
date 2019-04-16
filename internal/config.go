@@ -89,7 +89,8 @@ func ReadConnectionsFile(path string) ConnectionsConfig {
 	tempConfig := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &tempConfig)
 	if err != nil {
-		FatalError(err)
+		errMsg := fmt.Sprintf("Error: invalid syntax in connections config file %s\n", path)
+		FatalError(errMsg, err)
 	}
 	subEnvVars(&tempConfig)
 	if strConfig, err := convertMap(tempConfig); err == nil {
@@ -143,7 +144,8 @@ func setConfigFile(configPath string) {
 	config := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		FatalError(err)
+		errMsg := fmt.Sprintf("Error: invalid syntax in config file %s\n", configPath)
+		FatalError(errMsg, err)
 	}
 	validateProps(config, configPath)
 	subEnvVars(&config)
