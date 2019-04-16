@@ -13,7 +13,6 @@ corectl dimension set <glob-pattern-path-to-dimensions-files.json> [flags]
 ### Examples
 
 ```
-corectl dimension set
 corectl dimension set ./my-dimensions-glob-path.json
 ```
 

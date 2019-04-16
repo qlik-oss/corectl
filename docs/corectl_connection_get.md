@@ -7,7 +7,7 @@ Show the properties for a specific connection
 Show the properties for a specific connection
 
 ```
-corectl connection get [flags]
+corectl connection get <connection-id> [flags]
 ```
 
 ### Examples

@@ -13,7 +13,6 @@ corectl measure set <glob-pattern-path-to-measures-files.json> [flags]
 ### Examples
 
 ```
-corectl measure set
 corectl measure set ./my-measures-glob-path.json
 ```
 
