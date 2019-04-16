@@ -171,11 +171,18 @@ func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
 		if tt.initTest.teardown == true {
 			t.Log("\u001b[96m *** Teardown *** \u001b[0m")
 
-			args := append(tt.connectString, []string{"app", "rm", "--suppress"}...)
+			args := append(tt.connectString, "app", "ls")
 			cmd := exec.Command(binaryPath, args...)
+			output, err := cmd.CombinedOutput()
+			apps := []map[string]interface{}{}
+			json.Unmarshal(output, &apps)
+			appName := apps[0]["name"].(string)
+
+			args = append(tt.connectString, []string{"app", "rm", appName, "--suppress"}...)
+			cmd = exec.Command(binaryPath, args...)
 
 			t.Log("\u001b[35m Executing command:" + strings.Join(cmd.Args, " ") + "\u001b[0m")
-			output, err := cmd.CombinedOutput()
+			output, err = cmd.CombinedOutput()
 
 			if err != nil {
 				t.Fatalf("Unable to delete app: %s\n", output)
@@ -239,8 +246,8 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - remove measures", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "rm", "measure-3", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - check measures after removal", defaultConnectString1, []string{"measure", "ls"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
 		{"project 1 - set script", defaultConnectString1, []string{"script", "set", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
-		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
-		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
+		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set", "test/project1/dummy-script.qvs"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
+		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set", "test/project1/dummy-script.qvs", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
 
 		// Verify behaviour when opening an app without data
 		{"project 1 - open app without data", []string{"--config=test/project1/corectl-alt.yml", "--ttl", "0", connectToEngine}, []string{"connection", "ls", "--no-data", "--verbose"}, []string{"without data"}, initTest{true, true}},
