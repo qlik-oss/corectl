@@ -7,7 +7,7 @@ Set the script in the current app
 Set the script in the current app
 
 ```
-corectl script set <path-to-script-file.yml> [flags]
+corectl script set <path-to-script-file.qvs> [flags]
 ```
 
 ### Examples
