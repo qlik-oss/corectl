@@ -11,7 +11,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Set or update the dimensions in the current app",
 	Long:    "Set or update the dimensions in the current app",
-	Example: `corectl dimension set ./my-dimensions-glob-path.json`,
+	Example: "corectl dimension set ./my-dimensions-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -29,7 +29,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",
-	Example: `corectl dimension rm ID-1`,
+	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)

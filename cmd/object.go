@@ -16,8 +16,7 @@ var setObjectsCmd = withLocalFlags(&cobra.Command{
 	Short: "Set or update the objects in the current app",
 	Long: `Set or update the objects in the current app.
 The JSON objects can be in either the GenericObjectProperties format or the GenericObjectEntry format`,
-	Example: `corectl object set
-corectl object set ./my-objects-glob-path.json`,
+	Example: "corectl object set ./my-objects-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineObjects := args[0]
@@ -34,7 +33,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many generic objects in the current app",
 	Long:    "Remove one or many generic objects in the current app",
-	Example: `corectl object rm ID-1 ID-2`,
+	Example: "corectl object rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -62,7 +61,7 @@ var listObjectsCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic objects in the current app",
 	Long:    "Print a list of all generic objects in the current app",
-	Example: `corectl object ls`,
+	Example: "corectl object ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "object", !viper.GetBool("bash"))

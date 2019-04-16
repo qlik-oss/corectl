@@ -14,7 +14,6 @@ corectl object set <glob-pattern-path-to-objects-files.json [flags]
 ### Examples
 
 ```
-corectl object set
 corectl object set ./my-objects-glob-path.json
 ```
 

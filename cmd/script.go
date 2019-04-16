@@ -35,7 +35,7 @@ var getScriptCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print the reload script",
 	Long:    "Print the reload script currently set in the app",
-	Example: `corectl script get`,
+	Example: "corectl script get",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)

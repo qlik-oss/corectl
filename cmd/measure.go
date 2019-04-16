@@ -11,7 +11,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Set or update the measures in the current app",
 	Long:    "Set or update the measures in the current app",
-	Example: `corectl measure set ./my-measures-glob-path.json`,
+	Example: "corectl measure set ./my-measures-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -29,7 +29,7 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many generic measures in the current app",
 	Long:    "Remove one or many generic measures in the current app",
-	Example: `corectl measure rm ID-1 ID-2`,
+	Example: "corectl measure rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
@@ -52,7 +52,7 @@ var listMeasuresCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic measures in the current app",
 	Long:    "Print a list of all generic measures in the current app",
-	Example: `corectl measure ls`,
+	Example: "corectl measure ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
@@ -64,7 +64,7 @@ var getMeasurePropertiesCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic measure",
 	Long:    "Print the properties of the generic measure",
-	Example: `corectl measure properties MEASURE-ID`,
+	Example: "corectl measure properties MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityProperties(ccmd, args, "measure")
@@ -76,7 +76,7 @@ var getMeasureLayoutCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the layout of an generic measure",
 	Long:    "Evaluate the layout of an generic measure and prints in JSON format",
-	Example: `corectl measure layout MEASURE-ID`,
+	Example: "corectl measure layout MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		getEntityLayout(ccmd, args, "measure")

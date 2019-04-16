@@ -12,7 +12,7 @@ var setConnectionsCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Set or update the connections in the current app",
 	Long:    "Set or update the connections in the current app",
-	Example: `corectl connection set ./my-connections.yml`,
+	Example: "corectl connection set ./my-connections.yml",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, true)
@@ -55,7 +55,7 @@ var getConnectionsCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all connections in the current app",
 	Long:    "Print a list of all connections in the current app",
-	Example: `corectl connection ls`,
+	Example: "corectl connection ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
