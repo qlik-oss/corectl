@@ -1,5 +1,5 @@
 engine: localhost:9076
-app: project2.qvf
+app: corectl_test_app.qvf
 script: ./script.qvs
 connections:
   testdata:

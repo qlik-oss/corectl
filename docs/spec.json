@@ -295,7 +295,7 @@
       "description": "Print tables for the data model in an app"
     },
     "values": {
-      "description": "Print all the values for a specific field in your data model"
+      "description": "Print the top values for a specific field in your data model"
     },
     "version": {}
   }

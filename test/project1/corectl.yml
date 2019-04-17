@@ -1,5 +1,5 @@
 engine: ${ENGINE_URL}
-app: project1.qvf
+app: corectl_test_app.qvf
 script: ./script.qvs
 connections:
   myconnection:

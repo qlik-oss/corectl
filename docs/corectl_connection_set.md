@@ -13,7 +13,6 @@ corectl connection set <path-to-connections-file.yml> [flags]
 ### Examples
 
 ```
-corectl connection set
 corectl connection set ./my-connections.yml
 ```
 

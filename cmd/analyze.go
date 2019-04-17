@@ -1,18 +1,18 @@
 package cmd
 
 import (
-	"fmt"
+	"strings"
+
 	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"strings"
 )
 
 var getAssociationsCmd = &cobra.Command{
 	Use:     "assoc",
+	Args:    cobra.ExactArgs(0),
 	Aliases: []string{"associations"},
 	Short:   "Print table associations",
 	Long:    "Print table associations",
@@ -28,6 +28,7 @@ corectl associations`,
 
 var getTablesCmd = &cobra.Command{
 	Use:   "tables",
+	Args:  cobra.ExactArgs(0),
 	Short: "Print tables",
 	Long:  "Print tables for the data model in an app",
 	Example: `corectl tables
@@ -42,6 +43,7 @@ corectl tables --app=my-app.qvf`,
 
 var getMetaCmd = &cobra.Command{
 	Use:   "meta",
+	Args:  cobra.ExactArgs(0),
 	Short: "Print tables, fields and associations",
 	Long:  "Print tables, fields, associations along with metadata like memory consumption, field cardinality etc",
 	Example: `corectl meta
@@ -56,16 +58,12 @@ corectl meta --app my-app.qvf`,
 
 var getValuesCmd = &cobra.Command{
 	Use:     "values <field name>",
+	Args:    cobra.ExactArgs(1),
 	Short:   "Print the top values of a field",
-	Long:    "Print all the values for a specific field in your data model",
+	Long:    "Print the top values for a specific field in your data model",
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("Expected a field name as parameter")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
 	},
@@ -73,6 +71,7 @@ var getValuesCmd = &cobra.Command{
 
 var getFieldsCmd = &cobra.Command{
 	Use:     "fields",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print field list",
 	Long:    "Print all the fields in an app, and for each field also some sample content, tags and and number of values",
 	Example: "corectl fields",
@@ -86,6 +85,7 @@ var getFieldsCmd = &cobra.Command{
 
 var getKeysCmd = &cobra.Command{
 	Use:     "keys",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print key-only field list",
 	Long:    "Print a fields list containing key-only fields",
 	Example: "corectl keys",
@@ -99,6 +99,7 @@ var getKeysCmd = &cobra.Command{
 
 var evalCmd = &cobra.Command{
 	Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "Evaluate a list of measures and dimensions",
 	Long:  `Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
 	Example: `corectl eval "Count(a)" // returns the number of values in field "a"
@@ -107,11 +108,6 @@ corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" 
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Expected at least one dimension or measure")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
@@ -119,6 +115,7 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 var catwalkCmd = withLocalFlags(&cobra.Command{
 	Use:   "catwalk",
+	Args:  cobra.ExactArgs(0),
 	Short: "Open the specified app in catwalk",
 	Long:  `Open the specified app in catwalk. If no app is specified the catwalk hub will be opened.`,
 	Example: `corectl catwalk --app my-app.qvf
@@ -127,13 +124,11 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 	Run: func(ccmd *cobra.Command, args []string) {
 		catwalkURL := viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/apps/" + viper.GetString("app")
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			fmt.Println("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
-			os.Exit(1)
+			internal.FatalError("Please provide a valid URL starting with 'https://', 'http://' or 'www'")
 		}
 		err := browser.OpenURL(catwalkURL)
 		if err != nil {
-			fmt.Println("Could not open URL", err)
-			os.Exit(1)
+			internal.FatalError("Could not open URL", err)
 		}
 	},
 }, "catwalk-url")

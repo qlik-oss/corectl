@@ -1,27 +1,21 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var setDimensionsCmd = withLocalFlags(&cobra.Command{
-	Use:   "set <glob-pattern-path-to-dimensions-files.json>",
-	Short: "Set or update the dimensions in the current app",
-	Long:  "Set or update the dimensions in the current app",
-	Example: `corectl dimension set
-corectl dimension set ./my-dimensions-glob-path.json`,
+	Use:     "set <glob-pattern-path-to-dimensions-files.json>",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Set or update the dimensions in the current app",
+	Long:    "Set or update the dimensions in the current app",
+	Example: "corectl dimension set ./my-dimensions-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		commandLineDimensions := ""
-		if len(args) > 0 {
-			commandLineDimensions = args[0]
-		}
+		commandLineDimensions := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, commandLineDimensions, "dimension")
 		if state.AppID != "" && !viper.GetBool("no-save") {
@@ -32,16 +26,12 @@ corectl dimension set ./my-dimensions-glob-path.json`,
 
 var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <dimension-id>...",
+	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many dimensions in the current app",
 	Long:    "Remove one or many dimensions in the current app",
-	Example: `corectl dimension rm ID-1`,
+	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Expected atleast one dimension-id specify what dimension to remove from the app")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
@@ -59,6 +49,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 
 var listDimensionsCmd = &cobra.Command{
 	Use:     "ls",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic dimensions in the current app",
 	Long:    "Print a list of all generic dimensions in the current app",
 	Example: "corectl dimension ls",
@@ -70,6 +61,7 @@ var listDimensionsCmd = &cobra.Command{
 
 var getDimensionPropertiesCmd = &cobra.Command{
 	Use:     "properties <dimension-id>",
+	Args:    cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic dimension",
 	Long:    "Print the properties of the generic dimension",
 	Example: "corectl dimension properties DIMENSION-ID",
@@ -81,6 +73,7 @@ var getDimensionPropertiesCmd = &cobra.Command{
 
 var getDimensionLayoutCmd = &cobra.Command{
 	Use:     "layout <dimension-id>",
+	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the layout of an generic dimension",
 	Long:    "Evaluate the layout of an generic dimension",
 	Example: "corectl dimension layout DIMENSION-ID",

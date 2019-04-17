@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <path-to-script-file.qvs>",
+	Args:    cobra.ExactArgs(1),
 	Short:   "Set the script in the current app",
 	Long:    "Set the script in the current app",
 	Example: "corectl script set ./my-script-file.qvs",
@@ -17,19 +18,11 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		scriptFile := ""
-		if len(args) > 0 {
-			scriptFile = args[0]
-		}
-		if scriptFile == "" {
-			scriptFile = getPathFlagFromConfigFile("script")
-		}
+		scriptFile := args[0]
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
 		} else {
-			fmt.Println("Expected the path to a file containing the qlik script")
-			ccmd.Usage()
-			os.Exit(1)
+			internal.FatalError("Error: No loadscript (.qvs) file specified.")
 		}
 		if state.AppID != "" && !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -39,9 +32,10 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 var getScriptCmd = &cobra.Command{
 	Use:     "get",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print the reload script",
 	Long:    "Print the reload script currently set in the app",
-	Example: `corectl script get`,
+	Example: "corectl script get",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)

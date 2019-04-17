@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
@@ -12,9 +11,10 @@ import (
 
 var getAppsCmd = &cobra.Command{
 	Use:     "ls",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all apps available in the current engine",
 	Long:    "Print a list of all apps available in the current engine",
-	Example: `corectl app ls`,
+	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers)
@@ -27,24 +27,15 @@ var getAppsCmd = &cobra.Command{
 }
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
-	Use:   "rm <app-id>",
-	Short: "Remove the specified app",
-	Long:  `Remove the specified app`,
-	Example: `corectl app rm
-corectl app rm APP-ID`,
+	Use:     "rm <app-id>",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Remove the specified app",
+	Long:    "Remove the specified app",
+	Example: "corectl app rm APP-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := viper.GetString("app")
-
-		if len(args) != 1 && app == "" {
-			fmt.Println("Expected an identifier of the app to delete.")
-			ccmd.Usage()
-			os.Exit(1)
-		}
-
-		if len(args) == 1 {
-			app = args[0]
-		}
+		app = args[0]
 
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 

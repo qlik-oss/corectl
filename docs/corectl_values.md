@@ -4,7 +4,7 @@ Print the top values of a field
 
 ### Synopsis
 
-Print all the values for a specific field in your data model
+Print the top values for a specific field in your data model
 
 ```
 corectl values <field name> [flags]

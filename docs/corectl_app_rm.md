@@ -13,7 +13,6 @@ corectl app rm <app-id> [flags]
 ### Examples
 
 ```
-corectl app rm
 corectl app rm APP-ID
 ```
 
