@@ -83,15 +83,27 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 	}
 
 	var result []string
-	// Get hypercube layout
 
+	// If there are no datapages, it is (probably?) not a field.
+	if len(layout.ListObject.DataPages) == 0 {
+		errMsg := fmt.Sprintf("Error: No field by name '%s'", fieldName)
+		FatalError(errMsg)
+	}
+
+	// Get hypercube layout
 	for _, page := range layout.ListObject.DataPages {
 		for _, row := range page.Matrix {
 			for _, cell := range row {
+				text := cell.Text
+				// If there is no text, we will represent it as <empty>
+				// to align with how catwalk handles such values.
+				if len(text) == 0 {
+					text = "<empty>"
+				}
 				if cell.Frequency != "1" && cell.Frequency != "" {
-					result = append(result, cell.Text+"("+cell.Frequency+"x)")
+					result = append(result, text+"("+cell.Frequency+"x)")
 				} else {
-					result = append(result, cell.Text)
+					result = append(result, text)
 				}
 
 			}
