@@ -50,7 +50,7 @@ corectl connection rm ID-1 ID-2`,
 	},
 }
 
-var getConnectionsCmd = &cobra.Command{
+var listConnectionsCmd = &cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all connections in the current app",
@@ -94,5 +94,5 @@ var connectionCmd = &cobra.Command{
 }
 
 func init() {
-	connectionCmd.AddCommand(setConnectionsCmd, getConnectionCmd, getConnectionsCmd, removeConnectionCmd)
+	connectionCmd.AddCommand(setConnectionsCmd, getConnectionCmd, listConnectionsCmd, removeConnectionCmd)
 }
