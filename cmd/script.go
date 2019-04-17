@@ -43,7 +43,11 @@ var getScriptCmd = &cobra.Command{
 		if err != nil {
 			internal.FatalError(err)
 		}
-		fmt.Println(script)
+		if len(script) == 0 { // This happens if the script is set to an empty file
+			fmt.Println("The loadscript is empty")
+		} else {
+			fmt.Println(script)
+		}
 	},
 }
 
