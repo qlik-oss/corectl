@@ -88,11 +88,6 @@ var getObjectLayoutCmd = &cobra.Command{
 	Example: "corectl object layout OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Expected an object id specify what object to use as a parameter")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.PrintGenericEntityLayout(state, args[0], "object")
 	},
@@ -106,11 +101,6 @@ var getObjectDataCmd = &cobra.Command{
 	Example: "corectl object data OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Expected an object id specify what object to use as a parameter")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		printer.EvalObject(rootCtx, state.Doc, args[0])
 	},
