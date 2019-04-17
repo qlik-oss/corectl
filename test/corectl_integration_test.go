@@ -251,6 +251,7 @@ func TestCorectl(t *testing.T) {
 		{"project 2 - build with connections 2", []string{connectToEngine, "--config=test/project2/corectl-connectionsref.yml"}, []string{"build"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
 		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
+		{"project 2 - keys", []string{"--config=test/project2/corectl-alt2.yml", connectToEngine}, []string{"keys"}, []string{"animal"}, initTest{true, true}},
 
 		{"project 3 - build ", defaultConnectString3, []string{"build"}, []string{"No app specified, using session app.", "datacsv << data 1 Lines fetched", "Reload finished successfully"}, initTest{false, false}},
 		{"project 3 - get fields", defaultConnectString3, []string{"fields"}, []string{"golden", "project3-fields.golden"}, initTest{false, false}},
