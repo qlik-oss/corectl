@@ -26,7 +26,7 @@ func applyNameToIDTransformation(engineURL string, appName string) (appID string
 		return id, true
 	}
 
-	LogVerbose("No id found for app with name: " + appName)
+	LogVerbose("No known id for app with name: " + appName)
 	return appName, false
 }
 
