@@ -21,8 +21,16 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 	return total
 }
 
-// PrintFields prints a table sof fields along with various metadata to system out.
+// PrintFields prints a tables of fields along with various metadata to system out.
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
+	if len(data.Fields) == 0 {
+		if keyOnly {
+			fmt.Println("No key fields found.")
+			return
+		}
+		fmt.Println("No fields found.")
+		return
+	}
 	writer := tablewriter.NewWriter(os.Stdout)
 
 	headers := []string{"Field", "Uniq/Tot", "RAM", "Tags", "Tables"}
@@ -37,7 +45,7 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	// Add rows
 	writer.SetRowLine(true)
 	for _, field := range data.Fields {
-		if field != nil && !field.IsSystem && (!keyOnly || isKey(field)) {
+		if field != nil && !field.IsSystem {
 			total := uniqueAndTotal(field)
 			cells := []string{field.Name, total, field.MemUsage(), strings.Join(field.Tags, ", ")}
 			tablesPresence := ""
@@ -58,15 +66,6 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	footers := []string{"Total RAM", "-", data.MemUsage(), "-", "-", "-"}
 	writer.SetFooter(footers)
 	writer.Render()
-}
-
-func isKey(field *internal.FieldModel) bool {
-	for _, tag := range field.Tags {
-		if tag == "$key" {
-			return true
-		}
-	}
-	return false
 }
 
 func fieldInTableToText(fieldInTable *enigma.FieldInTableData) string {

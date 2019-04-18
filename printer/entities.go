@@ -74,37 +74,47 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 	if err != nil {
 		internal.FatalError(err)
 	}
-	fmt.Println(prettyJSON(properties))
+	json := prettyJSON(properties)
+	if len(json) == 0 {
+		fmt.Printf("Error: No %s by id '%s'\n", entityType, entityID)
+	} else {
+		fmt.Println(json)
+	}
 }
 
 // PrintGenericEntityLayout prints the layout of the object defined by objectID
 func PrintGenericEntityLayout(state *internal.State, entityID string, entityType string) {
 	var err error
-	var properties json.RawMessage
+	var layout json.RawMessage
 	switch entityType {
 	case "object":
 		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 		if err != nil {
 			internal.FatalError(err)
 		}
-		properties, err = genericObject.GetLayoutRaw(state.Ctx)
+		layout, err = genericObject.GetLayoutRaw(state.Ctx)
 	case "measure":
 		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 		if err != nil {
 			internal.FatalError(err)
 		}
-		properties, err = genericMeasure.GetLayoutRaw(state.Ctx)
+		layout, err = genericMeasure.GetLayoutRaw(state.Ctx)
 	case "dimension":
 		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 		if err != nil {
 			internal.FatalError(err)
 		}
-		properties, err = genericDimension.GetLayoutRaw(state.Ctx)
+		layout, err = genericDimension.GetLayoutRaw(state.Ctx)
 	}
 	if err != nil {
 		internal.FatalError(err)
 	}
-	fmt.Println(prettyJSON(properties))
+	json := prettyJSON(layout)
+	if len(json) == 0 {
+		fmt.Printf("Error: No %s by id '%s'\n", entityType, entityID)
+	} else {
+		fmt.Println(json)
+	}
 }
 
 func prettyJSON(data []byte) string {
@@ -132,6 +142,10 @@ func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	}
 	resultCubeMap := make(map[string]*enigma.HyperCube)
 	getAllHyperCubes("", layoutMap, resultCubeMap)
+	if len(resultCubeMap) == 0 {
+		fmt.Printf("Object %s contains no data\n", objectID)
+		return
+	}
 	for _, hypercube := range resultCubeMap {
 		printHypercube(hypercube)
 	}
