@@ -47,17 +47,20 @@ const bashCompletionFunc = `
 	__custom_func()
 	{
 		case ${last_command} in
-			corectl_dimension_properties | corectl_dimension_layout)
+			corectl_dimension_properties | corectl_dimension_layout | corectl_dimension_rm)
 				__corectl_get_dimensions
 				;;
-			corectl_measure_properties | corectl_measure_layout)
+			corectl_measure_properties | corectl_measure_layout | corectl_measure_rm)
 				__corectl_get_measures
 				;;
-			corectl_object_data | corectl_object_properties | corectl_object_layout)
+			corectl_object_data | corectl_object_properties | corectl_object_layout | corectl_object_rm)
 				__corectl_get_objects
 				;;
-			corectl_connection_get)
+			corectl_connection_get | corectl_connection_rm)
 				__corectl_get_connections
+				;;
+			corectl_app_rm)
+				__corectl_get_apps
 				;;
       *)
 				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
@@ -92,7 +95,7 @@ const bashCompletionFunc = `
     echo "$result";
 	}
 
-  __corectl_call_corectl() 
+  __corectl_call_corectl()
   {
     local flags=$(__extract_flags_to_forward ${words[@]})
 		local corectl_out
