@@ -30,6 +30,10 @@
       "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
     },
+    "json": {
+      "description": "Returns output in JSON format if possible, overrides the verbose and traffic flags",
+      "default": "false"
+    },
     "no-data": {
       "description": "Open app without data",
       "default": "false"

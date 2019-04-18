@@ -1,13 +1,30 @@
 package internal
 
-import "fmt"
+import (
+	"fmt"
 
-// QliVerbose is set to true to indicate that verbose logging should be enabled.
-var QliVerbose bool
+	"github.com/spf13/viper"
+)
+
+// PrintVerbose is set to true to indicate that verbose logging should be enabled.
+var PrintVerbose bool
+
+// PrintJSON represents whether all output should be in JSON format or not.
+var PrintJSON bool
+
+// InitLogOutput reads the viper flags json, verbose and traffic and sets the
+// internal loggin variables PrintJSON, PrintVerbose and LogTraffic accordingly.
+func InitLogOutput() {
+	PrintJSON = viper.GetBool("json")
+	if !PrintJSON {
+		PrintVerbose = viper.GetBool("verbose")
+		LogTraffic = viper.GetBool("traffic")
+	}
+}
 
 // LogVerbose prints the supplied message to system out if verbose logging is enabled.
 func LogVerbose(message string) {
-	if QliVerbose {
+	if PrintVerbose {
 		fmt.Println(message)
 	}
 }
