@@ -1,7 +1,6 @@
 package printer
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -14,19 +13,15 @@ import (
 )
 
 // PrintGenericEntities prints a list of the id and type of all generic entities in the app
-func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsJSON bool, printAsBash bool) {
-	if printAsJSON {
+func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsBash bool) {
+	if internal.PrintJSON {
 		specifiedEntityTypeInfos := []*enigma.NxInfo{}
 		for _, info := range allInfos {
 			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
 				specifiedEntityTypeInfos = append(specifiedEntityTypeInfos, info)
 			}
 		}
-		buffer, err := json.Marshal(specifiedEntityTypeInfos)
-		if err != nil {
-			internal.FatalError(err)
-		}
-		fmt.Println(prettyJSON(buffer))
+		internal.PrintAsJSON(specifiedEntityTypeInfos)
 	} else if printAsBash {
 		for _, info := range allInfos {
 			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
@@ -74,11 +69,10 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 	if err != nil {
 		internal.FatalError(err)
 	}
-	json := prettyJSON(properties)
-	if len(json) == 0 {
-		fmt.Printf("Error: No %s by id '%s'\n", entityType, entityID)
+	if len(properties) == 0 {
+		internal.FatalError(fmt.Sprintf("No %s by id '%s'", entityType, entityID))
 	} else {
-		fmt.Println(json)
+		internal.PrintAsJSON(properties)
 	}
 }
 
@@ -109,18 +103,11 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 	if err != nil {
 		internal.FatalError(err)
 	}
-	json := prettyJSON(layout)
-	if len(json) == 0 {
-		fmt.Printf("Error: No %s by id '%s'\n", entityType, entityID)
+	if len(layout) == 0 {
+		internal.FatalError(fmt.Sprintf("No %s by id '%s'", entityType, entityID))
 	} else {
-		fmt.Println(json)
+		internal.PrintAsJSON(layout)
 	}
-}
-
-func prettyJSON(data []byte) string {
-	var prettyJSON bytes.Buffer
-	json.Indent(&prettyJSON, data, "", "   ")
-	return prettyJSON.String()
 }
 
 // EvalObject evalutes the data of the object identified by objectID

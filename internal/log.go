@@ -1,7 +1,10 @@
 package internal
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -50,3 +53,27 @@ func (TrafficLogger) Received(message []byte) {
 
 // Closed implements Closed() method in enigma-go TrafficLogger interface
 func (TrafficLogger) Closed() {}
+
+// FatalError prints the supplied message and exists the process with code 1
+func FatalError(fatalMessage ...interface{}) {
+	if PrintJSON {
+		errMsg := map[string]string{
+			"error": fmt.Sprint(fatalMessage...),
+		}
+		PrintAsJSON(errMsg)
+	} else {
+		fmt.Println(fatalMessage...)
+	}
+	os.Exit(1)
+}
+
+// PrintAsJSON prints data as JSON
+func PrintAsJSON(data interface{}) {
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		FatalError(err)
+	}
+	var buffer bytes.Buffer
+	json.Indent(&buffer, jsonBytes, "", "   ")
+	fmt.Println(buffer.String())
+}

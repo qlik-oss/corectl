@@ -285,9 +285,3 @@ func getSessionID(appID string) string {
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
 }
-
-// FatalError prints the supplied message and exists the process with code 1
-func FatalError(fatalMessage ...interface{}) {
-	fmt.Println(fatalMessage...)
-	os.Exit(1)
-}

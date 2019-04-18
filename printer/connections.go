@@ -1,8 +1,6 @@
 package printer
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -12,8 +10,8 @@ import (
 
 // PrintConnections prints a list of connections to standard out
 func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printAsBash bool) {
-	if printAsJSON {
-		jsonPrinter(connections)
+	if internal.PrintJSON {
+		internal.PrintAsJSON(connections)
 	} else if printAsBash {
 		for _, connection := range connections {
 			PrintToBashComp(connection.Id)
@@ -32,13 +30,7 @@ func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printA
 
 // PrintConnection prints a connection to standard out
 func PrintConnection(connection *enigma.Connection) {
-	jsonPrinter(connection)
-}
-
-func jsonPrinter(v interface{}) {
-	buffer, err := json.Marshal(v)
-	if err != nil {
-		internal.FatalError(err)
+	if internal.PrintJSON {
+		internal.PrintAsJSON(connection)
 	}
-	fmt.Println(prettyJSON(buffer))
 }
