@@ -9,7 +9,7 @@ import (
 )
 
 // PrintConnections prints a list of connections to standard out
-func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printAsBash bool) {
+func PrintConnections(connections []*enigma.Connection, printAsBash bool) {
 	if internal.PrintJSON {
 		internal.PrintAsJSON(connections)
 	} else if printAsBash {
@@ -30,7 +30,5 @@ func PrintConnections(connections []*enigma.Connection, printAsJSON bool, printA
 
 // PrintConnection prints a connection to standard out
 func PrintConnection(connection *enigma.Connection) {
-	if internal.PrintJSON {
-		internal.PrintAsJSON(connection)
-	}
+	internal.PrintAsJSON(connection)
 }

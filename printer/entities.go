@@ -130,8 +130,7 @@ func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	resultCubeMap := make(map[string]*enigma.HyperCube)
 	getAllHyperCubes("", layoutMap, resultCubeMap)
 	if len(resultCubeMap) == 0 {
-		fmt.Printf("Object %s contains no data\n", objectID)
-		return
+		internal.FatalError(fmt.Sprintf("Object %s contains no data\n", objectID))
 	}
 	for _, hypercube := range resultCubeMap {
 		printHypercube(hypercube)
