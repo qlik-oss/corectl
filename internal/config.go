@@ -118,8 +118,7 @@ func ReadConfigFile(explicitConfigFile string) {
 			setConfigFile(configFile)
 		}
 	}
-	QliVerbose = viper.GetBool("verbose")
-	LogTraffic = viper.GetBool("traffic")
+	InitLogOutput() // sets json, verbose and traffic
 	if configFile != "" {
 		ConfigDir = filepath.Dir(configFile)
 		LogVerbose("Using config file: " + configFile)

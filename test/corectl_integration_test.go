@@ -87,7 +87,7 @@ func setupEntities(connectToEngine string, configPath string, entityType string,
 	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "build", entityPath}...)
 	fmt.Println(cmd)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "ls"}...)
+	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "ls", "--json"}...)
 	fmt.Println(cmd)
 	output, _ := cmd.CombinedOutput()
 	return output
@@ -100,7 +100,7 @@ func removeEntities(t *testing.T, connectToEngine string, configPath string, ent
 }
 
 func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, entityType string) {
-	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "ls"}...)
+	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "ls", "--json"}...)
 	output, _ := cmd.CombinedOutput()
 	assert.Equal(t, "[]\n", string(output))
 }
@@ -226,18 +226,18 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - eval", defaultConnectString1, []string{"eval", "=1+1"}, []string{"golden", "project1-eval-3.golden"}, initTest{true, true}},
 		{"project 1 - eval", defaultConnectString1, []string{"eval", "1+1"}, []string{"golden", "project1-eval-4.golden"}, initTest{true, true}},
 		{"project 1 - eval", defaultConnectString1, []string{"eval", "by", "numbers"}, []string{"golden", "project1-eval-5.golden"}, initTest{true, true}},
-		{"project 1 - get objects", defaultConnectString1, []string{"object", "ls"}, []string{"golden", "project1-objects.golden"}, initTest{true, true}},
+		{"project 1 - get objects", defaultConnectString1, []string{"object", "ls", "--json"}, []string{"golden", "project1-objects.golden"}, initTest{true, true}},
 		{"project 1 - get object data", defaultConnectString1, []string{"object", "data", "my-hypercube"}, []string{"golden", "project1-data.golden"}, initTest{true, true}},
-		{"project 1 - get object properties", defaultConnectString1, []string{"object", "properties", "my-hypercube"}, []string{"golden", "project1-properties.golden"}, initTest{true, true}},
-		{"project 1 - get measures 1 as json", defaultConnectString1, []string{"measure", "ls"}, []string{"golden", "project1-measures-1-json.golden"}, initTest{true, true}},
-		{"project 1 - get dimensions", defaultConnectString1, []string{"dimension", "ls"}, []string{"golden", "project1-dimensions.golden"}, initTest{true, true}},
+		{"project 1 - get object properties", defaultConnectString1, []string{"object", "properties", "my-hypercube", "--json"}, []string{"golden", "project1-properties.golden"}, initTest{true, true}},
+		{"project 1 - get measures 1 as json", defaultConnectString1, []string{"measure", "ls", "--json"}, []string{"golden", "project1-measures-1-json.golden"}, initTest{true, true}},
+		{"project 1 - get dimensions", defaultConnectString1, []string{"dimension", "ls", "--json"}, []string{"golden", "project1-dimensions.golden"}, initTest{true, true}},
 		{"project 1 - get script", defaultConnectString1, []string{"script", "get"}, []string{"golden", "project1-script.golden"}, initTest{true, true}},
 		{"project 1 - reload without progress", defaultConnectString1, []string{"reload", "--silent"}, []string{"golden", "project1-reload-silent.golden"}, initTest{true, true}},
 		{"project 1 - reload without progress and without save", defaultConnectString1, []string{"reload", "--silent", "--no-save"}, []string{"golden", "project1-reload-silent-no-save.golden"}, initTest{true, true}},
 		{"project 1 - set measures", defaultConnectString1, []string{"measure", "set", "test/project1/not-following-glob-pattern-measure.json", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
-		{"project 1 - get measures 2", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "ls"}, []string{"golden", "project1-measures-2.golden"}, initTest{true, true}},
+		{"project 1 - get measures 2", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "ls", "--json"}, []string{"golden", "project1-measures-2.golden"}, initTest{true, true}},
 		{"project 1 - remove measures", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"measure", "rm", "measure-3", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
-		{"project 1 - check measures after removal", defaultConnectString1, []string{"measure", "ls"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
+		{"project 1 - check measures after removal", defaultConnectString1, []string{"measure", "ls", "--json"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
 		{"project 1 - set script", defaultConnectString1, []string{"script", "set", "test/project1/dummy-script.qvs", "--no-save"}, []string{"golden", "blank.golden"}, initTest{true, true}},
 		{"project 1 - get script after setting it", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set", "test/project1/dummy-script.qvs"}, []string{"golden", "project1-script-2.golden"}, initTest{true, true}},
 		{"project 1 - traffic logging", []string{"--config=test/project1/corectl-alt.yml", connectToEngine}, []string{"script", "set", "test/project1/dummy-script.qvs", "--traffic"}, []string{"golden", "project1-traffic-log.golden"}, initTest{true, true}},
@@ -260,7 +260,7 @@ func TestCorectl(t *testing.T) {
 		{"err 3", []string{connectToEngine, "--app=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"object", "data", "nosuchobject"}, []string{"golden", "err-3.golden"}, initTest{true, true}},
 
 		{"project 1 - get status", defaultConnectString1, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 2 tables."}, initTest{true, true}},
-		{"list apps json", defaultConnectString1, []string{"app", "ls"}, []string{"\"id\": \"/apps/" + testAppName + "\","}, initTest{true, true}},
+		{"list apps json", defaultConnectString1, []string{"app", "ls", "--json"}, []string{"\"id\": \"/apps/" + testAppName + "\","}, initTest{true, true}},
 		{"err 1", []string{"--engine=localhost:9999"}, []string{"fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
 
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
@@ -269,7 +269,7 @@ func TestCorectl(t *testing.T) {
 
 		// Verifying corectl against an engine running with ABAC enabled
 		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 1 table."}, initTest{true, true}},
-		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls"}, []string{"\"title\": \"" + testAppName + "\","}, initTest{true, true}},
+		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls", "--json"}, []string{"\"title\": \"" + testAppName + "\","}, initTest{true, true}},
 		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
 
 		// Verifying config validation
