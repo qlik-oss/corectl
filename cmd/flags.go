@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"runtime"
 )
 
 var localFlags pflag.FlagSet
@@ -17,7 +18,7 @@ var initialized bool
 func getPathFlagFromConfigFile(paramName string) string {
 	pathInConfigFile := viper.GetString(paramName)
 	if pathInConfigFile != "" {
-		return internal.RelativeToProject(viper.ConfigFileUsed(), pathInConfigFile)
+		return internal.RelativeToProject(pathInConfigFile)
 	}
 	return ""
 }
@@ -46,6 +47,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
 	globalFlags.StringP("app", "a", "", "App name, if no app is specified a session app is used instead")
 	globalFlags.String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
+	globalFlags.Bool("json", false, "Returns output in JSON format if possible, disables verbose and traffic output")
 	globalFlags.Bool("no-data", false, "Open app without data")
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
@@ -67,6 +69,11 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 		// we instead rely on the default bash behavior
 		globalFlags.SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 	}
+
+	// Add all global flags to the set of valid config properties.
+	globalFlags.VisitAll(func(flag *pflag.Flag) {
+		internal.AddValidProp(flag.Name)
+	})
 }
 
 func initLocalFlags() {
@@ -100,4 +107,9 @@ func initLocalFlags() {
 		localFlags.SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})
 	}
+
+	// Add all local flags to the set of valid config properties.
+	localFlags.VisitAll(func(flag *pflag.Flag) {
+		internal.AddValidProp(flag.Name)
+	})
 }

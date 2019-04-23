@@ -1,4 +1,4 @@
 connections:
   testdata:
     connectionstring: /data
-    type: folder
+    type: ${CONN_TYPE}

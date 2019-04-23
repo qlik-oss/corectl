@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -9,6 +10,10 @@ import (
 
 // PrintAssociations prints a list of associations to system out.
 func PrintAssociations(data *internal.ModelMetadata) {
+	if len(data.SourceKeys) == 0 {
+		fmt.Println("No table associations found.")
+		return
+	}
 
 	writer := tablewriter.NewWriter(os.Stdout)
 	writer.SetAutoFormatHeaders(false)

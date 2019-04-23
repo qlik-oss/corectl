@@ -19,6 +19,7 @@ Explore and manage generic objects
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
@@ -32,6 +33,6 @@ Explore and manage generic objects
 * [corectl object layout](corectl_object_layout.md)	 - Evaluate the hypercube layout of the generic object
 * [corectl object ls](corectl_object_ls.md)	 - Print a list of all generic objects in the current app
 * [corectl object properties](corectl_object_properties.md)	 - Print the properties of the generic object
-* [corectl object remove](corectl_object_remove.md)	 - Remove one or many generic objects in the current app
+* [corectl object rm](corectl_object_rm.md)	 - Remove one or many generic objects in the current app
 * [corectl object set](corectl_object_set.md)	 - Set or update the objects in the current app
 

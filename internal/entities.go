@@ -3,13 +3,12 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/qlik-oss/enigma-go"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/viper"
 )
 
 type (
@@ -35,25 +34,9 @@ type genericEntity struct {
 	Property *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
 }
 
-// ReadEntitiesFile reads the entity config file from the supplied path.
-func ReadEntitiesFile(path string) EntitiesConfigFile {
-	var config EntitiesConfigFile
-	source, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Println("Could not find entities file:", path)
-		os.Exit(1)
-	}
-
-	err = yaml.Unmarshal(source, &config)
-	if err != nil {
-		FatalError(err)
-	}
-	return config
-}
-
 // SetupEntities reads all generic entities of the specified type from both the project file path and the config file path and updates
 // the list of entities in the app.
-func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, entitiesPathsOnCommandLine string, entityType string) {
+func SetupEntities(ctx context.Context, doc *enigma.Doc, entitiesPathsOnCommandLine string, entityType string) {
 	entitiesOnCommandLine, err := filepath.Glob(entitiesPathsOnCommandLine)
 	if err != nil {
 		FatalError(err)
@@ -61,20 +44,19 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, projectFile string, ent
 	for _, relativeEntityPath := range entitiesOnCommandLine {
 		setupEntity(ctx, doc, relativeEntityPath, entityType)
 	}
-	if projectFile != "" {
-		configFileContents := ReadEntitiesFile(projectFile)
+	if ConfigDir != "" {
 		currentWorkingDir, _ := os.Getwd()
 		defer os.Chdir(currentWorkingDir)
-		os.Chdir(filepath.Dir(projectFile))
+		os.Chdir(ConfigDir)
 
 		var entities []string
 		switch entityType {
 		case "dimension":
-			entities = configFileContents.Dimensions
+			entities = viper.GetStringSlice("dimensions")
 		case "measure":
-			entities = configFileContents.Measures
+			entities = viper.GetStringSlice("measures")
 		case "object":
-			entities = configFileContents.Objects
+			entities = viper.GetStringSlice("objects")
 		default:
 			FatalError("Unknown type: " + entityType)
 		}

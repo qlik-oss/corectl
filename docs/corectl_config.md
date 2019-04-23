@@ -3,7 +3,7 @@
 With `corectl` it is possible to configure values that should be passed to your command. This can be configured in a `yaml` file residing in e.g. an repo or locally on your computer.
 By default `corectl` will pick up a `corectl.yml | corectl.yaml` file from your current directory. It is also possible to pass a specific configuration file using the `--config` or `-c` flag.
 
-All properties set in a configuration file can be overriden by passing another value as a flag instead.
+All properties set in a configuration file can be overriden by passing another value as a flag instead. Properties can also be specified using environment variables. 
 
 ### Configuration properties
 
@@ -17,6 +17,7 @@ connections:
   myconnection:
     type: testconnector
     username: gwe
+    password: ${MY_PASSWORD}
     settings:
       host: corectl-test-connector
   myfolderconnection:
@@ -31,6 +32,8 @@ dimensions:
 headers:
   authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0" #generated at jwt.io with the password passw0rd
 ```
+
+Note that the `password` property for the connection `myconnection` is an example use of an environment variable in the config. This can done for any property in the config file.
 
 ### engine
 

@@ -130,6 +130,9 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, head
 	fieldNames := getSortedFieldsNames(ctx, doc, err)
 
 	fieldModels := createFieldModels(ctx, doc, fieldNames, restMetadata)
+	if keyOnly {
+		fieldModels = filterKeyFields(fieldModels)
+	}
 	tableModels := createTableModels(ctx, doc, tables, restMetadata)
 	fieldsInTableTexts := tableRecordsToMap(tables)
 	addTableFieldCellCrossReferences(fieldModels, tableModels)
@@ -141,6 +144,25 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, head
 		FieldsInTableTexts:       fieldsInTableTexts,
 		SampleContentByFieldName: buildSampleContent(ctx, doc, fieldNames),
 	}
+}
+
+func filterKeyFields(fields []*FieldModel) []*FieldModel {
+	filteredFields := []*FieldModel{}
+	for _, field := range fields {
+		if isKey(field) {
+			filteredFields = append(filteredFields, field)
+		}
+	}
+	return filteredFields
+}
+
+func isKey(field *FieldModel) bool {
+	for _, tag := range field.Tags {
+		if tag == "$key" {
+			return true
+		}
+	}
+	return false
 }
 
 func buildSampleContent(ctx context.Context, doc *enigma.Doc, fieldNames []string) map[string]string {

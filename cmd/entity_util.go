@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func getEntityProperties(ccmd *cobra.Command, args []string, entityType string, minimum bool) {

@@ -68,6 +68,14 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 	return global
 }
 
+//AppExists returns wether or not an app exists
+func AppExists(ctx context.Context, engine string, appName string, ttl string, headers http.Header) bool {
+	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	appID, _ := applyNameToIDTransformation(engine, appName)
+	_, err := global.GetAppEntry(ctx, appID)
+	return err == nil
+}
+
 //DeleteApp removes the specified app from the engine.
 func DeleteApp(ctx context.Context, engine string, appName string, ttl string, headers http.Header) {
 	global := connectToEngine(ctx, engine, appName, ttl, headers)
@@ -276,10 +284,4 @@ func getSessionID(appID string) string {
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
-}
-
-// FatalError prints the supplied message and exists the process with code 1
-func FatalError(fatalMessage ...interface{}) {
-	fmt.Println(fatalMessage...)
-	os.Exit(1)
 }

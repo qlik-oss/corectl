@@ -8,12 +8,14 @@ import (
 
 var buildCmd = withLocalFlags(&cobra.Command{
 	Use:   "build",
+	Args:  cobra.ExactArgs(0),
 	Short: "Reload and save the app after updating connections, dimensions, measures, objects and the script",
 	Example: `corectl build
 corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	Annotations: map[string]string{
 		"command_category": "build",
 	},
+
 	Run: func(ccmd *cobra.Command, args []string) {
 		ctx := rootCtx
 		state := internal.PrepareEngineState(ctx, headers, true)
@@ -22,10 +24,10 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 		if separateConnectionsFile == "" {
 			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
-		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile, viper.ConfigFileUsed())
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("dimensions").Value.String(), "dimension")
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("measures").Value.String(), "measure")
-		internal.SetupEntities(ctx, state.Doc, viper.ConfigFileUsed(), ccmd.Flag("objects").Value.String(), "object")
+		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile)
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("dimensions").Value.String(), "dimension")
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("measures").Value.String(), "measure")
+		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("objects").Value.String(), "object")
 		scriptFile := ccmd.Flag("script").Value.String()
 		if scriptFile == "" {
 			scriptFile = getPathFlagFromConfigFile("script")
@@ -47,6 +49,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
+	Args:    cobra.ExactArgs(0),
 	Short:   "Reload and save the app",
 	Long:    "Reload and save the app",
 	Example: "corectl reload",

@@ -2,7 +2,7 @@ version: "3.3"
 services:
   qix-engine:
     container_name: qix-engine-1
-    image: qlikcore/engine:12.350.0
+    image: qlikcore/engine:12.368.0
     ports:
       - 9076:9076
     command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps -S EnableGrpcCustomConnectors=1 -S ValidateJsonWebTokens=2 -S JsonWebTokenSecret=passw0rd -S GrpcConnectorPlugins="testconnector,corectl-test-connector:50051"
@@ -11,13 +11,13 @@ services:
       - ./data:/data
   qix-engine-2:
     container_name: qix-engine-2
-    image: qlikcore/engine:12.350.0
+    image: qlikcore/engine:12.368.0
     ports:
       - 9176:9076
     command: -S AcceptEULA=${ACCEPT_EULA}  -S SystemLogVerbosity=5 -S LicenseServiceUrl="doesnotexit:9090"
   qix-engine-3:
     container_name: qix-engine-3
-    image: qlikcore/engine:12.350.0
+    image: qlikcore/engine:12.368.0
     ports:
       - 9276:9076
     command: -S AcceptEULA=${ACCEPT_EULA} -S EnableABAC=1 -S SystemAllowRulePath=/rules/rules.txt

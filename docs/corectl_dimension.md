@@ -19,6 +19,7 @@ Explore and manage dimensions
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
@@ -31,6 +32,6 @@ Explore and manage dimensions
 * [corectl dimension layout](corectl_dimension_layout.md)	 - Evaluate the layout of an generic dimension
 * [corectl dimension ls](corectl_dimension_ls.md)	 - Print a list of all generic dimensions in the current app
 * [corectl dimension properties](corectl_dimension_properties.md)	 - Print the properties of the generic dimension
-* [corectl dimension remove](corectl_dimension_remove.md)	 - Remove one or many dimensions in the current app
+* [corectl dimension rm](corectl_dimension_rm.md)	 - Remove one or many dimensions in the current app
 * [corectl dimension set](corectl_dimension_set.md)	 - Set or update the dimensions in the current app
 

@@ -1,0 +1,13 @@
+AnimalSizes:
+LOAD * INLINE [
+animal, size
+Whale, Big 
+Sparrow, Small
+Wolf, Medium];
+
+AnimalColors:
+LOAD * INLINE [
+animal, color
+Whale, Blue
+Raven, Black
+Shark, White];

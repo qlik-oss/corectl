@@ -30,6 +30,10 @@
       "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
     },
+    "json": {
+      "description": "Returns output in JSON format if possible, disables verbose and traffic output",
+      "default": "false"
+    },
     "no-data": {
       "description": "Open app without data",
       "default": "false"
@@ -56,7 +60,7 @@
         "ls": {
           "description": "Print a list of all apps available in the current engine"
         },
-        "remove": {
+        "rm": {
           "description": "Remove the specified app",
           "flags": {
             "suppress": {
@@ -123,7 +127,7 @@
         "ls": {
           "description": "Print a list of all connections in the current app"
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many connections from the app"
         },
         "set": {
@@ -149,7 +153,7 @@
             }
           }
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many dimensions in the current app",
           "flags": {
             "no-save": {
@@ -212,7 +216,7 @@
             }
           }
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many generic measures in the current app",
           "flags": {
             "no-save": {
@@ -256,7 +260,7 @@
             }
           }
         },
-        "remove": {
+        "rm": {
           "description": "Remove one or many generic objects in the current app",
           "flags": {
             "no-save": {
@@ -313,7 +317,7 @@
       "description": "Print tables for the data model in an app"
     },
     "values": {
-      "description": "Print all the values for a specific field in your data model"
+      "description": "Print the top values for a specific field in your data model"
     },
     "version": {}
   }

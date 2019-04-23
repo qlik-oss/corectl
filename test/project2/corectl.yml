@@ -1,5 +1,5 @@
 engine: localhost:9076
-app: project2.qvf
+app: corectl_test_app.qvf
 script: ./script.qvs
 headers:
   authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0" #generated at jwt.io with the password passw0rd
