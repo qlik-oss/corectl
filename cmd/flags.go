@@ -47,7 +47,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
 	globalFlags.StringP("app", "a", "", "App name, if no app is specified a session app is used instead")
 	globalFlags.String("ttl", "30", "Qlik Associative Engine session time to live in seconds")
-	globalFlags.Bool("json", false, "Returns output in JSON format if possible, overrides the verbose and traffic flags")
+	globalFlags.Bool("json", false, "Returns output in JSON format if possible, disables verbose and traffic output")
 	globalFlags.Bool("no-data", false, "Open app without data")
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
