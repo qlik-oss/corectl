@@ -74,7 +74,7 @@ jobs:
           command: aws s3 cp s3://${S3BUCKET}/schema.json ./docs/schema.json --region ${S3BUCKET_REGION}
       - run:
           name: Install ajv-cli
-          command: npm install -g ajv-cli
+          command: sudo npm install -g ajv-cli
       - run:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
