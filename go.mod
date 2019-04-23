@@ -3,7 +3,7 @@ module github.com/qlik-oss/corectl
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/cpuguy83/go-md2man v1.0.10 // indirect
-	github.com/google/go-github v17.0.0+incompatible // indirect
+	github.com/google/go-github v25.0.1 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
