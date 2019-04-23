@@ -1,13 +1,33 @@
 package internal
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"os"
 
-// QliVerbose is set to true to indicate that verbose logging should be enabled.
-var QliVerbose bool
+	"github.com/spf13/viper"
+)
+
+// PrintVerbose is set to true to indicate that verbose logging should be enabled.
+var PrintVerbose bool
+
+// PrintJSON represents whether all output should be in JSON format or not.
+var PrintJSON bool
+
+// InitLogOutput reads the viper flags json, verbose and traffic and sets the
+// internal loggin variables PrintJSON, PrintVerbose and LogTraffic accordingly.
+func InitLogOutput() {
+	PrintJSON = viper.GetBool("json")
+	if !PrintJSON {
+		PrintVerbose = viper.GetBool("verbose")
+		LogTraffic = viper.GetBool("traffic")
+	}
+}
 
 // LogVerbose prints the supplied message to system out if verbose logging is enabled.
 func LogVerbose(message string) {
-	if QliVerbose {
+	if PrintVerbose {
 		fmt.Println(message)
 	}
 }
@@ -33,3 +53,27 @@ func (TrafficLogger) Received(message []byte) {
 
 // Closed implements Closed() method in enigma-go TrafficLogger interface
 func (TrafficLogger) Closed() {}
+
+// FatalError prints the supplied message and exists the process with code 1
+func FatalError(fatalMessage ...interface{}) {
+	if PrintJSON {
+		errMsg := map[string]string{
+			"error": fmt.Sprint(fatalMessage...),
+		}
+		PrintAsJSON(errMsg)
+	} else {
+		fmt.Println(fatalMessage...)
+	}
+	os.Exit(1)
+}
+
+// PrintAsJSON prints data as JSON
+func PrintAsJSON(data interface{}) {
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		FatalError(err)
+	}
+	var buffer bytes.Buffer
+	json.Indent(&buffer, jsonBytes, "", "   ")
+	fmt.Println(buffer.String())
+}

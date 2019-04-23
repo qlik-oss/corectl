@@ -22,7 +22,7 @@ var getAppsCmd = &cobra.Command{
 		if err != nil {
 			internal.FatalError(err)
 		}
-		printer.PrintApps(docList, !viper.GetBool("bash"), viper.GetBool("bash"))
+		printer.PrintApps(docList, viper.GetBool("bash"))
 	},
 }
 

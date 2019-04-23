@@ -36,5 +36,5 @@ func listEntities(ccmd *cobra.Command, args []string, entityType string, printAs
 	if err != nil {
 		internal.FatalError(err)
 	}
-	printer.PrintGenericEntities(allInfos, entityType, printAsJSON, viper.GetBool("bash"))
+	printer.PrintGenericEntities(allInfos, entityType, viper.GetBool("bash"))
 }

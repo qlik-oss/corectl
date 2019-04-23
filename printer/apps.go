@@ -1,7 +1,6 @@
 package printer
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -15,13 +14,9 @@ import (
 )
 
 // PrintApps prints a list of apps and some meta to system out.
-func PrintApps(docList []*enigma.DocListEntry, printAsJSON bool, printAsBash bool) {
-	if printAsJSON {
-		buffer, err := json.Marshal(filterDocEntries(docList))
-		if err != nil {
-			internal.FatalError(err)
-		}
-		fmt.Println(prettyJSON(buffer))
+func PrintApps(docList []*enigma.DocListEntry, printAsBash bool) {
+	if internal.PrintJSON {
+		internal.PrintAsJSON(filterDocEntries(docList))
 	} else if printAsBash {
 		for _, app := range docList {
 			PrintToBashComp(app.DocName)

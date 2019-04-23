@@ -63,7 +63,7 @@ var listConnectionsCmd = &cobra.Command{
 		if err != nil {
 			internal.FatalError(err)
 		}
-		printer.PrintConnections(connections, !viper.GetBool("bash"), viper.GetBool("bash"))
+		printer.PrintConnections(connections, viper.GetBool("bash"))
 	},
 }
 
