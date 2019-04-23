@@ -58,11 +58,7 @@ var listDimensionsCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		items := internal.ListDimensions(state.Ctx, state.Doc)
-		if viper.GetBool("bash") {
-			printer.PrintBash(items)
-		} else {
-			printer.PrintJson(items)
-		}
+		printer.PrintNamedItemsList(items, viper.GetBool("bash"))
 	},
 }
 
@@ -74,7 +70,8 @@ var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension properties DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "dimension", viper.GetBool("minimum"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityProperties(state, args[0], "dimension", viper.GetBool("minimum"))
 	},
 }, "minimum")
 
@@ -86,7 +83,8 @@ var getDimensionLayoutCmd = &cobra.Command{
 	Example: "corectl dimension layout DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityLayout(ccmd, args, "dimension")
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityLayout(state, args[0], "dimension")
 	},
 }
 

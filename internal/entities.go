@@ -16,10 +16,14 @@ type (
 		Title string `json:"title"`
 	}
 
-	NamedItemWithType struct {
+	NamedItem struct {
+		Id    string `json:"qId"`
 		Title string `json:"title"`
+	}
+	NamedItemWithType struct {
 		Id    string `json:"qId"`
 		Type  string `json:"qType,omitempty"`
+		Title string `json:"title"`
 	}
 )
 
@@ -175,7 +179,7 @@ func validateEntity(entity genericEntity, entityPath string, err error) {
 	}
 }
 
-func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
+func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "corectl_entity_list",
@@ -191,16 +195,16 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	sessionObject, _ := doc.CreateSessionObject(ctx, props)
 	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
 	layout, _ := sessionObject.GetLayout(ctx)
-	result := []NamedItemWithType{}
+	result := []NamedItem{}
 	for _, item := range layout.DimensionList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
-		result = append(result, NamedItemWithType{Title: parsedRawData.Title, Id: item.Info.Id})
+		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
 	}
 	return result
 }
 
-func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
+func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "corectl_entity_list",
@@ -216,11 +220,11 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	sessionObject, _ := doc.CreateSessionObject(ctx, props)
 	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
 	layout, _ := sessionObject.GetLayout(ctx)
-	result := []NamedItemWithType{}
+	result := []NamedItem{}
 	for _, item := range layout.MeasureList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
-		result = append(result, NamedItemWithType{Title: parsedRawData.Title, Id: item.Info.Id})
+		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
 	}
 	return result
 }

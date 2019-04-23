@@ -67,13 +67,22 @@ func FatalError(fatalMessage ...interface{}) {
 	os.Exit(1)
 }
 
-// PrintAsJSON prints data as JSON
+// PrintAsJSON prints data as JSON. If already encoded as []byte or json.RawMessage it will be reformated with proper indentation
 func PrintAsJSON(data interface{}) {
-	jsonBytes, err := json.Marshal(data)
+	var jsonBytes json.RawMessage
+	var err error
+	switch v := data.(type) {
+	case json.RawMessage:
+		jsonBytes = v
+	case []byte:
+		jsonBytes = json.RawMessage(v)
+	default:
+		jsonBytes, err = json.Marshal(data)
+	}
 	if err != nil {
 		FatalError(err)
 	}
 	var buffer bytes.Buffer
-	json.Indent(&buffer, jsonBytes, "", "   ")
+	json.Indent(&buffer, jsonBytes, "", "  ")
 	fmt.Println(buffer.String())
 }

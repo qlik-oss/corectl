@@ -58,11 +58,7 @@ var listMeasuresCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		items := internal.ListMeasures(state.Ctx, state.Doc)
-		if viper.GetBool("bash") {
-			printer.PrintBash(items)
-		} else {
-			printer.PrintJson(items)
-		}
+		printer.PrintNamedItemsList(items, viper.GetBool("bash"))
 	},
 }
 
@@ -74,7 +70,8 @@ var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure properties MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "measure", viper.GetBool("minimum"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityProperties(state, args[0], "measure", viper.GetBool("minimum"))
 	},
 }, "minimum")
 
@@ -86,7 +83,8 @@ var getMeasureLayoutCmd = &cobra.Command{
 	Example: "corectl measure layout MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityLayout(ccmd, args, "measure")
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityLayout(state, args[0], "measure")
 	},
 }
 

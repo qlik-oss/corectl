@@ -66,11 +66,7 @@ var listObjectsCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		items := internal.ListObjects(state.Ctx, state.Doc)
-		if viper.GetBool("bash") {
-			printer.PrintBash(items)
-		} else {
-			printer.PrintJson(items)
-		}
+		printer.PrintNamedItemsListWithType(items, viper.GetBool("bash"))
 	},
 }
 
@@ -82,7 +78,8 @@ var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "object", viper.GetBool("minimum"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityProperties(state, args[0], "object", viper.GetBool("minimum"))
 	},
 }, "minimum")
 

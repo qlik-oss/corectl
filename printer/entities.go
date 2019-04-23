@@ -12,42 +12,39 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-func PrintJson(data interface{}) {
-	resultAsString, _ := json.MarshalIndent(data, "", "  ")
-	fmt.Println(string(resultAsString))
-}
-
-func PrintBash(items []internal.NamedItemWithType) {
-	for _, item := range items {
-		fmt.Println(item.Id)
-	}
-}
-
-// PrintGenericEntities prints a list of the id and type of all generic entities in the app
-func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsBash bool) {
-	if internal.PrintJSON {
-		specifiedEntityTypeInfos := []*enigma.NxInfo{}
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				specifiedEntityTypeInfos = append(specifiedEntityTypeInfos, info)
-			}
+// PrintNamedItemsList prints a list of the id and type and title of the supplied items
+func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool) {
+	if printAsBash {
+		for _, item := range items {
+			fmt.Println(item.Id)
 		}
-		internal.PrintAsJSON(specifiedEntityTypeInfos)
-	} else if printAsBash {
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				PrintToBashComp(info.Id)
-			}
-		}
+	} else if internal.PrintJSON {
+		internal.PrintAsJSON(items)
 	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
-		writer.SetHeader([]string{"Id", "Type"})
+		writer.SetHeader([]string{"Id", "Title"})
+		for _, info := range items {
+			writer.Append([]string{info.Id, info.Title})
+		}
+		writer.Render()
+	}
+}
 
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				writer.Append([]string{info.Id, info.Type})
-			}
+// PrintNamedItemsList prints a list of the id and type and title of the supplied items
+func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash bool) {
+	if printAsBash {
+		for _, item := range items {
+			fmt.Println(item.Id)
+		}
+	} else if internal.PrintJSON {
+		internal.PrintAsJSON(items)
+	} else {
+		writer := tablewriter.NewWriter(os.Stdout)
+		writer.SetAutoFormatHeaders(false)
+		writer.SetHeader([]string{"Id", "Type", "Title"})
+		for _, info := range items {
+			writer.Append([]string{info.Id, info.Type, info.Title})
 		}
 		writer.Render()
 	}
@@ -56,7 +53,7 @@ func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsB
 // PrintGenericEntityProperties prints the properties of the generic entity defined by entityID
 func PrintGenericEntityProperties(state *internal.State, entityID string, entityType string, minimum bool) {
 	var err error
-	var properties []byte
+	var properties json.RawMessage
 
 	if minimum {
 		switch entityType {
