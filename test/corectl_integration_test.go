@@ -176,6 +176,10 @@ func TestPrecedence(t *testing.T) {
 		fmt.Println(string(output))
 	}
 
+	// Cleanup
+	rm_cmd := exec.Command(binaryPath, config, engine, "app", "rm", "corectl_test_app.qvf")
+	defer rm_cmd.Run()
+
 	var data []map[string]string
 	entities := []string{"object", "dimension", "measure"}
 	expected := []string{"my-hypercube2", "swedish-dimension", "measure-x"}
@@ -195,13 +199,6 @@ func TestPrecedence(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, connections, 1)
 	assert.Equal(t, "bogusname", connections[0].Name)
-	connID := connections[0].Id
-
-	// Cleanup
-	cmd = exec.Command(binaryPath, config, engine, "connection", "rm", connID)
-	cmd.Run()
-	cmd = exec.Command(binaryPath, config, engine, "app", "rm", "corectl_test_app.qvf")
-	cmd.Run()
 }
 
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
