@@ -274,7 +274,7 @@ func TestCorectl(t *testing.T) {
 		{"project 1 - get objects", defaultConnectString1, []string{"object", "ls", "--json"}, []string{"golden", "project1-objects.golden"}, initTest{true, true}},
 		{"project 1 - get object data", defaultConnectString1, []string{"object", "data", "my-hypercube"}, []string{"golden", "project1-data.golden"}, initTest{true, true}},
 		{"project 1 - get object properties", defaultConnectString1, []string{"object", "properties", "my-hypercube", "--json"}, []string{"golden", "project1-properties.golden"}, initTest{true, true}},
-		{"project 1 - get measures 1 as json", defaultConnectString1, []string{"measure", "ls", "--json"}, []string{"golden", "project1-measures-1-json.golden"}, initTest{true, true}},
+		{"project 1 - get measures 1 as json", defaultConnectString1, []string{"measure", "ls", "--json"}, []string{"golden", "project1-measures-1.golden"}, initTest{true, true}},
 		{"project 1 - get dimensions", defaultConnectString1, []string{"dimension", "ls", "--json"}, []string{"golden", "project1-dimensions.golden"}, initTest{true, true}},
 		{"project 1 - get script", defaultConnectString1, []string{"script", "get"}, []string{"golden", "project1-script.golden"}, initTest{true, true}},
 		{"project 1 - reload without progress", defaultConnectString1, []string{"reload", "--silent"}, []string{"golden", "project1-reload-silent.golden"}, initTest{true, true}},

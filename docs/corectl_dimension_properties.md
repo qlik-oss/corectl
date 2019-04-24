@@ -19,7 +19,8 @@ corectl dimension properties DIMENSION-ID
 ### Options
 
 ```
-  -h, --help   help for properties
+  -h, --help      help for properties
+      --minimum   Only print properties required by engine
 ```
 
 ### Options inherited from parent commands

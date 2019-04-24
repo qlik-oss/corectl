@@ -145,7 +145,13 @@
           "description": "Print a list of all generic dimensions in the current app"
         },
         "properties": {
-          "description": "Print the properties of the generic dimension"
+          "description": "Print the properties of the generic dimension",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Remove one or many dimensions in the current app",
@@ -202,7 +208,13 @@
           "description": "Print a list of all generic measures in the current app"
         },
         "properties": {
-          "description": "Print the properties of the generic measure"
+          "description": "Print the properties of the generic measure",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Remove one or many generic measures in the current app",
@@ -240,7 +252,13 @@
           "description": "Print a list of all generic objects in the current app"
         },
         "properties": {
-          "description": "Print the properties of the generic object in JSON format"
+          "description": "Print the properties of the generic object in JSON format",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Remove one or many generic objects in the current app",
