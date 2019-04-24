@@ -11,6 +11,28 @@ import (
 	"github.com/spf13/viper"
 )
 
+type (
+	ParsedEntityListData struct {
+		Title string `json:"title"`
+	}
+
+	NamedItem struct {
+		Id    string `json:"qId"`
+		Title string `json:"title"`
+	}
+	NamedItemWithType struct {
+		Id    string `json:"qId"`
+		Type  string `json:"qType,omitempty"`
+		Title string `json:"title"`
+	}
+)
+
+// EntitiesConfigFile defines a file that contains the different entities  yaml string arrays.
+type EntitiesConfigFile struct {
+	Measures   []string
+	Dimensions []string
+	Objects    []string
+}
 type genericEntity struct {
 	Info     *enigma.NxInfo                  `json:"qInfo,omitempty"`
 	Property *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
@@ -155,4 +177,74 @@ func validateEntity(entity genericEntity, entityPath string, err error) {
 	if entity.Property != nil && entity.Property.Info.Type == "" {
 		FatalError("Missing qInfo qType attribute inside qProperty", entityPath)
 	}
+}
+
+func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
+	props := &enigma.GenericObjectProperties{
+		Info: &enigma.NxInfo{
+			Type: "corectl_entity_list",
+		},
+		DimensionListDef: &enigma.DimensionListDef{
+			Type: "dimension",
+			Data: json.RawMessage(`{
+				"id":"/qInfo/qId",
+				"title":"/qDim/title"
+			}`),
+		},
+	}
+	sessionObject, _ := doc.CreateSessionObject(ctx, props)
+	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
+	layout, _ := sessionObject.GetLayout(ctx)
+	result := []NamedItem{}
+	for _, item := range layout.DimensionList.Items {
+		parsedRawData := &ParsedEntityListData{}
+		json.Unmarshal(item.Data, parsedRawData)
+		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
+	}
+	return result
+}
+
+func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
+	props := &enigma.GenericObjectProperties{
+		Info: &enigma.NxInfo{
+			Type: "corectl_entity_list",
+		},
+		MeasureListDef: &enigma.MeasureListDef{
+			Type: "measure",
+			Data: json.RawMessage(`{
+				"id":"/qInfo/qId",
+				"title":"/qMetaDef/title"
+			}`),
+		},
+	}
+	sessionObject, _ := doc.CreateSessionObject(ctx, props)
+	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
+	layout, _ := sessionObject.GetLayout(ctx)
+	result := []NamedItem{}
+	for _, item := range layout.MeasureList.Items {
+		parsedRawData := &ParsedEntityListData{}
+		json.Unmarshal(item.Data, parsedRawData)
+		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
+	}
+	return result
+}
+
+type PropsWithTitle struct {
+	*enigma.GenericObjectProperties
+	Title string `json:"title"`
+}
+
+func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
+	allInfos, _ := doc.GetAllInfos(ctx)
+	result := []NamedItemWithType{}
+	for _, item := range allInfos {
+		object, _ := doc.GetObject(ctx, item.Id)
+		if object != nil && object.Type != "" {
+			rawProps, _ := object.GetPropertiesRaw(ctx)
+			propsWithTitle := &PropsWithTitle{}
+			json.Unmarshal(rawProps, propsWithTitle)
+			result = append(result, NamedItemWithType{Title: propsWithTitle.Title, Id: item.Id, Type: item.Type})
+		}
+	}
+	return result
 }

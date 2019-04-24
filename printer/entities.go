@@ -12,59 +12,95 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-// PrintGenericEntities prints a list of the id and type of all generic entities in the app
-func PrintGenericEntities(allInfos []*enigma.NxInfo, entityType string, printAsBash bool) {
-	if internal.PrintJSON {
-		specifiedEntityTypeInfos := []*enigma.NxInfo{}
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				specifiedEntityTypeInfos = append(specifiedEntityTypeInfos, info)
-			}
+// PrintNamedItemsList prints a list of the id and type and title of the supplied items
+func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool) {
+	if printAsBash {
+		for _, item := range items {
+			fmt.Println(item.Id)
 		}
-		internal.PrintAsJSON(specifiedEntityTypeInfos)
-	} else if printAsBash {
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				PrintToBashComp(info.Id)
-			}
-		}
+	} else if internal.PrintJSON {
+		internal.PrintAsJSON(items)
 	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
-		writer.SetHeader([]string{"Id", "Type"})
+		writer.SetHeader([]string{"Id", "Title"})
+		for _, info := range items {
+			writer.Append([]string{info.Id, info.Title})
+		}
+		writer.Render()
+	}
+}
 
-		for _, info := range allInfos {
-			if (entityType == "object" && info.Type != "measure" && info.Type != "dimension") || entityType == info.Type {
-				writer.Append([]string{info.Id, info.Type})
-			}
+// PrintNamedItemsList prints a list of the id and type and title of the supplied items
+func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash bool) {
+	if printAsBash {
+		for _, item := range items {
+			fmt.Println(item.Id)
+		}
+	} else if internal.PrintJSON {
+		internal.PrintAsJSON(items)
+	} else {
+		writer := tablewriter.NewWriter(os.Stdout)
+		writer.SetAutoFormatHeaders(false)
+		writer.SetHeader([]string{"Id", "Type", "Title"})
+		for _, info := range items {
+			writer.Append([]string{info.Id, info.Type, info.Title})
 		}
 		writer.Render()
 	}
 }
 
 // PrintGenericEntityProperties prints the properties of the generic entity defined by entityID
-func PrintGenericEntityProperties(state *internal.State, entityID string, entityType string) {
+func PrintGenericEntityProperties(state *internal.State, entityID string, entityType string, minimum bool) {
 	var err error
 	var properties json.RawMessage
-	switch entityType {
-	case "object":
-		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
-		if err != nil {
-			internal.FatalError(err)
+
+	if minimum {
+		switch entityType {
+		case "object":
+			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			qProps, _ := genericObject.GetProperties(state.Ctx)
+			fmt.Println(qProps)
+			properties, _ = json.Marshal(qProps)
+		case "measure":
+			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			qProps, _ := genericMeasure.GetProperties(state.Ctx)
+			properties, _ = json.Marshal(qProps)
+		case "dimension":
+			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			qProps, _ := genericDimension.GetProperties(state.Ctx)
+			properties, _ = json.Marshal(qProps)
 		}
-		properties, err = genericObject.GetPropertiesRaw(state.Ctx)
-	case "measure":
-		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
-		if err != nil {
-			internal.FatalError(err)
+	} else {
+		switch entityType {
+		case "object":
+			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+		case "measure":
+			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
+		case "dimension":
+			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalError(err)
+			}
+			properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
 		}
-		properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
-	case "dimension":
-		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
-		if err != nil {
-			internal.FatalError(err)
-		}
-		properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
 	}
 	if err != nil {
 		internal.FatalError(err)

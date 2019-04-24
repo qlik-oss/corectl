@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -55,11 +56,13 @@ var listMeasuresCmd = &cobra.Command{
 	Example: "corectl measure ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		listEntities(ccmd, args, "measure", !viper.GetBool("bash"))
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		items := internal.ListMeasures(state.Ctx, state.Doc)
+		printer.PrintNamedItemsList(items, viper.GetBool("bash"))
 	},
 }
 
-var getMeasurePropertiesCmd = &cobra.Command{
+var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <measure-id>",
 	Args:    cobra.ExactArgs(1),
 	Short:   "Print the properties of the generic measure",
@@ -67,9 +70,10 @@ var getMeasurePropertiesCmd = &cobra.Command{
 	Example: "corectl measure properties MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityProperties(ccmd, args, "measure")
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityProperties(state, args[0], "measure", viper.GetBool("minimum"))
 	},
-}
+}, "minimum")
 
 var getMeasureLayoutCmd = &cobra.Command{
 	Use:     "layout <measure-id>",
@@ -79,7 +83,8 @@ var getMeasureLayoutCmd = &cobra.Command{
 	Example: "corectl measure layout MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		getEntityLayout(ccmd, args, "measure")
+		state := internal.PrepareEngineState(rootCtx, headers, false)
+		printer.PrintGenericEntityLayout(state, args[0], "measure")
 	},
 }
 
