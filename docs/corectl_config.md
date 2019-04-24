@@ -10,7 +10,7 @@ All properties set in a configuration file can be overriden by passing another v
 Below is a configuration example utilizing the different properties that are available today:
 
 ```yaml
-engine: localhost:9076 
+engine: localhost:9076
 app: project1.qvf
 script: ./dummy-script.qvs
 connections:
@@ -38,6 +38,7 @@ Note that the `password` property for the connection `myconnection` is an exampl
 ### engine
 
 This property sets the URL to the engine instance that you want `corectl` to connect to by default. Can be overriden with the `-e` or `--engine` flag.
+If the URL includes a `ws://` or `wss://` in the string then `corectl` assumes that a full URL is provided and will be used when establishing a session towards engine.
 
 ```yaml
 engine: localhost:9076

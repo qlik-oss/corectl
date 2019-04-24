@@ -42,8 +42,8 @@ func logConnectError(err error, engine string) {
 	os.Exit(1)
 }
 
-func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {
-	engineURL := buildWebSocketURL(engine, ttl)
+func connectToEngine(ctx context.Context, engine string, appName string, headers http.Header) *enigma.Global {
+	engineURL := BuildWebSocketURL(engine, false)
 	LogVerbose("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
@@ -69,16 +69,16 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 }
 
 //AppExists returns wether or not an app exists
-func AppExists(ctx context.Context, engine string, appName string, ttl string, headers http.Header) bool {
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header) bool {
+	global := connectToEngine(ctx, engine, appName, headers)
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	_, err := global.GetAppEntry(ctx, appID)
 	return err == nil
 }
 
 //DeleteApp removes the specified app from the engine.
-func DeleteApp(ctx context.Context, engine string, appName string, ttl string, headers http.Header) {
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header) {
+	global := connectToEngine(ctx, engine, appName, headers)
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
@@ -94,13 +94,12 @@ func DeleteApp(ctx context.Context, engine string, appName string, ttl string, h
 func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMissing bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
-	ttl := viper.GetString("ttl")
 	noData := viper.GetBool("no-data")
 	bashMode := viper.GetBool("bash")
 	var appID string
 
 	LogVerbose("---------- Connecting to app ----------")
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	global := connectToEngine(ctx, engine, appName, headers)
 	if appName == "" && !bashMode {
 		fmt.Println("No app specified, using session app.")
 	}
@@ -199,11 +198,10 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
 	engine := viper.GetString("engine")
-	ttl := viper.GetString("ttl")
 
 	LogVerbose("---------- Connecting to engine ----------")
 
-	engineURL := buildWebSocketURL(engine, ttl)
+	engineURL := BuildWebSocketURL(engine, false)
 
 	LogVerbose("Engine: " + engineURL)
 
@@ -237,32 +235,23 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	}
 }
 
-//TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
-func TidyUpEngineURL(engine string) string {
-	var url string
-	if strings.HasPrefix(engine, "wss://") {
-		url = engine
-	} else if strings.HasPrefix(engine, "ws://") {
-		url = engine
+// BuildWebSocketURL modifies the websocket url if incomplete
+func BuildWebSocketURL(engine string, baseURLOnly bool) string {
+	if strings.HasPrefix(engine, "wss://") || strings.HasPrefix(engine, "ws://") {
+		return engine
+	} else if baseURLOnly {
+		return "ws://" + engine
 	} else {
-		url = "ws://" + engine
+		ttl := viper.GetString("ttl")
+		return "ws://" + engine + "/app/ttl/" + ttl
 	}
-	if len(strings.Split(url, ":")) == 2 {
-		url += ":9076"
-	}
-	return url
-}
-
-func buildWebSocketURL(engine string, ttl string) string {
-	engine = TidyUpEngineURL(engine)
-	return engine + "/app/engineData/ttl/" + ttl
 }
 
 func buildMetadataURL(engine string, appID string) string {
 	if appID == "" {
 		return ""
 	}
-	engine = TidyUpEngineURL(engine)
+	engine = BuildWebSocketURL(engine, true)
 	engine = strings.Replace(engine, "wss://", "https://", -1)
 	engine = strings.Replace(engine, "ws://", "http://", -1)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
