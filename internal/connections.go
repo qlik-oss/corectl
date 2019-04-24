@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -22,18 +21,14 @@ func flattenSettings(settings map[string]string) string {
 func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsFile string) error {
 
 	connectionConfigEntries := map[string]ConnectionConfigEntry{}
-	if ConfigDir != "" {
 
-		//First try to interpret the connections entry in the config file as a path.
-		//If the connections entry is a string it is interpreted as a path pointing to a separate connections file
-		//This is mainly to align with the way the --connections flag on the command line is treated.
-		config := GetConnectionsConfig()
+	if separateConnectionsFile != "" {
+		config := ReadConnectionsFile(separateConnectionsFile)
 		for name, configEntry := range config.Connections {
 			connectionConfigEntries[name] = configEntry
 		}
-	}
-	if separateConnectionsFile != "" {
-		config := ReadConnectionsFile(separateConnectionsFile)
+	} else if ConfigDir != "" {
+		config := GetConnectionsConfig()
 		for name, configEntry := range config.Connections {
 			connectionConfigEntries[name] = configEntry
 		}
@@ -53,16 +48,6 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 			connection.ConnectionString = configEntry.ConnectionString
 		} else {
 			connection.ConnectionString = "CUSTOM CONNECT TO \"provider=" + configEntry.Type + ";" + flattenSettings(configEntry.Settings) + "\""
-		}
-
-		if strings.HasPrefix(connection.Password, "${") && strings.HasSuffix(connection.Password, "}") {
-			varName := strings.TrimSuffix(strings.TrimPrefix(connection.Password, "${"), "}")
-			connection.Password = os.Getenv(varName)
-			if connection.Password == "" {
-				fmt.Println("WARNING environment variable not found:", varName)
-			} else {
-				LogVerbose("Resolved password from environment variable " + varName)
-			}
 		}
 
 		if existingConnectionID := findExistingConnection(connections, connection.Name); existingConnectionID != "" {

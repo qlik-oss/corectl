@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -31,14 +30,12 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	layout, err := object.GetLayout(ctx)
 
 	if err != nil {
-		fmt.Println("Failed to get hypercube layout: ", err)
-		os.Exit(1)
+		FatalError("Failed to get hypercube layout: ", err)
 	}
 
 	// If the dimension info contains an error element the expression failed to evaluate
 	if len(layout.HyperCube.DimensionInfo) != 0 && layout.HyperCube.DimensionInfo[0].Error != nil {
-		fmt.Println("Failed to evaluate expression with error code:", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
-		os.Exit(1)
+		FatalError("Failed to evaluate expression with error code:", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
 	}
 
 	writer := tablewriter.NewWriter(os.Stdout)
