@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "measure-x",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "qLabel": "English",
+    "qDef": "Count(English)"
+  }
+}
