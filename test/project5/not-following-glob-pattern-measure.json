@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "measure-3",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "qLabel": "Label 3",
+    "qDef": "=1+1"
+  }
+}

@@ -1,0 +1,4 @@
+connections:
+  bogusname:
+    connectionstring: /data
+    type: folder
