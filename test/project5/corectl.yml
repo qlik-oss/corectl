@@ -1,4 +1,3 @@
-engine: localhost:9076 
 app: corectl_test_app.qvf
 script: ./script.qvs
 connections:

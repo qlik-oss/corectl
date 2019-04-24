@@ -160,9 +160,11 @@ func TestPrecedence(t *testing.T) {
 	// Set objects, dimensions, measures and connection explicitly.
 	// The information in the config should therefore be overriden.
 	config := "--config=test/project5/corectl.yml"
+	engine := "--engine=" + *engineIP
 	flags := []string{
 		"build",
 		config,
+		engine,
 		"--objects=test/project5/o/*",
 		"--dimensions=test/project5/d/*",
 		"--measures=test/project5/m/*",
@@ -171,14 +173,14 @@ func TestPrecedence(t *testing.T) {
 	cmd := exec.Command(binaryPath, flags...)
 	output, err := cmd.Output()
 	if err != nil {
-		fmt.Printf("%v\n", output)
+		fmt.Println(string(output))
 	}
 
 	var data []map[string]string
 	entities := []string{"object", "dimension", "measure"}
 	expected := []string{"my-hypercube2", "swedish-dimension", "measure-x"}
 	for i, entity := range entities {
-		cmd = exec.Command(binaryPath, config, entity, "ls", "--json")
+		cmd = exec.Command(binaryPath, config, engine, entity, "ls", "--json")
 		output, err = cmd.Output()
 		json.Unmarshal(output, &data)
 		assert.Nil(t, err)
@@ -187,7 +189,7 @@ func TestPrecedence(t *testing.T) {
 	}
 
 	var connections []*enigma.Connection
-	cmd = exec.Command(binaryPath, config, "connection", "ls", "--json")
+	cmd = exec.Command(binaryPath, config, engine, "connection", "ls", "--json")
 	output, err = cmd.Output()
 	json.Unmarshal(output, &connections)
 	assert.Nil(t, err)
@@ -196,9 +198,9 @@ func TestPrecedence(t *testing.T) {
 	connID := connections[0].Id
 
 	// Cleanup
-	cmd = exec.Command(binaryPath, config, "connection", "rm", connID)
+	cmd = exec.Command(binaryPath, config, engine, "connection", "rm", connID)
 	cmd.Run()
-	cmd = exec.Command(binaryPath, config, "app", "rm", "corectl_test_app.qvf")
+	cmd = exec.Command(binaryPath, config, engine, "app", "rm", "corectl_test_app.qvf")
 	cmd.Run()
 }
 
