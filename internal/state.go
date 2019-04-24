@@ -96,14 +96,14 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appName := viper.GetString("app")
 	ttl := viper.GetString("ttl")
 	noData := viper.GetBool("no-data")
-	bashMode := viper.GetBool("bash")
 	var appID string
+
+	if appName == "" {
+		FatalError("Error: No app specified")
+	}
 
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appName, ttl, headers)
-	if appName == "" && !bashMode {
-		fmt.Println("No app specified, using session app.")
-	}
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
@@ -113,49 +113,36 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
-		if appName != "" {
-			appID, _ = applyNameToIDTransformation(engine, appName)
-			LogVerbose("App with name: " + appName + " and id: " + appID + "(reconnected)")
-		} else {
-			LogVerbose("Session app (reconnected)")
-		}
+		appID, _ = applyNameToIDTransformation(engine, appName)
+		LogVerbose("App with name: " + appName + " and id: " + appID + "(reconnected)")
 	} else {
-		if appName == "" {
-			doc, err = global.CreateSessionApp(ctx)
-			if doc != nil {
-				LogVerbose("Session app (new)")
+		appID, _ = applyNameToIDTransformation(engine, appName)
+		doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
+		if doc != nil {
+			if noData {
+				LogVerbose("Opened app with name: " + appName + " and id: " + appID + " without data")
 			} else {
+				LogVerbose("Opened app with name: " + appName + " and id: " + appID)
+			}
+		} else if createAppIfMissing {
+			success, appID, err := global.CreateApp(ctx, appName, "")
+			if err != nil {
 				FatalError(err)
+			}
+			if !success {
+				FatalError("Failed to create app with name: " + appName)
+			}
+			// Write app id to config
+			setAppIDToKnownApps(engine, appName, appID, false)
+			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
+			if err != nil {
+				FatalError(err)
+			}
+			if doc != nil {
+				LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
 			}
 		} else {
-			appID, _ = applyNameToIDTransformation(engine, appName)
-			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
-			if doc != nil {
-				if noData {
-					LogVerbose("Opened app with name: " + appName + " and id: " + appID + " without data")
-				} else {
-					LogVerbose("Opened app with name: " + appName + " and id: " + appID)
-				}
-			} else if createAppIfMissing {
-				success, appID, err := global.CreateApp(ctx, appName, "")
-				if err != nil {
-					FatalError(err)
-				}
-				if !success {
-					FatalError("Failed to create app with name: " + appName)
-				}
-				// Write app id to config
-				setAppIDToKnownApps(engine, appName, appID, false)
-				doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
-				if err != nil {
-					FatalError(err)
-				}
-				if doc != nil {
-					LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
-				}
-			} else {
-				FatalError(err)
-			}
+			FatalError(err)
 		}
 	}
 
@@ -187,7 +174,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 			return errors.New(parsedEvent["qSessionState"])
 		}
 	}
-	return errors.New("Session closed before reciving OnConnected message.")
+	return errors.New("session closed before reciving OnConnected message")
 }
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
@@ -259,9 +246,6 @@ func buildWebSocketURL(engine string, ttl string) string {
 }
 
 func buildMetadataURL(engine string, appID string) string {
-	if appID == "" {
-		return ""
-	}
 	engine = TidyUpEngineURL(engine)
 	engine = strings.Replace(engine, "wss://", "https://", -1)
 	engine = strings.Replace(engine, "ws://", "http://", -1)
