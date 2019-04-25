@@ -276,7 +276,7 @@ func getSessionID(appID string) string {
 func parseAppFromURL(engineURL string) string {
 	u, _ := neturl.Parse(engineURL)
 	// Find any string in the path succeeding "/app/", and excluding anything after "/"
-	re, _ := regexp.Compile("/app/([^,/]+)")
+	re, _ := regexp.Compile("/app/([^/]+)")
 	values := re.FindStringSubmatch(u.Path)
 	if len(values) > 0 {
 		return values[1]
