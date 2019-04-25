@@ -11,7 +11,7 @@
   "flags": {
     "app": {
       "alias": "a",
-      "description": "App name, if no app is specified a session app is used instead"
+      "description": "Name or identifier of the app"
     },
     "bash": {
       "description": "Bash flag used to adapt output to bash completion format",
