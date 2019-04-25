@@ -96,11 +96,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appName := viper.GetString("app")
 	ttl := viper.GetString("ttl")
 	noData := viper.GetBool("no-data")
-	var appID string
 
 	if appName == "" {
 		FatalError("Error: No app specified")
 	}
+
+	appID, _ := applyNameToIDTransformation(engine, appName)
 
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, engine, appName, ttl, headers)
@@ -113,10 +114,8 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
-		appID, _ = applyNameToIDTransformation(engine, appName)
 		LogVerbose("App with name: " + appName + " and id: " + appID + "(reconnected)")
 	} else {
-		appID, _ = applyNameToIDTransformation(engine, appName)
 		doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 		if doc != nil {
 			if noData {
@@ -125,7 +124,8 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				LogVerbose("Opened app with name: " + appName + " and id: " + appID)
 			}
 		} else if createAppIfMissing {
-			success, appID, err := global.CreateApp(ctx, appName, "")
+			var success bool
+			success, appID, err = global.CreateApp(ctx, appName, "")
 			if err != nil {
 				FatalError(err)
 			}
