@@ -85,10 +85,8 @@ func (tf *testFile) load() string {
 
 func setupEntities(connectToEngine string, configPath string, entityType string, entityPath string) []byte {
 	cmd := exec.Command(binaryPath, []string{connectToEngine, configPath, "build", entityPath}...)
-	fmt.Println(cmd)
 	cmd.Run()
 	cmd = exec.Command(binaryPath, []string{connectToEngine, configPath, entityType, "ls", "--json"}...)
-	fmt.Println(cmd)
 	output, _ := cmd.CombinedOutput()
 	return output
 }
@@ -113,7 +111,6 @@ func TestNestedObjectSupport(t *testing.T) {
 	//verify that the objects are created
 	var objects []*enigma.NxInfo
 	err := json.Unmarshal(output, &objects)
-	fmt.Println(string(output))
 	assert.NoError(t, err)
 	assert.NotNil(t, objects[0])
 	assert.NotNil(t, objects[0].Id)
@@ -177,7 +174,7 @@ func TestPrecedence(t *testing.T) {
 	}
 
 	// Cleanup
-	rm_cmd := exec.Command(binaryPath, config, engine, "app", "rm", "corectl_test_app.qvf")
+	rm_cmd := exec.Command(binaryPath, config, engine, "app", "rm", testAppName)
 	defer rm_cmd.Run()
 
 	var data []map[string]string
@@ -253,8 +250,7 @@ func TestCorectl(t *testing.T) {
 	os.Setenv("ENGINE_URL", "localhost:9076")
 	// General
 	emptyConnectString := []string{}
-	defaultConnectString1 := []string{"--config=test/project1/corectl.yml", connectToEngine}
-	defaultConnectString3 := []string{"--config=test/project3/corectl.yml", connectToEngine, "--verbose=false", "--traffic=false"} // Config validation
+	defaultConnectString1 := []string{"--config=test/project1/corectl.yml", connectToEngine, "--verbose=false", "--traffic=false"} // Config validation
 
 	tests := []test{
 		{"help 1", emptyConnectString, []string{""}, []string{"golden", "help-1.golden"}, initTest{false, false}},
@@ -290,7 +286,7 @@ func TestCorectl(t *testing.T) {
 
 		// Verify behaviour when opening an app without data
 		{"project 1 - open app without data", []string{"--config=test/project1/corectl-alt.yml", "--ttl", "0", connectToEngine}, []string{"connection", "ls", "--no-data", "--verbose"}, []string{"without data"}, initTest{true, true}},
-		{"project 1 - save objects in app opened without data", []string{"--config=test/project1/corectl.yml", "--ttl", "0", connectToEngine}, []string{"build", "--no-data"}, []string{"Saving objects in app... Done"}, initTest{false, true}},
+		{"project 1 - save objects in app opened without data", []string{"--config=test/project1/corectl.yml", "--ttl", "0", connectToEngine, "--traffic=false", "--verbose=false"}, []string{"build", "--no-data"}, []string{"Saving objects in app... Done"}, initTest{false, true}},
 
 		// Project 2 has separate connections file
 		{"project 2 - build with connections", []string{connectToEngine, "-a=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
@@ -299,15 +295,13 @@ func TestCorectl(t *testing.T) {
 		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
 		{"project 2 - keys", []string{"--config=test/project2/corectl-alt2.yml", connectToEngine}, []string{"keys"}, []string{"animal"}, initTest{true, true}},
 
-		{"project 3 - build ", defaultConnectString3, []string{"build"}, []string{"No app specified, using session app.", "datacsv << data 1 Lines fetched", "Reload finished successfully"}, initTest{false, false}},
-		{"project 3 - get fields", defaultConnectString3, []string{"fields"}, []string{"golden", "project3-fields.golden"}, initTest{false, false}},
 		{"err project 1 - invalid-catwalk-url", defaultConnectString1, []string{"catwalk", "--catwalk-url=not-a-valid-url"}, []string{"golden", "project1-catwalk-error.golden"}, initTest{false, false}},
 		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"eval", "count(numbers)", "by", "xyz"}, []string{"golden", "err-2.golden"}, initTest{false, false}},
 		{"err 3", []string{connectToEngine, "--app=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"object", "data", "nosuchobject"}, []string{"golden", "err-3.golden"}, initTest{true, true}},
 
 		{"project 1 - get status", defaultConnectString1, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 2 tables."}, initTest{true, true}},
 		{"list apps json", defaultConnectString1, []string{"app", "ls", "--json"}, []string{"\"id\": \"/apps/" + testAppName + "\","}, initTest{true, true}},
-		{"err 1", []string{"--engine=localhost:9999"}, []string{"fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
+		{"err 1", []string{"--app=bogus", "--engine=localhost:9999"}, []string{"fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
 
 		// trying to connect to an engine that has JWT authorization activated without a JWT Header
 		{"err jwt", []string{connectToEngine}, []string{"app", "ls"}, []string{"Error details:  401 from ws server: websocket: bad handshake"}, initTest{false, false}},
@@ -319,8 +313,8 @@ func TestCorectl(t *testing.T) {
 		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
 
 		// Verifying config validation
-		{"err invalid 1", []string{"--config=test/project3/corectl-invalid.yml ", connectToEngine}, []string{"build"}, []string{"apps", "header", "object", "measure", "verbos", "trafic", "connection", "dimension"}, initTest{false, false}},
-		{"err invalid 2", []string{"--config=test/project3/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"'header': did you mean 'headers'?", "test/project3/corectl-invalid2.yml"}, initTest{false, false}},
+		{"err invalid 1", []string{"--config=test/project2/corectl-invalid.yml ", connectToEngine}, []string{"build"}, []string{"apps", "header", "object", "measure", "verbos", "trafic", "connection", "dimension"}, initTest{false, false}},
+		{"err invalid 2", []string{"--config=test/project2/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"'header': did you mean 'headers'?", "test/project2/corectl-invalid2.yml"}, initTest{false, false}},
 	}
 
 	for _, tt := range tests {

@@ -47,7 +47,13 @@ corectl status --app=my-app.qvf`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		appName := viper.GetString("app")
+		var state *internal.State
+		if appName != "" {
+			state = internal.PrepareEngineState(rootCtx, headers, false)
+		} else {
+			state = internal.PrepareEngineStateWithoutApp(rootCtx, headers)
+		}
 		printer.PrintStatus(state, viper.GetString("engine"))
 	},
 }

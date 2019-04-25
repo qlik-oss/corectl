@@ -37,7 +37,7 @@ We have added an example configuration file to this repo [here](./examples/corec
 Example configuration:
 ```yaml
 engine: localhost:9076 # URL and port to running Qlik Associative Engine instance
-app: corectl-example.qvf # App name that the tool should open a session against. Default a session app will be used.
+app: corectl-example.qvf # App name that the tool should open a session against. 
 script: ./script.qvs # Path to a script that should be set in the app
 connections: # Connections that should be created in the app
   testdata: # Name of the connection

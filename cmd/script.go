@@ -24,7 +24,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 		} else {
 			internal.FatalError("Error: No loadscript (.qvs) file specified.")
 		}
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
