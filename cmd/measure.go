@@ -19,7 +19,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 		commandLineMeasures := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, commandLineMeasures, "measure")
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -42,7 +42,7 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 				internal.FatalError("Failed to remove generic measure ", entity)
 			}
 		}
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

@@ -19,7 +19,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 		commandLineDimensions := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, commandLineDimensions, "dimension")
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -42,7 +42,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 				internal.FatalError("Failed to remove generic dimension ", entity)
 			}
 		}
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

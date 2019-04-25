@@ -21,7 +21,7 @@ var setConnectionsCmd = &cobra.Command{
 			internal.FatalError("Error: No connection file specified.")
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile)
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -44,7 +44,7 @@ corectl connection rm ID-1 ID-2`,
 				internal.FatalError("Failed to remove connection: ", connection, " with error: ", err.Error())
 			}
 		}
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

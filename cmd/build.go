@@ -41,7 +41,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 			internal.Reload(ctx, state.Doc, state.Global, silent, true)
 		}
 
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(ctx, state.Doc)
 		}
 	},
@@ -63,7 +63,7 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 
 		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
 
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},

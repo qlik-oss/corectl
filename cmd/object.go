@@ -22,7 +22,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		commandLineObjects := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetupEntities(rootCtx, state.Doc, commandLineObjects, "object")
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
@@ -50,7 +50,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 				internal.FatalError("Failed to remove generic object ", entity)
 			}
 		}
-		if state.AppID != "" && !viper.GetBool("no-save") {
+		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
