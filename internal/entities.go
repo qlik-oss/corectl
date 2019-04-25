@@ -45,10 +45,11 @@ func SetupEntities(ctx context.Context, doc *enigma.Doc, entitiesPathsOnCommandL
 	if err != nil {
 		FatalError(err)
 	}
-	for _, relativeEntityPath := range entitiesOnCommandLine {
-		setupEntity(ctx, doc, relativeEntityPath, entityType)
-	}
-	if ConfigDir != "" {
+	if len(entitiesOnCommandLine) > 0 {
+		for _, relativeEntityPath := range entitiesOnCommandLine {
+			setupEntity(ctx, doc, relativeEntityPath, entityType)
+		}
+	} else if ConfigDir != "" {
 		currentWorkingDir, _ := os.Getwd()
 		defer os.Chdir(currentWorkingDir)
 		os.Chdir(ConfigDir)

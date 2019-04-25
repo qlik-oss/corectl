@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "swedish-dimension",
+    "qType": "dimension"
+  },
+  "qDim": {
+    "qFieldLabels": ["Label"],
+    "qFieldDefs": ["Swedish"]
+  }
+}

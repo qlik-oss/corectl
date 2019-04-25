@@ -155,6 +155,52 @@ func TestConnections(t *testing.T) {
 	_ = exec.Command(binaryPath, []string{connectToEngine, "--config=test/project2/corectl.yml", "app", "rm", testAppName}...)
 }
 
+// TestPrecedence checks that command line flags overrides config props
+func TestPrecedence(t *testing.T) {
+	// Set objects, dimensions, measures and connection explicitly.
+	// The information in the config should therefore be overriden.
+	config := "--config=test/project5/corectl.yml"
+	engine := "--engine=" + *engineIP
+	flags := []string{
+		"build",
+		config,
+		engine,
+		"--objects=test/project5/o/*",
+		"--dimensions=test/project5/d/*",
+		"--measures=test/project5/m/*",
+		"--connections=test/project5/connections.yml",
+	}
+	cmd := exec.Command(binaryPath, flags...)
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(output))
+	}
+
+	// Cleanup
+	rm_cmd := exec.Command(binaryPath, config, engine, "app", "rm", "corectl_test_app.qvf")
+	defer rm_cmd.Run()
+
+	var data []map[string]string
+	entities := []string{"object", "dimension", "measure"}
+	expected := []string{"my-hypercube2", "swedish-dimension", "measure-x"}
+	for i, entity := range entities {
+		cmd = exec.Command(binaryPath, config, engine, entity, "ls", "--json")
+		output, err = cmd.Output()
+		json.Unmarshal(output, &data)
+		assert.Nil(t, err)
+		assert.Len(t, data, 1)
+		assert.Equal(t, expected[i], data[0]["qId"])
+	}
+
+	var connections []*enigma.Connection
+	cmd = exec.Command(binaryPath, config, engine, "connection", "ls", "--json")
+	output, err = cmd.Output()
+	json.Unmarshal(output, &connections)
+	assert.Nil(t, err)
+	assert.Len(t, connections, 1)
+	assert.Equal(t, "bogusname", connections[0].Name)
+}
+
 func setupTest(t *testing.T, tt test) func(t *testing.T, tt test) {
 	if tt.initTest.setup == true {
 		t.Log("\u001b[96m *** Setup *** \u001b[0m")

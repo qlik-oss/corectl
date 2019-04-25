@@ -1,0 +1,13 @@
+Numbers:
+Load * Inline [
+Number, English, Swedish 
+1, One, Ett
+2, Two, Två
+3, Three, Tre
+4, Four, Fyra
+5, Five, Fem
+6, Six, Sex
+7, Seven, Sju
+8, Eight, Åtta
+9, Nine, Nio
+]

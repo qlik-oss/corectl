@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "numbers-dimension",
+    "qType": "dimension"
+  },
+  "qDim": {
+    "qFieldLabels": ["Label"],
+    "qFieldDefs": ["numbers"]
+  }
+}
