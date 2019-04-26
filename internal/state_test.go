@@ -16,12 +16,12 @@ func TestBuildMetaUrl(t *testing.T) {
 }
 
 func TestBuildEngineUrl(t *testing.T) {
-	assert.Equal(t, buildWebSocketURL("engine", "30"), "ws://engine/app/engineData/ttl/30")
-	assert.Equal(t, buildWebSocketURL("engine:1234", "30"), "ws://engine:1234/app/engineData/ttl/30")
-	assert.Equal(t, buildWebSocketURL("wss://engine", "30"), "wss://engine/app/engineData/ttl/30")
-	assert.Equal(t, buildWebSocketURL("ws://engine", "30"), "ws://engine/app/engineData/ttl/30")
-	assert.Equal(t, buildWebSocketURL("wss://engine:1234", "30"), "wss://engine:1234/app/engineData/ttl/30")
-	assert.Equal(t, buildWebSocketURL("ws://engine:1234", "30"), "ws://engine:1234/app/engineData/ttl/30")
+	assert.Equal(t, buildWebSocketURL("engine", "30"), "ws://engine/app/corectl/ttl/30")
+	assert.Equal(t, buildWebSocketURL("engine:1234", "30"), "ws://engine:1234/app/corectl/ttl/30")
+	assert.Equal(t, buildWebSocketURL("wss://engine", "30"), "wss://engine/app/corectl/ttl/30")
+	assert.Equal(t, buildWebSocketURL("ws://engine", "30"), "ws://engine/app/corectl/ttl/30")
+	assert.Equal(t, buildWebSocketURL("wss://engine:1234", "30"), "wss://engine:1234/app/corectl/ttl/30")
+	assert.Equal(t, buildWebSocketURL("ws://engine:1234", "30"), "ws://engine:1234/app/corectl/ttl/30")
 	assert.Equal(t, buildWebSocketURL("ws://engine:1234/sense/app/test.qvf", "30"), "ws://engine:1234/sense/app/test.qvf")
 	assert.Equal(t, buildWebSocketURL("engine:1234/sense/app/test.qvf", "30"), "ws://engine:1234/sense/app/test.qvf")
 	assert.Equal(t, buildWebSocketURL("ws://engine:1234/", "30"), "ws://engine:1234/")

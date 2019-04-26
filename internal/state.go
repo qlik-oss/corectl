@@ -242,7 +242,7 @@ func buildWebSocketURL(engine string, ttl string) string {
 	u, _ := neturl.Parse(engine)
 	// Only modify the url if it does not contain a path or ends with a "/"
 	if u.Path == "" && engine[len(engine)-1:] != "/" {
-		engine = engine + "/app/engineData/ttl/" + ttl
+		engine = engine + "/app/corectl/ttl/" + ttl
 	}
 	return engine
 }
