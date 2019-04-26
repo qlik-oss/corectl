@@ -274,10 +274,9 @@ func getSessionID(appID string) string {
 
 // Function for parsing an url for an app identifier
 func tryParseAppFromURL(engineURL string) string {
-	u, _ := neturl.Parse(engineURL)
 	// Find any string in the path succeeding "/app/", and excluding anything after "/"
 	re, _ := regexp.Compile("/app/([^/]+)")
-	values := re.FindStringSubmatch(u.Path)
+	values := re.FindStringSubmatch(engineURL)
 	if len(values) > 0 {
 		appName := values[1]
 		LogVerbose("Found app in engine url: " + appName)
