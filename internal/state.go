@@ -100,7 +100,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 
 	if appName == "" {
 		// No app name provided, lets check if one exists in the url
-		appName = parseAppFromURL(engine)
+		appName = tryParseAppFromURL(engine)
 		if appName == "" {
 			FatalError("Error: No app specified")
 		}
@@ -273,7 +273,7 @@ func getSessionID(appID string) string {
 }
 
 // Function for parsing an url for an app identifier
-func parseAppFromURL(engineURL string) string {
+func tryParseAppFromURL(engineURL string) string {
 	u, _ := neturl.Parse(engineURL)
 	// Find any string in the path succeeding "/app/", and excluding anything after "/"
 	re, _ := regexp.Compile("/app/([^/]+)")
