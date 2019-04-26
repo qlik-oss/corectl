@@ -34,7 +34,7 @@ corectl object set ./my-objects-glob-path.json
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
   -t, --traffic                  Log JSON websocket traffic to stdout
-      --ttl string               Qlik Associative Engine session time to live in seconds (default "30")
+      --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information
 ```
 
