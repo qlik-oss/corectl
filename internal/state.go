@@ -279,7 +279,9 @@ func tryParseAppFromURL(engineURL string) string {
 	re, _ := regexp.Compile("/app/([^/]+)")
 	values := re.FindStringSubmatch(u.Path)
 	if len(values) > 0 {
-		return values[1]
+		appName := values[1]
+		LogVerbose("Found app in engine url: " + appName)
+		return appName
 	}
 	return ""
 }
