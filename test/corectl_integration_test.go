@@ -106,12 +106,13 @@ func verifyNoEntities(t *testing.T, connectToEngine string, configPath string, e
 func TestNestedObjectSupport(t *testing.T) {
 	connectToEngine := "--engine=" + *engineIP
 	//create the nested objects
-	output := setupEntities(connectToEngine, "--config=test/project2/corectl.yml", "object", "--objects=test/project2/sheet.json")
+	output := setupEntities(connectToEngine, "--config=test/project2/corectl-alt.yml", "object", "--objects=test/project2/sheet.json")
 
 	//verify that the objects are created
 	var objects []*enigma.NxInfo
 	err := json.Unmarshal(output, &objects)
 	assert.NoError(t, err)
+	assert.NotEmpty(t, objects)
 	assert.NotNil(t, objects[0])
 	assert.NotNil(t, objects[0].Id)
 	assert.Equal(t, "a699ee97-152d-4470-9655-ae7c82d71491", objects[0].Id)
