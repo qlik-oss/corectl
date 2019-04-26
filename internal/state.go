@@ -10,6 +10,7 @@ import (
 	neturl "net/url"
 	"os"
 	"os/user"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -69,16 +70,16 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 }
 
 //AppExists returns wether or not an app exists
-func AppExists(ctx context.Context, engine string, appName string, ttl string, headers http.Header) bool {
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header) bool {
+	global := PrepareEngineStateWithoutApp(ctx, headers).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	_, err := global.GetAppEntry(ctx, appID)
 	return err == nil
 }
 
 //DeleteApp removes the specified app from the engine.
-func DeleteApp(ctx context.Context, engine string, appName string, ttl string, headers http.Header) {
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header) {
+	global := PrepareEngineStateWithoutApp(ctx, headers).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
@@ -98,7 +99,11 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	noData := viper.GetBool("no-data")
 
 	if appName == "" {
-		FatalError("Error: No app specified")
+		// No app name provided, lets check if one exists in the url
+		appName = tryParseAppFromURL(engine)
+		if appName == "" {
+			FatalError("Error: No app specified")
+		}
 	}
 
 	appID, _ := applyNameToIDTransformation(engine, appName)
@@ -226,23 +231,20 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 
 //TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
 func TidyUpEngineURL(engine string) string {
-	var url string
-	if strings.HasPrefix(engine, "wss://") {
-		url = engine
-	} else if strings.HasPrefix(engine, "ws://") {
-		url = engine
-	} else {
-		url = "ws://" + engine
+	if strings.HasPrefix(engine, "wss://") || strings.HasPrefix(engine, "ws://") {
+		return engine
 	}
-	if len(strings.Split(url, ":")) == 2 {
-		url += ":9076"
-	}
-	return url
+	return "ws://" + engine
 }
 
 func buildWebSocketURL(engine string, ttl string) string {
 	engine = TidyUpEngineURL(engine)
-	return engine + "/app/engineData/ttl/" + ttl
+	u, _ := neturl.Parse(engine)
+	// Only modify the url if it does not contain a path or ends with a "/"
+	if u.Path == "" && engine[len(engine)-1:] != "/" {
+		engine = engine + "/app/corectl/ttl/" + ttl
+	}
+	return engine
 }
 
 func buildMetadataURL(engine string, appID string) string {
@@ -268,4 +270,17 @@ func getSessionID(appID string) string {
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
+}
+
+// Function for parsing an url for an app identifier
+func tryParseAppFromURL(engineURL string) string {
+	// Find any string in the path succeeding "/app/", and excluding anything after "/"
+	re, _ := regexp.Compile("/app/([^/]+)")
+	values := re.FindStringSubmatch(engineURL)
+	if len(values) > 0 {
+		appName := values[1]
+		LogVerbose("Found app in engine url: " + appName)
+		return appName
+	}
+	return ""
 }
