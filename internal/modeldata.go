@@ -3,10 +3,9 @@ package internal
 import (
 	"context"
 	"fmt"
+	"github.com/qlik-oss/enigma-go"
 	"net/http"
 	"os"
-
-	"github.com/qlik-oss/enigma-go"
 )
 
 // ModelMetadata defines all available metadata around the data model.
@@ -70,22 +69,33 @@ func (m *ModelMetadata) tableByName(name string) *TableModel {
 
 func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string, restMetadata *RestMetadata) []*FieldModel {
 	result := make([]*FieldModel, len(fieldNames))
-	resultChannel := make(chan *enigma.FieldDescription, len(fieldNames))
-	for _, fieldName := range fieldNames {
-		fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
-		if err != nil {
-			fmt.Println("Unexpected error", err)
-			os.Exit(1)
-		}
-		resultChannel <- fieldDescr
-	}
-	for i, fieldName := range fieldNames {
-		fieldDescr := <-resultChannel
 
+	type GetFieldDescriptionResultEntry struct {
+		index  int
+		result *enigma.FieldDescription
+	}
+	waitChannel := make(chan GetFieldDescriptionResultEntry)
+	defer close(waitChannel)
+
+	for i, fieldName := range fieldNames {
 		result[i] = &FieldModel{
-			FieldDescription: fieldDescr,
+			FieldDescription: nil, //Fill in later
 			RestMetadata:     restMetadata.fieldByName(fieldName),
 		}
+		//Run field description fetching in parallel threads
+		go func(index int, fieldName string) {
+			fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
+			if err != nil {
+				fmt.Println("Unexpected error", err)
+				os.Exit(1)
+			}
+			item := GetFieldDescriptionResultEntry{index: index, result: fieldDescr}
+			waitChannel <- item
+		}(i, fieldName)
+	}
+	for range fieldNames {
+		item := <-waitChannel
+		result[item.index].FieldDescription = item.result
 	}
 
 	return result
@@ -168,9 +178,26 @@ func isKey(field *FieldModel) bool {
 func buildSampleContent(ctx context.Context, doc *enigma.Doc, fieldNames []string) map[string]string {
 	var sampleContentByFieldName map[string]string
 	sampleContentByFieldName = make(map[string]string)
-	for _, fieldName := range fieldNames {
-		sampleContentByFieldName[fieldName] = getFieldContentAsString(ctx, doc, fieldName, 40)
+
+	type GetFieldContentAsStringResultEntry struct {
+		fieldName     string
+		sampleContent string
 	}
+	waitChannel := make(chan GetFieldContentAsStringResultEntry)
+	defer close(waitChannel)
+
+	for _, fieldName := range fieldNames {
+		go func(fieldName string) {
+			sampleContent := getFieldContentAsString(ctx, doc, fieldName, 40)
+			waitChannel <- GetFieldContentAsStringResultEntry{fieldName: fieldName, sampleContent: sampleContent}
+		}(fieldName)
+	}
+
+	for range fieldNames {
+		item := <-waitChannel
+		sampleContentByFieldName[item.fieldName] = item.sampleContent
+	}
+
 	return sampleContentByFieldName
 }
 
