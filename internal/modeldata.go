@@ -3,9 +3,9 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/enigma-go"
 	"net/http"
-	"os"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 // ModelMetadata defines all available metadata around the data model.
@@ -86,8 +86,7 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 		go func(index int, fieldName string) {
 			fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
 			if err != nil {
-				fmt.Println("Unexpected error", err)
-				os.Exit(1)
+				FatalError(err)
 			}
 			item := GetFieldDescriptionResultEntry{index: index, result: fieldDescr}
 			waitChannel <- item
