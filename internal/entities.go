@@ -237,15 +237,37 @@ type PropsWithTitle struct {
 
 func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
-	result := []NamedItemWithType{}
+	unsortedResult := make(map[string]*NamedItemWithType)
+	resultInOriginalOrder := []NamedItemWithType{}
+
+	waitChannel := make(chan *NamedItemWithType)
+	defer close(waitChannel)
+
 	for _, item := range allInfos {
-		object, _ := doc.GetObject(ctx, item.Id)
-		if object != nil && object.Type != "" {
-			rawProps, _ := object.GetPropertiesRaw(ctx)
-			propsWithTitle := &PropsWithTitle{}
-			json.Unmarshal(rawProps, propsWithTitle)
-			result = append(result, NamedItemWithType{Title: propsWithTitle.Title, Id: item.Id, Type: item.Type})
+		go func(item *enigma.NxInfo) {
+			object, _ := doc.GetObject(ctx, item.Id)
+			if object != nil && object.Type != "" {
+				rawProps, _ := object.GetPropertiesRaw(ctx)
+				propsWithTitle := &PropsWithTitle{}
+				json.Unmarshal(rawProps, propsWithTitle)
+				waitChannel <- &NamedItemWithType{Title: propsWithTitle.Title, Id: item.Id, Type: item.Type}
+			} else {
+				waitChannel <- nil
+			}
+		}(item)
+	}
+	//Put all responses into a map by their Id
+	for range allInfos {
+		item := <-waitChannel
+		if item != nil {
+			unsortedResult[item.Id] = item
 		}
 	}
-	return result
+	//Loop over the original sort order, fetch the result items from the map and build the final result array
+	for _, item := range allInfos {
+		if unsortedResult[item.Id] != nil {
+			resultInOriginalOrder = append(resultInOriginalOrder, *unsortedResult[item.Id])
+		}
+	}
+	return resultInOriginalOrder
 }
