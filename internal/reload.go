@@ -6,21 +6,29 @@ import (
 	"os"
 	"time"
 
+	"golang.org/x/crypto/ssh/terminal"
+
 	"github.com/qlik-oss/enigma-go"
 	"github.com/spf13/viper"
 )
 
-// Reload reloads the app and prints the progress to system out. If true is supplied to skipTransientLogs
-// the live ticking of table row counts is disabled (useful for testing).
-func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool, skipTransientLogs bool) {
+var transientLogged  bool
+
+// Reload reloads the app and prints the progress to system out.
+func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool) {
 
 	var (
 		reloadSuccessful bool
 		err              error
+		skipTransientLogs bool
 	)
 
 	// Log progress unless silent flag was passed in to the reload command
 	if !silent {
+
+		// If not running in a terminal we should skip transient progress logging
+		skipTransientLogs = !terminal.IsTerminal(int(os.Stdout.Fd()))
+
 		reloadDone := make(chan struct{})
 		loggingDone := make(chan struct{})
 		ctxWithReservedRequestID, reservedRequestID := doc.WithReservedRequestID(ctx)
@@ -32,7 +40,7 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 					close(loggingDone)
 					return
 				default:
-					time.Sleep(1000)
+					time.Sleep(time.Second)
 					// Get the progress using the request id we reserved for the reload
 					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
 				}
@@ -72,11 +80,17 @@ func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID i
 		if progress.TransientProgress != "" {
 			if !skipTransientLogs {
 				text = progress.TransientProgress
-				fmt.Print("\033\r" + text)
+				fmt.Print("\r" + text)
+				transientLogged = true
 			}
 		} else if progress.PersistentProgress != "" {
 			text = progress.PersistentProgress
-			fmt.Print(text)
+			// If a transient progress was logged we should update that progress with the persistent one
+			if transientLogged {
+				fmt.Print("\r" + text)
+			} else {
+				fmt.Print(text)
+			}
 		}
 	}
 }

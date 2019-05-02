@@ -38,7 +38,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 
 		if !viper.GetBool("no-reload") {
 			silent := viper.GetBool("silent")
-			internal.Reload(ctx, state.Doc, state.Global, silent, true)
+			internal.Reload(ctx, state.Doc, state.Global, silent)
 		}
 
 		if !viper.GetBool("no-save") {
@@ -61,7 +61,7 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		silent := viper.GetBool("silent")
 
-		internal.Reload(rootCtx, state.Doc, state.Global, silent, true)
+		internal.Reload(rootCtx, state.Doc, state.Global, silent)
 
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
