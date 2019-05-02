@@ -12,14 +12,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-var transientLogged  bool
+var transientLogged bool
 
 // Reload reloads the app and prints the progress to system out.
 func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool) {
 
 	var (
-		reloadSuccessful bool
-		err              error
+		reloadSuccessful  bool
+		err               error
 		skipTransientLogs bool
 	)
 
@@ -88,6 +88,7 @@ func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID i
 			// If a transient progress was logged we should update that progress with the persistent one
 			if transientLogged {
 				fmt.Print("\r" + text)
+				transientLogged = false
 			} else {
 				fmt.Print(text)
 			}
