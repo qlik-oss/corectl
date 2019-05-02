@@ -110,12 +110,16 @@ go test corectl_integration_test.go --update
 
 ## Release
 
-You create a release by pushing a git tag with semantic versioning.
+You create a release by pushing a commit and a tag with semantic versioning.
 CircleCi will then run a release build that uses `goreleaser` to release `corectl` with the version set as the git tag.
 
-Example:
-`git tag v0.1.0 COMMIT-SHA`
-`git push origin v0.1.0`
+To create a release for e.g. version `v1.0.0`:
+
+```bash
+RELEASE_VERSION=v1.0.0 ./release.sh
+```
+
+The script will update the API specification with the new version, create a commit with a tag and push to origin.
 
 ## Documentation
 
