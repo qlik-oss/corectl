@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -36,11 +33,6 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Expected atleast one object-id specify what object to remove from the app")
-			ccmd.Usage()
-			os.Exit(1)
-		}
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
