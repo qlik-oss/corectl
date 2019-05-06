@@ -37,7 +37,7 @@ Note that bash-completion is required and needs to be installed on your system.`
 		case args[0] == "zsh":
 			genZshCompletion()
 		default:
-			fmt.Printf("%s is not a supported shell", args[0])
+			fmt.Printf("'%s' is not a supported shell\n", args[0])
 		}
 	},
 }
@@ -70,27 +70,37 @@ const bashCompletionFunc = `
 
   __extract_flags_to_forward()
 	{
-    local forward_flags
+		local forward_flags
   	local result
-	  forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
-	  while [[ $# -gt 0 ]]; do
+  	forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
+  	while [[ $# -gt 0 ]]; do
   	  for i in "${forward_flags[@]}"
-			do
-				case $1 in
-				$i)
-					# If there is a flag with spacing we need to check that an arg is passed
-					if [[ $# -gt 1 ]]; then
-						result+="$1=";
-						shift;
-						result+="$1 "
-					fi
-      	;;
-      	$i=*)
-        	result+="$1 "
-      	;;
-    	esac
-			done
-    	shift
+  	  do
+  	    case $1 in
+  	      $i)
+  	        # If there is a flag with spacing we need to check that an arg is passed
+  	        if [[ $# -gt 1 ]]; then
+  	          result+="$1=";
+  	          shift;
+  	          result+="$1"
+  	        fi
+  	        ;;
+  	      $i=*)
+  	        result+="$1"
+  	        ;;
+  	    esac
+				# Since host:port gets treated as 3 words by cobra we have to puzzle it back to an url again
+				# Also, the 'words' contain a lot of trailing whitespaces hence the sed trim
+  	    if [[ $# -gt 2 ]]; then
+  	      if [ "$1" = ":" ]; then
+  	        shift;
+  	        result=$(echo $result | sed 's/[ \t]*$//')
+  	        result+=":$1"
+  	      fi
+  	    fi
+  	  result+=" "
+  	  done
+  	  shift
   	done
     echo "$result";
 	}
