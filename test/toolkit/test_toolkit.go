@@ -1,17 +1,20 @@
 package toolkit
 
 import (
+	"encoding/json"
 	"fmt"
-	"os"
+	"github.com/stretchr/testify/assert"
 	"os/exec"
-	"path/filepath"
 	"reflect"
-	"runtime"
+	"regexp"
 	"strings"
 	"testing"
 )
 
-var createdApps []string
+var (
+	createdApps   []string
+	goldPolishers []func(string) string
+)
 
 type Params struct {
 	T       *testing.T
@@ -24,11 +27,21 @@ type Params struct {
 	Ttl     string
 	Verbose string
 
-	expectGolden   bool
-	expectIncludes []string
-	expectError    bool
-	expectOK       bool
-	expectEqual    string
+	expectGolden               bool
+	expectIncludes             []string
+	exectJsonArrayPropertyName string
+	expectJsonArrayValues      []string
+	expectError                bool
+	expectOK                   bool
+	expectEqual                string
+}
+
+func AddGoldPolisher(from string, to string) {
+	polisher := func(content string) string {
+		newConnectionCreatedRegexp := regexp.MustCompile("(?m)" + from)
+		return newConnectionCreatedRegexp.ReplaceAllString(content, to)
+	}
+	goldPolishers = append(goldPolishers, polisher)
 }
 
 func (p *Params) ExpectGolden() *Params {
@@ -58,6 +71,19 @@ func (p *Params) ExpectEqual(item string) *Params {
 	return &pc
 }
 
+func (p *Params) ExpectEmptyJsonArray() *Params {
+	pc := *p // Shallow clone
+	pc.exectJsonArrayPropertyName = "NA"
+	pc.expectJsonArrayValues = []string{}
+	return &pc
+}
+func (p *Params) ExpectJsonArray(propertyName string, items ...string) *Params {
+	pc := *p // Shallow clone
+	pc.exectJsonArrayPropertyName = propertyName
+	pc.expectJsonArrayValues = items
+	return &pc
+}
+
 func (p *Params) Describe(title string) *Params {
 	p.T.Log(title)
 	return p
@@ -66,6 +92,13 @@ func (p *Params) Describe(title string) *Params {
 func toGoldenFileName(name string) string {
 	goldenBaseName := strings.Replace(name, "/", "_", -1)
 	return goldenBaseName + ".golden"
+}
+
+func (p *Params) filterForGold(content string) string {
+	for _, x := range p.goldPolishers {
+		content = x(content)
+	}
+	return content
 }
 
 func (p *Params) WithParams(newP Params) Params {
@@ -152,16 +185,20 @@ func (p *Params) Run(command ...string) []byte {
 			if err == nil {
 				t.Fatalf("%s\nexpected (err == nil) to be %v, but got %v. err: %v", output, false, err == nil, err)
 			}
-		} else if p.expectGolden {
+		}
+
+		if p.expectGolden {
 			golden := newGoldenFile(t, goldenName)
 
+			actualFiltered := p.filterForGold(actual)
+
 			if update {
-				golden.write(actual)
+				golden.write(actualFiltered)
 			}
 			expected := golden.load()
 
-			if !reflect.DeepEqual(expected, actual) {
-				t.Fatalf("diff: %v", diff(expected, actual))
+			if !reflect.DeepEqual(expected, actualFiltered) {
+				t.Fatalf("diff: %v", diff(expected, actualFiltered))
 			}
 		} else if p.expectEqual != "" {
 			if err != nil {
@@ -170,10 +207,16 @@ func (p *Params) Run(command ...string) []byte {
 			if strings.Trim(actual, " \t\n") != strings.Trim(p.expectEqual, " \t\n") {
 				t.Fatalf("Output did not equal string '%v'\nReceived:\n%v", p.expectEqual, actual)
 			}
-		} else if p.expectIncludes != nil && len(p.expectIncludes) > 0 {
-			if err != nil {
-				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
+		} else if p.expectJsonArrayValues != nil {
+			var jsonArray []map[string]string
+			json.Unmarshal(output, &jsonArray)
+			fmt.Println(len(jsonArray))
+			fmt.Println(len(p.expectJsonArrayValues))
+			assert.Equal(t, len(jsonArray), len(p.expectJsonArrayValues), "Wrong size of array")
+			for i, value := range p.expectJsonArrayValues {
+				assert.Equal(t, value, jsonArray[i][p.exectJsonArrayPropertyName], "Unexpected value in json array")
 			}
+		} else if p.expectIncludes != nil && len(p.expectIncludes) > 0 {
 			for _, sub := range p.expectIncludes {
 				if !strings.Contains(actual, sub) {
 					t.Fatalf("Output did not contain substring '%v'\nReceived:\n%v", sub, actual)
@@ -209,58 +252,11 @@ func createsApp(args []string) string {
 func (p *Params) Reset() {
 	if createdApps != nil {
 		for _, appId := range createdApps {
-			p.ExpectOK().Run("app", "rm", appId, "--suppress")
+			p.Run("app", "rm", appId, "--suppress")
 		}
 		createdApps = []string{}
 
 	} else {
 		p.T.Log("No apps found when resetting")
 	}
-}
-
-func buildCorectl() {
-	err := os.Chdir("..")
-	if err != nil {
-		fmt.Printf("could not change dir: %v", err)
-		os.Exit(1)
-	}
-
-	abs, err := filepath.Abs(binaryName)
-	if err != nil {
-		fmt.Printf("could not get abs path for %s: %v", binaryName, err)
-		os.Exit(1)
-	}
-
-	binaryPath = abs
-
-	if err := exec.Command("go", "build", "-o", binaryName, "-v").Run(); err != nil {
-		fmt.Printf("could not make binary for %s: %v", binaryName, err)
-		os.Exit(1)
-	}
-}
-
-func getBinaryName() string {
-	if runtime.GOOS == "windows" {
-		return "corectl.exe"
-	}
-
-	return "corectl"
-}
-
-var binaryName = getBinaryName()
-
-var binaryPath string
-
-func GetTestFilePath() string {
-	_, filename, _, _ := runtime.Caller(1)
-
-	return filepath.Dir(filename)
-}
-
-func init() {
-	fmt.Println("RUNNING TEST MAIN")
-	buildCorectl()
-	os.Setenv("CORECTL_TEST_CONNECT", "corectl-test-connector")
-	os.Setenv("ENGINE_URL", "localhost:9076")
-
 }

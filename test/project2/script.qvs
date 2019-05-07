@@ -1,5 +1,0 @@
-datacsv:
-LOAD
-  *
-FROM [lib://testdata/data.csv]
-(txt, utf8, embedded labels, delimiter is ',');

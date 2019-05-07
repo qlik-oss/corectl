@@ -1,28 +1,21 @@
-// +build integration
+// build integration
 
 package test
 
 import (
-	"encoding/json"
 	"github.com/qlik-oss/corectl/test/toolkit"
-	"github.com/qlik-oss/enigma-go"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
 
-func TestActualTestCase(t *testing.T) {
+func TestBasicAnalyzing(t *testing.T) {
 
-	p := toolkit.Params{T: t, Config: "test/project1/corectl.yml", App: t.Name()}
+	os.Setenv("CONN_TYPE", "folder")
+	p := toolkit.Params{T: t, Config: "test/project1/corectl.yml", Engine: *toolkit.Engine0IP, App: t.Name() + "-ga.qvf"}
 	defer p.Reset()
 
-	p.ExpectIncludes("Connected",
-		"TableA <<  5 Lines fetched",
-		"TableB <<  5 Lines fetched",
-		"Reload finished successfully",
-		"Saving app... Done",
-	).Run("build")
-
+	p.ExpectGolden().Run("build")
+	p.ExpectGolden().Run("status")
 	p.ExpectGolden().Run("tables")
 	p.ExpectGolden().Run("assoc")
 	p.ExpectGolden().Run("fields")
@@ -35,21 +28,23 @@ func TestActualTestCase(t *testing.T) {
 	p.ExpectGolden().Run("eval", "by", "numbers")
 	p.ExpectGolden().Run("object", "ls", "--json")
 	p.ExpectGolden().Run("object", "data", "my-hypercube")
-	p.ExpectGolden().Run("object", "properties", "my-hypercube", "--json")
+	p.ExpectGolden().Run("object", "properties", "my-hypercube")
+	p.ExpectGolden().Run("object", "layout", "my-hypercube")
+	p.ExpectGolden().Run("object", "data", "nosuchobject")
 	p.ExpectGolden().Run("measure", "ls", "--json")
 	p.ExpectGolden().Run("dimension", "ls", "--json")
 }
 
-func TestActualTestCase2(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml"}
+func TestReload(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/project1/corectl.yml", App: t.Name()}
 	defer p.Reset()
-	p.ExpectOK().Run("build")
+	p.ExpectGolden().Run("build")
 	p.ExpectGolden().Run("reload", "--silent")
 	p.ExpectGolden().Run("reload", "--silent", "--nosave")
 }
 
-func TestActualTestCase3(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml"}
+func TestMeasures(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml", App: t.Name()}
 	defer p.Reset()
 	envStd := p
 	envAlt := p.WithParams(toolkit.Params{Config: "test/project1/corectl-alt.yml"})
@@ -60,85 +55,93 @@ func TestActualTestCase3(t *testing.T) {
 	envAlt.ExpectGolden().Run("measure", "ls", "--json")
 	envAlt.ExpectGolden().Run("measure", "rm", "measure-3", "--no-save")
 	envStd.ExpectGolden().Run("measure", "ls", "--json")
+}
 
-	envStd.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs", "--no-save")
-	envAlt.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs")
-	envAlt.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs", "--traffic")
+func TestScript(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml", App: t.Name()}
+	defer p.Reset()
+	p.ExpectOK().Run("build")
+
+	p.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs", "--no-save")
+	p.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs")
+	p.ExpectGolden().Run("script", "set", "test/project1/dummy-script.qvs", "--traffic")
 
 }
 
 func TestOpeningWithoutData(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml", Ttl: "0"}
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml", App: t.Name()}
 	defer p.Reset()
-	envAlt := p.WithParams(toolkit.Params{Config: "test/project1/corectl-alt.yml"})
+	p.Run("build")
 
-	// Open app without data
-	envAlt.ExpectIncludes("without data").Run("connection", "ls", "--no-data", "--verbose")
+	// Open app without data and verify key printouts
+	p.ExpectIncludes(`{"qSessionState":"SESSION_CREATED"}`, "without data").Run("connection", "ls", "--no-data", "--verbose")
 
 	// Save objects in app opened without data
 	p.ExpectIncludes("Saving objects in app... Done").Run("build", "--no-data")
 }
 
 func TestHelp(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project1/corectl.yml", Ttl: "0"}
+	p := toolkit.Params{T: t}
 	p.ExpectGolden().Run("")
 	p.ExpectGolden().Run("help")
 	p.ExpectGolden().Run("help", "build")
 }
 
 func TestNoData(t *testing.T) {
-	//		// Verify behaviour when opening an app without data
-	//		{"project 1 - open app without data", []string{"--config=test/project1/corectl-alt.yml", "--ttl", "0", connectToEngine}, []string{"connection", "ls", "--no-data", "--verbose"}, []string{"without data"}, initTest{true, true}},
-	//		{"project 1 - save objects in app opened without data", []string{"--config=test/project1/corectl.yml", "--ttl", "0", connectToEngine, "--traffic=false", "--verbose=false"}, []string{"build", "--no-data"}, []string{"Saving objects in app... Done"}, initTest{false, true}},
-}
-
-func TestSeparateConnectionsFile(t *testing.T) {
-	//		// Project 2 has separate connections file
-	//		{"project 2 - build with connections", []string{connectToEngine, "-a=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"build", "--script=test/project2/script.qvs", "--connections=test/project2/connections.yml", "--objects=test/project2/object-*.json"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
-	//		{"project 2 - build with connections 2", []string{connectToEngine, "--config=test/project2/corectl-connectionsref.yml"}, []string{"build"}, []string{"datacsv << data 1 Lines fetched", "Reload finished successfully", "Saving app... Done"}, initTest{false, true}},
-	//		{"project 2 - get fields ", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"fields"}, []string{"golden", "project2-fields.golden"}, initTest{true, true}},
-	//		{"project 2 - get data", []string{"--config=test/project2/corectl-alt.yml ", connectToEngine}, []string{"object", "data", "my-hypercube-on-commandline"}, []string{"golden", "project2-data.golden"}, initTest{true, true}},
-	//		{"project 2 - keys", []string{"--config=test/project2/corectl-alt2.yml", connectToEngine}, []string{"keys"}, []string{"animal"}, initTest{true, true}},
+	p := toolkit.Params{T: t}
+	p.ExpectGolden().Run("")
+	p.ExpectGolden().Run("connection ls")
+	p.ExpectGolden().Run("help", "build")
 }
 
 func TestCatwalkUrl(t *testing.T) {
-	//		{"err project 1 - invalid-catwalk-url", defaultConnectString1, []string{"catwalk", "--catwalk-url=not-a-valid-url"}, []string{"golden", "project1-catwalk-error.golden"}, initTest{false, false}},
-	//		{"err 2", []string{connectToEngine, "--app=nosuchapp.qvf", "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"eval", "count(numbers)", "by", "xyz"}, []string{"golden", "err-2.golden"}, initTest{false, false}},
-	//		{"err 3", []string{connectToEngine, "--app=" + testAppName, "--headers=authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0"}, []string{"object", "data", "nosuchobject"}, []string{"golden", "err-3.golden"}, initTest{true, true}},
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine0IP, App: t.Name()}
+	p.ExpectIncludes("Please provide a valid URL starting with 'https://', 'http://' or 'www'").Run("catwalk", "--catwalk-url=not-a-valid-url")
 }
 
-func TestGetStatus(t *testing.T) {
-	//		{"project 1 - get status", defaultConnectString1, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 2 tables."}, initTest{true, true}},
-	//		{"list apps json", defaultConnectString1, []string{"app", "ls", "--json"}, []string{"\"id\": \"/apps/" + testAppName + "\","}, initTest{true, true}},
-	//		{"err 1", []string{"--app=bogus", "--engine=localhost:9999"}, []string{"fields"}, []string{"Please check the --engine parameter or your config file", "Error details:  dial tcp"}, initTest{false, false}},
+func TestEvalOnUnknownAppl(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine0IP, App: t.Name()}
+	p.ExpectIncludes("Could not find app: App not found (1003)").Run("eval", "count(numbers)", "by", "xyz")
+}
+
+func TestEvalOnUnknownAppEngine(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: "localhost:9999", App: t.Name()}
+	p.ExpectIncludes("Please check the --engine parameter or your config file.").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestMissingJWTHeader(t *testing.T) {
-	//		// trying to connect to an engine that has JWT authorization activated without a JWT Header
-	//		{"err jwt", []string{connectToEngine}, []string{"app", "ls"}, []string{"Error details:  401 from ws server: websocket: bad handshake"}, initTest{false, false}},
-	//		{"err no license", []string{connectToEngineWithInccorectLicenseService}, []string{"app", "ls"}, []string{"Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE"}, initTest{false, false}},
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, App: t.Name()}
+	p.ExpectIncludes("Please check the --engine parameter or your config file.").Run("app", "ls")
+}
+
+func TestLicenseServiceDown(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine3IP, App: t.Name()}
+	p.ExpectIncludes("Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE").Run("app", "ls")
 }
 
 func TestABAC(t *testing.T) {
-	//		// Verifying corectl against an engine running with ABAC enabled
-	//		{"project 4 - get status", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"status"}, []string{"Connected to " + testAppName + " @ ", "The data model has 1 table."}, initTest{true, true}},
-	//		{"project 4 - list apps", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"app", "ls", "--json"}, []string{"\"title\": \"" + testAppName + "\","}, initTest{true, true}},
-	//		{"project 4 - get meta", []string{"--config=test/project4/corectl.yml ", connectToEngineABAC}, []string{"meta"}, []string{"golden", "project4-meta.golden"}, initTest{true, true}},
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine2IP, Config: "test/projects/abac/corectl.yml", App: t.Name()}
+	defer p.Reset()
+	p.ExpectGolden().Run("build")
+	p.ExpectGolden().Run("status")
+	p.ExpectJsonArray("name", "TestABAC").Run("app", "ls", "--json")
+	p.ExpectGolden().Run("meta")
 }
 
 func TestInvalidConfig(t *testing.T) {
-	//		// Verifying config validation
-	//		{"err invalid 1", []string{"--config=test/project2/corectl-invalid.yml ", connectToEngine}, []string{"build"}, []string{"apps", "header", "object", "measure", "verbos", "trafic", "connection", "dimension"}, initTest{false, false}},
-	//		{"err invalid 2", []string{"--config=test/project2/corectl-invalid2.yml ", connectToEngine}, []string{"build"}, []string{"'header': did you mean 'headers'?", "test/project2/corectl-invalid2.yml"}, initTest{false, false}},
-
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine0IP, App: t.Name()}
+	pi1 := p.WithParams(toolkit.Params{Config: "test/projects/invalid-config/corectl-invalid.yml"})
+	pi2 := p.WithParams(toolkit.Params{Config: "test/projects/invalid-config/corectl-invalid2.yml"})
+	pi1.ExpectGolden().Run("build")
+	pi2.ExpectGolden().Run("build")
 }
 
-func TestNestedObjectSupport(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project2/corectl-alt.yml", Ttl: "0", App: t.Name()}
+func TestNestedObjects(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/projects/nested-objects/corectl-alt.yml", Ttl: "0", App: t.Name()}
 	defer p.Reset()
 
 	// Build the app with an object with two children
-	p.ExpectOK().Run("build", "--objects=test/project2/sheet.json")
+	p.ExpectOK().Run("build", "--objects=test/projects/nested-objects/sheet.json")
 
 	// List the objects and verify
 	p.ExpectGolden().Run("object", "ls", "--json")
@@ -152,58 +155,49 @@ func TestNestedObjectSupport(t *testing.T) {
 }
 
 func TestConnections(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project2/corectl.yml", Ttl: "0", App: t.Name()}
-	defer p.Reset()
-	//setup env var for project 2
+
 	os.Setenv("CONN_TYPE", "folder")
+	pNoConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", App: t.Name() + "-1"}
+	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", App: t.Name() + "-2"}
+	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", App: t.Name() + "-3"}
+	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", App: t.Name() + "-4"}
+	defer pNoConnections.Reset() //This resets all apps since last reset
 
-	//Build the app with a connection
-	p.ExpectOK().Run("build", "--connections=test/project2/connections.yml")
+	//Build the apps
+	pNoConnections.ExpectOK().Run("build")
+	pCommandLine.ExpectOK().Run("build", "--connections=test/projects/connections/connections.yml")
+	pWithConnections.ExpectOK().Run("build")
+	pConnectionsFile.ExpectOK().Run("build")
 
-	//Verify that the connecgtion is there
-	output := p.ExpectOK().Run("connection", "ls", "--json")
-	var connections []*enigma.Connection
-	err := json.Unmarshal(output, &connections)
-	assert.NoError(t, err)
-	assert.NotNil(t, connections[0])
-	assert.NotNil(t, connections[0].Id)
-
-	//verify that removing the connection works
-	p.ExpectOK().Run("connection", "rm", connections[0].Id)
-	//verify that there is no connections in the app anymore.
-	p.ExpectEqual("[]").Run("connection", "ls", "--json")
-
+	pNoConnections.ExpectEmptyJsonArray().Run("connection", "ls", "--json")
+	pCommandLine.ExpectJsonArray("qName", "testdata-separate-file").Run("connection", "ls", "--json")
+	pWithConnections.ExpectJsonArray("qName", "testdata-inline").Run("connection", "ls", "--json")
+	pConnectionsFile.ExpectJsonArray("qName", "testdata-separate-file").Run("connection", "ls", "--json")
 }
 
-//
 // TestPrecedence checks that command line flags overrides config props
-func TestPrecedence(t *testing.T) {
+func TestPrecedence2(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/presedence/corectl.yml"}
+	defer p.Reset()
+	p1 := p.WithParams(toolkit.Params{App: t.Name() + "-1"})
+	p2 := p.WithParams(toolkit.Params{App: t.Name() + "-2"})
+	p1.ExpectOK().Run("build")
+	p1.ExpectJsonArray("qId", "my-hypercube").Run("object", "ls", "--json")
+	p1.ExpectJsonArray("qId", "numbers-dimension").Run("dimension", "ls", "--json")
+	p1.ExpectJsonArray("qId", "measure-1", "measure-2").Run("measure", "ls", "--json")
+	p1.ExpectJsonArray("qName", "testdata").Run("connection", "ls", "--json")
+
 	// Set objects, dimensions, measures and connection explicitly.
 	// The information in the config should therefore be overriden.
+	p2.ExpectOK().Run("build",
+		"--config=test/projects/presedence/corectl.yml",
+		"--objects=test/projects/presedence/o/*",
+		"--dimensions=test/projects/presedence/d/*",
+		"--measures=test/projects/presedence/m/*",
+		"--connections=test/projects/presedence/connections.yml")
+	p2.ExpectJsonArray("qId", "my-hypercube2").Run("object", "ls", "--json")
+	p2.ExpectJsonArray("qId", "swedish-dimension").Run("dimension", "ls", "--json")
+	p2.ExpectJsonArray("qId", "measure-x").Run("measure", "ls", "--json")
+	p2.ExpectJsonArray("qName", "bogusname").Run("connection", "ls", "--json")
 
-	p := toolkit.Params{T: t, Engine: *toolkit.Engine1IP, Config: "test/project5/corectl.yml", Ttl: "0", App: t.Name()}
-	defer p.Reset()
-
-	output := p.ExpectOK().Run("build",
-		"--config=test/project5/corectl.yml",
-		"--objects=test/project5/o/*",
-		"--dimensions=test/project5/d/*",
-		"--measures=test/project5/m/*",
-		"--connections=test/project5/connections.yml")
-
-	var data []map[string]string
-	entities := []string{"object", "dimension", "measure"}
-	expected := []string{"my-hypercube2", "swedish-dimension", "measure-x"}
-	for i, entity := range entities {
-		output = p.ExpectOK().Run(entity, "ls", "--json")
-		json.Unmarshal(output, &data)
-		assert.Len(t, data, 1)
-		assert.Equal(t, expected[i], data[0]["qId"])
-	}
-
-	var connections []*enigma.Connection
-	output = p.ExpectOK().Run("connection", "ls", "--json")
-	json.Unmarshal(output, &connections)
-	assert.Len(t, connections, 1)
-	assert.Equal(t, "bogusname", connections[0].Name)
 }
