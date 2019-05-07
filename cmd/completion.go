@@ -37,117 +37,127 @@ Note that bash-completion is required and needs to be installed on your system.`
 		case args[0] == "zsh":
 			genZshCompletion()
 		default:
-			fmt.Printf("%s is not a supported shell", args[0])
+			fmt.Printf("'%s' is not a supported shell\n", args[0])
 		}
 	},
 }
 
 const bashCompletionFunc = `
 
-	__custom_func()
-	{
-		case ${last_command} in
-			corectl_dimension_properties | corectl_dimension_layout | corectl_dimension_rm)
-				__corectl_get_dimensions
-				;;
-			corectl_measure_properties | corectl_measure_layout | corectl_measure_rm)
-				__corectl_get_measures
-				;;
-			corectl_object_data | corectl_object_properties | corectl_object_layout | corectl_object_rm)
-				__corectl_get_objects
-				;;
-			corectl_connection_get | corectl_connection_rm)
-				__corectl_get_connections
-				;;
-			corectl_app_rm)
-				__corectl_get_apps
-				;;
-      *)
-				COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
-				;;
-		esac
-	}
+__custom_func()
+{
+	case ${last_command} in
+		corectl_dimension_properties | corectl_dimension_layout | corectl_dimension_rm)
+			__corectl_get_dimensions
+			;;
+		corectl_measure_properties | corectl_measure_layout | corectl_measure_rm)
+			__corectl_get_measures
+			;;
+		corectl_object_data | corectl_object_properties | corectl_object_layout | corectl_object_rm)
+			__corectl_get_objects
+			;;
+		corectl_connection_get | corectl_connection_rm)
+			__corectl_get_connections
+			;;
+		corectl_app_rm)
+			__corectl_get_apps
+			;;
+    *)
+			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
+			;;
+	esac
+}
 
-  __extract_flags_to_forward()
-	{
-    local forward_flags
-  	local result
-	  forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
-	  while [[ $# -gt 0 ]]; do
-  	  for i in "${forward_flags[@]}"
-			do
-				case $1 in
-				$i)
-					# If there is a flag with spacing we need to check that an arg is passed
-					if [[ $# -gt 1 ]]; then
-						result+="$1=";
-						shift;
-						result+="$1 "
-					fi
-      	;;
-      	$i=*)
-        	result+="$1 "
-      	;;
-    	esac
-			done
-    	shift
-  	done
-    echo "$result";
-	}
+__extract_flags_to_forward()
+{
+	local forward_flags
+	local result
+	forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
+	while [[ $# -gt 0 ]]; do
+	  for i in "${forward_flags[@]}"
+	  do
+	    case $1 in
+	      $i)
+	        # If there is a flag with spacing we need to check that an arg is passed
+	        if [[ $# -gt 1 ]]; then
+	          result+="$1=";
+	          shift;
+	          result+="$1"
+	        fi
+	        ;;
+	      $i=*)
+	        result+="$1"
+	        ;;
+	    esac
+			# Since host:port gets treated as 3 words by cobra we have to puzzle it back to an url again
+			# Also, the 'words' contain a lot of trailing whitespaces hence the sed trim
+	    if [[ $# -gt 2 ]]; then
+	      if [ "$1" = ":" ]; then
+	        shift;
+	        result=$(echo $result | sed 's/[ \t]*$//')
+	        result+=":$1"
+	      fi
+	    fi
+	  result+=" "
+	  done
+	  shift
+	done
+  echo "$result";
+}
 
-  __corectl_call_corectl()
-  {
-    local flags=$(__extract_flags_to_forward ${words[@]})
-		local corectl_out
-		local errorcode
-		corectl_out=$(corectl $1 $flags 2>/dev/null)
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${corectl_out}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
-  }
+__corectl_call_corectl()
+{
+  local flags=$(__extract_flags_to_forward ${words[@]})
+	local corectl_out
+	local errorcode
+	corectl_out=$(corectl $1 $flags 2>/dev/null)
+	errorcode=$?
+	if [[ errorcode -eq 0 ]]; then
+		local IFS=$'\n'
+		COMPREPLY=( $(compgen -W "${corectl_out}" -- "$cur") )
+	else
+		COMPREPLY=()
+	fi;
+}
 
-	__corectl_get_dimensions()
-	{
-		__corectl_call_corectl "dimension ls --bash"
-	}
+__corectl_get_dimensions()
+{
+	__corectl_call_corectl "dimension ls --bash"
+}
 
-	__corectl_get_measures()
-	{
-		__corectl_call_corectl "measure ls --bash"
-	}
+__corectl_get_measures()
+{
+	__corectl_call_corectl "measure ls --bash"
+}
 
-	__corectl_get_objects()
-	{
-		__corectl_call_corectl "object ls --bash"
-	}
+__corectl_get_objects()
+{
+	__corectl_call_corectl "object ls --bash"
+}
 
-	__corectl_get_connections()
-	{
-		__corectl_call_corectl "connection ls --bash"
-	}
+__corectl_get_connections()
+{
+	__corectl_call_corectl "connection ls --bash"
+}
 
-	__corectl_get_apps()
-	{
-		__corectl_call_corectl "app ls --bash"
-	}
+__corectl_get_apps()
+{
+	__corectl_call_corectl "app ls --bash"
+}
 
-	__corectl_get_local_engines()
-	{
-		local docker_out
-		local errorcode
-		docker_out=$(docker ps 2>/dev/null | grep /engine:|sed \ 's/.*0.0.0.0:/localhost:/g'|sed 's/->.*//g')
-		errorcode=$?
-		if [[ errorcode -eq 0 ]]; then
-  		local IFS=$'\n'
-  		COMPREPLY=( $(compgen -W "${docker_out}" -- "$cur") )
-		else
-  		COMPREPLY=()
-		fi;
-	}
+__corectl_get_local_engines()
+{
+	local docker_out
+	local errorcode
+	docker_out=$(docker ps 2>/dev/null | grep /engine:|sed \ 's/.*0.0.0.0:/localhost:/g'|sed 's/->.*//g')
+	errorcode=$?
+	if [[ errorcode -eq 0 ]]; then
+		local IFS=$'\n'
+		COMPREPLY=( $(compgen -W "${docker_out}" -- "$cur") )
+	else
+		COMPREPLY=()
+	fi;
+}
 
 `
 
