@@ -14,13 +14,13 @@ func TestBasicAnalyzing(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
-	p.ExpectGolden().Run("build")
+	p.ExpectOK().Run("build")
 
 	p.ExpectGolden().Run("reload")
 	p.ExpectGolden().Run("reload", "--silent")
 	p.ExpectGolden().Run("reload", "--silent", "--no-save")
 
-	p.ExpectGolden().Run("status")
+	p.ExpectIncludes("Connected to ", "The data model has 2 tables.").Run("status")
 	p.ExpectGolden().Run("tables")
 	p.ExpectGolden().Run("assoc")
 	p.ExpectGolden().Run("fields")
@@ -35,7 +35,7 @@ func TestBasicAnalyzing(t *testing.T) {
 }
 
 func TestReload(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 	p.ExpectOK().Run("build")
 	p.ExpectGolden().Run("reload", "--silent")
@@ -140,15 +140,13 @@ func TestScriptManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
 	defer p.Reset()
 
-	p.ExpectOK().Run("build")
+	p.ExpectOK().Run("build", "--script", "test/projects/using-script/script1.qvs")
+
 	// Set the script with zero TTL and --no-save This shouldn't persist the script1 qvs file
-	p.ExpectGolden().Run("script", "set", "test/projects/using-script/script1.qvs", "--no-save")
-	p.ExpectGolden().Run("script", "get")
-	// Set the script without the --no-save-flag. This should persist the script1 qvs file
-	p.ExpectGolden().Run("script", "set", "test/projects/using-script/script1.qvs")
+	p.ExpectGolden().Run("script", "set", "test/projects/using-script/script2.qvs", "--no-save")
 	p.ExpectGolden().Run("script", "get")
 
-	// Change it to see that that works
+	// Set the script without the --no-save-flag. This should persist the script1 qvs file
 	p.ExpectGolden().Run("script", "set", "test/projects/using-script/script2.qvs")
 	p.ExpectGolden().Run("script", "get")
 }
@@ -176,14 +174,14 @@ func TestUsingJwt(t *testing.T) {
 }
 
 func TestHelp(t *testing.T) {
-	p := toolkit.Params{T: t}
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
 	p.ExpectGolden().Run("")
 	p.ExpectGolden().Run("help")
 	p.ExpectGolden().Run("help", "build")
 }
 
 func TestAppMissing(t *testing.T) {
-	p := toolkit.Params{T: t}
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
 	p.ExpectError("Error: No app specified").Run("connection", "ls")
 }
 
@@ -256,10 +254,10 @@ func TestChildObjectsAndFullPropertyTree(t *testing.T) {
 func TestConnectionDefinitionVariations(t *testing.T) {
 
 	os.Setenv("CONN_TYPE", "folder")
-	pNoConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", App: t.Name() + "-1"}
-	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", App: t.Name() + "-2"}
-	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", App: t.Name() + "-3"}
-	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", App: t.Name() + "-4"}
+	pNoConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-1"}
+	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-2"}
+	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-3"}
+	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-4"}
 	defer pNoConnections.Reset() //This resets all apps since last reset
 
 	//Build the apps
@@ -276,7 +274,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 
 // TestPrecedence checks that command line flags overrides config props
 func TestCommandLineOverridingConfigFile(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/presedence/corectl.yml"}
+	p := toolkit.Params{T: t, Config: "test/projects/presedence/corectl.yml", Engine: *toolkit.EngineStdIP}
 	defer p.Reset()
 	p1 := p.WithParams(toolkit.Params{App: t.Name() + "-1"})
 	p2 := p.WithParams(toolkit.Params{App: t.Name() + "-2"})
