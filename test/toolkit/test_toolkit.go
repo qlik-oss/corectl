@@ -27,13 +27,15 @@ type Params struct {
 	Ttl     string
 	Verbose string
 
+	expectError bool
+	expectOK    bool
+
 	expectGolden               bool
 	expectIncludes             []string
 	exectJsonArrayPropertyName string
 	expectJsonArrayValues      []string
-	expectError                bool
-	expectOK                   bool
 	expectEqual                string
+	expectSilent               bool
 }
 
 func AddGoldPolisher(from string, to string) {
@@ -46,7 +48,14 @@ func AddGoldPolisher(from string, to string) {
 
 func (p *Params) ExpectGolden() *Params {
 	pc := *p // Shallow clone
+	pc.expectOK = true
 	pc.expectGolden = true
+	return &pc
+}
+func (p *Params) ExpectGoldenErr() *Params {
+	pc := *p // Shallow clone
+	pc.expectGolden = true
+	pc.expectError = true
 	return &pc
 }
 func (p *Params) ExpectOK() *Params {
@@ -54,11 +63,25 @@ func (p *Params) ExpectOK() *Params {
 	pc.expectOK = true
 	return &pc
 }
-func (p *Params) ExpectError() *Params {
+func (p *Params) ExpectEmptyOK() *Params {
 	pc := *p // Shallow clone
-	pc.expectError = true
+	pc.expectOK = true
+	pc.expectSilent = true
 	return &pc
 }
+func (p *Params) ExpectError(message string) *Params {
+	pc := *p // Shallow clone
+	pc.expectError = true
+	pc.expectEqual = message
+	return &pc
+}
+func (p *Params) ExpectErrorIncludes(items ...string) *Params {
+	pc := *p // Shallow clone
+	pc.expectError = true
+	pc.expectIncludes = items
+	return &pc
+}
+
 func (p *Params) ExpectIncludes(items ...string) *Params {
 	pc := *p // Shallow clone
 	pc.expectIncludes = items
@@ -66,7 +89,11 @@ func (p *Params) ExpectIncludes(items ...string) *Params {
 }
 
 func (p *Params) ExpectEqual(item string) *Params {
+	if item == "" {
+		panic("Checking against empty string not supported in ExpectEqual")
+	}
 	pc := *p // Shallow clone
+	pc.expectOK = true
 	pc.expectEqual = item
 	return &pc
 }
@@ -95,7 +122,7 @@ func toGoldenFileName(name string) string {
 }
 
 func (p *Params) filterForGold(content string) string {
-	for _, x := range p.goldPolishers {
+	for _, x := range goldPolishers {
 		content = x(content)
 	}
 	return content
@@ -187,12 +214,14 @@ func (p *Params) Run(command ...string) []byte {
 			}
 		}
 
-		if p.expectGolden {
+		if p.expectSilent {
+			assert.Empty(t, strings.Trim(actual, " \t\n"), "Expected empty output")
+		} else if p.expectGolden {
 			golden := newGoldenFile(t, goldenName)
 
 			actualFiltered := p.filterForGold(actual)
 
-			if update {
+			if *update {
 				golden.write(actualFiltered)
 			}
 			expected := golden.load()
@@ -201,9 +230,6 @@ func (p *Params) Run(command ...string) []byte {
 				t.Fatalf("diff: %v", diff(expected, actualFiltered))
 			}
 		} else if p.expectEqual != "" {
-			if err != nil {
-				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
-			}
 			if strings.Trim(actual, " \t\n") != strings.Trim(p.expectEqual, " \t\n") {
 				t.Fatalf("Output did not equal string '%v'\nReceived:\n%v", p.expectEqual, actual)
 			}
@@ -213,8 +239,10 @@ func (p *Params) Run(command ...string) []byte {
 			fmt.Println(len(jsonArray))
 			fmt.Println(len(p.expectJsonArrayValues))
 			assert.Equal(t, len(jsonArray), len(p.expectJsonArrayValues), "Wrong size of array")
-			for i, value := range p.expectJsonArrayValues {
-				assert.Equal(t, value, jsonArray[i][p.exectJsonArrayPropertyName], "Unexpected value in json array")
+			if len(jsonArray) == len(p.expectJsonArrayValues) {
+				for i, value := range p.expectJsonArrayValues {
+					assert.Equal(t, value, jsonArray[i][p.exectJsonArrayPropertyName], "Unexpected value in json array")
+				}
 			}
 		} else if p.expectIncludes != nil && len(p.expectIncludes) > 0 {
 			for _, sub := range p.expectIncludes {

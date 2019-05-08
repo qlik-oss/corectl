@@ -1,0 +1,14 @@
+{
+  "qInfo": {
+    "qId": "measure-sum-numbers",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "qDef": "Sum(numbers)",
+    "qGrouping": "N",
+    "qExpressions": [],
+    "qActiveExpression": 0,
+    "title": "Sum of numbers"
+  },
+  "qMetaDef": {}
+}

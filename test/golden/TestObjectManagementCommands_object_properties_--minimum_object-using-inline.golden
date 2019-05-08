@@ -1,6 +1,6 @@
 {
   "qInfo": {
-    "qId": "my-hypercube",
+    "qId": "object-using-inline",
     "qType": "my-hypercube"
   },
   "qMetaDef": {},
@@ -11,11 +11,7 @@
           "qGrouping": "N",
           "qFieldDefs": [
             "xyz"
-          ],
-          "qFieldLabels": [],
-          "qSortCriterias": [],
-          "qNumberPresentations": [],
-          "qActiveField": 0
+          ]
         },
         "qOtherTotalSpec": {
           "qOtherMode": "OTHER_OFF",
@@ -31,8 +27,6 @@
         "qOtherLabel": {},
         "qTotalLabel": {},
         "qCalcCond": {},
-        "qAttributeExpressions": [],
-        "qAttributeDimensions": [],
         "qCalcCondition": {
           "qCond": {},
           "qMsg": {}
@@ -42,24 +36,17 @@
     "qMeasures": [
       {
         "qDef": {
-          "qTags": [],
           "qGrouping": "N",
           "qDef": "count(numbers)",
           "qNumFormat": {
             "qType": "U",
-            "qnDec": 10,
-            "qUseThou": 0
-          },
-          "qAccumulate": 0,
-          "qActiveExpression": 0,
-          "qExpressions": []
+            "qnDec": 10
+          }
         },
         "qSortBy": {
           "qSortByFrequency": 1,
           "qExpression": {}
         },
-        "qAttributeExpressions": [],
-        "qAttributeDimensions": [],
         "qCalcCond": {},
         "qCalcCondition": {
           "qCond": {},
@@ -67,11 +54,8 @@
         }
       }
     ],
-    "qInterColumnSortOrder": [],
     "qInitialDataFetch": [
       {
-        "qLeft": 0,
-        "qTop": 0,
         "qWidth": 50,
         "qHeight": 20
       }
@@ -86,7 +70,6 @@
     "qCalcCondition": {
       "qCond": {},
       "qMsg": {}
-    },
-    "qColumnOrder": []
+    }
   }
 }

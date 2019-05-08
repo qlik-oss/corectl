@@ -1,0 +1,9 @@
+{
+  "qInfo": {
+    "qId": "dimension-abcs",
+    "qType": "dimension"
+  },
+  "qDim": {
+    "qFieldDefs": ["abcs"]
+  }
+}

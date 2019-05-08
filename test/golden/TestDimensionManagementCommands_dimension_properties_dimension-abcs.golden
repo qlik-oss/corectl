@@ -1,0 +1,14 @@
+{
+  "qInfo": {
+    "qId": "dimension-abcs",
+    "qType": "dimension"
+  },
+  "qDim": {
+    "qGrouping": "N",
+    "qFieldDefs": [
+      "abcs"
+    ],
+    "qFieldLabels": []
+  },
+  "qMetaDef": {}
+}

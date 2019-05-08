@@ -1,0 +1,21 @@
+{
+  "qInfo": {
+    "qId": "object-using-dims-and-measures",
+    "qType": "my-hypercube"
+  },
+  "qHyperCubeDef": {
+    "qDimensions": [{
+      "qLibraryId": "dimension-xyz"
+    }],
+    "qMeasures": [{
+      "qLibraryId": "measure-count-numbers",
+      "qSortBy": {
+        "qSortByFrequency": 1
+      }
+    }],
+    "qInitialDataFetch": [{
+      "qWidth": 50,
+      "qHeight": 20
+    }]
+  }
+}

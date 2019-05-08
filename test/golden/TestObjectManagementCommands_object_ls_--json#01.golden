@@ -1,0 +1,12 @@
+[
+  {
+    "qId": "object-using-dims-and-measures",
+    "qType": "my-hypercube",
+    "title": ""
+  },
+  {
+    "qId": "object-using-inline",
+    "qType": "my-hypercube",
+    "title": ""
+  }
+]

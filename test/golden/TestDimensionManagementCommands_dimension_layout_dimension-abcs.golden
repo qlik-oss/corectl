@@ -1,0 +1,31 @@
+{
+  "qInfo": {
+    "qId": "dimension-abcs",
+    "qType": "dimension"
+  },
+  "qMeta": {
+    "privileges": [
+      "read",
+      "update",
+      "delete",
+      "exportdata"
+    ]
+  },
+  "qDim": {
+    "qGrouping": "N",
+    "qFieldDefs": [
+      "abcs"
+    ],
+    "qFieldLabels": []
+  },
+  "qDimInfos": [
+    {
+      "qApprMaxGlyphCount": 1,
+      "qCardinal": 3,
+      "qTags": [
+        "$ascii",
+        "$text"
+      ]
+    }
+  ]
+}

@@ -1,9 +1,10 @@
 {
   "qInfo": {
-    "qId": "my-hypercube",
+    "qId": "object-using-inline",
     "qType": "my-hypercube"
   },
   "qHyperCubeDef": {
+    "customProperty": "should be filtered by the minimum flag",
     "qDimensions": [{
       "qDef": {
         "qFieldDefs": ["xyz"]
