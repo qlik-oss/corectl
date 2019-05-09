@@ -63,7 +63,6 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 				internal.FatalError(err)
 			}
 			qProps, _ := genericObject.GetProperties(state.Ctx)
-			fmt.Println(qProps)
 			properties, _ = json.Marshal(qProps)
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
