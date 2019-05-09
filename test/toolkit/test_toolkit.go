@@ -2,10 +2,9 @@ package toolkit
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/andreyvit/diff"
 	"github.com/stretchr/testify/assert"
 	"os/exec"
-	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -44,6 +43,10 @@ func AddGoldPolisher(from string, to string) {
 		return newConnectionCreatedRegexp.ReplaceAllString(content, to)
 	}
 	goldPolishers = append(goldPolishers, polisher)
+}
+
+func normalizeLineEndings(str string) string {
+	return strings.Replace(str, "\r\n", "\n", -1)
 }
 
 func (p *Params) ExpectGolden() *Params {
@@ -220,14 +223,16 @@ func (p *Params) Run(command ...string) []byte {
 			golden := newGoldenFile(t, goldenName)
 
 			actualFiltered := p.filterForGold(actual)
-
+			actualFiltered = normalizeLineEndings(actualFiltered)
 			if *update {
 				golden.write(actualFiltered)
 			}
-			expected := golden.load()
+			expected := normalizeLineEndings(golden.load())
 
-			if !reflect.DeepEqual(expected, actualFiltered) {
-				t.Fatalf("diff: %v", diff(expected, actualFiltered))
+			if expected != actualFiltered {
+				t.Logf("Expected:\n%v", expected)
+				t.Logf("Actual:\n%v", actualFiltered)
+				t.Fatalf("Diff:\n%v", diff.LineDiff(expected, actualFiltered))
 			}
 		} else if p.expectEqual != "" {
 			if strings.Trim(actual, " \t\n") != strings.Trim(p.expectEqual, " \t\n") {
@@ -236,8 +241,6 @@ func (p *Params) Run(command ...string) []byte {
 		} else if p.expectJsonArrayValues != nil {
 			var jsonArray []map[string]string
 			json.Unmarshal(output, &jsonArray)
-			fmt.Println(len(jsonArray))
-			fmt.Println(len(p.expectJsonArrayValues))
 			assert.Equal(t, len(jsonArray), len(p.expectJsonArrayValues), "Wrong size of array")
 			if len(jsonArray) == len(p.expectJsonArrayValues) {
 				for i, value := range p.expectJsonArrayValues {

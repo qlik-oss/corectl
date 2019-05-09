@@ -1,7 +1,6 @@
 package toolkit
 
 import (
-	"github.com/kr/pretty"
 	"io/ioutil"
 	"path/filepath"
 	"runtime"
@@ -34,10 +33,6 @@ func (tf *testFile) write(content string) {
 	if err != nil {
 		tf.t.Fatalf("could not write %s: %v", tf.name, err)
 	}
-}
-
-func diff(expected, actual interface{}) []string {
-	return pretty.Diff(expected, actual)
 }
 
 func (tf *testFile) load() string {
