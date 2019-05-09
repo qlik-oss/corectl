@@ -209,7 +209,7 @@ func TestAppsInABAC(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineAbacIP, Config: "test/projects/abac/corectl.yml", App: t.Name()}
 	defer p.Reset()
 	p.ExpectGolden().Run("build")
-	p.ExpectGolden().Run("status")
+	p.ExpectIncludes("Connected to", "The data model has 1 table.").Run("status")
 	p.ExpectJsonArray("name", t.Name()).Run("app", "ls", "--json")
 	p.ExpectEqual(t.Name()).Run("app", "ls", "--bash")
 	p.ExpectGolden().Run("meta")
