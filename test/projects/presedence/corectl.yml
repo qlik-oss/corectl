@@ -1,4 +1,5 @@
 engine: ${ENGINE_STD_URL}
+ttl: 1
 connections:
   testdata:
     connectionstring: /data
@@ -9,4 +10,3 @@ measures:
   - ./measure-*.json
 dimensions:
   - ./dimension-*.json
-ttl: 0

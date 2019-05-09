@@ -39,12 +39,10 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
 					close(loggingDone)
 					return
-				default:
-					time.Sleep(time.Second)
+				case <-time.After(time.Second):
 					// Get the progress using the request id we reserved for the reload
 					logProgress(ctx, global, reservedRequestID, skipTransientLogs)
 				}
-
 			}
 		}()
 		reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, false)
