@@ -206,7 +206,7 @@ func (p *Params) Run(command ...string) []byte {
 		output, err = cmd.CombinedOutput()
 
 		actual := string(output)
-		t.Log("\u001b[35m Output:\n" + actual)
+		t.Log("\u001b[35m Output:\n" + actual + "\u001b[0m")
 		if p.expectOK {
 			if err != nil {
 				t.Fatalf("%s\nexpected (err != nil) to be %v, but got %v. err: %v", output, false, err != nil, err)
