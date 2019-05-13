@@ -12,7 +12,7 @@ Below is a configuration example utilizing the different properties that are ava
 ```yaml
 engine: localhost:9076 
 app: project1.qvf
-script: ./dummy-script.qvs
+script: script.qvs
 connections:
   myconnection:
     type: testconnector

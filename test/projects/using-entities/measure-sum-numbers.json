@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "measure-sum-numbers",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "title": "Sum of numbers",
+    "qDef": "Sum(numbers)"
+  }
+}

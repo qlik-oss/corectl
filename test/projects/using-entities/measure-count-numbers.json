@@ -1,0 +1,9 @@
+{
+  "qInfo": {
+    "qId": "measure-count-numbers",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "qDef": "Count(numbers)"
+  }
+}

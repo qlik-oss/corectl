@@ -1,7 +1,0 @@
-engine: localhost:9276
-app: corectl_test_app.qvf
-script: ./script.qvs
-connections:
-  testdata:
-    connectionstring: /data
-    type: folder

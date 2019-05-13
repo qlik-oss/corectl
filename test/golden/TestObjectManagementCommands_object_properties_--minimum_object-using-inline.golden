@@ -1,0 +1,75 @@
+{
+  "qInfo": {
+    "qId": "object-using-inline",
+    "qType": "my-hypercube"
+  },
+  "qMetaDef": {},
+  "qHyperCubeDef": {
+    "qDimensions": [
+      {
+        "qDef": {
+          "qGrouping": "N",
+          "qFieldDefs": [
+            "xyz"
+          ]
+        },
+        "qOtherTotalSpec": {
+          "qOtherMode": "OTHER_OFF",
+          "qOtherCounted": {},
+          "qOtherLimit": {},
+          "qOtherLimitMode": "OTHER_GT_LIMIT",
+          "qForceBadValueKeeping": true,
+          "qApplyEvenWhenPossiblyWrongResult": true,
+          "qOtherSortMode": "OTHER_SORT_DESCENDING",
+          "qTotalMode": "TOTAL_OFF",
+          "qReferencedExpression": {}
+        },
+        "qOtherLabel": {},
+        "qTotalLabel": {},
+        "qCalcCond": {},
+        "qCalcCondition": {
+          "qCond": {},
+          "qMsg": {}
+        }
+      }
+    ],
+    "qMeasures": [
+      {
+        "qDef": {
+          "qGrouping": "N",
+          "qDef": "count(numbers)",
+          "qNumFormat": {
+            "qType": "U",
+            "qnDec": 10
+          }
+        },
+        "qSortBy": {
+          "qSortByFrequency": 1,
+          "qExpression": {}
+        },
+        "qCalcCond": {},
+        "qCalcCondition": {
+          "qCond": {},
+          "qMsg": {}
+        }
+      }
+    ],
+    "qInitialDataFetch": [
+      {
+        "qWidth": 50,
+        "qHeight": 20
+      }
+    ],
+    "qReductionMode": "N",
+    "qMode": "S",
+    "qPseudoDimPos": -1,
+    "qNoOfLeftDims": -1,
+    "qMaxStackedCells": 5000,
+    "qCalcCond": {},
+    "qTitle": {},
+    "qCalcCondition": {
+      "qCond": {},
+      "qMsg": {}
+    }
+  }
+}

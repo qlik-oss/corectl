@@ -1,0 +1,12 @@
+engine: ${ENGINE_STD_URL}
+ttl: 1
+connections:
+  testdata:
+    connectionstring: /data
+    type: folder
+objects:
+  - ./object-*.json
+measures:
+  - ./measure-*.json
+dimensions:
+  - ./dimension-*.json

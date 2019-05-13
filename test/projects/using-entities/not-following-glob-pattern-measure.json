@@ -1,0 +1,9 @@
+{
+  "qInfo": {
+    "qId": "not-following-glob-pattern-measure",
+    "qType": "measure"
+  },
+  "qMeasure": {
+    "qDef": "=1+1"
+  }
+}

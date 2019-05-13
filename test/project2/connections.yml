@@ -1,4 +1,0 @@
-connections:
-  testdata:
-    connectionstring: /data
-    type: ${CONN_TYPE}

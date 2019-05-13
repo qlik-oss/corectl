@@ -41,9 +41,9 @@ jobs:
           command: |
             # Spin up environment
             ACCEPT_EULA=yes docker-compose -f ./test/docker-compose.yml up -d
-            ENGINE_1_CONTAINER_ID=$(docker ps -aqf "name=engine-1")
-            ENGINE_3_CONTAINER_ID=$(docker ps -aqf "name=engine-3")
-            TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_1_CONTAINER_ID")
+            ENGINE_STD_CONTAINER_ID=$(docker ps -aqf "name=engine-std")
+            ENGINE_ABAC_CONTAINER_ID=$(docker ps -aqf "name=engine-abac")
+            TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_STD_CONTAINER_ID")
             # Start a container for test execution
             TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.12-alpine tail -f /dev/null)
             # Install packages
@@ -53,12 +53,12 @@ jobs:
             docker cp . $TEST_CONTAINER:/corectl
             # Copy apps and data into the first engine container, the second one does not need it. Third engine container needs the data and the rules.
             chmod -R 777 ./test/
-            docker cp ./test/apps/ $ENGINE_1_CONTAINER_ID:/
-            docker cp ./test/data/ $ENGINE_1_CONTAINER_ID:/
-            docker cp ./test/data/ $ENGINE_3_CONTAINER_ID:/
-            docker cp ./test/rules/ $ENGINE_3_CONTAINER_ID:/
+            docker cp ./test/apps/ $ENGINE_STD_CONTAINER_ID:/
+            docker cp ./test/data/ $ENGINE_STD_CONTAINER_ID:/
+            docker cp ./test/data/ $ENGINE_ABAC_CONTAINER_ID:/
+            docker cp ./test/rules/ $ENGINE_ABAC_CONTAINER_ID:/
             # Execute tests
-            docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test ./test/corectl_integration_test.go --engineIP $TEST_HOST:9076 --engine2IP $TEST_HOST:9176 --engine3IP $TEST_HOST:9276'
+            docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test ./test/corectl_integration_test.go --engineStd $TEST_HOST:9076 --engineJwt $TEST_HOST:9176 --engineAbac $TEST_HOST:9276 --engineBadLicenseServer $TEST_HOST:9376 '
 
   validate:
     working_directory: ~/corectl

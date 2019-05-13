@@ -1,0 +1,15 @@
+engine: ${ENGINE_STD_URL}
+ttl: 1
+script: ./script.qvs
+connections:
+  myconnection:
+    type: testconnector
+    username: gwe
+    settings:
+      host: ${CORECTL_TEST_CONNECT}
+objects:
+  - ./object-*.json
+measures:
+  - ./measure-*.json
+dimensions:
+  - ./dimension-*.json

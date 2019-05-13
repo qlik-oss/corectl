@@ -1,0 +1,4 @@
+connections:
+  testdata-separate-file:
+    connectionstring: /data
+    type: ${CONN_TYPE}
