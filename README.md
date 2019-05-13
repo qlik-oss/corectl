@@ -4,7 +4,6 @@
 
 <img src="./corectl.svg" alt="corectl" width="200"/>
 
-## (Experimental)
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 ---
