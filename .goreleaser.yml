@@ -27,6 +27,8 @@ snapcraft:
   name_template: "qlik-{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
   name: qlik-corectl
 
+  publish: true
+
   summary: A command line interface tool for the Qlik Associative Engine # 79 char long summary
   description: |
     Qlik Core Control (corectl) is a tool that delivers a

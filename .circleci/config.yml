@@ -79,6 +79,20 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
+  test_publish:
+    working_directory: ~/corectl
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run:
+          command: |
+            mkdir .snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
+            sudo apt update && sudo apt install -y snapd
+            sudo snap install snapcraft --edge --classic
+      - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
+
   publish:
     working_directory: ~/corectl
     docker:
