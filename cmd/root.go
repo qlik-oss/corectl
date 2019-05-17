@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 	BashCompletionFunction: bashCompletionFunc,
 
 	Annotations: map[string]string{
-		"x-qlik-stability": "experimental",
+		"x-qlik-stability": "stable",
 	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {

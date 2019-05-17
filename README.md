@@ -133,8 +133,9 @@ corectl generate-docs
 
 To regenerate the api spec, first build with latest release
 tag as version and then generate the spec using:
+
 ```bash
-go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+go build -ldflags "-X main.version=$(git tag --sort=-taggerdate | head -n 1)"
 ./corectl generate-spec > docs/spec.json
 ```
 
