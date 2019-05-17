@@ -82,14 +82,14 @@ jobs:
   test_publish:
     working_directory: ~/corectl
     docker:
-      - image: circleci/golang:1.12
+      - image: snapcore/snapcraft
     steps:
       - checkout
       - run:
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            sudo apt update && sudo apt install snapcraft
+            sudo apt update
       - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
