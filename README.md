@@ -99,7 +99,7 @@ The unit tests are run with the go test command:
 go test ./...
 ```
 
-The integration tests depend on external components. Before they can run, you must accept the [Qlik Core EULA](https://core.qlik.com/eula/) 
+The integration tests depend on external components. Before they can run, you must accept the [Qlik Core EULA](https://core.qlik.com/eula/)
 by setting the `ACCEPT_EULA` environment variable, you start the services by using the [docker-compose.yml](./test/docker-compose.yml) file.
 The tests are run with the test script:
 
@@ -146,7 +146,7 @@ To regenerate the api spec, first build with latest release
 tag as version and then generate the spec using:
 
 ```bash
-go build -ldflags "-X main.version=$(git tag --sort=-taggerdate | head -n 1)"
+go build -ldflags "-X main.version=$(git describe --tag --abbrev=0)"
 ./corectl generate-spec > docs/spec.json
 ```
 
