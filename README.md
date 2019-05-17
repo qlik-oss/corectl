@@ -67,12 +67,12 @@ fi
 (Substitute <shell> with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
-To change the alias, you can add the following snippet into your `rc` file aswell
+If you want add an alias for `corectl`, you can add the following snippet into your `rc` file aswell
 ```bash
 alias <myalias>=corectl
 complete -o default -F __start_corectl <myalias>
 ```
-where `<myalias>` is whatever you wish to call `corectl`.
+where `<myalias>` should be substituted for whatever you wish to call `corectl`.
 
 # Development
 
