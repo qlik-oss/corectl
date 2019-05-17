@@ -58,10 +58,21 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 `corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
-`. <(corectl completion bash)` or `. <(corectl completion zsh)`
+```bash
+if [ $(which corectl) ]; then
+  . <(corectl completion <shell>)
+fi
+```
 
+(Substitute <shell> with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
+If you want add an alias for `corectl`, you can add the following snippet into your `rc` file aswell
+```bash
+alias <myalias>=corectl
+complete -o default -F __start_corectl <myalias>
+```
+where `<myalias>` should be substituted for whatever you wish to call `corectl`.
 
 # Development
 
@@ -133,8 +144,9 @@ corectl generate-docs
 
 To regenerate the api spec, first build with latest release
 tag as version and then generate the spec using:
+
 ```bash
-go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+go build -ldflags "-X main.version=$(git tag --sort=-taggerdate | head -n 1)"
 ./corectl generate-spec > docs/spec.json
 ```
 
