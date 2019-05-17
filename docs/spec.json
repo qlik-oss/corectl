@@ -7,7 +7,7 @@
     "license": "MIT"
   },
   "clispec": "0.1.0",
-  "x-qlik-stability": "experimental",
+  "x-qlik-stability": "stable",
   "flags": {
     "app": {
       "alias": "a",

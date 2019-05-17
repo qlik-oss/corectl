@@ -36,12 +36,14 @@ We have added an example configuration file to this repo [here](./examples/corec
 Example configuration:
 ```yaml
 engine: localhost:9076 # URL and port to running Qlik Associative Engine instance
-app: corectl-example.qvf # App name that the tool should open a session against. 
+app: corectl-example.qvf # App name that the tool should open a session against.
 script: ./script.qvs # Path to a script that should be set in the app
 connections: # Connections that should be created in the app
   testdata: # Name of the connection
-    connectionstring: /data # Connectionstring (qConnectionString) of the connection.
+    connectionstring: /data # Connectionstring (qConnectionString) of the connection. For a folder connector this is an absolute or relative path inside of the engine docker container.
     type: folder # Type of connection
+objects:
+  - ./object-*.json # Path to objects that should be created from a json file. Accepts wildcards.
 ```
 
 For more information regarding which additional options that are configurable are further described [here](./docs/corectl_config.md).
@@ -56,10 +58,21 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 `corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
-`. <(corectl completion bash)` or `. <(corectl completion zsh)`
+```bash
+if [ $(which corectl) ]; then
+  . <(corectl completion <shell>)
+fi
+```
 
+(Substitute <shell> with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
+If you want add an alias for `corectl`, you can add the following snippet into your `rc` file aswell
+```bash
+alias <myalias>=corectl
+complete -o default -F __start_corectl <myalias>
+```
+where `<myalias>` should be substituted for whatever you wish to call `corectl`.
 
 # Development
 
@@ -95,10 +108,10 @@ ACCEPT_EULA=<yes/no> docker-compose up -d
 go test corectl_integration_test.go
 ```
 
-The tests are by default trying to connect to an engine on localhost:9076 and another one on localhost:9176. This can be changed with the --engineIP flag and --engine2IP flag.
+The tests are by default trying to connect to the engines running on localhost as defined in the [docker-compose.yml](./test/docker-compose.yml) file. By setting a series of command line parameters you can run the engines on different hosts and ports:
 
 ```sh
-go test corectl_integration_test.go --engineIP HOST:PORT --engine2IP HOST:ANOTHERPORT
+go test corectl_integration_test.go --engineStd HOST:PORT --engineJwt HOST:PORT --engineAbac HOST:PORT --engineBadLicenseServer HOST:PORT
 ```
 
 If the reference output files need to be updated, run the test with --update flag.
@@ -131,8 +144,9 @@ corectl generate-docs
 
 To regenerate the api spec, first build with latest release
 tag as version and then generate the spec using:
+
 ```bash
-go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"
+go build -ldflags "-X main.version=$(git tag --sort=-taggerdate | head -n 1)"
 ./corectl generate-spec > docs/spec.json
 ```
 
