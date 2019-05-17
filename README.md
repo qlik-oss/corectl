@@ -58,10 +58,21 @@ Usage documentation can be found [here](./docs/corectl.md).
 
 `corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
-`. <(corectl completion bash)` or `. <(corectl completion zsh)`
+```bash
+if [ $(which corectl) ]; then
+  . <(corectl completion <shell>)
+fi
+```
 
+(Substitute <shell> with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
+To change the alias, you can add the following snippet into your `rc` file aswell
+```bash
+alias <myalias>=corectl
+complete -o default -F __start_corectl <myalias>
+```
+where `<myalias>` is whatever you wish to call `corectl`.
 
 # Development
 
