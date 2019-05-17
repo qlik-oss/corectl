@@ -89,8 +89,7 @@ jobs:
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            sudo apt update
-            sudo snap install curl
+            sudo apt update && sudo apt install curl
       - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
