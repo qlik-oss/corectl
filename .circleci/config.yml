@@ -79,7 +79,7 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
-  test_publish:
+  publish:
     working_directory: ~/corectl
     docker:
       - image: cibuilds/snapcraft
@@ -101,15 +101,8 @@ jobs:
           command: |
             export TEMP_PATH="/usr/local/go/bin:$PATH"
             export PATH=$TEMP_PATH
-            go version && curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
-
-  publish:
-    working_directory: ~/corectl
-    docker:
-      - image: circleci/golang:1.12
-    steps:
-      - checkout
-      - run: curl -sL https://git.io/goreleaser | bash
+            # See if we managed to install go
+            go version && curl -sL https://git.io/goreleaser | bash
 
 workflows:
   version: 2
@@ -121,11 +114,6 @@ workflows:
               only:
                 - /v.*/
       - validate:
-          filters:
-            tags:
-              only:
-                - /v.*/
-      - test_publish:
           filters:
             tags:
               only:
