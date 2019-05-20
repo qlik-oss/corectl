@@ -79,17 +79,35 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
+          #  copy_snap:
+          #    docker:
+          #      - image: snapcore/snapcraft
+          #    steps:
+          #      - persist_to_workspace:
+          #          root: /usr/bin
+          #          paths:
+          #  - /snapcraft
+  copy_go:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      run:
+        blabla
+
   test_publish:
     working_directory: ~/corectl
-    machine:
-      image: circleci/classic:latest
+    docker:
+      - image: cibuilds/snapcraft
+        #- image: snapcore/snapcraft
     steps:
       - checkout
+      #- attach_workspace:
+      #    at: /tmp/workspace
       - run:
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            sudo apt update && sudo apt install -y curl
+            #sudo apt update && sudo apt install -y curl
       - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
@@ -114,7 +132,14 @@ workflows:
             tags:
               only:
                 - /v.*/
+      - copy_go:
+          filters:
+            tags:
+              only:
+                - /v.*/
       - test_publish:
+          requires:
+            - copy_go
           filters:
             tags:
               only:
