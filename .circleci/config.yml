@@ -83,8 +83,10 @@ jobs:
     docker:
       - image: snapcore/snapcraft
     steps:
-      #- persist_to_workspace: $(which snapcraft)
-      - run: which snapcraft
+      - persist_to_workspace:
+          root: .
+          paths:
+            - /usr/bin/snapcraft
 
   test_publish:
     working_directory: ~/corectl
