@@ -91,7 +91,6 @@ jobs:
     working_directory: ~/corectl
     docker:
       - image: cibuilds/snapcraft
-        #- image: snapcore/snapcraft
     steps:
       - checkout
       - attach_workspace:
@@ -100,13 +99,12 @@ jobs:
           name: copy go
           command: |
             mkdir /go && mkdir /go/src && mkdir /go/bin
-            sudo mv /tmp/workspace/usr/local/go /usr/local/go
+            sudo mv /tmp/workspace/go /usr/local/go
             export PATH="/go/bin:/usr/local/go/bin:$PATH"
       - run:
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            #sudo apt update && sudo apt install -y curl
       - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
