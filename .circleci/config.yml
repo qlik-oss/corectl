@@ -83,8 +83,7 @@ jobs:
     docker:
       - image: circleci/golang:1.12
     steps:
-      run:
-        blabla
+      - run: blabla
 
   test_publish:
     working_directory: ~/corectl
