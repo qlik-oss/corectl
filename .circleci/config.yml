@@ -83,8 +83,6 @@ jobs:
     working_directory: ~/corectl
     docker:
       - image: cibuilds/snapcraft
-    environment:
-      BASH_ENV: ~/.bashrc
     steps:
       - checkout
       - run:
@@ -92,8 +90,8 @@ jobs:
           command: |
             cd /tmp
             wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
-            tar -xvf go1.12.2.linux-amd64.tar.gz && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
-            echo 'export PATH=/go/bin:/usr/local/go/bin:$PATH' >> $BASH_ENV
+            tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
+            echo 'export PATH=/go/bin:/usr/local/go/bin:$PATH' >> ~/.profile
       - run:
           command: |
             mkdir .snapcraft
