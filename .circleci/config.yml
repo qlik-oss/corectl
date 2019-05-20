@@ -84,10 +84,10 @@ jobs:
       - image: circleci/golang:1.12
     steps:
       - persist_to_workspace:
-        root: /
-        paths:
-          - go
-          - usr/local/go
+        	root: /
+        	paths:
+          	- go
+          	- usr/local/go
 
   test_publish:
     working_directory: ~/corectl
