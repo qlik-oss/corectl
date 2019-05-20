@@ -79,6 +79,12 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
+  copy_snap:
+    docker:
+      - image: snapcore/snapcraft
+    steps:
+      - persist_to_workspace: $(which snapcraft)
+
   test_publish:
     working_directory: ~/corectl
     docker:
@@ -86,6 +92,8 @@ jobs:
         #- image: snapcore/snapcraft
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           command: |
             mkdir .snapcraft
@@ -116,6 +124,8 @@ workflows:
               only:
                 - /v.*/
       - test_publish:
+          requires:
+            - copy_snap
           filters:
             tags:
               only:
