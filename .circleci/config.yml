@@ -91,11 +91,12 @@ jobs:
             cd /tmp
             wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
             tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
-            echo 'export PATH=/go/bin:/usr/local/go/bin:$PATH' >> ~/.profile
+            echo 'PATH="/usr/local/go/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
       - run:
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
+            export PATH="/usr/local/go/bin:$PATH"
       - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
