@@ -79,28 +79,21 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
-  copy_go:
-    docker:
-      - image: circleci/golang:1.12
-    steps:
-      - persist_to_workspace:
-          root: /usr/local
-          paths: ./go
-
   test_publish:
     working_directory: ~/corectl
     docker:
       - image: cibuilds/snapcraft
+    environment:
+      BASH_ENV: ~/.bashrc
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
       - run:
-          name: copy go
+          name: install go
           command: |
-            mkdir /go && mkdir /go/src && mkdir /go/bin
-            sudo mv /tmp/workspace/go /usr/local/go
-            export PATH="/go/bin:/usr/local/go/bin:$PATH"
+            cd /tmp
+            wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
+            tar -xvf go1.12.2.linux-amd64.tar.gz && sudo mv go /usr/local && rm go1.12.2.linx-amd64.tar.gz
+            echo 'export PATH=/go/bin:/usr/local/go/bin:$PATH' >> $BASH_ENV
       - run:
           command: |
             mkdir .snapcraft
@@ -135,8 +128,6 @@ workflows:
               only:
                 - /v.*/
       - test_publish:
-          requires:
-            - copy_go
           filters:
             tags:
               only:
