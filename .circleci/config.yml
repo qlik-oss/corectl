@@ -82,7 +82,7 @@ jobs:
   test_publish:
     working_directory: ~/corectl
     docker:
-      - image: circleci/snapcraft:stable
+      - image: cibuilds/snapcraft:stable
     steps:
       - checkout
       - run:
