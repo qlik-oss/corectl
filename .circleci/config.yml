@@ -83,7 +83,11 @@ jobs:
     docker:
       - image: circleci/golang:1.12
     steps:
-      - run: blabla
+      - persist_to_workspace:
+        root: /
+        paths:
+          - go
+          - usr/local/go
 
   test_publish:
     working_directory: ~/corectl
@@ -92,8 +96,14 @@ jobs:
         #- image: snapcore/snapcraft
     steps:
       - checkout
-      #- attach_workspace:
-      #    at: /tmp/workspace
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: copy go
+          command: |
+            sudo mv /tmp/workspace/go /go
+            sudo mv /tmp/workspace/usr/local/go /usr/local/go
+            export PATH="/go/bin:/usr/local/go/bin:$PATH"
       - run:
           command: |
             mkdir .snapcraft
