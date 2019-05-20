@@ -123,6 +123,11 @@ workflows:
             tags:
               only:
                 - /v.*/
+      - copy_snap:
+          filters:
+            tags:
+              only:
+                - /v.*/
       - test_publish:
           requires:
             - copy_snap
