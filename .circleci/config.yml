@@ -84,10 +84,6 @@ jobs:
       - image: circleci/golang:1.12
     steps:
       - persist_to_workspace:
-        	root: /go
-        	paths:
-          	- .
-      - persist_to_workspace:
           root: /usr/local
           paths:
           	- go
@@ -104,7 +100,7 @@ jobs:
       - run:
           name: copy go
           command: |
-            sudo mv /tmp/workspace/go /go
+            mkdir /go && mkdir /go/src && mkdir /go/bin
             sudo mv /tmp/workspace/usr/local/go /usr/local/go
             export PATH="/go/bin:/usr/local/go/bin:$PATH"
       - run:
