@@ -82,10 +82,27 @@ jobs:
   publish:
     working_directory: ~/corectl
     docker:
-      - image: circleci/golang:1.12
+      - image: cibuilds/snapcraft
     steps:
       - checkout
-      - run: curl -sL https://git.io/goreleaser | bash
+      - run:
+          name: install go
+          command: |
+            cd /tmp
+            wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
+            tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
+      - run:
+          name: setup snap credentials
+          command: |
+            mkdir .snapcraft
+            echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
+      - run:
+          name: run goreleaser
+          command: |
+            export TEMP_PATH="/usr/local/go/bin:$PATH"
+            export PATH=$TEMP_PATH
+            # See if we managed to install go
+            go version && curl -sL https://git.io/goreleaser | bash
 
 workflows:
   version: 2

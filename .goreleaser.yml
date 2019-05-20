@@ -22,3 +22,21 @@ archive:
       format: zip
   files:
   - none*
+
+snapcraft:
+  name_template: "qlik-{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
+  name: qlik-corectl
+
+  publish: true
+
+  summary: A command line interface tool for the Qlik Associative Engine
+  description: |
+    Qlik Core Control (corectl) is a tool that delivers a
+    command line interface (CLI) for the Qlik Associative Engine.
+    With corectl you can interact with your apps, objects, and data.
+  grade: stable
+  confinement: strict
+
+  apps:
+    corectl:
+      plugs: ["home", "network"]
