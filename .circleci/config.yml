@@ -91,14 +91,17 @@ jobs:
             cd /tmp
             wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
             tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
-            echo 'PATH="/usr/local/go/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
-            go
       - run:
+          name: setup snap credentials
           command: |
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
-            export PATH="/usr/local/go/bin:$PATH"
-      - run: curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
+      - run:
+          name: run goreleaser
+          command: |
+            export TEMP_PATH="/usr/local/go/bin:$PATH"
+            export PATH=$TEMP_PATH
+            go && curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
     working_directory: ~/corectl
