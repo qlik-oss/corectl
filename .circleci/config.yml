@@ -92,6 +92,7 @@ jobs:
             wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
             tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
             echo 'PATH="/usr/local/go/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+            go
       - run:
           command: |
             mkdir .snapcraft
