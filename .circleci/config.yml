@@ -101,7 +101,7 @@ jobs:
           command: |
             export TEMP_PATH="/usr/local/go/bin:$PATH"
             export PATH=$TEMP_PATH
-            go && curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
+            go version && curl -sL https://git.io/goreleaser | bash -s -- --skip-publish --skip-validate
 
   publish:
     working_directory: ~/corectl
