@@ -20,6 +20,6 @@ require (
 	github.com/tcnksm/go-latest v0.0.0-20170313132115-e3007ae9052e
 	github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e
 	golang.org/x/crypto v0.0.0-20190518004053-22d7a77e9e5f
-	golang.org/x/sys v0.0.0-20190512164544-a5b02f93d862 // indirect
+	golang.org/x/sys v0.0.0-20190520113106-61b9204099cb // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
