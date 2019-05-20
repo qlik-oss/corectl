@@ -79,14 +79,6 @@ jobs:
           name: Validate api spec towards schema
           command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
 
-          #  copy_snap:
-          #    docker:
-          #      - image: snapcore/snapcraft
-          #    steps:
-          #      - persist_to_workspace:
-          #          root: /usr/bin
-          #          paths:
-          #  - /snapcraft
   copy_go:
     docker:
       - image: circleci/golang:1.12
