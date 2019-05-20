@@ -85,7 +85,7 @@ jobs:
     steps:
       - persist_to_workspace:
           root: /usr/local
-          paths: /go
+          paths: ./go
 
   test_publish:
     working_directory: ~/corectl
