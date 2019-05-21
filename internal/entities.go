@@ -52,11 +52,13 @@ func getEntityPaths(globPattern string, entityType string) ([]string, error) {
 			if err != nil {
 				FatalError(err)
 			}
+			for i, path := range paths {
+				paths[i] = ConfigDir + "/" + path
+			}
 		}
 	}
 	return paths, nil
 }
-
 
 func parseEntityFile(path string) (entities []json.RawMessage, err error) {
 	entities = []json.RawMessage{}
