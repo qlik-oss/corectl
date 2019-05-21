@@ -18,7 +18,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineObjects := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, commandLineObjects, "object")
+		internal.SetObjects(rootCtx, state.Doc, commandLineObjects)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

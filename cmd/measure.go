@@ -18,7 +18,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 
 		commandLineMeasures := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, commandLineMeasures, "measure")
+		internal.SetMeasures(rootCtx, state.Doc, commandLineMeasures)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

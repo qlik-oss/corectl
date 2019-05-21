@@ -18,7 +18,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 
 		commandLineDimensions := args[0]
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, commandLineDimensions, "dimension")
+		internal.SetDimensions(rootCtx, state.Doc, commandLineDimensions)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
