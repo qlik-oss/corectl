@@ -8,8 +8,8 @@ connections:
     settings:
       host: ${CORECTL_TEST_CONNECT}
 objects:
-  - ./object-*.json
+  - ./object*.json
 measures:
-  - ./measure-*.json
+  - ./measure*.json
 dimensions:
-  - ./dimension-*.json
+  - ./dimension*.json
