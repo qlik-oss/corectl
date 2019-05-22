@@ -15,10 +15,12 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension set ./my-dimensions-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-
 		commandLineDimensions := args[0]
+		if commandLineDimensions == "" {
+			internal.FatalError("Error: no dimensions specified")
+		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, commandLineDimensions, "dimension")
+		internal.SetDimensions(rootCtx, state.Doc, commandLineDimensions)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

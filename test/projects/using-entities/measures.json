@@ -1,0 +1,21 @@
+[
+  {
+    "qInfo": {
+      "qId": "measure-count-numbers",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qDef": "Count(numbers)"
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "measure-sum-numbers",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "title": "Sum of numbers",
+      "qDef": "Sum(numbers)"
+    }
+  }
+]

@@ -1,9 +1,0 @@
-{
-  "qInfo": {
-    "qId": "dimension-xyz",
-    "qType": "dimension"
-  },
-  "qDim": {
-    "qFieldDefs": ["xyz"]
-  }
-}
