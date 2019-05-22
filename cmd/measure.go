@@ -15,10 +15,12 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure set ./my-measures-glob-path.json",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-
 		commandLineMeasures := args[0]
+		if commandLineMeasures == "" {
+			internal.FatalError("Error: no measures specified")
+		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
-		internal.SetupEntities(rootCtx, state.Doc, commandLineMeasures, "measure")
+		internal.SetMeasures(rootCtx, state.Doc, commandLineMeasures)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}

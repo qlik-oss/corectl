@@ -25,9 +25,9 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 			separateConnectionsFile = getPathFlagFromConfigFile("connections")
 		}
 		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile)
-		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("dimensions").Value.String(), "dimension")
-		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("measures").Value.String(), "measure")
-		internal.SetupEntities(ctx, state.Doc, ccmd.Flag("objects").Value.String(), "object")
+		internal.SetDimensions(ctx, state.Doc, ccmd.Flag("dimensions").Value.String())
+		internal.SetMeasures(ctx, state.Doc, ccmd.Flag("measures").Value.String())
+		internal.SetObjects(ctx, state.Doc, ccmd.Flag("objects").Value.String())
 		scriptFile := ccmd.Flag("script").Value.String()
 		if scriptFile == "" {
 			scriptFile = getPathFlagFromConfigFile("script")

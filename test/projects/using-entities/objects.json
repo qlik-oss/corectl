@@ -1,0 +1,49 @@
+[
+  {
+    "qInfo": {
+      "qId": "object-using-dims-and-measures",
+      "qType": "my-hypercube"
+    },
+    "qHyperCubeDef": {
+      "qDimensions": [{
+        "qLibraryId": "dimension-xyz"
+      }],
+      "qMeasures": [{
+        "qLibraryId": "measure-count-numbers",
+        "qSortBy": {
+          "qSortByFrequency": 1
+        }
+      }],
+      "qInitialDataFetch": [{
+        "qWidth": 50,
+        "qHeight": 20
+      }]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "object-using-inline",
+      "qType": "my-hypercube"
+    },
+    "qHyperCubeDef": {
+      "customProperty": "should be filtered by the minimum flag",
+      "qDimensions": [{
+        "qDef": {
+          "qFieldDefs": ["xyz"]
+        }
+      }],
+      "qMeasures": [{
+        "qDef": {
+          "qDef": "count(numbers)"
+        },
+        "qSortBy": {
+          "qSortByFrequency": 1
+        }
+      }],
+      "qInitialDataFetch": [{
+        "qWidth": 50,
+        "qHeight": 20
+      }]
+    }
+  }
+]
