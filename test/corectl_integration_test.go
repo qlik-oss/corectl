@@ -75,7 +75,7 @@ func TestObjectManagementCommands(t *testing.T) {
 	p.ExpectJsonArray("qId", "object-using-dims-and-measures").Run("object", "ls", "--json")
 
 	// Re-add the object and check
-	p.ExpectOK().Run("object", "set", "test/projects/using-entities/object-using-inline.json")
+	p.ExpectOK().Run("object", "set", "test/projects/using-entities/objects.json")
 	p.ExpectJsonArray("qId", "object-using-dims-and-measures", "object-using-inline").Run("object", "ls", "--json")
 }
 
@@ -97,7 +97,7 @@ func TestDimensionManagementCommands(t *testing.T) {
 	p.ExpectJsonArray("qId", "dimension-xyz").Run("dimension", "ls", "--json")
 
 	// Re-add the measure and check
-	p.ExpectOK().Run("dimension", "set", "test/projects/using-entities/dimension-abcs.json")
+	p.ExpectOK().Run("dimension", "set", "test/projects/using-entities/dimensions.json")
 	p.ExpectJsonArray("qId", "dimension-xyz", "dimension-abcs").Run("dimension", "ls", "--json")
 }
 
@@ -119,7 +119,7 @@ func TestMeasureManagementCommands(t *testing.T) {
 	p.ExpectJsonArray("qId", "measure-sum-numbers").Run("measure", "ls", "--json")
 
 	// Re-add the measure and check
-	p.ExpectOK().Run("measure", "set", "test/projects/using-entities/measure-count-numbers.json")
+	p.ExpectOK().Run("measure", "set", "test/projects/using-entities/measures.json")
 	p.ExpectJsonArray("qId", "measure-sum-numbers", "measure-count-numbers").Run("measure", "ls", "--json")
 
 }
