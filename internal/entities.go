@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -32,12 +33,20 @@ type (
 	}
 )
 
-func getEntityPaths(globPattern string, entityType string) ([]string, error) {
-	paths, err := filepath.Glob(globPattern)
-	if err != nil {
-		return paths, err
-	}
-	if len(paths) == 0 {
+// If commandLineGlobPattern is set the paths will be from that glob pattern
+// otherwise glob patterns will be from the config file using the configEntityParam
+func getEntityPaths(commandLineGlobPattern string, configEntityParam string) ([]string, error) {
+	var paths []string
+	var err error
+	if commandLineGlobPattern != "" {
+		paths, err = filepath.Glob(commandLineGlobPattern)
+		if err != nil {
+			return paths, err
+		}
+		if len(paths) == 0 {
+			fmt.Printf("Warning: no '%s' found for pattern %s\n", configEntityParam, commandLineGlobPattern)
+		}
+	} else {
 		if ConfigDir == "" {
 			return paths, nil
 		}
@@ -45,21 +54,27 @@ func getEntityPaths(globPattern string, entityType string) ([]string, error) {
 		defer os.Chdir(currentWorkingDir)
 		os.Chdir(ConfigDir)
 
-		globPatterns := viper.GetStringSlice(entityType)
-
+		globPatterns := viper.GetStringSlice(configEntityParam)
+		var pathMatches []string
 		for _, pattern := range globPatterns {
-			paths, err = filepath.Glob(pattern)
+			pathMatches, err = filepath.Glob(pattern)
 			if err != nil {
 				FatalError(err)
+			} else if len(pathMatches) == 0 {
+				fmt.Printf("Warning: no '%s' found for pattern %s\n", configEntityParam, pattern)
+			} else {
+				paths = append(paths, pathMatches...)
 			}
-			for i, path := range paths {
-				paths[i] = ConfigDir + "/" + path
-			}
+		}
+		for i, path := range paths {
+			paths[i] = ConfigDir + "/" + path
 		}
 	}
 	return paths, nil
 }
 
+// Try to interpret the file contents as a slice of json objects,
+// otherwise try to interpret it as an json object and put it into a slice
 func parseEntityFile(path string) (entities []json.RawMessage, err error) {
 	entities = []json.RawMessage{}
 	var entity json.RawMessage
@@ -70,6 +85,7 @@ func parseEntityFile(path string) (entities []json.RawMessage, err error) {
 	}
 	err = json.Unmarshal(content, &entities)
 	if err != nil {
+		entities = []json.RawMessage{}
 		err = json.Unmarshal(content, &entity)
 		if err == nil {
 			entities = append(entities, entity)

@@ -54,8 +54,8 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	return result
 }
 
-func SetDimensions(ctx context.Context, doc *enigma.Doc, globPattern string) {
-	paths, err := getEntityPaths(globPattern, "dimensions")
+func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
+	paths, err := getEntityPaths(commandLineGlobPattern, "dimensions")
 	if err != nil {
 		FatalError("Failed to interpret glob pattern:", err)
 	}

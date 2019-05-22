@@ -75,8 +75,8 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	return resultInOriginalOrder
 }
 
-func SetObjects(ctx context.Context, doc *enigma.Doc, globPattern string) {
-	paths, err := getEntityPaths(globPattern, "objects")
+func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
+	paths, err := getEntityPaths(commandLineGlobPattern, "objects")
 	if err != nil {
 		FatalError("Failed to interpret glob pattern:", err)
 	}

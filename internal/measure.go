@@ -54,8 +54,8 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	return result
 }
 
-func SetMeasures(ctx context.Context, doc *enigma.Doc, globPattern string) {
-	paths, err := getEntityPaths(globPattern, "measures")
+func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
+	paths, err := getEntityPaths(commandLineGlobPattern, "measures")
 	if err != nil {
 		FatalError("Failed to interpret glob pattern:", err)
 	}
