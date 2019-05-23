@@ -66,7 +66,7 @@ func TestObjectManagementCommands(t *testing.T) {
 	p.ExpectGolden().Run("object", "layout", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-dims-and-measures")
-	p.ExpectError("Invalid handle: Invalid Params (-32602)").Run("object", "data", "nosuchobject")
+	p.ExpectErrorIncludes("Invalid handle: Invalid Params (-32602)").Run("object", "data", "nosuchobject")
 
 	p.ExpectJsonArray("qId", "object-using-dims-and-measures", "object-using-inline").Run("object", "ls", "--json")
 
@@ -168,7 +168,7 @@ func TestUsingJwt(t *testing.T) {
 	p4 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"})
 
 	p1.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
-	p2.ExpectErrorIncludes("Please check the --engine parameter or your config file.").Run("status")
+	p2.ExpectErrorIncludes("--engine", "config", "engine is running").Run("status")
 	p3.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 	p4.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 }
@@ -182,7 +182,7 @@ func TestHelp(t *testing.T) {
 
 func TestAppMissing(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
-	p.ExpectError("Error: No app specified").Run("connection", "ls")
+	p.ExpectErrorIncludes("no app specified").Run("connection", "ls")
 }
 
 func TestCatwalkUrl(t *testing.T) {
@@ -197,12 +197,12 @@ func TestEvalOnUnknownAppl(t *testing.T) {
 
 func TestEvalOnUnknownAppEngine(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: "localhost:9999", App: t.Name()}
-	p.ExpectIncludes("Please check the --engine parameter or your config file.").Run("eval", "count(numbers)", "by", "xyz")
+	p.ExpectErrorIncludes("--engine", "config", "engine is running").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestLicenseServiceDown(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineBadLicenseServerIP, App: t.Name()}
-	p.ExpectIncludes("Failed to connect to engine with error message:  SESSION_ERROR_NO_LICENSE").Run("app", "ls")
+	p.ExpectIncludes("SESSION_ERROR_NO_LICENSE").Run("app", "ls")
 }
 
 func TestAppsInABAC(t *testing.T) {
