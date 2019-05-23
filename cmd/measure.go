@@ -17,7 +17,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineMeasures := args[0]
 		if commandLineMeasures == "" {
-			internal.FatalError("Error: no measures specified")
+			internal.FatalError("no measures specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetMeasures(rootCtx, state.Doc, commandLineMeasures)
@@ -39,9 +39,9 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic measure ", entity+" with error: "+err.Error())
+				internal.FatalErrorf("could not remove generic measure '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic measure ", entity)
+				internal.FatalErrorf("could not remove generic measure '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

@@ -22,7 +22,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
 		} else {
-			internal.FatalError("Error: No loadscript (.qvs) file specified.")
+			internal.FatalError("no loadscript (.qvs) file specified.")
 		}
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -41,7 +41,7 @@ var getScriptCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve script: %s", err)
 		}
 		if len(script) == 0 { // This happens if the script is set to an empty file
 			fmt.Println("The loadscript is empty")

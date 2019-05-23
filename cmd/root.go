@@ -55,7 +55,7 @@ var rootCmd = &cobra.Command{
 func Execute(mainVersion string) {
 	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
-		internal.FatalError("Error at start:", err)
+		internal.FatalErrorf("error at start: %s", err)
 	}
 }
 

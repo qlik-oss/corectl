@@ -20,7 +20,7 @@ var getAppsCmd = &cobra.Command{
 		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve app list: %s", err)
 		}
 		printer.PrintApps(docList, viper.GetBool("bash"))
 	},
@@ -38,8 +38,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 
 		exists := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers)
 		if !exists {
-			errMsg := fmt.Sprintf("Error: Could not find any app by the name '%s'.", app)
-			internal.FatalError(errMsg)
+			internal.FatalErrorf("could not find any app by the name '%s'", app)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
