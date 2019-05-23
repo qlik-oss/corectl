@@ -31,7 +31,8 @@ type State struct {
 
 func logConnectError(err error, engine string) {
 	msg := fmt.Sprintf("could not connect to engine on %s\nDetails: %s\n", engine, err)
-	msg += fmt.Sprintln("Please check if the engine url specified by the --engine flag or in your config file is correct.")
+	msg += fmt.Sprintln("Please check if the engine is running and that the url specified")
+	msg += fmt.Sprintln("using either the --engine flag or the config file is correct.")
 	FatalError(msg)
 }
 
@@ -75,9 +76,9 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
-		FatalError(err)
+		FatalErrorf("could not delete app with name '%s' and ID '%s': %s", appName, appID, err)
 	} else if !succ {
-		FatalError("Failed to delete app with name: " + appName + " and ID: " + appID)
+		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
 	setAppIDToKnownApps(engine, appName, appID, true)
 }
@@ -94,7 +95,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 		// No app name provided, lets check if one exists in the url
 		appName = TryParseAppFromURL(engine)
 		if appName == "" {
-			FatalError("Error: No app specified")
+			FatalError("no app specified")
 		}
 	}
 
@@ -105,7 +106,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		FatalError("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 	doc, err := global.GetActiveDoc(ctx)
@@ -124,22 +125,22 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 			var success bool
 			success, appID, err = global.CreateApp(ctx, appName, "")
 			if err != nil {
-				FatalError(err)
+				FatalErrorf("could not create app with name '%s': %s", appName, err)
 			}
 			if !success {
-				FatalError("Failed to create app with name: " + appName)
+				FatalErrorf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
 			setAppIDToKnownApps(engine, appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
-				FatalError(err)
+				FatalErrorf("could not do open app with ID '%s': %s", appID, err)
 			}
 			if doc != nil {
 				LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
 			}
 		} else {
-			FatalError(err)
+			FatalErrorf("could not open app with ID '%s': %s", appID, err)
 		}
 	}
 
@@ -163,7 +164,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
 			if err != nil {
-				FatalError(err)
+				FatalError("could not parse response from engine: ", err)
 			}
 			if parsedEvent["qSessionState"] == "SESSION_CREATED" || parsedEvent["qSessionState"] == "SESSION_ATTACHED" {
 				return nil
@@ -207,7 +208,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		FatalError("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 
@@ -254,11 +255,11 @@ func getSessionID(appID string) string {
 
 	currentUser, err := user.Current()
 	if err != nil {
-		FatalError(err)
+		FatalError("unexpected error when retrieving current user: ", err)
 	}
 	hostName, err := os.Hostname()
 	if err != nil {
-		FatalError(err)
+		FatalError("unexpected error when retrieving hostname: ", err)
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID

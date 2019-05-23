@@ -9,7 +9,7 @@ import (
 func applySelection(ctx context.Context, doc *enigma.Doc, fieldName string, value string) {
 	field, err := doc.GetField(ctx, fieldName, "")
 	if err != nil {
-		FatalError("Could not find field", err)
+		FatalErrorf("could not find field '%s': %s", fieldName, err)
 	}
 	field.Clear(ctx)
 	if value != "" {

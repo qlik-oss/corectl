@@ -39,7 +39,7 @@ func getKnownApps() map[string]map[string]string {
 	}
 	err = yaml.Unmarshal(yamlFile, &knownApps)
 	if err != nil {
-		FatalError("Failed to unmarshal content of knownApps yaml file: " + err.Error())
+		FatalErrorf("could not parse content of knownApps yaml '%s': %s", yamlFile, err)
 	}
 
 	return knownApps
@@ -69,7 +69,7 @@ func setAppIDToKnownApps(engineURL string, appName string, appID string, remove 
 	out, _ := yaml.Marshal(apps)
 
 	if err := ioutil.WriteFile(knownAppsFilePath, out, 0644); err != nil {
-		FatalError("Failed to write to knownApps.yml: " + err.Error())
+		FatalErrorf("could not write to '%s': %s", knownAppsFilePath, err)
 	}
 }
 
@@ -80,13 +80,13 @@ func createKnownAppsFileIfNotExist() {
 		// Create .corectl folder in home directory
 		err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
 		if err != nil {
-			FatalError("Failed to create .corectl folder in home directory: " + err.Error())
+			FatalError("could not create .corectl folder in home directory: ", err)
 		}
 
 		// Create knownApps.yml in .corectl folder
 		_, err := os.Create(knownAppsFilePath)
 		if err != nil {
-			FatalError("Failed to create knownApps.yml in .corectl folder: " + err.Error())
+			FatalErrorf("could not create %s: %s", knownAppsFilePath, err)
 		}
 
 		LogVerbose("Created ~/.corectl/knownApps.yml for storage of app ids")

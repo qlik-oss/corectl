@@ -1,16 +1,16 @@
 package internal
 
 import (
-	"fmt"
-	"errors"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"github.com/qlik-oss/enigma-go"
 )
 
 type Dimension struct {
-	Info	*enigma.NxInfo	`json:"qInfo,omitempty"`
+	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 }
 
 func (d Dimension) validate() error {
@@ -29,6 +29,7 @@ func (d Dimension) validate() error {
 	return nil
 }
 
+// ListDimensions lists all dimenions in an app
 func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
@@ -54,29 +55,30 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	return result
 }
 
+// SetDimensions adds all dimensions that match the specified glob pattern
 func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "dimensions")
 	if err != nil {
-		FatalError("Failed to interpret glob pattern:", err)
+		FatalError("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalError(fmt.Errorf("Failed to parse file %s: %s", path, err))
+			FatalErrorf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
-			var dimension Dimension
-			err := json.Unmarshal(raw, &dimension)
+			var dim Dimension
+			err := json.Unmarshal(raw, &dim)
 			if err != nil {
-				FatalError(fmt.Errorf("Failed to parse data in file %s: %s", path, err))
+				FatalErrorf("could not parse data in file %s: %s", path, err)
 			}
-			err = dimension.validate()
+			err = dim.validate()
 			if err != nil {
-				FatalError(fmt.Errorf("Validation error in file %s: %s", path, err))
+				FatalErrorf("validation error in file %s: %s", path, err)
 			}
-			err = setDimension(ctx, doc, dimension.Info.Id, raw)
+			err = setDimension(ctx, doc, dim.Info.Id, raw)
 			if err != nil {
-				FatalError("Error while creating/updating dimension: ", err)
+				FatalError(err)
 			}
 		}
 	}
@@ -91,13 +93,13 @@ func setDimension(ctx context.Context, doc *enigma.Doc, dimensionID string, raw 
 		LogVerbose("Updating dimension " + dimensionID)
 		err = dimension.SetPropertiesRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("failed to update %s with %s: %s", "dimension", dimensionID, err)
+			return fmt.Errorf("could not update %s with %s: %s", "dimension", dimensionID, err)
 		}
 	} else {
 		LogVerbose("Creating dimension " + dimensionID)
 		_, err = doc.CreateDimensionRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("failed to create %s with %s: %s", "dimension", dimensionID, err)
+			return fmt.Errorf("could not create %s with %s: %s", "dimension", dimensionID, err)
 		}
 	}
 	return nil

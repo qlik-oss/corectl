@@ -1,16 +1,16 @@
 package internal
 
 import (
-	"fmt"
-	"errors"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"github.com/qlik-oss/enigma-go"
 )
 
 type Object struct {
-	Info     *enigma.NxInfo                  `json:"qInfo,omitempty"`
+	Info       *enigma.NxInfo                  `json:"qInfo,omitempty"`
 	Properties *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
 }
 
@@ -78,26 +78,26 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "objects")
 	if err != nil {
-		FatalError("Failed to interpret glob pattern:", err)
+		FatalError("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalError(fmt.Errorf("Failed to parse file %s: %s", path, err))
+			FatalErrorf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
 			var object Object
 			err = json.Unmarshal(raw, &object)
 			if err != nil {
-				FatalError(fmt.Errorf("Failed to parse data in file %s: %s", path, err))
+				FatalErrorf("could not parse data in file %s: %s", path, err)
 			}
 			err = object.validate()
 			if err != nil {
-				FatalError(fmt.Errorf("Validation error in file %s: %s", path, err))
+				FatalErrorf("validation error in file %s: %s", path, err)
 			}
 			err = setObject(ctx, doc, object.Info, object.Properties, raw)
 			if err != nil {
-				FatalError("Error while creating/updating object: ", err)
+				FatalError(err)
 			}
 		}
 	}

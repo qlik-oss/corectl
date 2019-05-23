@@ -10,7 +10,7 @@ func getSortedFieldsNames(ctx context.Context, doc *enigma.Doc, err error) []str
 	systemTableObject := createSystemTableHypercube(ctx, doc)
 	systemTableLayout, err := systemTableObject.GetLayout(ctx)
 	if err != nil {
-		FatalError("could not fetch system table:", err)
+		FatalError("could not fetch system table: ", err)
 	}
 	fieldNames := layoutToFieldLists(systemTableLayout)
 	return fieldNames

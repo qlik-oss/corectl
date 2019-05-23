@@ -1,16 +1,16 @@
 package internal
 
 import (
-	"fmt"
-	"errors"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"github.com/qlik-oss/enigma-go"
 )
 
 type Measure struct {
-	Info	*enigma.NxInfo	`json:"qInfo,omitempty"`
+	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 }
 
 func (m Measure) validate() error {
@@ -57,26 +57,26 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "measures")
 	if err != nil {
-		FatalError("Failed to interpret glob pattern:", err)
+		FatalError("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalError(fmt.Errorf("Failed to parse file %s: %s", path, err))
+			FatalErrorf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
 			var measure Measure
 			err := json.Unmarshal(raw, &measure)
 			if err != nil {
-				FatalError(fmt.Errorf("Failed to parse data in file %s: %s", path, err))
+				FatalErrorf("could not parse data in file %s: %s", path, err)
 			}
 			err = measure.validate()
 			if err != nil {
-				FatalError(fmt.Errorf("Validation error in file %s: %s", path, err))
+				FatalErrorf("validation error in file %s: %s", path, err)
 			}
 			err = setMeasure(ctx, doc, measure.Info.Id, raw)
 			if err != nil {
-				FatalError("Error while creating/updating measure: ", err)
+				FatalError(err)
 			}
 		}
 	}

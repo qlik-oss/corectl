@@ -86,8 +86,7 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 
 	// If there are no datapages, it is (probably?) not a field.
 	if len(layout.ListObject.DataPages) == 0 {
-		errMsg := fmt.Sprintf("Error: No field by name '%s'", fieldName)
-		FatalError(errMsg)
+		FatalErrorf("no field by name '%s'", fieldName)
 	}
 
 	// Get hypercube layout

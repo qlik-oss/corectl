@@ -54,7 +54,12 @@ func (TrafficLogger) Received(message []byte) {
 // Closed implements Closed() method in enigma-go TrafficLogger interface
 func (TrafficLogger) Closed() {}
 
-// FatalError prints the supplied message and exists the process with code 1
+// FatalErrorf formats and prints the message according to the applied format and exits the process with code 1
+func FatalErrorf(format string, fatalMessage ...interface{}) {
+	FatalError(fmt.Sprintf(format, fatalMessage...))
+}
+
+// FatalError prints the supplied message and exits the process with code 1
 func FatalError(fatalMessage ...interface{}) {
 	if PrintJSON {
 		errMsg := map[string]string{
