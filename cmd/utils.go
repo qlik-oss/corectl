@@ -75,13 +75,13 @@ func checkLatestVersion() {
 		fmt.Printf("corectl version: %s, latest version is %s\n", version, res.Current)
 		switch runtime.GOOS {
 			//	case "darwin":
-			//		fmt.Println("To udpate to the latest version using brew just run:")
+			//		fmt.Println("To update to the latest version using brew just run:")
 			//		fmt.Print("\n  brew upgrade qlik-corectl\n\n")
-			//		fmt.Println("If you prefer using curl you can instead run:")
+			//		fmt.Println("If you prefer curl, you can run:")
 		case "linux":
-			fmt.Println("To udpate to the latest version using snap just run:")
+			fmt.Println("To update to the latest version using snap just run:")
 			fmt.Print("\n  snap refresh qlik-corectl\n\n")
-			fmt.Println("If you prefer using curl you can instead run:")
+			fmt.Println("If you prefer curl, you can run:")
 		default:
 			fmt.Println("To download the latest version using curl you can run:")
 		}
