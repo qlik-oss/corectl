@@ -2,8 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -11,8 +9,7 @@ import (
 func applySelection(ctx context.Context, doc *enigma.Doc, fieldName string, value string) {
 	field, err := doc.GetField(ctx, fieldName, "")
 	if err != nil {
-		fmt.Println("Could not find field", err)
-		os.Exit(1)
+		FatalError("Could not find field", err)
 	}
 	field.Clear(ctx)
 	if value != "" {

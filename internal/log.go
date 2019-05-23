@@ -62,7 +62,7 @@ func FatalError(fatalMessage ...interface{}) {
 		}
 		PrintAsJSON(errMsg)
 	} else {
-		fmt.Println(fatalMessage...)
+		fmt.Println("ERROR", fmt.Sprint(fatalMessage...))
 	}
 	os.Exit(1)
 }

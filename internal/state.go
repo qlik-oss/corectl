@@ -30,17 +30,9 @@ type State struct {
 }
 
 func logConnectError(err error, engine string) {
-
-	if engine == "" {
-		fmt.Println("Could not connect to the default engine on http://localhost:9076")
-		fmt.Println("Specify where the engine is running using the --engine parameter or in your config file.")
-		fmt.Println("Error details: ", err)
-	} else {
-		fmt.Println("Could not connect to engine on " + engine + ".")
-		fmt.Println("Please check the --engine parameter or your config file.")
-		fmt.Println("Error details: ", err)
-	}
-	os.Exit(1)
+	msg := fmt.Sprintf("could not connect to engine on %s\nDetails: %s\n", engine, err)
+	msg += fmt.Sprintln("Please check if the engine url specified by the --engine flag or in your config file is correct.")
+	FatalError(msg)
 }
 
 func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {

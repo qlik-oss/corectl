@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -56,7 +55,7 @@ var rootCmd = &cobra.Command{
 func Execute(mainVersion string) {
 	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
+		internal.FatalError("Error at start:", err)
 	}
 }
 

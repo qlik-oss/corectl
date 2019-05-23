@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -63,8 +62,7 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		}
 
 		if err != nil {
-			fmt.Println("Could not create/modify connection", err)
-			os.Exit(1)
+			FatalError("could not create/modify connection", err)
 		}
 	}
 	return err

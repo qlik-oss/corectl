@@ -57,12 +57,8 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 		}
 	}
 
-	if err != nil {
-		fmt.Println("Error when reloading app", err)
-	}
-	if !reloadSuccessful {
-		fmt.Println("DoReload was not successful!")
-		os.Exit(1)
+	if err != nil || !reloadSuccessful {
+		FatalError("failed to reload app", err)
 	}
 
 	fmt.Println("Reload finished successfully")
