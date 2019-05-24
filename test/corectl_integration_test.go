@@ -186,7 +186,7 @@ func TestAppMissing(t *testing.T) {
 }
 
 func TestCatwalkUrl(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
 	p.ExpectIncludes("Please provide a valid URL starting with 'https://', 'http://' or 'www'").Run("catwalk", "--catwalk-url=not-a-valid-url")
 }
 
