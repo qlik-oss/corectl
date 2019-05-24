@@ -136,7 +136,7 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 			catwalkURL += "?engine_url=" + internal.TidyUpEngineURL(engineURL)
 		}
 		if appSpecified {
-			if err := internal.AppExists(rootCtx, engineURL, appID, headers); err != nil {
+			if ok, err := internal.AppExists(rootCtx, engineURL, appID, headers); ok {
 				internal.FatalError(err)
 			}
 		}
