@@ -29,9 +29,9 @@ var versionCmd = &cobra.Command{
 
 		if version != "development build" {
 			checkLatestVersion()
+		} else {
+			fmt.Printf("corectl version: %s\n", version)
 		}
-
-		fmt.Printf("corectl version: %s\n", version)
 	},
 }
 
@@ -64,14 +64,27 @@ func checkLatestVersion() {
 		Owner:      "qlik-oss",
 		Repository: "corectl",
 	}
-
 	res, err := latest.Check(githubTag, version)
-
-	if err == nil && res.Outdated {
-
+	if err != nil {
+		internal.FatalError("Could not find latest version:", err)
+	}
+	if res.Outdated {
 		// Find absolute path of executable
 		executable, _ := os.Executable()
-
+		fmt.Println("--------------------------------------------------")
+		fmt.Printf("corectl version: %s, latest version is %s\n", version, res.Current)
+		switch runtime.GOOS {
+			//	case "darwin":
+			//		fmt.Println("To update to the latest version using brew just run:")
+			//		fmt.Print("\n  brew upgrade qlik-corectl\n\n")
+			//		fmt.Println("If you prefer curl, you can run:")
+		case "linux":
+			fmt.Println("To update to the latest version using snap just run:")
+			fmt.Print("\n  snap refresh qlik-corectl\n\n")
+			fmt.Println("If you prefer curl, you can run:")
+		default:
+			fmt.Println("To download the latest version using curl you can run:")
+		}
 		// Format a download string depending on OS
 		var dwnl string
 		if runtime.GOOS == "windows" {
@@ -79,12 +92,13 @@ func checkLatestVersion() {
 		} else {
 			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, res.Current, runtime.GOOS, path.Dir(executable))
 		}
-
-		fmt.Println("-------------------------------------------------")
-		fmt.Printf("There is a new version available! Please upgrade for the latest features and bug fixes. You are on %s, latest version is %s. \n", version, res.Current)
-		fmt.Printf("To download the latest version you can use this command: \n")
-		fmt.Printf(`'%s'`, dwnl)
-		fmt.Println("\n-------------------------------------------------")
+		fmt.Printf("\n  %s\n\n", dwnl)
+		fmt.Println("If you have any problems, questions or feedback you can find us on:")
+		fmt.Println("  slack:\thttps://qlikbranch-slack-invite.herokuapp.com/")
+		fmt.Println("  github:\thttps://github.com/qlik-oss/corectl")
+		fmt.Println("---------------------------------------------------")
+	} else {
+		fmt.Printf("corectl version: %s\n", version)
 	}
 }
 
@@ -92,19 +106,14 @@ func askForConfirmation(s string) bool {
 	if viper.GetString("suppress") == "true" {
 		return true
 	}
-
 	reader := bufio.NewReader(os.Stdin)
-
 	for {
 		fmt.Printf("%s [y/n]: ", s)
-
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		response = strings.ToLower(strings.TrimSpace(response))
-
 		if response == "y" || response == "yes" {
 			return true
 		} else if response == "n" || response == "no" {
