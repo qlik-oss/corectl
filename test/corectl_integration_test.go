@@ -220,7 +220,6 @@ func TestWithUnknownApp(t *testing.T) {
 	p.ExpectError().Run("reload")
 
 	p.ExpectErrorIncludes("Could not find app").Run("assoc")
-	p.ExpectErrorIncludes("Could not find app").Run("catwalk")
 	p.ExpectErrorIncludes("Could not find app").Run("eval", "count(a)")
 	p.ExpectErrorIncludes("Could not find app").Run("fields")
 	p.ExpectErrorIncludes("Could not find app").Run("keys")
