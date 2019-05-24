@@ -63,11 +63,14 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 }
 
 //AppExists returns wether or not an app exists
-func AppExists(ctx context.Context, engine string, appName string, headers http.Header) bool {
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header) error {
 	global := PrepareEngineStateWithoutApp(ctx, headers).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	_, err := global.GetAppEntry(ctx, appID)
-	return err == nil
+	if err != nil {
+		return fmt.Errorf("could not find any app by ID '%s': %s", appID, err)
+	}
+	return nil
 }
 
 //DeleteApp removes the specified app from the engine.

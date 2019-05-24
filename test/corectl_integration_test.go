@@ -190,6 +190,51 @@ func TestCatwalkUrl(t *testing.T) {
 	p.ExpectIncludes("Please provide a valid URL starting with 'https://', 'http://' or 'www'").Run("catwalk", "--catwalk-url=not-a-valid-url")
 }
 
+func TestWithoutApp(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+
+	p.ExpectOK().Run("status")
+	p.ExpectOK().Run("version")
+	// Can't run catwalk because it tries to open a browser when successful
+
+	p.ExpectErrorIncludes("no app specified").Run("build")
+	p.ExpectErrorIncludes("no app specified").Run("reload")
+
+	p.ExpectErrorIncludes("no app specified").Run("assoc")
+	p.ExpectErrorIncludes("no app specified").Run("eval", "count(a)")
+	p.ExpectErrorIncludes("no app specified").Run("fields")
+	p.ExpectErrorIncludes("no app specified").Run("keys")
+	p.ExpectErrorIncludes("no app specified").Run("meta")
+	p.ExpectErrorIncludes("no app specified").Run("tables")
+	p.ExpectErrorIncludes("no app specified").Run("values", "foo")
+
+	p.ExpectErrorIncludes("no app specified").Run("connection", "ls")
+	p.ExpectErrorIncludes("no app specified").Run("dimension", "ls")
+	p.ExpectErrorIncludes("no app specified").Run("measure", "ls")
+	p.ExpectErrorIncludes("no app specified").Run("object", "ls")
+	p.ExpectErrorIncludes("no app specified").Run("script", "get")
+}
+
+func TestWithUnknownApp(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p.ExpectError().Run("reload")
+
+	p.ExpectErrorIncludes("Could not find app").Run("assoc")
+	p.ExpectErrorIncludes("Could not find app").Run("catwalk")
+	p.ExpectErrorIncludes("Could not find app").Run("eval", "count(a)")
+	p.ExpectErrorIncludes("Could not find app").Run("fields")
+	p.ExpectErrorIncludes("Could not find app").Run("keys")
+	p.ExpectErrorIncludes("Could not find app").Run("meta")
+	p.ExpectErrorIncludes("Could not find app").Run("tables")
+	p.ExpectErrorIncludes("Could not find app").Run("values", "foo")
+
+	p.ExpectErrorIncludes("Could not find app").Run("connection", "ls")
+	p.ExpectErrorIncludes("Could not find app").Run("dimension", "ls")
+	p.ExpectErrorIncludes("Could not find app").Run("measure", "ls")
+	p.ExpectErrorIncludes("Could not find app").Run("object", "ls")
+	p.ExpectErrorIncludes("Could not find app").Run("script", "get")
+}
+
 func TestEvalOnUnknownAppl(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectIncludes("Could not find app: App not found (1003)").Run("eval", "count(numbers)", "by", "xyz")

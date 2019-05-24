@@ -122,13 +122,23 @@ var catwalkCmd = withLocalFlags(&cobra.Command{
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		var catwalkURL string
-		if viper.GetString("app") != "" {
-			catwalkURL = viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine")) + "/app/" + viper.GetString("app")
-		} else if internal.TryParseAppFromURL(viper.GetString("engine")) != "" {
-			catwalkURL = viper.GetString("catwalk-url") + "?engine_url=" + internal.TidyUpEngineURL(viper.GetString("engine"))
+		var appSpecified bool
+		engineURL := viper.GetString("engine")
+		appID := viper.GetString("app")
+		catwalkURL := viper.GetString("catwalk-url")
+		if appID != "" {
+			catwalkURL += "?engine_url=" + internal.TidyUpEngineURL(engineURL) + "/app/" + appID
+			appSpecified = true
 		} else {
-			internal.FatalError("please provide an app that should be opened in catwalk")
+			if internal.TryParseAppFromURL(viper.GetString("engine")) != "" {
+				appSpecified = true
+			}
+			catwalkURL += "?engine_url=" + internal.TidyUpEngineURL(engineURL)
+		}
+		if appSpecified {
+			if err := internal.AppExists(rootCtx, engineURL, appID, headers); err != nil {
+				internal.FatalError(err)
+			}
 		}
 
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {

@@ -36,9 +36,8 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := args[0]
 
-		exists := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers)
-		if !exists {
-			internal.FatalErrorf("could not find any app by the name '%s'", app)
+		if err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers); err != nil {
+			internal.FatalError(err)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
