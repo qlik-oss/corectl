@@ -8,7 +8,7 @@ require (
 	github.com/magiconair/properties v1.8.1
 	github.com/olekukonko/tablewriter v0.0.1
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
-	github.com/qlik-oss/enigma-go v0.0.0-20190520114648-b81be0d4ad59
+	github.com/qlik-oss/enigma-go v0.0.0-20190525015736-6f192af3ba5d
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/cobra v0.0.4
 	github.com/spf13/pflag v1.0.3
