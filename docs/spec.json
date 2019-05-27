@@ -3,7 +3,7 @@
   "info": {
     "title": "Specification for corectl",
     "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "MIT"
   },
   "clispec": "0.1.0",
