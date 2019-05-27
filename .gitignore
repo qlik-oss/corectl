@@ -7,3 +7,4 @@ vendor/
 corectl
 corectl.exe
 main
+.snapcraft/
