@@ -31,7 +31,7 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool) {
 	}
 }
 
-// PrintNamedItemsList prints a list of the id and type and title of the supplied items
+// PrintNamedItemsListWithType prints a list of the id and type and title of the supplied items
 func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash bool) {
 	if printAsBash {
 		for _, item := range items {
@@ -60,21 +60,21 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 		case "object":
 			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			qProps, _ := genericObject.GetProperties(state.Ctx)
 			properties, _ = json.Marshal(qProps)
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			qProps, _ := genericMeasure.GetProperties(state.Ctx)
 			properties, _ = json.Marshal(qProps)
 		case "dimension":
 			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			qProps, _ := genericDimension.GetProperties(state.Ctx)
 			properties, _ = json.Marshal(qProps)
@@ -84,28 +84,28 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 		case "object":
 			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			properties, err = genericObject.GetPropertiesRaw(state.Ctx)
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
 		case "dimension":
 			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 			if err != nil {
-				internal.FatalError(err)
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
 		}
 	}
 	if err != nil {
-		internal.FatalError(err)
+		internal.FatalErrorf("could not print properties of %s by ID '%s': %s", entityType, entityID, err)
 	}
 	if len(properties) == 0 {
-		internal.FatalError(fmt.Sprintf("No %s by id '%s'", entityType, entityID))
+		internal.FatalErrorf("no %s by ID '%s'", entityType, entityID)
 	} else {
 		internal.PrintAsJSON(properties)
 	}
@@ -119,27 +119,27 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 	case "object":
 		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 		}
 		layout, err = genericObject.GetLayoutRaw(state.Ctx)
 	case "measure":
 		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 		}
 		layout, err = genericMeasure.GetLayoutRaw(state.Ctx)
 	case "dimension":
 		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 		}
 		layout, err = genericDimension.GetLayoutRaw(state.Ctx)
 	}
 	if err != nil {
-		internal.FatalError(err)
+		internal.FatalErrorf("could not get layout of %s by ID '%s': %s", entityType, entityID, err)
 	}
 	if len(layout) == 0 {
-		internal.FatalError(fmt.Sprintf("No %s by id '%s'", entityType, entityID))
+		internal.FatalErrorf("no %s by ID '%s'", entityType, entityID)
 	} else {
 		internal.PrintAsJSON(layout)
 	}
@@ -149,12 +149,12 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	object, err := doc.GetObject(ctx, objectID)
 	if err != nil {
-		internal.FatalError(err)
+		internal.FatalErrorf("could not retrieve object by ID '%s': %s", objectID, err)
 	}
 
 	layout, err := object.GetLayoutRaw(ctx)
 	if err != nil {
-		internal.FatalError(err)
+		internal.FatalErrorf("could not get layout of object by ID '%s': %s", objectID, err)
 	}
 
 	layoutMap := make(map[string]interface{})
@@ -165,7 +165,7 @@ func EvalObject(ctx context.Context, doc *enigma.Doc, objectID string) {
 	resultCubeMap := make(map[string]*enigma.HyperCube)
 	getAllHyperCubes("", layoutMap, resultCubeMap)
 	if len(resultCubeMap) == 0 {
-		internal.FatalError(fmt.Sprintf("Object %s contains no data\n", objectID))
+		internal.FatalErrorf("object %s contains no data", objectID)
 	}
 	for _, hypercube := range resultCubeMap {
 		printHypercube(hypercube)

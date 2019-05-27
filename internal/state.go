@@ -30,17 +30,15 @@ type State struct {
 }
 
 func logConnectError(err error, engine string) {
-
-	if engine == "" {
-		fmt.Println("Could not connect to the default engine on http://localhost:9076")
-		fmt.Println("Specify where the engine is running using the --engine parameter or in your config file.")
-		fmt.Println("Error details: ", err)
+	msg := fmt.Sprintf("could not connect to engine on %s\nDetails: %s\n", engine, err)
+	if strings.Contains(err.Error(), "401") {
+		msg += fmt.Sprintln("This probably means that you have provided either incorrect or no authorization credentials.")
+		msg += fmt.Sprintln("Check that the headers specified are correct.")
 	} else {
-		fmt.Println("Could not connect to engine on " + engine + ".")
-		fmt.Println("Please check the --engine parameter or your config file.")
-		fmt.Println("Error details: ", err)
+		msg += fmt.Sprintln("This probably means that there is no engine running on the specified url.")
+		msg += fmt.Sprintln("Check that the engine is up and that the url specified is correct.")
 	}
-	os.Exit(1)
+	FatalError(msg)
 }
 
 func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {
@@ -69,12 +67,15 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 	return global
 }
 
-//AppExists returns wether or not an app exists
-func AppExists(ctx context.Context, engine string, appName string, headers http.Header) bool {
+//AppExists returns wether or not an app exists along with any eventual error from engine
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header) (bool, error) {
 	global := PrepareEngineStateWithoutApp(ctx, headers).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	_, err := global.GetAppEntry(ctx, appID)
-	return err == nil
+	if err != nil {
+		return false, fmt.Errorf("could not find any app by ID '%s': %s", appID, err)
+	}
+	return true, nil
 }
 
 //DeleteApp removes the specified app from the engine.
@@ -83,9 +84,9 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
-		FatalError(err)
+		FatalErrorf("could not delete app with name '%s' and ID '%s': %s", appName, appID, err)
 	} else if !succ {
-		FatalError("Failed to delete app with name: " + appName + " and ID: " + appID)
+		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
 	setAppIDToKnownApps(engine, appName, appID, true)
 }
@@ -102,7 +103,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 		// No app name provided, lets check if one exists in the url
 		appName = TryParseAppFromURL(engine)
 		if appName == "" {
-			FatalError("Error: No app specified")
+			FatalError("no app specified")
 		}
 	}
 
@@ -113,7 +114,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		FatalError("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 	doc, err := global.GetActiveDoc(ctx)
@@ -132,22 +133,22 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 			var success bool
 			success, appID, err = global.CreateApp(ctx, appName, "")
 			if err != nil {
-				FatalError(err)
+				FatalErrorf("could not create app with name '%s': %s", appName, err)
 			}
 			if !success {
-				FatalError("Failed to create app with name: " + appName)
+				FatalErrorf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
 			setAppIDToKnownApps(engine, appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
-				FatalError(err)
+				FatalErrorf("could not do open app with ID '%s': %s", appID, err)
 			}
 			if doc != nil {
 				LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
 			}
 		} else {
-			FatalError(err)
+			FatalErrorf("could not open app with ID '%s': %s", appID, err)
 		}
 	}
 
@@ -171,7 +172,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
 			if err != nil {
-				FatalError(err)
+				FatalError("could not parse response from engine: ", err)
 			}
 			if parsedEvent["qSessionState"] == "SESSION_CREATED" || parsedEvent["qSessionState"] == "SESSION_ATTACHED" {
 				return nil
@@ -215,7 +216,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("Failed to connect to engine with error message: ", err)
+		FatalError("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 
@@ -262,11 +263,11 @@ func getSessionID(appID string) string {
 
 	currentUser, err := user.Current()
 	if err != nil {
-		FatalError(err)
+		FatalError("unexpected error when retrieving current user: ", err)
 	}
 	hostName, err := os.Hostname()
 	if err != nil {
-		FatalError(err)
+		FatalError("unexpected error when retrieving hostname: ", err)
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID

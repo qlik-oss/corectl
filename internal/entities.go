@@ -2,8 +2,8 @@ package internal
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -59,7 +59,7 @@ func getEntityPaths(commandLineGlobPattern string, configEntityParam string) ([]
 		for _, pattern := range globPatterns {
 			pathMatches, err = filepath.Glob(pattern)
 			if err != nil {
-				FatalError(err)
+				FatalErrorf("could not interpret glob pattern '%s': %s", pattern, err)
 			} else if len(pathMatches) == 0 {
 				fmt.Printf("Warning: no '%s' found for pattern %s\n", configEntityParam, pattern)
 			} else {

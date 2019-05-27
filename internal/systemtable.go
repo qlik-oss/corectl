@@ -2,8 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/qlik-oss/enigma-go"
 )
@@ -12,8 +10,7 @@ func getSortedFieldsNames(ctx context.Context, doc *enigma.Doc, err error) []str
 	systemTableObject := createSystemTableHypercube(ctx, doc)
 	systemTableLayout, err := systemTableObject.GetLayout(ctx)
 	if err != nil {
-		fmt.Println("Error when fetching system table:", err)
-		os.Exit(1)
+		FatalError("could not fetch system table: ", err)
 	}
 	fieldNames := layoutToFieldLists(systemTableLayout)
 	return fieldNames

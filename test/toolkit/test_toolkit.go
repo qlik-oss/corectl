@@ -2,12 +2,13 @@ package toolkit
 
 import (
 	"encoding/json"
-	"github.com/andreyvit/diff"
-	"github.com/stretchr/testify/assert"
 	"os/exec"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/andreyvit/diff"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -72,12 +73,19 @@ func (p *Params) ExpectEmptyOK() *Params {
 	pc.expectSilent = true
 	return &pc
 }
-func (p *Params) ExpectError(message string) *Params {
+func (p *Params) ExpectError() *Params {
+	pc := *p // Shallow clone
+	pc.expectError = true
+	return &pc
+}
+
+func (p *Params) ExpectErrorEquals(message string) *Params {
 	pc := *p // Shallow clone
 	pc.expectError = true
 	pc.expectEqual = message
 	return &pc
 }
+
 func (p *Params) ExpectErrorIncludes(items ...string) *Params {
 	pc := *p // Shallow clone
 	pc.expectError = true

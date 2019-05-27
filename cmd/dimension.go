@@ -17,7 +17,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineDimensions := args[0]
 		if commandLineDimensions == "" {
-			internal.FatalError("Error: no dimensions specified")
+			internal.FatalError("no dimensions specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetDimensions(rootCtx, state.Doc, commandLineDimensions)
@@ -39,9 +39,9 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic dimension ", entity+" with error: "+err.Error())
+				internal.FatalErrorf("could not remove generic dimension '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic dimension ", entity)
+				internal.FatalErrorf("could not remove generic dimension '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

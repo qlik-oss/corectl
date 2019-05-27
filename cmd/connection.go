@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -18,7 +20,7 @@ var setConnectionsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		separateConnectionsFile := args[0]
 		if separateConnectionsFile == "" {
-			internal.FatalError("Error: No connection file specified.")
+			internal.FatalError("no connections config file specified")
 		}
 		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile)
 		if !viper.GetBool("no-save") {
@@ -41,7 +43,7 @@ corectl connection rm ID-1 ID-2`,
 		for _, connection := range args {
 			err := state.Doc.DeleteConnection(rootCtx, connection)
 			if err != nil {
-				internal.FatalError("Failed to remove connection: ", connection, " with error: ", err.Error())
+				internal.FatalErrorf("could not remove connection '%s': %s", connection, err)
 			}
 		}
 		if !viper.GetBool("no-save") {
@@ -61,7 +63,7 @@ var listConnectionsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
-			internal.FatalError(err)
+			internal.FatalErrorf("could not retrieve list of connections: %s", err)
 		}
 		printer.PrintConnections(connections, viper.GetBool("bash"))
 	},
@@ -78,7 +80,8 @@ var getConnectionCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
-			internal.FatalError(err)
+			fmt.Printf("%T\n", err)
+			internal.FatalErrorf("could not retrieve connection '%s': %s", args[0], err)
 		}
 		printer.PrintConnection(connection)
 	},

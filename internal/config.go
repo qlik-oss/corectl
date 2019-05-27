@@ -2,7 +2,6 @@ package internal
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -46,7 +45,7 @@ func GetConnectionsConfig() ConnectionsConfig {
 		connMap := conn.(map[string]interface{})
 		err := reMarshal(connMap, &config.Connections)
 		if err != nil {
-			FatalError(err)
+			FatalErrorf("could not parse connections configuration: %s", err)
 		}
 	}
 	return config
@@ -73,7 +72,7 @@ func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 		if s, ok := k.(string); ok {
 			strMap[s] = v
 		} else {
-			return strMap, errors.New("Non-string found in map")
+			return strMap, fmt.Errorf("property '%v' is not a string", k)
 		}
 	}
 	return strMap, nil
@@ -83,20 +82,22 @@ func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 func ReadConnectionsFile(path string) ConnectionsConfig {
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
-		FatalError("Could not find connections file:", path)
+		FatalErrorf("could not find connections config file '%s'", path)
 	}
 	var config ConnectionsConfig
 	tempConfig := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &tempConfig)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error: invalid syntax in connections config file %s\n", path)
-		FatalError(errMsg, err)
+		FatalErrorf("invalid syntax in connections config file '%s': %s", path, err)
 	}
-	subEnvVars(&tempConfig)
+	err = subEnvVars(&tempConfig)
+	if err != nil {
+		FatalErrorf("bad substitution in '%s': %s", path, err)
+	}
 	if strConfig, err := convertMap(tempConfig); err == nil {
 		reMarshal(strConfig, &config)
 	} else {
-		FatalError("Found non-string property in:", path)
+		FatalErrorf("could not parse connections config file '%s': %s", path, err)
 	}
 	return config
 }
@@ -108,7 +109,7 @@ func ReadConfigFile(explicitConfigFile string) {
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
-			FatalError(err)
+			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
 		setConfigFile(explicitConfigFile)
 		configFile = explicitConfigFile
@@ -136,26 +137,28 @@ func AddValidProp(propName string) {
 func setConfigFile(configPath string) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		FatalError("Could not find config file:", configPath)
+		FatalErrorf("could not find config file '%s'", configPath)
 	}
 	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
 	// However, this make validateProps a tiny bit more complex
 	config := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error: invalid syntax in config file %s\n", configPath)
-		FatalError(errMsg, err)
+		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
 	}
 	validateProps(config, configPath)
-	subEnvVars(&config)
+	err = subEnvVars(&config)
+	if err != nil {
+		FatalErrorf("bad substitution in '%s': %s", configPath, err)
+	}
 	configBytes, err := yaml.Marshal(config)
 	if err != nil {
-		FatalError(err)
+		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
 	if err != nil {
-		FatalError(err)
+		FatalErrorf("unexpected error after parseing config: %s", err)
 	}
 }
 
@@ -171,7 +174,7 @@ func findConfigFile(fileName string) string {
 	if configFile != "" {
 		absConfig, err := filepath.Abs(configFile) // Convert to abs path
 		if err != nil {
-			FatalError(err)
+			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
 		configFile = absConfig
 	}
@@ -218,7 +221,7 @@ func validateProps(config map[interface{}]interface{}, configPath string) {
 
 // subEnvVars substitutes all the environment variables with their actual values in
 // a map[string]interface{}, typically the unmarshallad yaml. (recursively)
-func subEnvVars(m *map[interface{}]interface{}) {
+func subEnvVars(m *map[interface{}]interface{}) error {
 	for k, v := range *m {
 		switch v.(type) {
 		case string:
@@ -228,14 +231,17 @@ func subEnvVars(m *map[interface{}]interface{}) {
 				if val := os.Getenv(envVar); val != "" {
 					(*m)[k] = val
 				} else {
-					FatalError(fmt.Sprintf("Environment variable '%s' not found.", envVar))
+					return fmt.Errorf("environment variable '%s' not found", envVar)
 				}
 			}
 		case map[interface{}]interface{}:
 			m2 := v.(map[interface{}]interface{})
-			subEnvVars(&m2)
+			if err := subEnvVars(&m2); err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 // getSuggestion finds the best matching property within the specified Levenshtein distance limit

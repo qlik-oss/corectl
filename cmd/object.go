@@ -18,7 +18,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineObjects := args[0]
 		if commandLineObjects == "" {
-			internal.FatalError("Error: no objects specified")
+			internal.FatalError("no objects specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, true)
 		internal.SetObjects(rootCtx, state.Doc, commandLineObjects)
@@ -40,9 +40,9 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {
-				internal.FatalError("Failed to remove generic object ", entity+" with error: "+err.Error())
+				internal.FatalErrorf("could not remove generic object '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalError("Failed to remove generic object ", entity)
+				internal.FatalErrorf("could not remove generic object '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {
