@@ -31,7 +31,6 @@ type State struct {
 
 func logConnectError(err error, engine string) {
 	msg := fmt.Sprintf("could not connect to engine on %s\nDetails: %s\n", engine, err)
-	msg += fmt.Sprintf("%T\n", err)
 	if strings.Contains(err.Error(), "401") {
 		msg += fmt.Sprintln("This probably means that you have provided either incorrect or no authorization credentials.")
 		msg += fmt.Sprintln("Check that the headers specified are correct.")

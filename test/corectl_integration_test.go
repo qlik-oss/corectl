@@ -168,7 +168,7 @@ func TestUsingJwt(t *testing.T) {
 	p4 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"})
 
 	p1.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
-	p2.ExpectErrorIncludes("--engine", "config", "engine is running").Run("status")
+	p2.ExpectErrorIncludes("headers", "authorization").Run("status")
 	p3.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 	p4.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 }
@@ -241,7 +241,7 @@ func TestEvalOnUnknownAppl(t *testing.T) {
 
 func TestEvalOnUnknownAppEngine(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: "localhost:9999", App: t.Name()}
-	p.ExpectErrorIncludes("--engine", "config", "engine is running").Run("eval", "count(numbers)", "by", "xyz")
+	p.ExpectErrorIncludes("engine", "url").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestLicenseServiceDown(t *testing.T) {
