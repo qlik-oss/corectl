@@ -31,8 +31,9 @@ type State struct {
 
 func logConnectError(err error, engine string) {
 	msg := fmt.Sprintf("could not connect to engine on %s\nDetails: %s\n", engine, err)
-	msg += fmt.Sprintln("Please check if the engine is running and that the url specified")
-	msg += fmt.Sprintln("using either the --engine flag or the config file is correct.")
+	msg += fmt.Sprintln("This could be because:")
+	msg += fmt.Sprintln("  the engine isn't up and running, or")
+	msg += fmt.Sprintln("  incorrect url in --engine flag or 'engine' property (in config)")
 	FatalError(msg)
 }
 
