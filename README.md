@@ -10,13 +10,43 @@ Corectl is a command line tool to perform reloads, fetch metadata and evaluate e
 
 ## Download
 
-On **Linux** and **OS X**
+### snap
+
+If you want to install `corectl` using snap you can run:
+
+```bash
+sudo snap install qlik-corectl
+```
+
+This installs `qlik-corectl` with the alias `corectl`, so you can still use it as normal (without the `qlik-` prefix).
+
+### brew
+
+If you want to install `corectl` using brew you have to first tap our homebrew repo with the following:
+
+```bash
+brew tap qlik-oss/taps
+```
+
+after which you can install `corectl` by running:
+
+```
+brew install qlik-corectl
+```
+
+Note that the binary is still installed as `corectl`.
+
+### curl
+
+If you want to install using curl instead, you can use:
+
+For **Linux** or **OS X**
 
 ```bash
  curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-$(uname -s)-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
 
-On **Windows** with git bash
+For **Windows** with git bash
 
 ```bash
 curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "$HOME/bin/" && rm ./corectl.zip
