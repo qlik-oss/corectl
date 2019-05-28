@@ -41,7 +41,7 @@ sudo snap install qlik-corectl
 
 This installs `qlik-corectl` with the alias `corectl`, so you can still use it as normal (without the `qlik-` prefix).
 
-If you want you can use curl to install isntead by running:
+If you prefer, you can install using curl instead. Simply run:
 ```bash
  curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-Linux-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
