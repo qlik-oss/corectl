@@ -26,7 +26,7 @@ brew install qlik-corectl
 
 Note that the binary is still installed as `corectl`.
 
-If you want to install using curl instead just run:
+If you prefer, you can install using curl instead. Simply run:
 ```bash
  curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-Darwin-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
@@ -41,7 +41,7 @@ sudo snap install qlik-corectl
 
 This installs `qlik-corectl` with the alias `corectl`, so you can still use it as normal (without the `qlik-` prefix).
 
-If you want to install using curl instead just run:
+If you want you can use curl to install isntead by running:
 ```bash
  curl --silent --location "https://github.com/qlik-oss/corectl/releases/latest/download/corectl-Linux-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl /usr/local/bin/corectl
 ```
