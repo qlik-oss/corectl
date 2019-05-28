@@ -79,8 +79,10 @@ func checkLatestVersion() {
 		case "darwin":
 			fmt.Println("To update to the latest version using brew just run:")
 			fmt.Print("\n  brew upgrade qlik-corectl\n\n")
-			fmt.Println("If you don't already have the qlik-oss tap you have to add the tap first with:")
+			fmt.Println("If you don't already have the qlik-oss tap you have to first add the tap with:")
 			fmt.Print("\n  brew tap qlik-oss/taps\n\n")
+			fmt.Println("And after that, you have to install it with brew by running:")
+			fmt.Print("\n  brew install qlik-corectl\n\n")
 			fmt.Println("If you prefer curl, you can run:")
 		case "linux":
 			fmt.Println("To update to the latest version using snap just run:")
