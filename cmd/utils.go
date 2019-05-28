@@ -66,7 +66,9 @@ func checkLatestVersion() {
 	}
 	res, err := latest.Check(githubTag, version)
 	if err != nil {
-		internal.FatalError("Could not find latest version:", err)
+		// If we cannot connect to github just print the version
+		fmt.Printf("corectl version: %s\n", version)
+		return
 	}
 	if res.Outdated {
 		// Find absolute path of executable
@@ -74,10 +76,12 @@ func checkLatestVersion() {
 		fmt.Println("--------------------------------------------------")
 		fmt.Printf("corectl version: %s, latest version is %s\n", version, res.Current)
 		switch runtime.GOOS {
-			//	case "darwin":
-			//		fmt.Println("To update to the latest version using brew just run:")
-			//		fmt.Print("\n  brew upgrade qlik-corectl\n\n")
-			//		fmt.Println("If you prefer curl, you can run:")
+		case "darwin":
+			fmt.Println("To update to the latest version using brew just run:")
+			fmt.Print("\n  brew upgrade qlik-corectl\n\n")
+			fmt.Println("If you don't already have the qlik-oss tap you have to add the tap first with:")
+			fmt.Print("\n  brew tap qlik-oss/taps\n\n")
+			fmt.Println("If you prefer curl, you can run:")
 		case "linux":
 			fmt.Println("To update to the latest version using snap just run:")
 			fmt.Print("\n  snap refresh qlik-corectl\n\n")
