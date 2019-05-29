@@ -29,6 +29,7 @@ corectl [flags]
 
 * [corectl app](corectl_app.md)	 - Explore and manage apps
 * [corectl assoc](corectl_assoc.md)	 - Print table associations
+* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
 * [corectl build](corectl_build.md)	 - Reload and save the app after updating connections, dimensions, measures, objects and the script
 * [corectl catwalk](corectl_catwalk.md)	 - Open the specified app in catwalk
 * [corectl completion](corectl_completion.md)	 - Generate auto completion scripts

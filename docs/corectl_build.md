@@ -20,6 +20,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 ### Options
 
 ```
+      --bookmarks string     A list of generic bookmark json paths
       --connections string   Path to a yml file containing the data connection definitions
       --dimensions string    A list of generic dimension json paths
   -h, --help                 help for build
