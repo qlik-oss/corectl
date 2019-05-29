@@ -75,8 +75,49 @@
       "alias": "associations",
       "description": "Print table associations"
     },
+    "bookmark": {
+      "description": "Explore and manage bookmarks",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic bookmark"
+        },
+        "ls": {
+          "description": "Print a list of all generic bookmarks in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic bookmark",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
+        },
+        "rm": {
+          "description": "Remove one or many bookmarks in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the bookmarks in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
+    },
     "build": {
       "flags": {
+        "bookmarks": {
+          "description": "A list of generic bookmark json paths"
+        },
         "connections": {
           "description": "Path to a yml file containing the data connection definitions"
         },
