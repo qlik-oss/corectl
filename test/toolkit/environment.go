@@ -25,7 +25,7 @@ func init() {
 	os.Setenv("ENGINE_BAD_LICENSE_SERVER_URL", *EngineBadLicenseServerIP)
 	AddGoldPolisher("(New connection created with id): .*$", "$1: <filtered for gold shininess>")
 	AddGoldPolisher("localhost:9076", "<host>:<port>")
-
+	AddGoldPolisher("(\"qUtcModifyTime\":) .*$", "$1 <filtered for gold shininess>")
 }
 
 func buildCorectl() {

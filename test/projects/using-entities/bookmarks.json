@@ -1,0 +1,22 @@
+[
+  {
+    "qInfo": {
+      "qId": "bookmark-1",
+      "qType": "bookmark"
+    },
+    "qMetaDef": {
+      "title": "Håkan #1",
+      "description": "Håkans första bokmärke!"
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "bookmark-2",
+      "qType": "bookmark"
+    },
+    "qMetaDef": {
+      "title": "Håkan #2",
+      "description": "Håkans andra bokmärke!"
+    }
+  }
+]

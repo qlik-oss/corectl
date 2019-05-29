@@ -1,0 +1,10 @@
+{
+  "qInfo": {
+    "qId": "bookmark-1",
+    "qType": "bookmark"
+  },
+  "qMetaDef": {
+    "title": "Håkan #1",
+    "description": "Håkans första bokmärke!"
+  }
+}

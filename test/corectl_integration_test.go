@@ -124,6 +124,27 @@ func TestMeasureManagementCommands(t *testing.T) {
 
 }
 
+func TestBookmarkManagementCommands(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+
+	// Build with two bookmarks
+	p.ExpectOK().Run("build")
+	p.ExpectGolden().Run("bookmark", "ls")
+	p.ExpectGolden().Run("bookmark", "ls", "--json")
+	p.ExpectGolden().Run("bookmark", "ls", "--bash")
+	p.ExpectGolden().Run("bookmark", "properties", "bookmark-1")
+	p.ExpectGolden().Run("bookmark", "layout", "bookmark-2")
+	p.ExpectJsonArray("qId", "bookmark-2", "bookmark-1").Run("bookmark", "ls", "--json")
+
+	// Reomve one bookmark and see that only the other one remains
+	p.ExpectOK().Run("bookmark", "rm", "bookmark-1")
+	p.ExpectJsonArray("qId", "bookmark-2").Run("bookmark", "ls", "--json")
+
+	// Re-add the bookmarks and check
+	p.ExpectOK().Run("bookmark", "set", "test/projects/using-entities/bookmarks.json")
+	p.ExpectJsonArray("qId", "bookmark-2", "bookmark-1").Run("bookmark", "ls", "--json")
+}
+
 func TestOpeningWithoutData(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
 	defer p.Reset()
