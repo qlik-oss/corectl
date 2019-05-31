@@ -2,10 +2,13 @@ package internal
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	neturl "net/url"
 	"os"
@@ -52,12 +55,10 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 	}
 	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
 
-	var dialer enigma.Dialer
+	var dialer = enigma.Dialer{}
 
 	if LogTraffic {
-		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
-	} else {
-		dialer = enigma.Dialer{}
+		dialer.TrafficLogger = TrafficLogger{}
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
@@ -193,6 +194,7 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
 	engine := viper.GetString("engine")
 	ttl := viper.GetString("ttl")
+	certificates := viper.GetString("certificates")
 
 	LogVerbose("---------- Connecting to engine ----------")
 
@@ -200,12 +202,14 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 
 	LogVerbose("Engine: " + engineURL)
 
-	var dialer enigma.Dialer
+	var dialer = enigma.Dialer{}
 
 	if LogTraffic {
-		dialer = enigma.Dialer{TrafficLogger: TrafficLogger{}}
-	} else {
-		dialer = enigma.Dialer{}
+		dialer.TrafficLogger = TrafficLogger{}
+	}
+
+	if certificates != "" {
+		dialer.TLSClientConfig = readCertificates(certificates)
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
@@ -284,4 +288,34 @@ func TryParseAppFromURL(engineURL string) string {
 		return appName
 	}
 	return ""
+}
+
+func readCertificates(certificatesPath string) *tls.Config {
+	// Read client and root certificates.
+	certFile := certificatesPath + "/client.pem"
+	keyFile := certificatesPath + "/client_key.pem"
+	caFile := certificatesPath + "/root.pem"
+
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		fmt.Println("Failed to load client certificate", err)
+		panic(err)
+	}
+
+	caCert, err := ioutil.ReadFile(caFile)
+	if err != nil {
+		fmt.Println("Failed to read root certificate", err)
+		panic(err)
+	}
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
+
+	// Setup TLS configuration.
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		Certificates:       []tls.Certificate{cert},
+		RootCAs:            caCertPool,
+	}
+
+	return tlsConfig
 }

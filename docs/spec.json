@@ -17,6 +17,9 @@
       "description": "Bash flag used to adapt output to bash completion format",
       "default": "false"
     },
+    "certificates": {
+      "description": "path/to/certificates containing client and root certificates"
+    },
     "config": {
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"

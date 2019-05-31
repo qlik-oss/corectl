@@ -3,14 +3,14 @@
 With `corectl` it is possible to configure values that should be passed to your command. This can be configured in a `yaml` file residing in e.g. an repo or locally on your computer.
 By default `corectl` will pick up a `corectl.yml | corectl.yaml` file from your current directory. It is also possible to pass a specific configuration file using the `--config` or `-c` flag.
 
-All properties set in a configuration file can be overriden by passing another value as a flag instead. Properties can also be specified using environment variables. 
+All properties set in a configuration file can be overriden by passing another value as a flag instead. Properties can also be specified using environment variables.
 
 ### Configuration properties
 
 Below is a configuration example utilizing the different properties that are available today:
 
 ```yaml
-engine: localhost:9076 
+engine: localhost:9076
 app: project1.qvf
 script: script.qvs
 connections:
@@ -29,6 +29,7 @@ measures:
   - ./*measure*.json
 dimensions:
   - ./dimension-*.json
+certificates: path/to/certificates #path to the folder containing the root and client certificates
 headers:
   authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0" #generated at jwt.io with the password passw0rd
 ```
@@ -73,7 +74,7 @@ myfolderconnection:
     type: folder
 ```
 
-Depending on which type of connection that should be used there may be a need for additional values in your configuration. Below is another example where we configure an connection to a custom type connection e.g. a gRPC data connector. 
+Depending on which type of connection that should be used there may be a need for additional values in your configuration. Below is another example where we configure an connection to a custom type connection e.g. a gRPC data connector.
 
 When not specifying a `connectionstring` in your connection config then `corectl` builds one for you.
 The value for the `type` property will be set as `provider`, and the keys and values from the `settings` property will also be appended to the `connectionstring`. The example below will yield `CUSTOM CONNECT TO \"provider=testconnector;host=corectl-test-connector;\"`.
@@ -86,10 +87,10 @@ myconnection:
       host: corectl-test-connector
 ```
 
-#### Using a separate connections file 
-Optionally the `connections` property in the config file can reference a separate connections file by 
-specifying a path to a yaml file instead of an inline list of connections: 
-           
+#### Using a separate connections file
+Optionally the `connections` property in the config file can reference a separate connections file by
+specifying a path to a yaml file instead of an inline list of connections:
+
  ``` yaml
  connections: ./connections.yml
  ```
@@ -108,7 +109,7 @@ connections:
 ```
 
 Note that when using the `--connections` command line option only the file reference format is supported.
- 
+
 ### objects, measures and dimensions
 
 When for example generating apps it can be useful to create objects in an app from json files that are stored remotely or locally. The properties `objects`, `measures` and `dimensions` are arrays where you can set multiple files or using wildcards for paths to files. It is also possible to use nested json structures with this approach, and then multiple objects will be created in engine.
@@ -120,6 +121,14 @@ measures:
   - ./*measure*.json
 dimensions:
   - ./dimension-*.json
+```
+
+### certificates
+
+If you want to connect to a Qlik Sense Enterprise using certificates, it is possible to use the `certificates` parameter. By specifying a path to the folder containing the CA and root certificates, `corectl` will use the certificates when authenticating.
+
+```yaml
+certificates: path/to/folder
 ```
 
 ### headers
