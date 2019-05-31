@@ -55,10 +55,16 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 	}
 	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
 
+	certificates := viper.GetString("certificates")
+
 	var dialer = enigma.Dialer{}
 
 	if LogTraffic {
 		dialer.TrafficLogger = TrafficLogger{}
+	}
+
+	if certificates != "" {
+		dialer.TLSClientConfig = readCertificates(certificates)
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
