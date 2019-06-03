@@ -29,6 +29,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
       --objects string       A list of generic object json paths
       --script string        Path to a qvs file containing the app data reload script
       --silent               Do not log reload output
+      --variables string     A list of generic variable json paths
 ```
 
 ### Options inherited from parent commands

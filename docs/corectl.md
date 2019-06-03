@@ -45,5 +45,6 @@ corectl [flags]
 * [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables
 * [corectl values](corectl_values.md)	 - Print the top values of a field
+* [corectl variable](corectl_variable.md)	 - Explore and manage variables
 * [corectl version](corectl_version.md)	 - Print the version of corectl
 

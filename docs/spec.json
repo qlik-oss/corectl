@@ -103,6 +103,9 @@
         "silent": {
           "description": "Do not log reload output",
           "default": "false"
+        },
+        "variables": {
+          "description": "A list of generic variable json paths"
         }
       }
     },
@@ -318,6 +321,44 @@
     },
     "values": {
       "description": "Print the top values for a specific field in your data model"
+    },
+    "variable": {
+      "description": "Explore and manage variables",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic variable"
+        },
+        "ls": {
+          "description": "Print a list of all generic variables in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic variable",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
+        },
+        "rm": {
+          "description": "Remove one or many variables in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the variables in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
     },
     "version": {}
   }
