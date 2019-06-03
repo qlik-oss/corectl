@@ -121,6 +121,30 @@ func TestMeasureManagementCommands(t *testing.T) {
 	// Re-add the measure and check
 	p.ExpectOK().Run("measure", "set", "test/projects/using-entities/measures.json")
 	p.ExpectJsonArray("qId", "measure-sum-numbers", "measure-count-numbers").Run("measure", "ls", "--json")
+}
+
+func TestVariableManagementCommands(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+
+
+	// Build with both variables and check
+	p.ExpectOK().Run("build")
+	p.ExpectOK().Run("variable", "ls")
+	p.ExpectOK().Run("variable", "ls", "--json")
+	p.ExpectOK().Run("variable", "ls", "--bash")
+	p.ExpectOK().Run("variable", "properties", "variable-abc")
+	p.ExpectOK().Run("variable", "layout", "variable-xyz")
+	p.ExpectJsonArray("qId", "variable-abc", "variable-xyz").Run("variable", "ls", "--json")
+
+	//Remove one variable and check
+	p.ExpectOK().Run("variable", "rm", "variable-abc")
+	p.ExpectJsonArray("qId", "variable-xyz").Run("variable", "ls", "--json")
+
+	//Re-add the variable and check
+	p.ExpectOK().Run("variable", "set", "test/projects/using-entities/variables.json")
+	p.ExpectJsonArray("qId", "variable-xyz", "variable-abc").Run("variable", "ls", "--json")
+
 
 }
 
