@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-/* var setVariablesCmd = withLocalFlags(&cobra.Command{
+var setVariablesCmd = withLocalFlags(&cobra.Command{
 	Use:     "set <glob-pattern-path-to-variables-files.json>",
 	Args:    cobra.ExactArgs(1),
 	Short:   "Set or update the variables in the current app",
@@ -25,19 +25,19 @@ import (
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}, "no-save") */
+}, "no-save")
 
-/* var removeVariableCmd = withLocalFlags(&cobra.Command{
-	Use:     "rm <variable-id>...",
+var removeVariableCmd = withLocalFlags(&cobra.Command{
+	Use:     "rm <variable-name>...",
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Remove one or many variables in the current app",
 	Long:    "Remove one or many variables in the current app",
-	Example: "corectl variable rm ID-1",
+	Example: "corectl variable rm NAME-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		for _, entity := range args {
-			destroyed, err := state.Doc.DestroyVariable(rootCtx, entity)
+			destroyed, err := state.Doc.DestroyVariableByName(rootCtx, entity)
 			if err != nil {
 				internal.FatalErrorf("could not remove generic variable '%s': %s", entity, err)
 			} else if !destroyed {
@@ -48,7 +48,7 @@ import (
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}, "no-save") */
+}, "no-save")
 
 var listVariablesCmd = &cobra.Command{
 	Use:     "ls",
@@ -100,6 +100,5 @@ var variableCmd = &cobra.Command{
 }
 
 func init() {
-	//variableCmd.AddCommand( setVariablesCmd, getVariablePropertiesCmd, getVariableLayoutCmd, removeVariableCmd)
-	variableCmd.AddCommand(listVariablesCmd, getVariablePropertiesCmd, getVariableLayoutCmd)
+	variableCmd.AddCommand(setVariablesCmd, removeVariableCmd, listVariablesCmd, getVariablePropertiesCmd, getVariableLayoutCmd)
 }

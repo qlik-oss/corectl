@@ -93,6 +93,7 @@ func initLocalFlags() {
 	// Don't bind these to viper since paths are treated separately to support relative paths!
 	localFlags.String("connections", "", "Path to a yml file containing the data connection definitions")
 	localFlags.String("dimensions", "", "A list of generic dimension json paths")
+	localFlags.String("variables", "", "A list of generic variable json paths")
 	localFlags.String("measures", "", "A list of generic measures json paths")
 	localFlags.String("objects", "", "A list of generic object json paths")
 	localFlags.String("script", "", "Path to a qvs file containing the app data reload script")
@@ -103,6 +104,7 @@ func initLocalFlags() {
 		// we instead rely on the default bash behavior
 		localFlags.SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
 		localFlags.SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
+		localFlags.SetAnnotation("variables", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})

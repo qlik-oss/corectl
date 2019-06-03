@@ -11,19 +11,23 @@ import (
 
 type Variable struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
+	Name string					`json:"qName,omitempty"`
 }
 
-func (d Variable) validate() error {
-	if d.Info == nil {
+func (v Variable) validate() error {
+	if v.Info == nil {
 		return errors.New("missing qInfo attribute")
 	}
-	if d.Info.Id == "" {
+	if v.Info.Id == "" {
 		return errors.New("missing qInfo qId attribute")
 	}
-	if d.Info.Type == "" {
+	if v.Info.Type == "" {
 		return errors.New("missing qInfo qType attribute")
 	}
-	if d.Info.Type != "variable" {
+	if v.Name == "" {
+		return errors.New("missing Name attribute")
+	}
+	if v.Info.Type != "variable" {
 		return errors.New("variables must have qType: variable")
 	}
 	return nil
@@ -57,7 +61,6 @@ func ListVariables(ctx context.Context, doc *enigma.Doc) []NamedItem {
 // SetVariables adds all variables that match the specified glob pattern
 func SetVariables(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "variables")
-	return
 	if err != nil {
 		FatalError("could not interpret glob pattern: ", err)
 	}
@@ -67,16 +70,16 @@ func SetVariables(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern s
 			FatalErrorf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
-			var dim Variable
-			err := json.Unmarshal(raw, &dim)
+			var variable Variable
+			err := json.Unmarshal(raw, &variable)
 			if err != nil {
 				FatalErrorf("could not parse data in file %s: %s", path, err)
 			}
-			err = dim.validate()
+			err = variable.validate()
 			if err != nil {
 				FatalErrorf("validation error in file %s: %s", path, err)
 			}
-			err = setVariable(ctx, doc, dim.Info.Id, raw)
+			err = setVariable(ctx, doc, variable.Name, raw)
 			if err != nil {
 				FatalError(err)
 			}
@@ -84,23 +87,22 @@ func SetVariables(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern s
 	}
 }
 
-func setVariable(ctx context.Context, doc *enigma.Doc, variableID string, raw json.RawMessage) error {
-	variable, err := doc.GetVariable(ctx, variableID)
-	return nil
+func setVariable(ctx context.Context, doc *enigma.Doc, variableName string, raw json.RawMessage) error {
+	variable, err := doc.GetVariableByName(ctx, variableName)
 	if err != nil {
 		return err
 	}
 	if variable.Handle != 0 {
-		LogVerbose("Updating variable " + variableID)
-		//err = variable.SetPropertiesRaw(ctx, raw)
+		LogVerbose("Updating variable " + variableName)
+		err = variable.SetPropertiesRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("could not update %s with %s: %s", "variable", variableID, err)
+			return fmt.Errorf("could not update %s with %s: %s", "variable", variableName, err)
 		}
 	} else {
-		LogVerbose("Creating variable " + variableID)
-		//_, err = doc.CreateVariableRaw(ctx, raw)
+		LogVerbose("Creating variable " + variableName)
+		_, err = doc.CreateVariableExRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("could not create %s with %s: %s", "variable", variableID, err)
+			return fmt.Errorf("could not create %s with %s: %s", "variable", variableName, err)
 		}
 	}
 	return nil
