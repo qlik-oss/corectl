@@ -304,14 +304,12 @@ func readCertificates(certificatesPath string) *tls.Config {
 
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
-		fmt.Println("Failed to load client certificate", err)
-		panic(err)
+		FatalError("Failed to load client certificate: ", err)
 	}
 
 	caCert, err := ioutil.ReadFile(caFile)
 	if err != nil {
-		fmt.Println("Failed to read root certificate", err)
-		panic(err)
+		FatalError("Failed to read root certificate: ", err)
 	}
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
