@@ -18,7 +18,7 @@
       "default": "false"
     },
     "certificates": {
-      "description": "path/to/certificates containing client and root certificates"
+      "description": "path/to/folder containing client.pem, client_key.pem and root.pem certificates"
     },
     "config": {
       "alias": "c",

@@ -125,11 +125,13 @@ dimensions:
 
 ### certificates
 
-If you want to connect to a Qlik Sense Enterprise using certificates, it is possible to use the `certificates` parameter. By specifying a path to the folder containing the CA and root certificates, `corectl` will use the certificates when authenticating.
+If you want to connect to a Qlik Sense Enterprise using certificates, it is possible to use the `certificates` parameter. By specifying a path to the folder containing the CA and root certificates, `corectl` will use the certificates when authenticating. `corectl` only supports connecting with `PEM` certificates and expects that `client.pem`, `client_key.pem` and `root.pem` to be present in the configured folder.
 
 ```yaml
 certificates: path/to/folder
 ```
+
+To specify which user that is connecting using the certificates you can add a `X-Qlik-User` header with value `UserDirectory=<user directory>; UserId=<user name>`. How to specify a header in the configuration file is described in the [headers](#headers) section.
 
 ### headers
 
