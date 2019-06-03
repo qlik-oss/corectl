@@ -33,7 +33,7 @@ func (v Variable) validate() error {
 	return nil
 }
 
-// ListVariables lists all dimenions in an app
+// ListVariables lists all variables in an app
 func ListVariables(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
