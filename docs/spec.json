@@ -17,6 +17,9 @@
       "description": "Bash flag used to adapt output to bash completion format",
       "default": "false"
     },
+    "certificates": {
+      "description": "path/to/folder containing client.pem, client_key.pem and root.pem certificates"
+    },
     "config": {
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"
