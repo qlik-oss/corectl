@@ -130,11 +130,11 @@ func TestVariableManagementCommands(t *testing.T) {
 
 	// Build with both variables and check
 	p.ExpectOK().Run("build")
-	p.ExpectOK().Run("variable", "ls")
-	p.ExpectOK().Run("variable", "ls", "--json")
-	p.ExpectOK().Run("variable", "ls", "--bash")
-	p.ExpectOK().Run("variable", "properties", "variable-abc")
-	p.ExpectOK().Run("variable", "layout", "variable-xyz")
+	p.ExpectGolden().Run("variable", "ls")
+	p.ExpectGolden().Run("variable", "ls", "--json")
+	p.ExpectGolden().Run("variable", "ls", "--bash")
+	p.ExpectGolden().Run("variable", "properties", "variable-abc")
+	p.ExpectGolden().Run("variable", "layout", "variable-xyz")
 	p.ExpectJsonArray("qId", "variable-abc", "variable-xyz").Run("variable", "ls", "--json")
 
 	//Remove one variable and check
@@ -144,8 +144,6 @@ func TestVariableManagementCommands(t *testing.T) {
 	//Re-add the variable and check
 	p.ExpectOK().Run("variable", "set", "test/projects/using-entities/variables.json")
 	p.ExpectJsonArray("qId", "variable-xyz", "variable-abc").Run("variable", "ls", "--json")
-
-
 }
 
 func TestOpeningWithoutData(t *testing.T) {
