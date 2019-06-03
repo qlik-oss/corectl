@@ -29,7 +29,7 @@ func (b Bookmark) validate() error {
 	return nil
 }
 
-// ListBookmarks lists all dimenions in an app
+// ListBookmarks lists all bookmarks in an app
 func ListBookmarks(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{

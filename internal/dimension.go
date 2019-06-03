@@ -29,7 +29,7 @@ func (d Dimension) validate() error {
 	return nil
 }
 
-// ListDimensions lists all dimenions in an app
+// ListDimensions lists all dimensions in an app
 func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
