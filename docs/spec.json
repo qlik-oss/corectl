@@ -163,7 +163,7 @@
       }
     },
     "completion": {
-      "description": "Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that bash-completion is required and needs to be installed on your system."
+      "description": "Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.\nNote that bash-completion is required and needs to be installed on your system."
     },
     "connection": {
       "description": "Explore and manage connections",
