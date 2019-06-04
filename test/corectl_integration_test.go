@@ -194,6 +194,14 @@ func TestScriptManagementCommands(t *testing.T) {
 	p.ExpectGolden().Run("script", "get")
 }
 
+func TestScriptVariables(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+	// Build with script that creates two variables and check
+	p.ExpectOK().Run("build", "--script", "test/projects/using-script/script3.qvs")
+	p.ExpectJsonArray("title", "a", "b").Run("variable", "ls", "--json")
+}
+
 func TestTrafficFlag(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
 	defer p.Reset()

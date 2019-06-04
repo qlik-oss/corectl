@@ -1,0 +1,2 @@
+set a = 10;
+let b = sqr(10)
