@@ -82,7 +82,7 @@ var getVariableLayoutCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Evaluate the layout of an generic variable",
 	Long:    "Evaluate the layout of an generic variable",
-	Example: "corectl variable layout DIMENSION-ID",
+	Example: "corectl variable layout VARIABLE-NAME",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
