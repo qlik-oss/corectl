@@ -133,7 +133,6 @@ func TestBookmarkManagementCommands(t *testing.T) {
 	p.ExpectOK().Run("bookmark", "ls", "--json")
 	p.ExpectOK().Run("bookmark", "ls", "--bash")
 	p.ExpectOK().Run("bookmark", "properties", "alpha-bookmark-1")
-  // Sometimes title and description is inside qMeta and sometimes outside although created identically.
 	p.ExpectOK().Run("bookmark", "layout", "zeta-bookmark-2")
 	p.ExpectIncludes("qId", "alpha-bookmark-1", "zeta-bookmark-2").Run("bookmark", "ls", "--json")
 
