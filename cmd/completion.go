@@ -15,7 +15,7 @@ var completionCmd = &cobra.Command{
 	Args:      cobra.MinimumNArgs(1),
 	Short:     "Generate auto completion scripts",
 	Long: `Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. 
+interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
 Note that bash-completion is required and needs to be installed on your system.`,
 	Example: `   Add the following to your ~/.bashrc or ~/.zshrc file
 
@@ -52,6 +52,12 @@ __custom_func()
 			;;
 		corectl_measure_properties | corectl_measure_layout | corectl_measure_rm)
 			__corectl_get_measures
+			;;
+		corectl_bookmark_properties | corectl_bookmark_layout | corectl_bookmark_rm)
+			__corectl_get_bookmarks
+			;;
+		corectl_variable_properties | corectl_variable_layout | corectl_variable_rm)
+			__corectl_get_variables
 			;;
 		corectl_object_data | corectl_object_properties | corectl_object_layout | corectl_object_rm)
 			__corectl_get_objects
@@ -128,6 +134,16 @@ __corectl_get_dimensions()
 __corectl_get_measures()
 {
 	__corectl_call_corectl "measure ls --bash"
+}
+
+__corectl_get_bookmarks()
+{
+	__corectl_call_corectl "bookmark ls --bash"
+}
+
+__corectl_get_variables()
+{
+	__corectl_call_corectl "variable ls --bash"
 }
 
 __corectl_get_objects()

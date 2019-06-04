@@ -92,6 +92,13 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 			}
 			qProps, _ := genericVariable.GetProperties(state.Ctx)
 			properties, _ = json.Marshal(qProps)
+		case "bookmark":
+			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+			}
+			qProps, _ := genericBookmark.GetProperties(state.Ctx)
+			properties, _ = json.Marshal(qProps)
 		}
 	} else {
 		switch entityType {
@@ -120,6 +127,12 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			properties, err = genericVariable.GetPropertiesRaw(state.Ctx)
+		case "bookmark":
+			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+			}
+			properties, err = genericBookmark.GetPropertiesRaw(state.Ctx)
 		}
 	}
 	if err != nil {
@@ -156,12 +169,18 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 		}
 		layout, err = genericDimension.GetLayoutRaw(state.Ctx)
 	case "variable":
-		// In this case we need name not ID 
+		// In this case we need name not ID
 		genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
 		if err != nil {
 			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 		}
 		layout, err = genericVariable.GetLayoutRaw(state.Ctx)
+	case "bookmark":
+		genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+		}
+		layout, err = genericBookmark.GetLayoutRaw(state.Ctx)
 	}
 	if err != nil {
 		internal.FatalErrorf("could not get layout of %s by ID '%s': %s", entityType, entityID, err)

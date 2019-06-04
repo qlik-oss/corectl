@@ -29,6 +29,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 		internal.SetVariables(ctx, state.Doc, ccmd.Flag("variables").Value.String())
 		internal.SetMeasures(ctx, state.Doc, ccmd.Flag("measures").Value.String())
 		internal.SetObjects(ctx, state.Doc, ccmd.Flag("objects").Value.String())
+		internal.SetBookmarks(ctx, state.Doc, ccmd.Flag("bookmarks").Value.String())
 		scriptFile := ccmd.Flag("script").Value.String()
 		if scriptFile == "" {
 			scriptFile = getPathFlagFromConfigFile("script")
@@ -46,7 +47,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 			internal.Save(ctx, state.Doc)
 		}
 	},
-}, "script", "connections", "dimensions", "measures", "variables", "objects", "no-reload", "silent", "no-save")
+}, "script", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save")
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",

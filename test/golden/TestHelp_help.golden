@@ -20,6 +20,7 @@ App Analysis Commands:
 
 Advanced Commands:
   app           Explore and manage apps
+  bookmark      Explore and manage bookmarks
   connection    Explore and manage connections
   dimension     Explore and manage dimensions
   measure       Explore and manage measures
