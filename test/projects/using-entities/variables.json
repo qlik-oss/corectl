@@ -1,0 +1,34 @@
+[
+  {
+    "qInfo": {
+      "qId": "variable-abc",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "variable-abc",
+    "qComment": "First three letters of the alphabet",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "variable-xyz",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "variable-xyz",
+    "qComment": "Last three letters of the alphabet",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1",
+    "tags": []
+  }
+]

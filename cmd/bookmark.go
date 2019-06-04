@@ -60,7 +60,7 @@ var listBookmarksCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		items := internal.ListBookmarks(state.Ctx, state.Doc)
-		printer.PrintNamedItemsList(items, viper.GetBool("bash"))
+		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
 }
 

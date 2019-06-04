@@ -13,10 +13,16 @@ import (
 )
 
 // PrintNamedItemsList prints a list of the id and type and title of the supplied items
-func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool) {
+func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitle bool) {
 	if printAsBash {
-		for _, item := range items {
-			fmt.Println(item.Id)
+		if printTitle {
+			for _, item := range items {
+				fmt.Println(item.Title)
+			}
+		} else {
+			for _, item := range items {
+				fmt.Println(item.Id)
+			}
 		}
 	} else if internal.PrintJSON {
 		internal.PrintAsJSON(items)
@@ -78,6 +84,14 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 			}
 			qProps, _ := genericDimension.GetProperties(state.Ctx)
 			properties, _ = json.Marshal(qProps)
+		case "variable":
+			//In this case we need name not ID
+			genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+			}
+			qProps, _ := genericVariable.GetProperties(state.Ctx)
+			properties, _ = json.Marshal(qProps)
 		case "bookmark":
 			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
 			if err != nil {
@@ -106,6 +120,13 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 			}
 			properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
+		case "variable":
+			//In this case we need name not ID
+			genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+			if err != nil {
+				internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+			}
+			properties, err = genericVariable.GetPropertiesRaw(state.Ctx)
 		case "bookmark":
 			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
 			if err != nil {
@@ -147,6 +168,13 @@ func PrintGenericEntityLayout(state *internal.State, entityID string, entityType
 			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
 		}
 		layout, err = genericDimension.GetLayoutRaw(state.Ctx)
+	case "variable":
+		// In this case we need name not ID
+		genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+		if err != nil {
+			internal.FatalErrorf("could not retrieve %s by ID '%s': %s", entityType, entityID, err)
+		}
+		layout, err = genericVariable.GetLayoutRaw(state.Ctx)
 	case "bookmark":
 		genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
 		if err != nil {

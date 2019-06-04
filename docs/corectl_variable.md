@@ -1,33 +1,15 @@
-## corectl completion
+## corectl variable
 
-Generate auto completion scripts
+Explore and manage variables
 
 ### Synopsis
 
-Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
-Note that bash-completion is required and needs to be installed on your system.
-
-```
-corectl completion <shell> [flags]
-```
-
-### Examples
-
-```
-   Add the following to your ~/.bashrc or ~/.zshrc file
-
-   . <(corectl completion zsh)
-
-   or
-
-   . <(corectl completion bash)
-```
+Explore and manage variables
 
 ### Options
 
 ```
-  -h, --help   help for completion
+  -h, --help   help for variable
 ```
 
 ### Options inherited from parent commands
@@ -48,4 +30,9 @@ corectl completion <shell> [flags]
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
+* [corectl variable layout](corectl_variable_layout.md)	 - Evaluate the layout of an generic variable
+* [corectl variable ls](corectl_variable_ls.md)	 - Print a list of all generic variables in the current app
+* [corectl variable properties](corectl_variable_properties.md)	 - Print the properties of the generic variable
+* [corectl variable rm](corectl_variable_rm.md)	 - Remove one or many variables in the current app
+* [corectl variable set](corectl_variable_set.md)	 - Set or update the variables in the current app
 

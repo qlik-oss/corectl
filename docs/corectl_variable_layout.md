@@ -1,33 +1,25 @@
-## corectl completion
+## corectl variable layout
 
-Generate auto completion scripts
+Evaluate the layout of an generic variable
 
 ### Synopsis
 
-Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
-Note that bash-completion is required and needs to be installed on your system.
+Evaluate the layout of an generic variable
 
 ```
-corectl completion <shell> [flags]
+corectl variable layout <variable-id> [flags]
 ```
 
 ### Examples
 
 ```
-   Add the following to your ~/.bashrc or ~/.zshrc file
-
-   . <(corectl completion zsh)
-
-   or
-
-   . <(corectl completion bash)
+corectl variable layout VARIABLE-NAME
 ```
 
 ### Options
 
 ```
-  -h, --help   help for completion
+  -h, --help   help for layout
 ```
 
 ### Options inherited from parent commands
@@ -47,5 +39,5 @@ corectl completion <shell> [flags]
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl variable](corectl_variable.md)	 - Explore and manage variables
 

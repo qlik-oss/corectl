@@ -1,33 +1,26 @@
-## corectl completion
+## corectl variable rm
 
-Generate auto completion scripts
+Remove one or many variables in the current app
 
 ### Synopsis
 
-Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
-Note that bash-completion is required and needs to be installed on your system.
+Remove one or many variables in the current app
 
 ```
-corectl completion <shell> [flags]
+corectl variable rm <variable-name>... [flags]
 ```
 
 ### Examples
 
 ```
-   Add the following to your ~/.bashrc or ~/.zshrc file
-
-   . <(corectl completion zsh)
-
-   or
-
-   . <(corectl completion bash)
+corectl variable rm NAME-1
 ```
 
 ### Options
 
 ```
-  -h, --help   help for completion
+  -h, --help      help for rm
+      --no-save   Do not save the app
 ```
 
 ### Options inherited from parent commands
@@ -47,5 +40,5 @@ corectl completion <shell> [flags]
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl variable](corectl_variable.md)	 - Explore and manage variables
 

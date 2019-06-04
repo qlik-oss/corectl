@@ -26,6 +26,7 @@ Advanced Commands:
   measure       Explore and manage measures
   object        Explore and manage generic objects
   script        Explore and manage the script
+  variable      Explore and manage variables
 
 Other Commands:
   completion    Generate auto completion scripts

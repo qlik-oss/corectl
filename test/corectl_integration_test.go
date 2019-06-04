@@ -121,7 +121,29 @@ func TestMeasureManagementCommands(t *testing.T) {
 	// Re-add the measure and check
 	p.ExpectOK().Run("measure", "set", "test/projects/using-entities/measures.json")
 	p.ExpectJsonArray("qId", "measure-sum-numbers", "measure-count-numbers").Run("measure", "ls", "--json")
+}
 
+func TestVariableManagementCommands(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+
+
+	// Build with both variables and check
+	p.ExpectOK().Run("build")
+	p.ExpectGolden().Run("variable", "ls")
+	p.ExpectGolden().Run("variable", "ls", "--json")
+	p.ExpectGolden().Run("variable", "ls", "--bash")
+	p.ExpectGolden().Run("variable", "properties", "variable-abc")
+	p.ExpectGolden().Run("variable", "layout", "variable-xyz")
+	p.ExpectJsonArray("qId", "variable-abc", "variable-xyz").Run("variable", "ls", "--json")
+
+	//Remove one variable and check
+	p.ExpectOK().Run("variable", "rm", "variable-abc")
+	p.ExpectJsonArray("qId", "variable-xyz").Run("variable", "ls", "--json")
+
+	//Re-add the variable and check
+	p.ExpectOK().Run("variable", "set", "test/projects/using-entities/variables.json")
+	p.ExpectJsonArray("qId", "variable-xyz", "variable-abc").Run("variable", "ls", "--json")
 }
 
 func TestBookmarkManagementCommands(t *testing.T) {
@@ -170,6 +192,14 @@ func TestScriptManagementCommands(t *testing.T) {
 	// Set the script without the --no-save-flag. This should persist the script1 qvs file
 	p.ExpectGolden().Run("script", "set", "test/projects/using-script/script2.qvs")
 	p.ExpectGolden().Run("script", "get")
+}
+
+func TestScriptVariables(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+	// Build with script that creates two variables and check
+	p.ExpectOK().Run("build", "--script", "test/projects/using-script/script3.qvs")
+	p.ExpectJsonArray("title", "a", "b").Run("variable", "ls", "--json")
 }
 
 func TestTrafficFlag(t *testing.T) {
