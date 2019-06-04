@@ -13,7 +13,7 @@ corectl variable layout <variable-id> [flags]
 ### Examples
 
 ```
-corectl variable layout DIMENSION-ID
+corectl variable layout VARIABLE-NAME
 ```
 
 ### Options
