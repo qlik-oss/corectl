@@ -124,6 +124,27 @@ func TestMeasureManagementCommands(t *testing.T) {
 
 }
 
+func TestBookmarkManagementCommands(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+
+	// Build with two bookmarks
+	p.ExpectOK().Run("build")
+	p.ExpectOK().Run("bookmark", "ls") // Cannot ensure order of bookmarks so can't use golden.
+	p.ExpectOK().Run("bookmark", "ls", "--json")
+	p.ExpectOK().Run("bookmark", "ls", "--bash")
+	p.ExpectOK().Run("bookmark", "properties", "alpha-bookmark-1")
+	p.ExpectOK().Run("bookmark", "layout", "zeta-bookmark-2")
+	p.ExpectIncludes("qId", "alpha-bookmark-1", "zeta-bookmark-2").Run("bookmark", "ls", "--json")
+
+	// Reomve one bookmark and see that only the other one remains
+	p.ExpectOK().Run("bookmark", "rm", "alpha-bookmark-1")
+	p.ExpectJsonArray("qId", "zeta-bookmark-2").Run("bookmark", "ls", "--json")
+
+	// Re-add the bookmarks and check
+	p.ExpectOK().Run("bookmark", "set", "test/projects/using-entities/bookmarks.json")
+	p.ExpectJsonArray("qId", "zeta-bookmark-2", "alpha-bookmark-1").Run("bookmark", "ls", "--json")
+}
+
 func TestOpeningWithoutData(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
 	defer p.Reset()

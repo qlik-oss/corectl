@@ -1,35 +1,25 @@
-## corectl build
+## corectl bookmark layout
 
-Reload and save the app after updating connections, dimensions, measures, objects and the script
+Evaluate the layout of an generic bookmark
 
 ### Synopsis
 
-Reload and save the app after updating connections, dimensions, measures, objects and the script
+Evaluate the layout of an generic bookmark
 
 ```
-corectl build [flags]
+corectl bookmark layout <bookmark-id> [flags]
 ```
 
 ### Examples
 
 ```
-corectl build
-corectl build --connections ./myconnections.yml --script ./myscript.qvs
+corectl bBookmark layout BOOKMARK-ID
 ```
 
 ### Options
 
 ```
-      --bookmarks string     A list of generic bookmark json paths
-      --connections string   Path to a yml file containing the data connection definitions
-      --dimensions string    A list of generic dimension json paths
-  -h, --help                 help for build
-      --measures string      A list of generic measures json paths
-      --no-reload            Do not run the reload script
-      --no-save              Do not save the app
-      --objects string       A list of generic object json paths
-      --script string        Path to a qvs file containing the app data reload script
-      --silent               Do not log reload output
+  -h, --help   help for layout
 ```
 
 ### Options inherited from parent commands
@@ -49,5 +39,5 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
 

@@ -1,35 +1,15 @@
-## corectl build
+## corectl bookmark
 
-Reload and save the app after updating connections, dimensions, measures, objects and the script
+Explore and manage bookmarks
 
 ### Synopsis
 
-Reload and save the app after updating connections, dimensions, measures, objects and the script
-
-```
-corectl build [flags]
-```
-
-### Examples
-
-```
-corectl build
-corectl build --connections ./myconnections.yml --script ./myscript.qvs
-```
+Explore and manage bookmarks
 
 ### Options
 
 ```
-      --bookmarks string     A list of generic bookmark json paths
-      --connections string   Path to a yml file containing the data connection definitions
-      --dimensions string    A list of generic dimension json paths
-  -h, --help                 help for build
-      --measures string      A list of generic measures json paths
-      --no-reload            Do not run the reload script
-      --no-save              Do not save the app
-      --objects string       A list of generic object json paths
-      --script string        Path to a qvs file containing the app data reload script
-      --silent               Do not log reload output
+  -h, --help   help for bookmark
 ```
 
 ### Options inherited from parent commands
@@ -50,4 +30,9 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
+* [corectl bookmark layout](corectl_bookmark_layout.md)	 - Evaluate the layout of an generic bookmark
+* [corectl bookmark ls](corectl_bookmark_ls.md)	 - Print a list of all generic bookmarks in the current app
+* [corectl bookmark properties](corectl_bookmark_properties.md)	 - Print the properties of the generic bookmark
+* [corectl bookmark rm](corectl_bookmark_rm.md)	 - Remove one or many bookmarks in the current app
+* [corectl bookmark set](corectl_bookmark_set.md)	 - Set or update the bookmarks in the current app
 

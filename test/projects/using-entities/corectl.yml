@@ -13,3 +13,5 @@ measures:
   - ./measure*.json
 dimensions:
   - ./dimension*.json
+bookmarks:
+  - ./bookmark*.json

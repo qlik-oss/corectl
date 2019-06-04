@@ -53,6 +53,9 @@ __custom_func()
 		corectl_measure_properties | corectl_measure_layout | corectl_measure_rm)
 			__corectl_get_measures
 			;;
+		corectl_bookmark_properties | corectl_bookmark_layout | corectl_bookmark_rm)
+			__corectl_get_bookmarks
+			;;
 		corectl_object_data | corectl_object_properties | corectl_object_layout | corectl_object_rm)
 			__corectl_get_objects
 			;;
@@ -128,6 +131,11 @@ __corectl_get_dimensions()
 __corectl_get_measures()
 {
 	__corectl_call_corectl "measure ls --bash"
+}
+
+__corectl_get_bookmarks()
+{
+	__corectl_call_corectl "bookmark ls --bash"
 }
 
 __corectl_get_objects()

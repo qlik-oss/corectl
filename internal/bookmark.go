@@ -9,37 +9,37 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-type Dimension struct {
+type Bookmark struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 }
 
-func (d Dimension) validate() error {
-	if d.Info == nil {
+func (b Bookmark) validate() error {
+	if b.Info == nil {
 		return errors.New("missing qInfo attribute")
 	}
-	if d.Info.Id == "" {
+	if b.Info.Id == "" {
 		return errors.New("missing qInfo qId attribute")
 	}
-	if d.Info.Type == "" {
+	if b.Info.Type == "" {
 		return errors.New("missing qInfo qType attribute")
 	}
-	if d.Info.Type != "dimension" {
-		return errors.New("dimensions must have qType: dimension")
+	if b.Info.Type != "bookmark" {
+		return errors.New("bookmarks must have qType: bookmark")
 	}
 	return nil
 }
 
-// ListDimensions lists all dimensions in an app
-func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
+// ListBookmarks lists all bookmarks in an app
+func ListBookmarks(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
 			Type: "corectl_entity_list",
 		},
-		DimensionListDef: &enigma.DimensionListDef{
-			Type: "dimension",
+		BookmarkListDef: &enigma.BookmarkListDef{
+			Type: "bookmark",
 			Data: json.RawMessage(`{
 				"id":"/qInfo/qId",
-				"title":"/qDim/title"
+				"title":"/qMetaDef/title"
 			}`),
 		},
 	}
@@ -47,7 +47,7 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
 	layout, _ := sessionObject.GetLayout(ctx)
 	result := []NamedItem{}
-	for _, item := range layout.DimensionList.Items {
+	for _, item := range layout.BookmarkList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
 		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
@@ -55,9 +55,9 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	return result
 }
 
-// SetDimensions adds all dimensions that match the specified glob pattern
-func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "dimensions")
+// SetBookmarks adds all bookmarks that match the specified glob pattern
+func SetBookmarks(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
+	paths, err := getEntityPaths(commandLineGlobPattern, "bookmarks")
 	if err != nil {
 		FatalError("could not interpret glob pattern: ", err)
 	}
@@ -67,16 +67,16 @@ func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern 
 			FatalErrorf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
-			var dim Dimension
-			err := json.Unmarshal(raw, &dim)
+			var bm Bookmark
+			err := json.Unmarshal(raw, &bm)
 			if err != nil {
 				FatalErrorf("could not parse data in file %s: %s", path, err)
 			}
-			err = dim.validate()
+			err = bm.validate()
 			if err != nil {
 				FatalErrorf("validation error in file %s: %s", path, err)
 			}
-			err = setDimension(ctx, doc, dim.Info.Id, raw)
+			err = setBookmark(ctx, doc, bm.Info.Id, raw)
 			if err != nil {
 				FatalError(err)
 			}
@@ -84,22 +84,22 @@ func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern 
 	}
 }
 
-func setDimension(ctx context.Context, doc *enigma.Doc, dimensionID string, raw json.RawMessage) error {
-	dimension, err := doc.GetDimension(ctx, dimensionID)
+func setBookmark(ctx context.Context, doc *enigma.Doc, bookmarkID string, raw json.RawMessage) error {
+	bookmark, err := doc.GetBookmark(ctx, bookmarkID)
 	if err != nil {
 		return err
 	}
-	if dimension.Handle != 0 {
-		LogVerbose("Updating dimension " + dimensionID)
-		err = dimension.SetPropertiesRaw(ctx, raw)
+	if bookmark.Handle != 0 {
+		LogVerbose("Updating bookmark " + bookmarkID)
+		err = bookmark.SetPropertiesRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("could not update %s with %s: %s", "dimension", dimensionID, err)
+			return fmt.Errorf("could not update %s with %s: %s", "bookmark", bookmarkID, err)
 		}
 	} else {
-		LogVerbose("Creating dimension " + dimensionID)
-		_, err = doc.CreateDimensionRaw(ctx, raw)
+		LogVerbose("Creating bookmark " + bookmarkID)
+		_, err = doc.CreateBookmarkRaw(ctx, raw)
 		if err != nil {
-			return fmt.Errorf("could not create %s with %s: %s", "dimension", dimensionID, err)
+			return fmt.Errorf("could not create %s with %s: %s", "bookmark", bookmarkID, err)
 		}
 	}
 	return nil
