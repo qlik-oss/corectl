@@ -35,7 +35,7 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global) {
 	exportEntities(ctx, doc, rootFolder)
 
 	exportScript(ctx, doc, rootFolder)
-
+	exportVariables(ctx, doc, rootFolder)
 	connections, _ := doc.GetConnections(ctx)
 	connectionsStr := "connections:\n"
 	for _, x := range connections {
@@ -53,6 +53,7 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global) {
 		`dimensions: dimensions.json
 measures: measures.json
 objects: objects/*.json
+variables: variables/*.json
 `
 	writeFile(rootFolder+"/corectl.yml", config)
 }
@@ -126,35 +127,32 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 	writeDimensions(dimensionArrayLock, folder, dimensionArray)
 }
 
-//func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
-//	variableArray := make([]json.RawMessage, 0)
-//	var variarbleArraySync sync.Mutex
-//	variables, _ := doc.GetVariables(ctx, &enigma.VariableListDef{ Type:"variable", Data: json.RawMessage(`{"name":"/qMetaDef/name"}`),})
-//	fmt.Println(variables)
-//	waitChannel := make(chan *NamedItemWithType, 10000)
-//	defer close(waitChannel)
-//	for _, item := range variables {
-//		go func(item *enigma.NxInfo) {
-//			result := []NamedItem{}
-//
-//			if variable, _ := doc.GetVariable(ctx, item.Id) {
-//				variarbleArraySync.Lock()
-//				props, _ := variable.GetPropertiesRaw(ctx)
-//				variableArray = append(variableArray, props)
-//				variarbleArraySync.Unlock()
-//			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
-//			}
-//			waitChannel <- &NamedItemWithType{}
-//		}(item)
-//	}
-//	//Put all responses into a map by their Id
-//	for range allInfos {
-//		<-waitChannel
-//	}
-//	writeMeasures(measureArrayLock, folder, measureArray)
-//	writeDimensions(variarbleArraySync, folder, variableArray)
-//}
-//}
+func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
+	variableArray := make([]json.RawMessage, 0)
+	var variarbleArraySync sync.Mutex
+	variables := ListVariables(ctx, doc)
+	fmt.Println(variables)
+	waitChannel := make(chan *NamedItemWithType, 10000)
+	defer close(waitChannel)
+	for _, item := range variables {
+		go func(item NamedItem) {
+			if variable, _ := doc.GetVariableByName(ctx, item.Title); variable != nil && variable.Handle != 0 {
+				variarbleArraySync.Lock()
+				props, _ := variable.GetPropertiesRaw(ctx)
+				variableArray = append(variableArray, props)
+				variarbleArraySync.Unlock()
+			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
+			}
+			waitChannel <- &NamedItemWithType{}
+		}(item)
+	}
+	//Put all responses into a map by their Id
+	for range variables {
+		<-waitChannel
+	}
+	writeVariables(variarbleArraySync, folder, variableArray)
+
+}
 
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	script, _ := doc.GetScript(ctx)
@@ -183,6 +181,12 @@ func writeMeasures(measureArrayLock sync.Mutex, folder string, measureArray []js
 	filename := folder + "/measures.json"
 	ioutil.WriteFile(filename, marshal(measureArray), os.ModePerm)
 	measureArrayLock.Unlock()
+}
+func writeVariables(variableArrayLock sync.Mutex, folder string, variableArray []json.RawMessage) {
+	variableArrayLock.Lock()
+	filename := folder + "/variables.json"
+	ioutil.WriteFile(filename, marshal(variableArray), os.ModePerm)
+	variableArrayLock.Unlock()
 }
 func writeDimensions(dimensionArrayLock sync.Mutex, folder string, dimensionArray []json.RawMessage) {
 	dimensionArrayLock.Lock()
