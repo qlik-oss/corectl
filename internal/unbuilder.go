@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"time"
 )
 
 type (
@@ -30,7 +29,7 @@ type (
 )
 
 func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global) {
-	rootFolder := "./unbuilds/" + time.Now().String()
+	rootFolder := "./unbuild-output"
 	os.MkdirAll(rootFolder, os.ModePerm)
 
 	exportEntities(ctx, doc, rootFolder)
@@ -40,17 +39,19 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global) {
 	connections, _ := doc.GetConnections(ctx)
 	connectionsStr := "connections:\n"
 	for _, x := range connections {
-		connectionsStr += x.Name + ": "
-		connectionsStr += "  type: " + x.Type
-		connectionsStr += "  connectionstring: " + x.ConnectionString
-		connectionsStr += "  username: " + x.UserName
-		connectionsStr += "  password: "
+		connectionsStr += "  " + x.Name + ": " + "\n"
+		connectionsStr += "    type: " + x.Type + "\n"
+		connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
+		if x.Type != "folder" {
+			connectionsStr += "    username: " + x.UserName + "\n"
+			connectionsStr += "    password: " + "\n"
+		}
 	}
 
 	config := `script: script.qvs
-dimensions: dimensions.json
 ` + connectionsStr +
-		`measures: measures.json
+		`dimensions: dimensions.json
+measures: measures.json
 objects: objects/*.json
 `
 	writeFile(rootFolder+"/corectl.yml", config)
@@ -69,21 +70,20 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 	for _, item := range allInfos {
 		go func(item *enigma.NxInfo) {
 			if bookmark, _ := doc.GetBookmark(ctx, item.Id); bookmark != nil && bookmark.Type != "" {
+
 			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
 				fmt.Println("dimension")
 				props, _ := dimension.GetPropertiesRaw(ctx)
-				fmt.Println(props)
 				dimensionArrayLock.Lock()
 				dimensionArray = append(dimensionArray, props)
 				dimensionArrayLock.Unlock()
 			} else if measure, _ := doc.GetMeasure(ctx, item.Id); measure != nil && measure.Type != "" {
 				fmt.Println("measure")
 				props, _ := measure.GetPropertiesRaw(ctx)
-				fmt.Println(props)
 				measureArrayLock.Lock()
 				measureArray = append(measureArray, props)
 				measureArrayLock.Unlock()
-			} else if measure, _ := doc.GetVariableById(ctx, item.Id); measure != nil && measure.Type != "" {
+			} else if variable, _ := doc.GetVariableById(ctx, item.Id); variable != nil && variable.Type != "" {
 				fmt.Println("variable")
 			} else if object, _ := doc.GetObject(ctx, item.Id); object != nil && object.Type != "" {
 				parent, _ := object.GetParent(ctx)
@@ -126,9 +126,35 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 	writeDimensions(dimensionArrayLock, folder, dimensionArray)
 }
 
-func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
-
-}
+//func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
+//	variableArray := make([]json.RawMessage, 0)
+//	var variarbleArraySync sync.Mutex
+//	variables, _ := doc.GetVariables(ctx, &enigma.VariableListDef{ Type:"variable", Data: json.RawMessage(`{"name":"/qMetaDef/name"}`),})
+//	fmt.Println(variables)
+//	waitChannel := make(chan *NamedItemWithType, 10000)
+//	defer close(waitChannel)
+//	for _, item := range variables {
+//		go func(item *enigma.NxInfo) {
+//			result := []NamedItem{}
+//
+//			if variable, _ := doc.GetVariable(ctx, item.Id) {
+//				variarbleArraySync.Lock()
+//				props, _ := variable.GetPropertiesRaw(ctx)
+//				variableArray = append(variableArray, props)
+//				variarbleArraySync.Unlock()
+//			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
+//			}
+//			waitChannel <- &NamedItemWithType{}
+//		}(item)
+//	}
+//	//Put all responses into a map by their Id
+//	for range allInfos {
+//		<-waitChannel
+//	}
+//	writeMeasures(measureArrayLock, folder, measureArray)
+//	writeDimensions(variarbleArraySync, folder, variableArray)
+//}
+//}
 
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	script, _ := doc.GetScript(ctx)
