@@ -80,6 +80,7 @@
     },
     "bookmark": {
       "description": "Explore and manage bookmarks",
+      "x-qlik-stability": "experimental",
       "commands": {
         "layout": {
           "description": "Evaluate the layout of an generic bookmark"
@@ -368,6 +369,7 @@
     },
     "variable": {
       "description": "Explore and manage variables",
+      "x-qlik-stability": "experimental",
       "commands": {
         "layout": {
           "description": "Evaluate the layout of an generic variable"

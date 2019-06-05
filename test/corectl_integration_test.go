@@ -151,6 +151,7 @@ func TestBookmarkManagementCommands(t *testing.T) {
 
 	// Build with two bookmarks
 	p.ExpectOK().Run("build")
+	p.ExpectOK().Run("bookmark", "set", "test/projects/using-entities/bookmarks.json")
 	p.ExpectOK().Run("bookmark", "ls") // Cannot ensure order of bookmarks so can't use golden.
 	p.ExpectOK().Run("bookmark", "ls", "--json")
 	p.ExpectOK().Run("bookmark", "ls", "--bash")
