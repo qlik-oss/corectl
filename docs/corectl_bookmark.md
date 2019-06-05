@@ -34,5 +34,4 @@ Explore and manage bookmarks
 * [corectl bookmark ls](corectl_bookmark_ls.md)	 - Print a list of all generic bookmarks in the current app
 * [corectl bookmark properties](corectl_bookmark_properties.md)	 - Print the properties of the generic bookmark
 * [corectl bookmark rm](corectl_bookmark_rm.md)	 - Remove one or many bookmarks in the current app
-* [corectl bookmark set](corectl_bookmark_set.md)	 - Set or update the bookmarks in the current app
 

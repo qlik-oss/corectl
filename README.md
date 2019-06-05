@@ -179,7 +179,7 @@ tag as version and then generate the spec using:
 
 ```bash
 go build -ldflags "-X main.version=$(git describe --tag --abbrev=0)"
-./corectl generate-spec > docs/spec.json
+./corectl generate-spec
 ```
 
 ## Contributing

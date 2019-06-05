@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -119,7 +120,7 @@ var generateSpecCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(string(jsonData))
+		ioutil.WriteFile("./docs/spec.json", jsonData, 0644)
 	},
 }
 
