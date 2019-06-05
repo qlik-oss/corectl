@@ -1,0 +1,16 @@
+{
+  "qInfo": {
+    "qId": "variable-xyz",
+    "qType": "variable"
+  },
+  "qMeta": {
+    "privileges": [
+      "read",
+      "update",
+      "delete"
+    ]
+  },
+  "qText": "1",
+  "qNum": 1,
+  "tags": []
+}

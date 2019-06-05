@@ -59,6 +59,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	// not bound to viper
 	globalFlags.StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 	globalFlags.StringToStringVar(&headersMap, "headers", nil, "Http headers to use when connecting to Qlik Associative Engine")
+	globalFlags.String("certificates", "", "path/to/folder containing client.pem, client_key.pem and root.pem certificates")
 
 	// Set annotation to run bash completion function
 	globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
@@ -93,6 +94,8 @@ func initLocalFlags() {
 	// Don't bind these to viper since paths are treated separately to support relative paths!
 	localFlags.String("connections", "", "Path to a yml file containing the data connection definitions")
 	localFlags.String("dimensions", "", "A list of generic dimension json paths")
+	localFlags.String("variables", "", "A list of generic variable json paths")
+	localFlags.String("bookmarks", "", "A list of generic bookmark json paths")
 	localFlags.String("measures", "", "A list of generic measures json paths")
 	localFlags.String("objects", "", "A list of generic object json paths")
 	localFlags.String("script", "", "Path to a qvs file containing the app data reload script")
@@ -103,6 +106,8 @@ func initLocalFlags() {
 		// we instead rely on the default bash behavior
 		localFlags.SetAnnotation("connections", cobra.BashCompFilenameExt, []string{"yml", "yaml"})
 		localFlags.SetAnnotation("dimensions", cobra.BashCompFilenameExt, []string{"json"})
+		localFlags.SetAnnotation("variables", cobra.BashCompFilenameExt, []string{"json"})
+		localFlags.SetAnnotation("bookmarks", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("measures", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("objects", cobra.BashCompFilenameExt, []string{"json"})
 		localFlags.SetAnnotation("script", cobra.BashCompFilenameExt, []string{"qvs"})

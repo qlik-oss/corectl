@@ -20,11 +20,13 @@ App Analysis Commands:
 
 Advanced Commands:
   app           Explore and manage apps
+  bookmark      Explore and manage bookmarks
   connection    Explore and manage connections
   dimension     Explore and manage dimensions
   measure       Explore and manage measures
   object        Explore and manage generic objects
   script        Explore and manage the script
+  variable      Explore and manage variables
 
 Other Commands:
   completion    Generate auto completion scripts
@@ -34,6 +36,7 @@ Other Commands:
 
 Flags:
   -a, --app string               Name or identifier of the app
+      --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "<host>:<port>")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])

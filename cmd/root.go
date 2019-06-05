@@ -99,6 +99,8 @@ func init() {
 	rootCmd.AddCommand(measureCmd)
 	rootCmd.AddCommand(dimensionCmd)
 	rootCmd.AddCommand(objectCmd)
+	rootCmd.AddCommand(variableCmd)
+	rootCmd.AddCommand(bookmarkCmd)
 	rootCmd.AddCommand(connectionCmd)
 	rootCmd.AddCommand(scriptCmd)
 	rootCmd.AddCommand(appCmd)

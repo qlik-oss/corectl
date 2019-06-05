@@ -14,6 +14,7 @@ corectl [flags]
 
 ```
   -a, --app string               Name or identifier of the app
+      --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
@@ -29,6 +30,7 @@ corectl [flags]
 
 * [corectl app](corectl_app.md)	 - Explore and manage apps
 * [corectl assoc](corectl_assoc.md)	 - Print table associations
+* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
 * [corectl build](corectl_build.md)	 - Reload and save the app after updating connections, dimensions, measures, objects and the script
 * [corectl catwalk](corectl_catwalk.md)	 - Open the specified app in catwalk
 * [corectl completion](corectl_completion.md)	 - Generate auto completion scripts
@@ -45,5 +47,6 @@ corectl [flags]
 * [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables
 * [corectl values](corectl_values.md)	 - Print the top values of a field
+* [corectl variable](corectl_variable.md)	 - Explore and manage variables
 * [corectl version](corectl_version.md)	 - Print the version of corectl
 

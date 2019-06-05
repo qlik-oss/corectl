@@ -17,6 +17,9 @@
       "description": "Bash flag used to adapt output to bash completion format",
       "default": "false"
     },
+    "certificates": {
+      "description": "path/to/folder containing client.pem, client_key.pem and root.pem certificates"
+    },
     "config": {
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"
@@ -75,8 +78,49 @@
       "alias": "associations",
       "description": "Print table associations"
     },
+    "bookmark": {
+      "description": "Explore and manage bookmarks",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic bookmark"
+        },
+        "ls": {
+          "description": "Print a list of all generic bookmarks in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic bookmark",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
+        },
+        "rm": {
+          "description": "Remove one or many bookmarks in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the bookmarks in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
+    },
     "build": {
       "flags": {
+        "bookmarks": {
+          "description": "A list of generic bookmark json paths"
+        },
         "connections": {
           "description": "Path to a yml file containing the data connection definitions"
         },
@@ -103,6 +147,9 @@
         "silent": {
           "description": "Do not log reload output",
           "default": "false"
+        },
+        "variables": {
+          "description": "A list of generic variable json paths"
         }
       }
     },
@@ -116,7 +163,7 @@
       }
     },
     "completion": {
-      "description": "Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. \nNote that bash-completion is required and needs to be installed on your system."
+      "description": "Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide\ninteractive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.\nNote that bash-completion is required and needs to be installed on your system."
     },
     "connection": {
       "description": "Explore and manage connections",
@@ -318,6 +365,44 @@
     },
     "values": {
       "description": "Print the top values for a specific field in your data model"
+    },
+    "variable": {
+      "description": "Explore and manage variables",
+      "commands": {
+        "layout": {
+          "description": "Evaluate the layout of an generic variable"
+        },
+        "ls": {
+          "description": "Print a list of all generic variables in the current app"
+        },
+        "properties": {
+          "description": "Print the properties of the generic variable",
+          "flags": {
+            "minimum": {
+              "description": "Only print properties required by engine",
+              "default": "false"
+            }
+          }
+        },
+        "rm": {
+          "description": "Remove one or many variables in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        },
+        "set": {
+          "description": "Set or update the variables in the current app",
+          "flags": {
+            "no-save": {
+              "description": "Do not save the app",
+              "default": "false"
+            }
+          }
+        }
+      }
     },
     "version": {}
   }

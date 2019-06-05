@@ -60,7 +60,7 @@ var listMeasuresCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
 		items := internal.ListMeasures(state.Ctx, state.Doc)
-		printer.PrintNamedItemsList(items, viper.GetBool("bash"))
+		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
 }
 

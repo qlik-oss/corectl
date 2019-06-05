@@ -5,7 +5,7 @@ Generate auto completion scripts
 ### Synopsis
 
 Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
-interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file. 
+interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
 Note that bash-completion is required and needs to be installed on your system.
 
 ```
@@ -34,6 +34,7 @@ corectl completion <shell> [flags]
 
 ```
   -a, --app string               Name or identifier of the app
+      --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
