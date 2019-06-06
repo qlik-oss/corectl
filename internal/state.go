@@ -258,10 +258,17 @@ func buildWebSocketURL(engine string, ttl string) string {
 	return engine
 }
 
+func buildRestBaseURL(engine string) string {
+	engine_url := TidyUpEngineURL(engine)
+	// Don't we always need a port?
+	pattern := regexp.MustCompile("^ws(s?://.+?)(:\\d+)?(/.+)?$")
+	replace := "http$1$2"
+	base_url := pattern.ReplaceAllString(engine_url, replace)
+	return base_url
+}
+
 func buildMetadataURL(engine string, appID string) string {
-	engine = TidyUpEngineURL(engine)
-	engine = strings.Replace(engine, "wss://", "https://", -1)
-	engine = strings.Replace(engine, "ws://", "http://", -1)
+	engine = buildRestBaseURL(engine)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
 	return url
 }
