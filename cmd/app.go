@@ -56,6 +56,7 @@ var importAppCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
+		// TODO allow specification of appId as the method by default creates an app with a UID as ID.
 		internal.ImportApp(appPath, viper.GetString("engine"), headers)
 		fmt.Println(appPath)
 	},
