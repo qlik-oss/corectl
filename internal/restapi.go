@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 // ReadRestMetadata fetches metadata from the rest api.
@@ -31,6 +32,24 @@ func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
 	result := &RestMetadata{}
 	json.Unmarshal(data, result)
 	return result, nil
+}
+
+func ImportApp(appPath, engineURL string, headers http.Header) {
+	baseURL := buildRestBaseURL(engineURL)
+	url := baseURL + "/v1/apps/import"
+	file, err := os.Open(appPath)
+	if err != nil {
+		FatalError("could not open file: ", appPath)
+	}
+	defer file.Close()
+	response, err := http.Post(url, "binary/octet-stream", file)
+	if err != nil {
+		FatalError(err)
+	}
+	defer response.Body.Close()
+	message, _ := ioutil.ReadAll(response.Body)
+	fmt.Println(response.Status)
+	fmt.Println(string(message))
 }
 
 func toFieldMetadataMap(fields []*RestFieldMetadata) map[string]*RestFieldMetadata {

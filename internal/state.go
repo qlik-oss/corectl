@@ -259,12 +259,12 @@ func buildWebSocketURL(engine string, ttl string) string {
 }
 
 func buildRestBaseURL(engine string) string {
-	engine_url := TidyUpEngineURL(engine)
+	engineURL := TidyUpEngineURL(engine)
 	// Don't we always need a port?
 	pattern := regexp.MustCompile("^ws(s?://.+?)(:\\d+)?(/.+)?$")
 	replace := "http$1$2"
-	base_url := pattern.ReplaceAllString(engine_url, replace)
-	return base_url
+	baseURL := pattern.ReplaceAllString(engineURL, replace)
+	return baseURL
 }
 
 func buildMetadataURL(engine string, appID string) string {
