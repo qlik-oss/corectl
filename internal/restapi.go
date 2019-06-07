@@ -59,7 +59,7 @@ func ImportApp(appPath, engine string, headers http.Header) string {
 	defer response.Body.Close()
 	data, _ := ioutil.ReadAll(response.Body)
 	if response.StatusCode != 200 {
-		FatalErrorf("could not create app: got status %d with message %s",
+		FatalErrorf("could not import app: got status %d with message %s",
 			response.StatusCode, string(data))
 	}
 	appInfo := &RestNxApp{}

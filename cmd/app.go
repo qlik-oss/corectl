@@ -50,9 +50,12 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 var importAppCmd = &cobra.Command{
 	Use:			"import",
 	Args:			cobra.ExactArgs(1),
-	Short:		"Import the specified app into the engine",
-	Long:			"Import the specified app into the engine",
+	Short:		"Import the specified app into the engine, returns the ID of the created app",
+	Long:			"Import the specified app into the engine, returns the ID of the created app",
 	Example:	"corectl import <path-to-app.qvf>",
+	Annotations: map[string]string{
+		"x-qlik-stability": "experimental",
+	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
