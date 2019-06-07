@@ -2,7 +2,6 @@
 vendor/
 .vscode/
 .DS_Store
-*.qvf
 *.exe
 corectl
 corectl.exe
