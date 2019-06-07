@@ -260,10 +260,9 @@ func buildWebSocketURL(engine string, ttl string) string {
 
 func buildRestBaseURL(engine string) string {
 	engineURL := TidyUpEngineURL(engine)
-	// Don't we always need a port?
-	pattern := regexp.MustCompile("^ws(s?://.+?)(:\\d+)?(/.+)?$")
-	replace := "http$1$2"
-	baseURL := pattern.ReplaceAllString(engineURL, replace)
+	u, _ := neturl.Parse(engineURL)
+	// u.Scheme[2:] is "" for ws and s for wss
+	baseURL := "http" + u.Scheme[2:] + "://" + u.Host
 	return baseURL
 }
 
