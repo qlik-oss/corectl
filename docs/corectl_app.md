@@ -30,7 +30,7 @@ Explore and manage apps
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl app import](corectl_app_import.md)	 - Import the specified app into the engine
+* [corectl app import](corectl_app_import.md)	 - Import the specified app into the engine, returns the ID of the created app
 * [corectl app ls](corectl_app_ls.md)	 - Print a list of all apps available in the current engine
 * [corectl app rm](corectl_app_rm.md)	 - Remove the specified app
 

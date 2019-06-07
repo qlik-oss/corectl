@@ -1,10 +1,10 @@
 ## corectl app import
 
-Import the specified app into the engine
+Import the specified app into the engine, returns the ID of the created app
 
 ### Synopsis
 
-Import the specified app into the engine
+Import the specified app into the engine, returns the ID of the created app
 
 ```
 corectl app import [flags]
