@@ -38,7 +38,8 @@ func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
 func ImportApp(appPath, engine string, headers http.Header) string {
 	url, err := neturl.Parse(buildRestBaseURL(engine))
 	url.Path = "/v1/apps/import"
-	values := neturl.Values{} //name and mode don't seem to work
+	// You can specify name and mode with query but they only seem to work in ABAC mode.
+	values := neturl.Values{}
 	url.RawQuery = values.Encode()
 	file, err := os.Open(appPath)
 	if err != nil {
@@ -64,7 +65,8 @@ func ImportApp(appPath, engine string, headers http.Header) string {
 	appInfo := &RestNxApp{}
 	json.Unmarshal(data, appInfo)
 	appID := appInfo.Attributes["id"]
-	setAppIDToKnownApps(engine, appID, appID, false)
+	appName := appInfo.Attributes["name"]
+	setAppIDToKnownApps(engine, appName, appID, false)
 	return appID
 }
 
