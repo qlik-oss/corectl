@@ -60,6 +60,9 @@
     "app": {
       "description": "Explore and manage apps",
       "commands": {
+        "import": {
+          "description": "Import the specified app into the engine"
+        },
         "ls": {
           "description": "Print a list of all apps available in the current engine"
         },
