@@ -10,7 +10,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/qlik-oss/enigma-go v0.0.0-20190603060220-9ab01848e278
 	github.com/sergi/go-diff v1.0.0 // indirect
-	github.com/spf13/cobra v0.0.4
+	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.3.0
