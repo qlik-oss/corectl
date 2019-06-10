@@ -13,6 +13,7 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 	Short:   "Set or update the bookmarks in the current app",
 	Long:    "Set or update the bookmarks in the current app",
 	Example: "corectl bookmark set ./my-bookmarks-glob-path.json",
+	Hidden: true,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineBookmarks := args[0]
@@ -96,6 +97,7 @@ var bookmarkCmd = &cobra.Command{
 	Long:		"Explore and manage bookmarks",
 	Annotations: map[string]string{
 		"command_category": "sub",
+		"x-qlik-stability": "experimental",
 	},
 }
 
