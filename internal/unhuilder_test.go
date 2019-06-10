@@ -6,5 +6,5 @@ import (
 )
 
 func TestBuildName(t *testing.T) {
-	fmt.Println(buildName("wefwef", "mastesrobject", "table", "'='Halleluljah moment'"))
+	fmt.Println(buildEntityFilename("wefwef", "mastesrobject", "table", "'='Halleluljah moment'"))
 }
