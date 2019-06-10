@@ -60,6 +60,10 @@
     "app": {
       "description": "Explore and manage apps",
       "commands": {
+        "import": {
+          "description": "Import the specified app into the engine, returns the ID of the created app",
+          "x-qlik-stability": "experimental"
+        },
         "ls": {
           "description": "Print a list of all apps available in the current engine"
         },

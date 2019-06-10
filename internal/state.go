@@ -258,10 +258,16 @@ func buildWebSocketURL(engine string, ttl string) string {
 	return engine
 }
 
+func buildRestBaseURL(engine string) string {
+	engineURL := TidyUpEngineURL(engine)
+	u, _ := neturl.Parse(engineURL)
+	// u.Scheme[2:] is "" for ws and s for wss
+	baseURL := "http" + u.Scheme[2:] + "://" + u.Host
+	return baseURL
+}
+
 func buildMetadataURL(engine string, appID string) string {
-	engine = TidyUpEngineURL(engine)
-	engine = strings.Replace(engine, "wss://", "https://", -1)
-	engine = strings.Replace(engine, "ws://", "http://", -1)
+	engine = buildRestBaseURL(engine)
 	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
 	return url
 }

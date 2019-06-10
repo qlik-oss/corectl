@@ -1,15 +1,25 @@
-## corectl app
+## corectl app import
 
-Explore and manage apps
+Import the specified app into the engine, returns the ID of the created app
 
 ### Synopsis
 
-Explore and manage apps
+Import the specified app into the engine, returns the ID of the created app
+
+```
+corectl app import [flags]
+```
+
+### Examples
+
+```
+corectl import <path-to-app.qvf>
+```
 
 ### Options
 
 ```
-  -h, --help   help for app
+  -h, --help   help for import
 ```
 
 ### Options inherited from parent commands
@@ -29,8 +39,5 @@ Explore and manage apps
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl app import](corectl_app_import.md)	 - Import the specified app into the engine, returns the ID of the created app
-* [corectl app ls](corectl_app_ls.md)	 - Print a list of all apps available in the current engine
-* [corectl app rm](corectl_app_rm.md)	 - Remove the specified app
+* [corectl app](corectl_app.md)	 - Explore and manage apps
 
