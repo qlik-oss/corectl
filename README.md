@@ -174,14 +174,12 @@ To regenerate the documentation:
 corectl generate-docs
 ```
 
-To regenerate the api spec, first build with latest release
+To regenerate the api spec, first build and run with latest release
 tag as version and then generate the spec using:
 
 ```bash
-go build -ldflags "-X main.version=$(git describe --tag --abbrev=0)"
-./corectl generate-spec
+go run -ldflags "-X main.version=$(git describe --tag --abbrev=0)" main.go generate-spec
 ```
-
 ## Contributing
 
 We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source)

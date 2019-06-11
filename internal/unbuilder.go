@@ -43,8 +43,8 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFo
 	exportEntities(ctx, doc, rootFolder)
 	exportVariables(ctx, doc, rootFolder)
 	exportScript(ctx, doc, rootFolder)
-	connectionsStr := exportConnections(ctx, doc)
-	exportMainConfigFile(connectionsStr, rootFolder)
+	exportConnections(ctx, doc, rootFolder)
+	exportMainConfigFile(rootFolder)
 }
 
 func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
@@ -132,7 +132,7 @@ func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
 }
 
-func exportConnections(ctx context.Context, doc *enigma.Doc) string {
+func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) string {
 	connections, _ := doc.GetConnections(ctx)
 	connectionsStr := "connections:\n"
 	for _, x := range connections {
@@ -144,12 +144,14 @@ func exportConnections(ctx context.Context, doc *enigma.Doc) string {
 			connectionsStr += "    password: " + "\n"
 		}
 	}
+
+	ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
 	return connectionsStr
 }
 
-func exportMainConfigFile(connectionsStr string, rootFolder string) {
+func exportMainConfigFile(rootFolder string) {
 	config := "script: script.qvs\n" +
-		connectionsStr +
+		"connections: connections.yml\n" +
 		"dimensions: dimensions.json\n" +
 		"measures: measures.json\n" +
 		"objects: objects/*.json\n" +
@@ -197,6 +199,12 @@ func buildEntityFilename(folder, qType, viz, title string) string {
 	filename = strings.ToLower(filename)
 	filename = matchAllNonAlphaNumeric.ReplaceAllString(filename, `-`)
 	return folder + "/" + filename + ".json"
+}
+
+func BuildRootFolderFromTitle(title string) string {
+	title = strings.ToLower(title) + "-unbuild"
+	title = matchAllNonAlphaNumeric.ReplaceAllString(title, `-`)
+	return title
 }
 
 func sortJsonArray(array []JsonWithOrder) {

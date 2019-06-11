@@ -364,6 +364,15 @@
     "tables": {
       "description": "Print tables for the data model in an app"
     },
+    "unbuild": {
+      "description": "Split upp an existing app into separate entities",
+      "flags": {
+        "dir": {
+          "description": "Path to a the folder where the unbuilt app is exported",
+          "default": "./\u003capp name\u003e-unbuild"
+        }
+      }
+    },
     "values": {
       "description": "Print the top values for a specific field in your data model"
     },

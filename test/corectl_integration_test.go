@@ -401,7 +401,7 @@ func TestUnbuild(t *testing.T) {
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")
-	p.ExpectOK().Run("unbuild", "--outdir", "test/golden/unbuild")
+	p.ExpectOK().Run("unbuild", "--dir", "test/golden/unbuild")
 	p2.ExpectOK().Run("build")
 	p2.ExpectGolden().Run("object", "ls")
 	p2.ExpectGolden().Run("measure", "ls")
