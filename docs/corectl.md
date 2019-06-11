@@ -46,7 +46,7 @@ corectl [flags]
 * [corectl script](corectl_script.md)	 - Explore and manage the script
 * [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables
-* [corectl unbuild](corectl_unbuild.md)	 - Split upp an existing app into separate entities
+* [corectl unbuild](corectl_unbuild.md)	 - Split up an existing app into separate json and yaml files
 * [corectl values](corectl_values.md)	 - Print the top values of a field
 * [corectl variable](corectl_variable.md)	 - Explore and manage variables
 * [corectl version](corectl_version.md)	 - Print the version of corectl
