@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,6 +15,7 @@ var unbuildCmd = withLocalFlags(&cobra.Command{
 	Example: `corectl unbuild`,
 	Annotations: map[string]string{
 		"command_category": "build",
+		"x-qlik-stability": "experimental",
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -22,14 +24,21 @@ var unbuildCmd = withLocalFlags(&cobra.Command{
 		outdir := ccmd.Flag("dir").Value.String()
 		state := internal.PrepareEngineState(ctx, headers, false)
 		if outdir == DefaultUnbuildFolder {
-			appLayout, _ := state.Doc.GetAppLayout(ctx)
-			if appLayout.Title != "" {
-				outdir = internal.BuildRootFolderFromTitle(appLayout.Title)
-			} else {
-				outdir = "unknown-app-unbuild"
-			}
+			outdir = getDefaultOutDir(ctx, state)
 		}
-
 		internal.Unbuild(ctx, state.Doc, state.Global, outdir)
 	},
 }, "dir")
+
+func getDefaultOutDir(ctx context.Context, state *internal.State) string {
+	appLayout, _ := state.Doc.GetAppLayout(ctx)
+	var defaultFolder string
+	if appLayout.Title != "" {
+		defaultFolder = appLayout.Title
+	} else if state.AppName != "" {
+		defaultFolder = state.AppName
+	} else {
+		defaultFolder = state.AppID
+	}
+	return internal.BuildRootFolderFromTitle(defaultFolder)
+}
