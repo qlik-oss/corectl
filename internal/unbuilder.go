@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -18,12 +19,19 @@ type (
 		QInfo struct {
 			QId   string `json:"qId"`
 			QType string `json:"qType"`
-		} `jsom: qInfo`
+		} `json:"qInfo"`
 		QMetaDef struct {
 			Title string `json:"title"`
-		} `jsom: qMetaDef`
-		Visualization string `jsom: visualization`
+		} `json:"qMetaDef"`
+		Visualization string `json:"visualization"`
 		QProperty     *UnbuildEntityProperies
+	}
+
+	// A container for a json struct that retains the order in which the data was originally fetched
+	// Used to hold the results of parallel calls
+	JsonWithOrder struct {
+		Json  json.RawMessage
+		Order int
 	}
 )
 
@@ -40,24 +48,24 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFo
 }
 
 func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
-	measureArray := make([]json.RawMessage, 0)
+	measureArray := make([]JsonWithOrder, 0)
 	var measureArrayLock sync.Mutex
-	dimensionArray := make([]json.RawMessage, 0)
+	dimensionArray := make([]JsonWithOrder, 0)
 	var dimensionArrayLock sync.Mutex
 	allInfos, _ := doc.GetAllInfos(ctx)
 	waitChannel := make(chan interface{}, 10000)
 	defer close(waitChannel)
-	for _, item := range allInfos {
-		go func(item *enigma.NxInfo) {
+	for index, item := range allInfos {
+		go func(index int, item *enigma.NxInfo) {
 			if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
 				props, _ := dimension.GetPropertiesRaw(ctx)
 				dimensionArrayLock.Lock()
-				dimensionArray = append(dimensionArray, props)
+				dimensionArray = append(dimensionArray, JsonWithOrder{props, index})
 				dimensionArrayLock.Unlock()
 			} else if measure, _ := doc.GetMeasure(ctx, item.Id); measure != nil && measure.Type != "" {
 				props, _ := measure.GetPropertiesRaw(ctx)
 				measureArrayLock.Lock()
-				measureArray = append(measureArray, props)
+				measureArray = append(measureArray, JsonWithOrder{props, index})
 				measureArrayLock.Unlock()
 			} else if object, _ := doc.GetObject(ctx, item.Id); object != nil && object.Type != "" {
 				parent, _ := object.GetParent(ctx)
@@ -86,7 +94,7 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 				}
 			}
 			waitChannel <- true
-		}(item)
+		}(index, item)
 	}
 	for range allInfos {
 		<-waitChannel
@@ -96,22 +104,22 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 }
 
 func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
-	variableArray := make([]json.RawMessage, 0)
+	variableArray := make([]JsonWithOrder, 0)
 	var variarbleArraySync sync.Mutex
 	variables := ListVariables(ctx, doc)
 	waitChannel := make(chan interface{}, 10000)
 	defer close(waitChannel)
-	for _, item := range variables {
-		go func(item NamedItem) {
+	for index, item := range variables {
+		go func(index int, item NamedItem) {
 			if variable, _ := doc.GetVariableByName(ctx, item.Title); variable != nil && variable.Handle != 0 {
 				variarbleArraySync.Lock()
 				props, _ := variable.GetPropertiesRaw(ctx)
-				variableArray = append(variableArray, props)
+				variableArray = append(variableArray, JsonWithOrder{props, index})
 				variarbleArraySync.Unlock()
 			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
 			}
 			waitChannel <- true
-		}(item)
+		}(index, item)
 	}
 	for range variables {
 		<-waitChannel
@@ -140,34 +148,37 @@ func exportConnections(ctx context.Context, doc *enigma.Doc) string {
 }
 
 func exportMainConfigFile(connectionsStr string, rootFolder string) {
-	config := `script: script.qvs
-		` + connectionsStr + `dimensions: dimensions.json
-		measures: measures.json
-		objects: objects/*.json
-		variables: variables/*.json
-		`
+	config := "script: script.qvs\n" +
+		connectionsStr +
+		"dimensions: dimensions.json\n" +
+		"measures: measures.json\n" +
+		"objects: objects/*.json\n" +
+		"variables: variables/*.json\n"
 	ioutil.WriteFile(rootFolder+"/corectl.yml", []byte(config), os.ModePerm)
 }
 
-func writeMeasures(measureArrayLock sync.Mutex, measureArray []json.RawMessage, folder string) {
+func writeDimensions(dimensionArrayLock sync.Mutex, dimensionArray []JsonWithOrder, folder string) {
+	dimensionArrayLock.Lock()
+	sortJsonArray(dimensionArray)
+	filename := folder + "/dimensions.json"
+	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(dimensionArray)), os.ModePerm)
+	dimensionArrayLock.Unlock()
+}
+
+func writeMeasures(measureArrayLock sync.Mutex, measureArray []JsonWithOrder, folder string) {
 	measureArrayLock.Lock()
+	sortJsonArray(measureArray)
 	filename := folder + "/measures.json"
-	ioutil.WriteFile(filename, marshalOrFail(measureArray), os.ModePerm)
+	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(measureArray)), os.ModePerm)
 	measureArrayLock.Unlock()
 }
 
-func writeVariables(variableArrayLock sync.Mutex, variableArray []json.RawMessage, folder string) {
+func writeVariables(variableArrayLock sync.Mutex, variableArray []JsonWithOrder, folder string) {
 	variableArrayLock.Lock()
+	sortJsonArray(variableArray)
 	filename := folder + "/variables.json"
-	ioutil.WriteFile(filename, marshalOrFail(variableArray), os.ModePerm)
+	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(variableArray)), os.ModePerm)
 	variableArrayLock.Unlock()
-}
-
-func writeDimensions(dimensionArrayLock sync.Mutex, dimensionArray []json.RawMessage, folder string) {
-	dimensionArrayLock.Lock()
-	filename := folder + "/dimensions.json"
-	ioutil.WriteFile(filename, marshalOrFail(dimensionArray), os.ModePerm)
-	dimensionArrayLock.Unlock()
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
@@ -186,4 +197,18 @@ func buildEntityFilename(folder, qType, viz, title string) string {
 	filename = strings.ToLower(filename)
 	filename = matchAllNonAlphaNumeric.ReplaceAllString(filename, `-`)
 	return folder + "/" + filename + ".json"
+}
+
+func sortJsonArray(array []JsonWithOrder) {
+	sort.SliceStable(array, func(i, j int) bool {
+		return array[i].Order < array[j].Order
+	})
+}
+
+func toJsonArray(array []JsonWithOrder) []json.RawMessage {
+	var result []json.RawMessage
+	for _, x := range array {
+		result = append(result, x.Json)
+	}
+	return result
 }
