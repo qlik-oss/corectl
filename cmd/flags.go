@@ -14,7 +14,7 @@ var localFlags pflag.FlagSet
 var initialized bool
 
 // Default placeholder for unbuild folder location
-var DefaultUnbuild = "./<app name>-unbuild"
+var DefaultUnbuildFolder = "./<app name>-unbuild"
 
 // getPathFlagFromConfigFile returns a parameter from the config file.
 // It modifies the parameter to actually be relative to the config file and not the working directory
@@ -102,7 +102,7 @@ func initLocalFlags() {
 	localFlags.String("measures", "", "A list of generic measures json paths")
 	localFlags.String("objects", "", "A list of generic object json paths")
 	localFlags.String("script", "", "Path to a qvs file containing the app data reload script")
-	localFlags.String("dir", DefaultUnbuild, "Path to a the folder where the unbuilt app is exported")
+	localFlags.String("dir", DefaultUnbuildFolder, "Path to a the folder where the unbuilt app is exported")
 
 	if runtime.GOOS != "windows" {
 		// Set annotation to run bash completion function
