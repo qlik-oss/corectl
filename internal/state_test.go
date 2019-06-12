@@ -6,6 +6,16 @@ import (
 	"github.com/magiconair/properties/assert"
 )
 
+func TestBuildRestBaseUrl(t *testing.T) {
+	assert.Equal(t, buildRestBaseURL("engine"), "http://engine")
+	assert.Equal(t, buildRestBaseURL("engine.com"), "http://engine.com")
+	assert.Equal(t, buildRestBaseURL("engine.com/app/appId"), "http://engine.com")
+	assert.Equal(t, buildRestBaseURL("engine:1234"), "http://engine:1234")
+	assert.Equal(t, buildRestBaseURL("ws://engine:1234"), "http://engine:1234")
+	assert.Equal(t, buildRestBaseURL("wss://engine:1234"), "https://engine:1234")
+	assert.Equal(t, buildRestBaseURL("wss://engine:1234/app/appId"), "https://engine:1234")
+}
+
 func TestBuildMetaUrl(t *testing.T) {
 	assert.Equal(t, buildMetadataURL("engine", "appId"), "http://engine/v1/apps/appId/data/metadata")
 	assert.Equal(t, buildMetadataURL("engine:1234", "appId"), "http://engine:1234/v1/apps/appId/data/metadata")
@@ -13,6 +23,7 @@ func TestBuildMetaUrl(t *testing.T) {
 	assert.Equal(t, buildMetadataURL("ws://engine", "appId"), "http://engine/v1/apps/appId/data/metadata")
 	assert.Equal(t, buildMetadataURL("wss://engine:1234", "appId"), "https://engine:1234/v1/apps/appId/data/metadata")
 	assert.Equal(t, buildMetadataURL("ws://engine:1234", "appId"), "http://engine:1234/v1/apps/appId/data/metadata")
+	assert.Equal(t, buildMetadataURL("ws://engine:1234/app/appId", "appId"), "http://engine:1234/v1/apps/appId/data/metadata")
 }
 
 func TestBuildEngineUrl(t *testing.T) {

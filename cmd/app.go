@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var getAppsCmd = &cobra.Command{
+var listAppsCmd = &cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all apps available in the current engine",
@@ -47,6 +47,23 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	},
 }, "suppress")
 
+var importAppCmd = &cobra.Command{
+	Use:			"import",
+	Args:			cobra.ExactArgs(1),
+	Short:		"Import the specified app into the engine, returns the ID of the created app",
+	Long:			"Import the specified app into the engine, returns the ID of the created app",
+	Example:	"corectl import <path-to-app.qvf>",
+	Annotations: map[string]string{
+		"x-qlik-stability": "experimental",
+	},
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		appPath := args[0]
+		appID := internal.ImportApp(appPath, viper.GetString("engine"), headers)
+		fmt.Println("Imported app with new ID: " + appID)
+	},
+}
+
 var appCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Explore and manage apps",
@@ -57,5 +74,5 @@ var appCmd = &cobra.Command{
 }
 
 func init() {
-	appCmd.AddCommand(getAppsCmd, removeAppCmd)
+	appCmd.AddCommand(listAppsCmd, removeAppCmd, importAppCmd)
 }

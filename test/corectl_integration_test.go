@@ -6,6 +6,7 @@ import (
 	"github.com/qlik-oss/corectl/test/toolkit"
 	"os"
 	"testing"
+	"strings"
 )
 
 func TestBasicAnalyzing(t *testing.T) {
@@ -391,7 +392,26 @@ func TestCommandLineOverridingConfigFile(t *testing.T) {
 	p2.ExpectJsonArray("qId", "swedish-dimension").Run("dimension", "ls", "--json")
 	p2.ExpectJsonArray("qId", "measure-x").Run("measure", "ls", "--json")
 	p2.ExpectJsonArray("qName", "bogusname").Run("connection", "ls", "--json")
+}
 
+func TestImportApp(t *testing.T) {
+	parseID := func (output []byte) string {
+		appID := strings.Split(string(output), ": ")[1]
+		return strings.TrimSpace(appID)
+	}
+	// Create tests for the standard, abac and jwt case.
+	pStd := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+	pAbac := toolkit.Params{T: t, Engine: *toolkit.EngineAbacIP}
+	pJwt := toolkit.Params{T: t, Engine: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"}
+	params := []toolkit.Params{pStd, pAbac, pJwt}
+	for _, p := range params {
+		// See if we can import the app test.qvf
+		output := p.ExpectOK().Run("app", "import", "test/projects/import/test.qvf")
+		appID := parseID(output)
+		// If it was created, we can remove it
+		p.ExpectOK().Run("app", "rm", appID, "--suppress")
+		p.Reset()
+	}
 }
 
 func TestUnbuild(t *testing.T) {
