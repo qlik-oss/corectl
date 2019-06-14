@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Check if changes has been done to the CLI API
           command: |
-            ./corectl generate-spec > ./docs/spec.json
+            ./corectl generate-spec
             git diff --exit-code --name-only docs/spec.json
       - store_artifacts:
           path: ./docs/spec.json
