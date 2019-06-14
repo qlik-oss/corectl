@@ -11,7 +11,7 @@ import (
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-func CreateContext(contextName string, productName string, comment string) {
+func AddContext(contextName string, productName string, comment string) {
 	createContextFileIfNotExist()
 	_, contexts := GetContexts()
 
@@ -131,11 +131,13 @@ func GetSpecificContext(contextName string) map[interface{}]interface{} {
 func createContextFileIfNotExist() {
 	if _, err := os.Stat(contextFilePath); os.IsNotExist(err) {
 
-		// // Create .corectl folder in home directory
-		// err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
-		// if err != nil {
-		// 	FatalError("could not create .corectl folder in home directory: ", err)
-		// }
+		// Create .corectl folder in home directory
+		if _, err := os.Stat(path.Join(userHomeDir(), ".corectl")); os.IsNotExist(err) {
+			err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
+			if err != nil {
+				FatalError("could not create .corectl folder in home directory: ", err)
+			}
+		}
 
 		// Create contexts.yml in .corectl folder
 		_, err := os.Create(contextFilePath)

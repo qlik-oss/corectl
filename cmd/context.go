@@ -7,17 +7,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-var createContextCmd = withLocalFlags(&cobra.Command{
-	Use:   "create <context name>",
+var addContextCmd = withLocalFlags(&cobra.Command{
+	Use:   "add <context name>",
 	Args:  cobra.ExactArgs(1),
-	Short: "Creates a new context",
-	Long:  "Creates a new context",
-	Example: `corectl context create local-engine
-corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"`,
+	Short: "Add a new context",
+	Long:  "Add a new context",
+	Example: `corectl add create local-engine
+corectl context add rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		// Add validation of product
-		internal.CreateContext(args[0], viper.GetString("product"), viper.GetString("comment"))
+		internal.AddContext(args[0], viper.GetString("product"), viper.GetString("comment"))
 	},
 }, "product", "comment")
 
@@ -68,5 +68,5 @@ var contextCmd = &cobra.Command{
 }
 
 func init() {
-	contextCmd.AddCommand(createContextCmd, removeContextCmd, listContextsCmd, setContextCmd)
+	contextCmd.AddCommand(addContextCmd, removeContextCmd, listContextsCmd, setContextCmd)
 }
