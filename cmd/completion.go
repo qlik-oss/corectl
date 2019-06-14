@@ -68,6 +68,9 @@ __custom_func()
 		corectl_app_rm)
 			__corectl_get_apps
 			;;
+		corectl_context_rm | corectl_context_set)
+			__corectl_get_contexts
+			;;
     *)
 			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
 			;;
@@ -173,6 +176,11 @@ __corectl_get_local_engines()
 	else
 		COMPREPLY=()
 	fi;
+}
+
+__corectl_get_contexts()
+{
+	__corectl_call_corectl "context ls --bash"
 }
 
 `

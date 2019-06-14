@@ -141,11 +141,13 @@ func setConfigFile(configPath string) {
 	}
 	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
 	// However, this make validateProps a tiny bit more complex
+
 	config := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &config)
 	if err != nil {
 		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
 	}
+	config = mergeGlobalAndLocalConfig(config)
 	validateProps(config, configPath)
 	err = subEnvVars(&config)
 	if err != nil {
@@ -257,4 +259,23 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 		}
 	}
 	return suggestion
+}
+
+func mergeGlobalAndLocalConfig(config map[interface{}]interface{}) map[interface{}]interface{} {
+	var context map[interface{}]interface{}
+	if viper.GetString("context") != "" {
+		context = GetSpecificContext(viper.GetString("context"))
+	} else {
+		context = GetCurrentContext()
+	}
+
+	if context == nil {
+		return config
+	}
+
+	for k, v := range config {
+		context[k.(string)] = v
+	}
+
+	return context
 }

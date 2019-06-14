@@ -51,6 +51,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.Bool("no-data", false, "Open app without data")
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
+	globalFlags.String("context", "", "Specific context that should be used when connecting")
 
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)
@@ -64,6 +65,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	// Set annotation to run bash completion function
 	globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
 	globalFlags.SetAnnotation("engine", cobra.BashCompCustom, []string{"__corectl_get_local_engines"})
+	globalFlags.SetAnnotation("context", cobra.BashCompCustom, []string{"__corectl_get_contexts"})
 
 	if runtime.GOOS != "windows" {
 		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
@@ -85,6 +87,8 @@ func initLocalFlags() {
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
 	localFlags.Bool("minimum", false, "Only print properties required by engine")
+	localFlags.String("product", "QC", "Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud)")
+	localFlags.String("comment", "", "Comment for the context")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

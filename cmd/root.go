@@ -93,6 +93,7 @@ func init() {
 	rootCmd.AddCommand(reloadCmd)
 	rootCmd.AddCommand(getValuesCmd)
 	rootCmd.AddCommand(getMetaCmd)
+	rootCmd.AddCommand(contextCmd)
 
 	// Subcommands
 	rootCmd.AddCommand(measureCmd)
