@@ -2,7 +2,7 @@ module github.com/qlik-oss/corectl
 
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
-	github.com/google/go-github v17.0.0+incompatible // indirect
+	github.com/google/go-github v26.0.4 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.1
