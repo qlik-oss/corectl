@@ -69,7 +69,7 @@ func checkLatestVersion() {
 		fmt.Printf("corectl version: %s\n", version)
 		return
 	}
-	outdated, latestVersion := compareVersions(version, *rel.TagName)
+	latestVersion, outdated := isLatestVersion(version, *rel.TagName)
 	if outdated {
 		// Find absolute path of executable
 		executable, _ := os.Executable()
@@ -108,21 +108,21 @@ func checkLatestVersion() {
 	}
 }
 
-func compareVersions(currentTag string, latestTag string) (bool, string) {
+func isLatestVersion(currentTag string, latestTag string) (string, bool) {
 	currentVersion, err := ver.NewVersion(currentTag)
 	if err != nil {
 		internal.FatalErrorf("Current version is not semantically versioned: %s", currentTag)
 	}
 
-	latestVersion, err := ver.NewVersion(latestTag[1:])
+	latestVersion, err := ver.NewVersion(latestTag[1:]) // Remove 'v' from the tag
 	if err != nil {
 		internal.FatalErrorf("Latest version is not semantically versioned: %s", latestVersion)
 	}
 
 	if currentVersion.LessThan(latestVersion) {
-		return true, latestVersion.String()
+		return latestVersion.String(), true
 	}
-	return false, ""
+	return "", false
 }
 
 func askForConfirmation(s string) bool {
