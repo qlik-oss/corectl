@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -9,11 +10,12 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/google/go-github/v26/github"
+	ver "github.com/hashicorp/go-version"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tcnksm/go-latest"
 )
 
 var versionCmd = &cobra.Command{
@@ -60,21 +62,19 @@ corectl status --app=my-app.qvf`,
 
 // Function for checking current version against latest released version on github
 func checkLatestVersion() {
-	githubTag := &latest.GithubTag{
-		Owner:      "qlik-oss",
-		Repository: "corectl",
-	}
-	res, err := latest.Check(githubTag, version)
+	client := github.NewClient(nil)
+	rel, _, err := client.Repositories.GetLatestRelease(context.Background(), "qlik-oss", "corectl")
 	if err != nil {
 		// If we cannot connect to github just print the version
 		fmt.Printf("corectl version: %s\n", version)
 		return
 	}
-	if res.Outdated {
+	outdated, latestVersion := compareVersions(version, *rel.TagName)
+	if outdated {
 		// Find absolute path of executable
 		executable, _ := os.Executable()
 		fmt.Println("--------------------------------------------------")
-		fmt.Printf("corectl version: %s, latest version is %s\n", version, res.Current)
+		fmt.Printf("corectl version: %s, latest version is %s\n", version, latestVersion)
 		switch runtime.GOOS {
 		case "darwin":
 			fmt.Println("To update to the latest version using brew just run:")
@@ -94,9 +94,9 @@ func checkLatestVersion() {
 		// Format a download string depending on OS
 		var dwnl string
 		if runtime.GOOS == "windows" {
-			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "%s" && rm ./corectl.zip`, res.Current, path.Dir(executable))
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-windows-x86_64.zip" > corectl.zip && unzip ./corectl.zip -d "%s" && rm ./corectl.zip`, latestVersion, path.Dir(executable))
 		} else {
-			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, res.Current, runtime.GOOS, path.Dir(executable))
+			dwnl = fmt.Sprintf(`curl --silent --location "https://github.com/qlik-oss/corectl/releases/download/v%s/corectl-%s-x86_64.tar.gz" | tar xz -C /tmp && mv /tmp/corectl %s`, latestVersion, runtime.GOOS, path.Dir(executable))
 		}
 		fmt.Printf("\n  %s\n\n", dwnl)
 		fmt.Println("If you have any problems, questions or feedback you can find us on:")
@@ -106,6 +106,23 @@ func checkLatestVersion() {
 	} else {
 		fmt.Printf("corectl version: %s\n", version)
 	}
+}
+
+func compareVersions(currentTag string, latestTag string) (bool, string) {
+	currentVersion, err := ver.NewVersion(currentTag)
+	if err != nil {
+		internal.FatalErrorf("Current version is not semantically versioned: %s", currentTag)
+	}
+
+	latestVersion, err := ver.NewVersion(latestTag[1:])
+	if err != nil {
+		internal.FatalErrorf("Latest version is not semantically versioned: %s", latestVersion)
+	}
+
+	if currentVersion.LessThan(latestVersion) {
+		return true, latestVersion.String()
+	}
+	return false, ""
 }
 
 func askForConfirmation(s string) bool {
