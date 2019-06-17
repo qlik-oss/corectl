@@ -99,8 +99,8 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 	for range allInfos {
 		<-waitChannel
 	}
-	writeMeasures(measureArrayLock, measureArray, folder)
-	writeDimensions(dimensionArrayLock, dimensionArray, folder)
+	writeMeasures(measureArray, folder)
+	writeDimensions(dimensionArray, folder)
 }
 
 func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
@@ -116,7 +116,6 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 				props, _ := variable.GetPropertiesRaw(ctx)
 				variableArray = append(variableArray, JsonWithOrder{props, index})
 				variarbleArraySync.Unlock()
-			} else if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
 			}
 			waitChannel <- true
 		}(index, item)
@@ -124,7 +123,7 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 	for range variables {
 		<-waitChannel
 	}
-	writeVariables(variarbleArraySync, variableArray, folder)
+	writeVariables(variableArray, folder)
 }
 
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
@@ -155,32 +154,26 @@ func exportMainConfigFile(rootFolder string) {
 		"dimensions: dimensions.json\n" +
 		"measures: measures.json\n" +
 		"objects: objects/*.json\n" +
-		"variables: variables/*.json\n"
+		"variables: variables.json\n"
 	ioutil.WriteFile(rootFolder+"/corectl.yml", []byte(config), os.ModePerm)
 }
 
-func writeDimensions(dimensionArrayLock sync.Mutex, dimensionArray []JsonWithOrder, folder string) {
-	dimensionArrayLock.Lock()
+func writeDimensions(dimensionArray []JsonWithOrder, folder string) {
 	sortJsonArray(dimensionArray)
 	filename := folder + "/dimensions.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(dimensionArray)), os.ModePerm)
-	dimensionArrayLock.Unlock()
 }
 
-func writeMeasures(measureArrayLock sync.Mutex, measureArray []JsonWithOrder, folder string) {
-	measureArrayLock.Lock()
+func writeMeasures(measureArray []JsonWithOrder, folder string) {
 	sortJsonArray(measureArray)
 	filename := folder + "/measures.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(measureArray)), os.ModePerm)
-	measureArrayLock.Unlock()
 }
 
-func writeVariables(variableArrayLock sync.Mutex, variableArray []JsonWithOrder, folder string) {
-	variableArrayLock.Lock()
+func writeVariables(variableArray []JsonWithOrder, folder string) {
 	sortJsonArray(variableArray)
 	filename := folder + "/variables.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(variableArray)), os.ModePerm)
-	variableArrayLock.Unlock()
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
