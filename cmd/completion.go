@@ -36,6 +36,8 @@ Note that bash-completion is required and needs to be installed on your system.`
 			rootCmd.GenBashCompletion(os.Stdout)
 		case args[0] == "zsh":
 			genZshCompletion()
+		case args[0] == "ps":
+			rootCmd.GenPowerShellCompletion(os.Stdout)
 		default:
 			fmt.Printf("'%s' is not a supported shell\n", args[0])
 		}
