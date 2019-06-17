@@ -56,6 +56,7 @@ var rootCmd = &cobra.Command{
 func Execute(mainVersion string) {
 	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
+		// Cobra already prints an error message so we just want to exit
 		os.Exit(1)
 	}
 }

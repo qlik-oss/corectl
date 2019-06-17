@@ -46,7 +46,7 @@ Note that bash-completion is required and needs to be installed on your system.`
 
 const bashCompletionFunc = `
 
-__custom_func()
+__corectl_custom_func()
 {
 	case ${last_command} in
 		corectl_dimension_properties | corectl_dimension_layout | corectl_dimension_rm)
@@ -70,11 +70,36 @@ __custom_func()
 		corectl_app_rm)
 			__corectl_get_apps
 			;;
+		corectl_app_import)
+			__get_files_by_extensions "qvf"
+			;;
+		corectl_script_set)
+			__get_files_by_extensions "qvs"
+			;;
+		corectl_dimension_set | corectl_measure_set | corectl_bookmark_set | corectl_variable_set | corectl_object_set)
+			__get_files_by_extensions "json"
+			;;
+		corectl_connection_set)
+			__get_files_by_extensions "yaml yml"
+			;;
     *)
 			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
 			;;
 	esac
 }
+
+__get_files_by_extensions()
+{
+	local rv
+	local FILE_EXTS
+	FILE_EXTS=$1
+	for EXT in $FILE_EXTS; do
+		rv="$rv $(ls $cur*.$EXT 2>/dev/null)"
+	done
+	rv="$rv $(ls $cur*/ -d 2>/dev/null)"
+	COMPREPLY+=( $( compgen -W "$rv"  -- "$cur") )
+}
+
 
 __extract_flags_to_forward()
 {
