@@ -96,7 +96,7 @@ __get_files_by_extensions()
 	for EXT in $FILE_EXTS; do
 		rv="$rv $(ls $cur*.$EXT 2>/dev/null)"
 	done
-	rv="$rv $(ls $cur*/ -d 2>/dev/null)"
+	rv="$rv $(ls -d $cur*/ 2>/dev/null)"
 	COMPREPLY+=( $( compgen -W "$rv"  -- "$cur") )
 }
 
