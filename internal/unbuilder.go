@@ -131,31 +131,27 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	script, _ := doc.GetScript(ctx)
-	if script != "" {
-		ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
-		LogVerbose("Exported script to " + folder + "/script.qvs")
-	}
+	ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
+	LogVerbose("Exported script to " + folder + "/script.qvs")
 }
 
 func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	connections, _ := doc.GetConnections(ctx)
 	nbrConnections := len(connections)
 
-	if nbrConnections > 0 {
-		connectionsStr := "connections:\n"
-		for _, x := range connections {
-			connectionsStr += "  " + x.Name + ":" + "\n"
-			connectionsStr += "    type: " + x.Type + "\n"
-			connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
-			if x.Type != "folder" {
-				connectionsStr += "    username: " + x.UserName + "\n"
-				connectionsStr += "    password: " + "\n"
-			}
+	connectionsStr := "connections:\n"
+	for _, x := range connections {
+		connectionsStr += "  " + x.Name + ":" + "\n"
+		connectionsStr += "    type: " + x.Type + "\n"
+		connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
+		if x.Type != "folder" {
+			connectionsStr += "    username: " + x.UserName + "\n"
+			connectionsStr += "    password: " + "\n"
 		}
-
-		ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
-		LogVerbose("Exported " + strconv.Itoa(nbrConnections) + " connection(s) to " + folder + "/connections.yml")
 	}
+
+	ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
+	LogVerbose("Exported " + strconv.Itoa(nbrConnections) + " connection(s) to " + folder + "/connections.yml")
 }
 
 func exportMainConfigFile(rootFolder string) {
@@ -170,32 +166,26 @@ func exportMainConfigFile(rootFolder string) {
 
 func writeDimensions(dimensionArray []JsonWithOrder, folder string) {
 	nbrDimensions := len(dimensionArray)
-	if nbrDimensions > 0 {
-		sortJSONArray(dimensionArray)
-		filename := folder + "/dimensions.json"
-		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(dimensionArray)), os.ModePerm)
-		LogVerbose("Exported " + strconv.Itoa(nbrDimensions) + " dimension(s) to " + filename)
-	}
+	sortJSONArray(dimensionArray)
+	filename := folder + "/dimensions.json"
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(dimensionArray)), os.ModePerm)
+	LogVerbose("Exported " + strconv.Itoa(nbrDimensions) + " dimension(s) to " + filename)
 }
 
 func writeMeasures(measureArray []JsonWithOrder, folder string) {
 	nbrMeasures := len(measureArray)
-	if nbrMeasures > 0 {
-		sortJSONArray(measureArray)
-		filename := folder + "/measures.json"
-		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(measureArray)), os.ModePerm)
-		LogVerbose("Exported " + strconv.Itoa(nbrMeasures) + " measure(s) to " + filename)
-	}
+	sortJSONArray(measureArray)
+	filename := folder + "/measures.json"
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(measureArray)), os.ModePerm)
+	LogVerbose("Exported " + strconv.Itoa(nbrMeasures) + " measure(s) to " + filename)
 }
 
 func writeVariables(variableArray []JsonWithOrder, folder string) {
 	nbrVariables := len(variableArray)
-	if nbrVariables > 0 {
-		sortJSONArray(variableArray)
-		filename := folder + "/variables.json"
-		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(variableArray)), os.ModePerm)
-		LogVerbose("Exported " + strconv.Itoa(nbrVariables) + " variable(s) to " + filename)
-	}
+	sortJSONArray(variableArray)
+	filename := folder + "/variables.json"
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(variableArray)), os.ModePerm)
+	LogVerbose("Exported " + strconv.Itoa(nbrVariables) + " variable(s) to " + filename)
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
@@ -230,7 +220,7 @@ func sortJSONArray(array []JsonWithOrder) {
 }
 
 func toJSONArray(array []JsonWithOrder) []json.RawMessage {
-	var result []json.RawMessage
+	result := []json.RawMessage{}
 	for _, x := range array {
 		result = append(result, x.Json)
 	}
