@@ -88,7 +88,7 @@ Also check out the blog post about utilizing `corectl` and `catwalk` to build yo
 
 Usage documentation can be found [here](./docs/corectl.md).
 
-### macOS & Linux
+### bash & zsh
 
 `corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
@@ -108,7 +108,7 @@ complete -o default -F __start_corectl <myalias>
 ```
 where `<myalias>` should be substituted for whatever you wish to call `corectl`.
 
-### Windows
+### PowerShell
 
 `corectl` has some basic auto completion for PowerShell. It can be used by doing the following.
 
@@ -120,8 +120,6 @@ followed by adding the following to your PowerShell [profile](https://docs.micro
 ```powershell
 . <file-path.ps1>
 ```
-
-If you prefer using the git-bash shell you can install the completion as described in the macOS & Linux section, substituting `<shell>` with `bash`.
 
 # Development
 
