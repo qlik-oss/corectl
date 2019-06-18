@@ -121,7 +121,7 @@ followed by adding the following to your PowerShell [profile](https://docs.micro
 . <file-path.ps1>
 ```
 
-If you prefer using the git-bash shell you can install the completion as described in the macOS & Linux section, substituing `<shell>` with `bash`.
+If you prefer using the git-bash shell you can install the completion as described in the macOS & Linux section, substituting `<shell>` with `bash`.
 
 # Development
 
