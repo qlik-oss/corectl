@@ -4,6 +4,8 @@ vendor/
 .DS_Store
 *.exe
 corectl
-corectl.exe
 main
 .snapcraft/
+*-unbuild/
+*.qvf
+!test/projects/import/test.qvf
