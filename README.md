@@ -98,7 +98,7 @@ if [ $(which corectl) ]; then
 fi
 ```
 
-(Substitute <shell> with `bash` or `zsh`.)
+(Substitute `<shell>` with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
 If you want add an alias for `corectl`, you can add the following snippet into your `rc` file aswell
@@ -120,6 +120,8 @@ followed by adding the following to your PowerShell [profile](https://docs.micro
 ```powershell
 . <file-path.ps1>
 ```
+
+If you prefer using the git-bash shell you can install the completion as described in the macOS & Linux section, substituting `<shell>` with `bash`.
 
 # Development
 
