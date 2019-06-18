@@ -3,7 +3,7 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"github.com/qlik-oss/enigma-go"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,6 +11,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 type (
@@ -39,6 +41,7 @@ var matchAllNonAlphaNumeric = regexp.MustCompile(`[^a-zA-Z0-9]+`)
 
 // Unbuild exports measures, dimensions, variables, connections, objects and a config file from an app into the file system
 func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFolder string) {
+	LogVerbose("Exporting app to folder: " + rootFolder)
 	os.MkdirAll(rootFolder, os.ModePerm)
 	exportEntities(ctx, doc, rootFolder)
 	exportVariables(ctx, doc, rootFolder)
@@ -129,13 +132,14 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	script, _ := doc.GetScript(ctx)
 	ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
+	LogVerbose("Exported script to " + folder + "/script.qvs")
 }
 
-func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) string {
+func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	connections, _ := doc.GetConnections(ctx)
 	connectionsStr := "connections:\n"
 	for _, x := range connections {
-		connectionsStr += "  " + x.Name + ": " + "\n"
+		connectionsStr += "  " + x.Name + ":" + "\n"
 		connectionsStr += "    type: " + x.Type + "\n"
 		connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
 		if x.Type != "folder" {
@@ -145,7 +149,7 @@ func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) stri
 	}
 
 	ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
-	return connectionsStr
+	LogVerbose(fmt.Sprintf("Exported %v connection(s) to %s/connections.yml", len(connections), folder))
 }
 
 func exportMainConfigFile(rootFolder string) {
@@ -159,21 +163,24 @@ func exportMainConfigFile(rootFolder string) {
 }
 
 func writeDimensions(dimensionArray []JsonWithOrder, folder string) {
-	sortJsonArray(dimensionArray)
+	sortJSONArray(dimensionArray)
 	filename := folder + "/dimensions.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(dimensionArray)), os.ModePerm)
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(dimensionArray)), os.ModePerm)
+	LogVerbose(fmt.Sprintf("Exported %v dimension(s) to %s/dimensions.yml", len(dimensionArray), folder))
 }
 
 func writeMeasures(measureArray []JsonWithOrder, folder string) {
-	sortJsonArray(measureArray)
+	sortJSONArray(measureArray)
 	filename := folder + "/measures.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(measureArray)), os.ModePerm)
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(measureArray)), os.ModePerm)
+	LogVerbose(fmt.Sprintf("Exported %v measure(s) to %s/measures.yml", len(measureArray), folder))
 }
 
 func writeVariables(variableArray []JsonWithOrder, folder string) {
-	sortJsonArray(variableArray)
+	sortJSONArray(variableArray)
 	filename := folder + "/variables.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(variableArray)), os.ModePerm)
+	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(variableArray)), os.ModePerm)
+	LogVerbose(fmt.Sprintf("Exported %v variable(s) to %s/variables.yml", len(variableArray), folder))
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
@@ -194,20 +201,21 @@ func buildEntityFilename(folder, qType, viz, title string) string {
 	return folder + "/" + filename + ".json"
 }
 
+// BuildRootFolderFromTitle returns a folder name based on app title
 func BuildRootFolderFromTitle(title string) string {
 	title = strings.ToLower(title) + "-unbuild"
 	title = matchAllNonAlphaNumeric.ReplaceAllString(title, `-`)
 	return title
 }
 
-func sortJsonArray(array []JsonWithOrder) {
+func sortJSONArray(array []JsonWithOrder) {
 	sort.SliceStable(array, func(i, j int) bool {
 		return array[i].Order < array[j].Order
 	})
 }
 
-func toJsonArray(array []JsonWithOrder) []json.RawMessage {
-	var result []json.RawMessage
+func toJSONArray(array []JsonWithOrder) []json.RawMessage {
+	result := []json.RawMessage{}
 	for _, x := range array {
 		result = append(result, x.Json)
 	}
