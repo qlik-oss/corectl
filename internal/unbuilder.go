@@ -3,12 +3,12 @@ package internal
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -137,8 +137,6 @@ func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 
 func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	connections, _ := doc.GetConnections(ctx)
-	nbrConnections := len(connections)
-
 	connectionsStr := "connections:\n"
 	for _, x := range connections {
 		connectionsStr += "  " + x.Name + ":" + "\n"
@@ -151,7 +149,7 @@ func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	}
 
 	ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
-	LogVerbose("Exported " + strconv.Itoa(nbrConnections) + " connection(s) to " + folder + "/connections.yml")
+	LogVerbose(fmt.Sprintf("Exported %v connection(s) to %s/connections.yml", len(connections), folder))
 }
 
 func exportMainConfigFile(rootFolder string) {
@@ -165,27 +163,24 @@ func exportMainConfigFile(rootFolder string) {
 }
 
 func writeDimensions(dimensionArray []JsonWithOrder, folder string) {
-	nbrDimensions := len(dimensionArray)
 	sortJSONArray(dimensionArray)
 	filename := folder + "/dimensions.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(dimensionArray)), os.ModePerm)
-	LogVerbose("Exported " + strconv.Itoa(nbrDimensions) + " dimension(s) to " + filename)
+	LogVerbose(fmt.Sprintf("Exported %v dimension(s) to %s/dimensions.yml", len(dimensionArray), folder))
 }
 
 func writeMeasures(measureArray []JsonWithOrder, folder string) {
-	nbrMeasures := len(measureArray)
 	sortJSONArray(measureArray)
 	filename := folder + "/measures.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(measureArray)), os.ModePerm)
-	LogVerbose("Exported " + strconv.Itoa(nbrMeasures) + " measure(s) to " + filename)
+	LogVerbose(fmt.Sprintf("Exported %v measure(s) to %s/measures.yml", len(measureArray), folder))
 }
 
 func writeVariables(variableArray []JsonWithOrder, folder string) {
-	nbrVariables := len(variableArray)
 	sortJSONArray(variableArray)
 	filename := folder + "/variables.json"
 	ioutil.WriteFile(filename, marshalOrFail(toJSONArray(variableArray)), os.ModePerm)
-	LogVerbose("Exported " + strconv.Itoa(nbrVariables) + " variable(s) to " + filename)
+	LogVerbose(fmt.Sprintf("Exported %v variable(s) to %s/variables.yml", len(variableArray), folder))
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
