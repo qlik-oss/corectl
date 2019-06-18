@@ -3,14 +3,16 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"github.com/qlik-oss/enigma-go"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 type (
@@ -39,6 +41,7 @@ var matchAllNonAlphaNumeric = regexp.MustCompile(`[^a-zA-Z0-9]+`)
 
 // Unbuild exports measures, dimensions, variables, connections, objects and a config file from an app into the file system
 func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFolder string) {
+	LogVerbose("Exporting app to folder: " + rootFolder)
 	os.MkdirAll(rootFolder, os.ModePerm)
 	exportEntities(ctx, doc, rootFolder)
 	exportVariables(ctx, doc, rootFolder)
@@ -128,24 +131,31 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 
 func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	script, _ := doc.GetScript(ctx)
-	ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
+	if script != "" {
+		ioutil.WriteFile(folder+"/script.qvs", []byte(script), os.ModePerm)
+		LogVerbose("Exported script to " + folder + "/script.qvs")
+	}
 }
 
-func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) string {
+func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	connections, _ := doc.GetConnections(ctx)
-	connectionsStr := "connections:\n"
-	for _, x := range connections {
-		connectionsStr += "  " + x.Name + ": " + "\n"
-		connectionsStr += "    type: " + x.Type + "\n"
-		connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
-		if x.Type != "folder" {
-			connectionsStr += "    username: " + x.UserName + "\n"
-			connectionsStr += "    password: " + "\n"
-		}
-	}
+	nbrConnections := len(connections)
 
-	ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
-	return connectionsStr
+	if nbrConnections > 0 {
+		connectionsStr := "connections:\n"
+		for _, x := range connections {
+			connectionsStr += "  " + x.Name + ":" + "\n"
+			connectionsStr += "    type: " + x.Type + "\n"
+			connectionsStr += "    connectionstring: " + x.ConnectionString + "\n"
+			if x.Type != "folder" {
+				connectionsStr += "    username: " + x.UserName + "\n"
+				connectionsStr += "    password: " + "\n"
+			}
+		}
+
+		ioutil.WriteFile(folder+"/connections.yml", []byte(connectionsStr), os.ModePerm)
+		LogVerbose("Exported " + strconv.Itoa(nbrConnections) + " connection(s) to " + folder + "/connections.yml")
+	}
 }
 
 func exportMainConfigFile(rootFolder string) {
@@ -159,21 +169,33 @@ func exportMainConfigFile(rootFolder string) {
 }
 
 func writeDimensions(dimensionArray []JsonWithOrder, folder string) {
-	sortJsonArray(dimensionArray)
-	filename := folder + "/dimensions.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(dimensionArray)), os.ModePerm)
+	nbrDimensions := len(dimensionArray)
+	if nbrDimensions > 0 {
+		sortJSONArray(dimensionArray)
+		filename := folder + "/dimensions.json"
+		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(dimensionArray)), os.ModePerm)
+		LogVerbose("Exported " + strconv.Itoa(nbrDimensions) + " dimension(s) to " + filename)
+	}
 }
 
 func writeMeasures(measureArray []JsonWithOrder, folder string) {
-	sortJsonArray(measureArray)
-	filename := folder + "/measures.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(measureArray)), os.ModePerm)
+	nbrMeasures := len(measureArray)
+	if nbrMeasures > 0 {
+		sortJSONArray(measureArray)
+		filename := folder + "/measures.json"
+		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(measureArray)), os.ModePerm)
+		LogVerbose("Exported " + strconv.Itoa(nbrMeasures) + " measure(s) to " + filename)
+	}
 }
 
 func writeVariables(variableArray []JsonWithOrder, folder string) {
-	sortJsonArray(variableArray)
-	filename := folder + "/variables.json"
-	ioutil.WriteFile(filename, marshalOrFail(toJsonArray(variableArray)), os.ModePerm)
+	nbrVariables := len(variableArray)
+	if nbrVariables > 0 {
+		sortJSONArray(variableArray)
+		filename := folder + "/variables.json"
+		ioutil.WriteFile(filename, marshalOrFail(toJSONArray(variableArray)), os.ModePerm)
+		LogVerbose("Exported " + strconv.Itoa(nbrVariables) + " variable(s) to " + filename)
+	}
 }
 
 func marshalOrFail(v interface{}) json.RawMessage {
@@ -194,19 +216,20 @@ func buildEntityFilename(folder, qType, viz, title string) string {
 	return folder + "/" + filename + ".json"
 }
 
+// BuildRootFolderFromTitle returns a folder name based on app title
 func BuildRootFolderFromTitle(title string) string {
 	title = strings.ToLower(title) + "-unbuild"
 	title = matchAllNonAlphaNumeric.ReplaceAllString(title, `-`)
 	return title
 }
 
-func sortJsonArray(array []JsonWithOrder) {
+func sortJSONArray(array []JsonWithOrder) {
 	sort.SliceStable(array, func(i, j int) bool {
 		return array[i].Order < array[j].Order
 	})
 }
 
-func toJsonArray(array []JsonWithOrder) []json.RawMessage {
+func toJSONArray(array []JsonWithOrder) []json.RawMessage {
 	var result []json.RawMessage
 	for _, x := range array {
 		result = append(result, x.Json)
