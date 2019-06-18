@@ -7,3 +7,6 @@ corectl
 corectl.exe
 main
 .snapcraft/
+*-unbuild/
+*.qvf
+!test/projects/import/test.qvf
