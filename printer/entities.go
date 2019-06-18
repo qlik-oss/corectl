@@ -141,6 +141,7 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 	if len(properties) == 0 {
 		internal.FatalErrorf("no %s by ID '%s'", entityType, entityID)
 	} else {
+		properties = internal.InjectSchemaIntoProperties(properties, entityType)
 		internal.PrintAsJSON(properties)
 	}
 }

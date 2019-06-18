@@ -1,16 +1,17 @@
 {
+  "$schema": "https://core.qlik.com/json-schema/generic-variable.json",
+  "qComment": "First three letters of the alphabet",
+  "qDefinition": "1",
   "qInfo": {
     "qId": "variable-abc",
     "qType": "variable"
   },
   "qMetaDef": {},
   "qName": "variable-abc",
-  "qComment": "First three letters of the alphabet",
   "qNumberPresentation": {
     "qType": "U",
-    "qnDec": 10,
-    "qUseThou": 0
+    "qUseThou": 0,
+    "qnDec": 10
   },
-  "qDefinition": "1",
   "tags": []
 }

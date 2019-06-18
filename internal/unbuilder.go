@@ -62,11 +62,13 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 		go func(index int, item *enigma.NxInfo) {
 			if dimension, _ := doc.GetDimension(ctx, item.Id); dimension != nil && dimension.Type != "" {
 				props, _ := dimension.GetPropertiesRaw(ctx)
+				props = InjectSchemaIntoProperties(props, "dimension")
 				dimensionArrayLock.Lock()
 				dimensionArray = append(dimensionArray, JsonWithOrder{props, index})
 				dimensionArrayLock.Unlock()
 			} else if measure, _ := doc.GetMeasure(ctx, item.Id); measure != nil && measure.Type != "" {
 				props, _ := measure.GetPropertiesRaw(ctx)
+				props = InjectSchemaIntoProperties(props, "measure")
 				measureArrayLock.Lock()
 				measureArray = append(measureArray, JsonWithOrder{props, index})
 				measureArrayLock.Unlock()
@@ -80,6 +82,7 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 					} else {
 						rawProps, _ = object.GetPropertiesRaw(ctx)
 					}
+					rawProps = InjectSchemaIntoProperties(rawProps, "object")
 					propsWithTitle := &UnbuildEntityProperies{}
 					json.Unmarshal(rawProps, propsWithTitle)
 					if propsWithTitle.QProperty != nil {
@@ -117,6 +120,7 @@ func exportVariables(ctx context.Context, doc *enigma.Doc, folder string) {
 			if variable, _ := doc.GetVariableByName(ctx, item.Title); variable != nil && variable.Handle != 0 {
 				variarbleArraySync.Lock()
 				props, _ := variable.GetPropertiesRaw(ctx)
+				props = InjectSchemaIntoProperties(props, "variable")
 				variableArray = append(variableArray, JsonWithOrder{props, index})
 				variarbleArraySync.Unlock()
 			}

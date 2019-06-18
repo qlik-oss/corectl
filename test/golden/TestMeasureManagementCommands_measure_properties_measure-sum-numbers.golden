@@ -1,13 +1,14 @@
 {
+  "$schema": "https://core.qlik.com/json-schema/generic-measure.json",
   "qInfo": {
     "qId": "measure-sum-numbers",
     "qType": "measure"
   },
   "qMeasure": {
-    "qDef": "Sum(numbers)",
-    "qGrouping": "N",
-    "qExpressions": [],
     "qActiveExpression": 0,
+    "qDef": "Sum(numbers)",
+    "qExpressions": [],
+    "qGrouping": "N",
     "title": "Sum of numbers"
   },
   "qMetaDef": {}

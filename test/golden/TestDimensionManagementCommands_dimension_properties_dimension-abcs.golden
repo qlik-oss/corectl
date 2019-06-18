@@ -1,14 +1,15 @@
 {
-  "qInfo": {
-    "qId": "dimension-abcs",
-    "qType": "dimension"
-  },
+  "$schema": "https://core.qlik.com/json-schema/generic-dimension.json",
   "qDim": {
-    "qGrouping": "N",
     "qFieldDefs": [
       "abcs"
     ],
-    "qFieldLabels": []
+    "qFieldLabels": [],
+    "qGrouping": "N"
+  },
+  "qInfo": {
+    "qId": "dimension-abcs",
+    "qType": "dimension"
   },
   "qMetaDef": {}
 }

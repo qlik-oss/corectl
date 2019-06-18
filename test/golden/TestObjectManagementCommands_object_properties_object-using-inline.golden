@@ -1,93 +1,94 @@
 {
-  "qInfo": {
-    "qId": "object-using-inline",
-    "qType": "my-hypercube"
-  },
-  "qMetaDef": {},
+  "$schema": "https://core.qlik.com/json-schema/generic-object.json",
   "qHyperCubeDef": {
-    "qDimensions": [
-      {
-        "qDef": {
-          "qGrouping": "N",
-          "qFieldDefs": [
-            "xyz"
-          ],
-          "qFieldLabels": [],
-          "qSortCriterias": [],
-          "qNumberPresentations": [],
-          "qActiveField": 0
-        },
-        "qOtherTotalSpec": {
-          "qOtherMode": "OTHER_OFF",
-          "qOtherCounted": {},
-          "qOtherLimit": {},
-          "qOtherLimitMode": "OTHER_GT_LIMIT",
-          "qForceBadValueKeeping": true,
-          "qApplyEvenWhenPossiblyWrongResult": true,
-          "qOtherSortMode": "OTHER_SORT_DESCENDING",
-          "qTotalMode": "TOTAL_OFF",
-          "qReferencedExpression": {}
-        },
-        "qOtherLabel": {},
-        "qTotalLabel": {},
-        "qCalcCond": {},
-        "qAttributeExpressions": [],
-        "qAttributeDimensions": [],
-        "qCalcCondition": {
-          "qCond": {},
-          "qMsg": {}
-        }
-      }
-    ],
-    "qMeasures": [
-      {
-        "qDef": {
-          "qTags": [],
-          "qGrouping": "N",
-          "qDef": "count(numbers)",
-          "qNumFormat": {
-            "qType": "U",
-            "qnDec": 10,
-            "qUseThou": 0
-          },
-          "qAccumulate": 0,
-          "qActiveExpression": 0,
-          "qExpressions": []
-        },
-        "qSortBy": {
-          "qSortByFrequency": 1,
-          "qExpression": {}
-        },
-        "qAttributeExpressions": [],
-        "qAttributeDimensions": [],
-        "qCalcCond": {},
-        "qCalcCondition": {
-          "qCond": {},
-          "qMsg": {}
-        }
-      }
-    ],
-    "qInterColumnSortOrder": [],
-    "qInitialDataFetch": [
-      {
-        "qLeft": 0,
-        "qTop": 0,
-        "qWidth": 50,
-        "qHeight": 20
-      }
-    ],
-    "qReductionMode": "N",
-    "qMode": "S",
-    "qPseudoDimPos": -1,
-    "qNoOfLeftDims": -1,
-    "qMaxStackedCells": 5000,
+    "customProperty": "should be filtered by the minimum flag",
     "qCalcCond": {},
-    "qTitle": {},
     "qCalcCondition": {
       "qCond": {},
       "qMsg": {}
     },
     "qColumnOrder": [],
-    "customProperty": "should be filtered by the minimum flag"
-  }
+    "qDimensions": [
+      {
+        "qAttributeDimensions": [],
+        "qAttributeExpressions": [],
+        "qCalcCond": {},
+        "qCalcCondition": {
+          "qCond": {},
+          "qMsg": {}
+        },
+        "qDef": {
+          "qActiveField": 0,
+          "qFieldDefs": [
+            "xyz"
+          ],
+          "qFieldLabels": [],
+          "qGrouping": "N",
+          "qNumberPresentations": [],
+          "qSortCriterias": []
+        },
+        "qOtherLabel": {},
+        "qOtherTotalSpec": {
+          "qApplyEvenWhenPossiblyWrongResult": true,
+          "qForceBadValueKeeping": true,
+          "qOtherCounted": {},
+          "qOtherLimit": {},
+          "qOtherLimitMode": "OTHER_GT_LIMIT",
+          "qOtherMode": "OTHER_OFF",
+          "qOtherSortMode": "OTHER_SORT_DESCENDING",
+          "qReferencedExpression": {},
+          "qTotalMode": "TOTAL_OFF"
+        },
+        "qTotalLabel": {}
+      }
+    ],
+    "qInitialDataFetch": [
+      {
+        "qHeight": 20,
+        "qLeft": 0,
+        "qTop": 0,
+        "qWidth": 50
+      }
+    ],
+    "qInterColumnSortOrder": [],
+    "qMaxStackedCells": 5000,
+    "qMeasures": [
+      {
+        "qAttributeDimensions": [],
+        "qAttributeExpressions": [],
+        "qCalcCond": {},
+        "qCalcCondition": {
+          "qCond": {},
+          "qMsg": {}
+        },
+        "qDef": {
+          "qAccumulate": 0,
+          "qActiveExpression": 0,
+          "qDef": "count(numbers)",
+          "qExpressions": [],
+          "qGrouping": "N",
+          "qNumFormat": {
+            "qType": "U",
+            "qUseThou": 0,
+            "qnDec": 10
+          },
+          "qTags": []
+        },
+        "qSortBy": {
+          "qExpression": {},
+          "qSortByFrequency": 1
+        }
+      }
+    ],
+    "qMode": "S",
+    "qNoOfLeftDims": -1,
+    "qPseudoDimPos": -1,
+    "qReductionMode": "N",
+    "qTitle": {}
+  },
+  "qInfo": {
+    "qId": "object-using-inline",
+    "qType": "my-hypercube"
+  },
+  "qMetaDef": {}
 }
