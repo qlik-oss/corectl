@@ -17,6 +17,6 @@ func PrintTables(data *internal.ModelMetadata) {
 	for _, table := range data.Tables {
 		writer.Append([]string{table.Name, strconv.Itoa(table.NoOfRows), table.MemUsage(), data.FieldsInTableTexts[table.Name]})
 	}
-	writer.SetFooter([]string{"", "Total RAM", data.MemUsage(), ""})
+	writer.SetFooter([]string{" ", "Total RAM", data.MemUsage(), " "})
 	writer.Render()
 }
