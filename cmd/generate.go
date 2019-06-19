@@ -102,6 +102,7 @@ var generateSpecCmd = &cobra.Command{
 	Hidden: true,
 
 	Run: func(ccmd *cobra.Command, args []string) {
+		fmt.Println("Generating specification")
 		var jsonData []byte
 		spec := spec{
 			Clispec: "0.1.0",
