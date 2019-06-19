@@ -5,8 +5,8 @@ Split up an existing app into separate json and yaml files
 ### Synopsis
 
 Extracts generic objects, dimensions, measures, variables, reload script and connections from an app in an engine into separate json and yaml files.  
-In addition to the resources from the app a corectl.yml configuration file is generated that binds them all together. 
-Passwords in the connection definitions can not be exported from the app and hence need to be handled manually. 
+In addition to the resources from the app a corectl.yml configuration file is generated that binds them all together.
+Passwords in the connection definitions can not be exported from the app and hence need to be handled manually.
 Generic Object trees (e.g. Qlik Sense sheets) are exported as a a full property tree which means that child objects are found inside the parent´s json (the qChildren array). 
 
 
@@ -18,6 +18,7 @@ corectl unbuild [flags]
 
 ```
 corectl unbuild
+corectl unbuild --app APP-ID
 ```
 
 ### Options
