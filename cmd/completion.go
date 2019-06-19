@@ -71,35 +71,22 @@ __corectl_custom_func()
 			__corectl_get_apps
 			;;
 		corectl_app_import)
-			__get_files_by_extensions "qvf"
+			__corectl_handle_filename_extension_flag "qvf"
 			;;
 		corectl_script_set)
-			__get_files_by_extensions "qvs"
+			__corectl_handle_filename_extension_flag "qvs"
 			;;
 		corectl_dimension_set | corectl_measure_set | corectl_bookmark_set | corectl_variable_set | corectl_object_set)
-			__get_files_by_extensions "json"
+			__corectl_handle_filename_extension_flag "json"
 			;;
 		corectl_connection_set)
-			__get_files_by_extensions "yaml yml"
+			__corectl_handle_filename_extension_flag "yaml|yml"
 			;;
     *)
 			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
 			;;
 	esac
 }
-
-__get_files_by_extensions()
-{
-	local rv
-	local FILE_EXTS
-	FILE_EXTS=$1
-	for EXT in $FILE_EXTS; do
-		rv="$rv $(ls $cur*.$EXT 2>/dev/null)"
-	done
-	rv="$rv $(ls -d $cur*/ 2>/dev/null)"
-	COMPREPLY+=( $( compgen -W "$rv"  -- "$cur") )
-}
-
 
 __extract_flags_to_forward()
 {
