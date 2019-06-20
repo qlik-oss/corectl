@@ -21,13 +21,20 @@ if [[ $1 == "-?" || $1 == "-h" || $1 == "--help" ]]; then
 fi
 
 function pre_flight_checks() {
+  # Check if there are local uncommitted changes
   if [[ ! -z $(git status --porcelain) ]]; then
     echo "There are uncommitted changes. Please make sure branch is clean."
     exit 1
   fi
+  # Check if local branch is up-to-date with remote master branch
+  git fetch origin master
+  if [[ ! -z $(git diff origin/master) ]]; then
+    echo "Local branch is not up-to-date with remote master. Please pull the latest changes."
+    exit 1
+  fi
 }
 
-## Check that there are no uncommitted changes locally
+## Verify that the local branch is pristine
 pre_flight_checks
 
 ## Build corectl with the version number and generate an API specification
