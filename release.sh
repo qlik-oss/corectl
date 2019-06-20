@@ -26,7 +26,7 @@ function pre_flight_checks() {
     echo "There are uncommitted changes. Please make sure branch is clean."
     exit 1
   fi
-  # Check if local branch are up-to-date with remote master branch
+  # Check if local branch is up-to-date with remote master branch
   git fetch origin master
   if [[ ! -z $(git diff origin/master) ]]; then
     echo "Local branch is not up-to-date with remote master. Please pull the latest changes."
@@ -34,7 +34,7 @@ function pre_flight_checks() {
   fi
 }
 
-## Check that local branch is pristine
+## Verify that the local branch is pristine
 pre_flight_checks
 
 ## Build corectl with the version number and generate an API specification
