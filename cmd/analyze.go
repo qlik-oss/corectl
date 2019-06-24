@@ -21,7 +21,7 @@ corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, headers, false)
 		printer.PrintAssociations(data)
 	},
 }
@@ -36,7 +36,7 @@ corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, headers, false)
 		printer.PrintTables(data)
 	},
 }
@@ -51,7 +51,7 @@ corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, headers, false)
 		printer.PrintMetadata(data)
 	},
 }
@@ -78,7 +78,7 @@ var getFieldsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, headers, false)
 		printer.PrintFields(data, false)
 	},
 }
@@ -92,7 +92,7 @@ var getKeysCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, true)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, headers, true)
 		printer.PrintFields(data, true)
 	},
 }

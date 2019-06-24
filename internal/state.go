@@ -28,7 +28,6 @@ type State struct {
 	Global  *enigma.Global
 	AppName string
 	AppID   string
-	MetaURL string
 	Verbose bool
 }
 
@@ -95,7 +94,7 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	} else if !succ {
 		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
-	setAppIDToKnownApps(engine, appName, appID, true)
+	SetAppIDToKnownApps(engine, appName, appID, true)
 }
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
@@ -146,7 +145,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				FatalErrorf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
-			setAppIDToKnownApps(engine, appName, appID, false)
+			SetAppIDToKnownApps(engine, appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
 				FatalErrorf("could not do open app with ID '%s': %s", appID, err)
@@ -159,16 +158,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 		}
 	}
 
-	metaURL := buildMetadataURL(engine, appID)
-	LogVerbose("Meta: " + metaURL)
-
 	return &State{
 		Doc:     doc,
 		Global:  global,
 		AppName: appName,
 		AppID:   appID,
 		Ctx:     ctx,
-		MetaURL: metaURL,
 	}
 }
 
@@ -236,7 +231,6 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 		AppName: "",
 		AppID:   "",
 		Ctx:     ctx,
-		MetaURL: "",
 	}
 }
 
@@ -256,20 +250,6 @@ func buildWebSocketURL(engine string, ttl string) string {
 		engine = engine + "/app/corectl/ttl/" + ttl
 	}
 	return engine
-}
-
-func buildRestBaseURL(engine string) string {
-	engineURL := TidyUpEngineURL(engine)
-	u, _ := neturl.Parse(engineURL)
-	// u.Scheme[2:] is "" for ws and s for wss
-	baseURL := "http" + u.Scheme[2:] + "://" + u.Host
-	return baseURL
-}
-
-func buildMetadataURL(engine string, appID string) string {
-	engine = buildRestBaseURL(engine)
-	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
-	return url
 }
 
 func getSessionID(appID string) string {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/rest"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -59,7 +60,11 @@ var importAppCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
-		appID := internal.ImportApp(appPath, viper.GetString("engine"), headers)
+		appID, appName, err := rest.ImportApp(appPath, headers)
+		if err != nil {
+			internal.FatalError(err)
+		}
+		internal.SetAppIDToKnownApps(viper.GetString("engine"), appName, appID, false)
 		fmt.Println("Imported app with new ID: " + appID)
 	},
 }
