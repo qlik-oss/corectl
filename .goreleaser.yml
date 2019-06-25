@@ -45,6 +45,8 @@ snapcrafts:
 
 brews:
   -
+    name: qlik-corectl
+
     github:
       owner: qlik-oss
       name: homebrew-taps
@@ -60,7 +62,7 @@ brews:
     description: "corectl is a CLI tool for using Qlik Associative Engine."
 
     test: |
-      assert_equal corectl version: '#{version}", shell_output("#{bin}/corectl version").chomp"'
+      assert_equal "corectl version: #{version}", shell_output("#{bin}/corectl version").chomp
 
     install: |
       bin.install "corectl"
