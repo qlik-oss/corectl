@@ -6,11 +6,36 @@ import (
 	"strings"
 )
 
-// ParseEngineURL parses the engine parameter and returns an websocket URL if at all possible
 func ParseEngineURL(engine string) (*url.URL) {
 	if engine == "" {
 		FatalError("engine URL not specified")
 	}
+	u, err := parseEngineURL(engine)
+	if err != nil {
+		FatalErrorf("could not parse engine url '%s' got error: '%s'", engine, err)
+	}
+	return u
+}
+
+// ParseEngineURL parses the engine parameter and returns an websocket URL if at all possible
+// The following quirks/behavior of net/url.Parse might be nice to know
+//
+// 'localhost'										=> path=localhost
+// 'localhost/app/foo'						=> path=localhost/app/foo
+// 'localhost:9076'								=> scheme=localhost, opaque=9076
+// 'localhost:9076/app/foo'				=> scheme=localhost, opaque=9076/app/foo
+// '127.0.0.1'										=> path=127.0.0.1
+// '127.0.0.1:1234								=> parse error
+// 'ws://localhost:9076'					=> scheme=ws, host=localhost:9076
+// 'ws://example.com'							=> scheme=ws, host=example.com
+// 'ws://localhost:9076/app/foo'	=> scheme=ws, host=localhost:9076, path=/app/foo
+//
+// References, if you need to see it with your own eyes:
+//
+// Documentation: https://golang.org/pkg/net/url/#URL
+//				Source: https://github.com/golang/go/blob/master/src/net/url/url.go
+//
+func parseEngineURL(engine string) (*url.URL, error) {
 	u, err := url.Parse(engine)
 	if err != nil {
 		// If 'engine' couldn't be parsed by net/url.Parse and contains colon
@@ -32,7 +57,7 @@ func ParseEngineURL(engine string) (*url.URL) {
 		if u.Host == "" {
 			u, err = url.Parse("ws://" + u.String())
 			if err != nil {
-				FatalError("could not parse engine URL: ", engine)
+				return nil, err
 			}
 		} else {
 			u.Scheme = "ws"
@@ -49,13 +74,13 @@ func ParseEngineURL(engine string) (*url.URL) {
 		if u.Opaque != "" {
 			u, err = url.Parse("ws://" + u.String())
 			if err != nil {
-				FatalError("could not parse engine URL: ", engine)
+				return nil, err
 			}
 		} else {
-			FatalError("could not parse engine URL: ", engine)
+			return nil, err
 		}
 	}
-	return u
+	return u, nil
 }
 
 

@@ -1,12 +1,104 @@
 package internal
 
 import (
+	"fmt"
+	"net/url"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseEngineUrl(t *testing.T) {
+// This test is more like documentation of the golang's net/url
+func TestParseEngineURL1(t *testing.T) {
+	testURL(t, "engine", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine",
+		"Path": "",
+	}, true)
+	testURL(t, "engine:1234", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine:1234",
+		"Path": "",
+	}, true)
+	testURL(t, "localhost:1234", map[string]string{
+		"Scheme": "ws",
+		"Host": "localhost:1234",
+		"Path": "",
+	}, true)
+	testURL(t, "localhost:1234/app/apa", map[string]string{
+		"Scheme": "ws",
+		"Host": "localhost:1234",
+		"Path": "/app/apa",
+	}, true)
+	testURL(t, "engine/path", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine",
+		"Path": "/path",
+	}, true)
+	testURL(t, "engine.com", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine.com",
+		"Path": "",
+	}, true)
+	testURL(t, "http://engine.com", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine.com",
+		"Path": "",
+	}, true)
+	testURL(t, "http://engine/path", map[string]string{
+		"Scheme": "ws",
+		"Host": "engine",
+		"Path": "/path",
+	}, true)
+	testURL(t, "http://127.0.0.1:1234", map[string]string{
+		"Scheme": "ws",
+		"Host": "127.0.0.1:1234",
+		"Path": "",
+	}, true)
+	testURL(t, "127.0.0.1:1234", map[string]string{
+		"Scheme": "ws",
+		"Host": "127.0.0.1:1234",
+		"Path": "",
+	}, true)
+	testURL(t, "127.0.0.1", map[string]string{
+		"Scheme": "ws",
+		"Host": "127.0.0.1",
+		"Path": "",
+	}, true)
+	testURL(t, "127.0.0.1/app/foo", map[string]string{
+		"Scheme": "ws",
+		"Host": "127.0.0.1",
+		"Path": "/app/foo",
+	}, true)
+	testURL(t, "ws://localhost:1234/app/foo", map[string]string{
+		"Scheme": "ws",
+		"Host": "localhost:1234",
+		"Path": "/app/foo",
+	}, true)
+}
+
+func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *url.URL) {
+	u, err := parseEngineURL(s)
+	if pass {
+		if !assert.Nil(t, err) {
+			return
+		}
+	} else {
+		assert.Error(t, err)
+		return
+	}
+	v := reflect.ValueOf(*u)
+	for f, expected := range(fields) {
+		fval := string(v.FieldByName(f).String())
+		s_exp := fmt.Sprintf("'%s'= %s", f, expected)
+		s_fval := fmt.Sprintf("'%s'= %s", f, fval)
+		assert.Equal(t, s_exp, s_fval)
+	}
+	return
+}
+
+func TestParseEngineUrl2(t *testing.T) {
 	// Wrapper function for calling multireturn function
 	f := func(s string) string {
 		return ParseEngineURL(s).String()
