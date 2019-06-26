@@ -60,10 +60,12 @@ var importAppCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
-		appID, appName, err := rest.ImportApp(appPath, headers)
+		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		appID, appName, err := rest.ImportApp(appPath, engine, headers)
 		if err != nil {
 			internal.FatalError(err)
 		}
+		// TODO: Do we want to parse to map to host specifically or just the engine property?
 		internal.SetAppIDToKnownApps(viper.GetString("engine"), appName, appID, false)
 		fmt.Println("Imported app with new ID: " + appID)
 	},

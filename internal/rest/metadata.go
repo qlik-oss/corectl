@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	neturl "net/url"
 )
 
 // ReadRestMetadata fetches the metadata for the specified app
-func ReadRestMetadata(appID string, headers http.Header) (*RestMetadata, error) {
-	url := GetBaseURL()
+func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header) (*RestMetadata, error) {
+	url := CreateBaseURL(*engine)
 	url.Path = fmt.Sprintf("/v1/apps/%s/data/metadata", adaptAppID(appID))
 	req := &http.Request{
 		Method: "GET",

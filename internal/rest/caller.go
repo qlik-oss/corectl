@@ -6,8 +6,6 @@ import (
 	neturl "net/url"
 	"net/http"
 	"strings"
-
-	"github.com/spf13/viper"
 )
 
 // parseFunction is any function that reads bytes into a pointer and returns an error,
@@ -15,9 +13,13 @@ import (
 type parseFunction func([]byte, interface{}) error
 
 // GetBaseURL returns the base URL for Rest API calls based on the value of 'engine'
-func GetBaseURL() (*neturl.URL) {
-	url := buildRestBaseURL(viper.GetString("engine"))
-	return url
+func CreateBaseURL(u neturl.URL) (*neturl.URL) {
+	if u.Scheme == "ws" {
+		u.Scheme = "http"
+	} else if u.Scheme == "wss" {
+		u.Scheme = "https"
+	}
+	return &u
 }
 
 // Call performs the specified the request and uses the passed parsing function 'read'
@@ -40,21 +42,6 @@ func Call(req *http.Request, result interface{}, statusCodes *map[int]bool, read
 		return err
 	}
 	return nil
-}
-
-func buildRestBaseURL(engine string) (*neturl.URL) {
-	u, _ := neturl.Parse(engine)
-	switch (u.Scheme) {
-	case "ws":
-		u.Scheme = "http"
-	case "wss":
-		u.Scheme = "https"
-		default:
-		url := "http://" + u.String()
-		u, _ = neturl.Parse(url)
-	}
-	u.Path = ""
-	return u
 }
 
 // Removes path and query escapes an app id.

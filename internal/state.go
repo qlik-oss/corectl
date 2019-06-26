@@ -10,10 +10,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	neturl "net/url"
 	"os"
 	"os/user"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -234,24 +232,6 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	}
 }
 
-//TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
-func TidyUpEngineURL(engine string) string {
-	if strings.HasPrefix(engine, "wss://") || strings.HasPrefix(engine, "ws://") {
-		return engine
-	}
-	return "ws://" + engine
-}
-
-func buildWebSocketURL(engine string, ttl string) string {
-	engine = TidyUpEngineURL(engine)
-	u, _ := neturl.Parse(engine)
-	// Only modify the url if it does not contain a path or ends with a "/"
-	if u.Path == "" && engine[len(engine)-1:] != "/" {
-		engine = engine + "/app/corectl/ttl/" + ttl
-	}
-	return engine
-}
-
 func getSessionID(appID string) string {
 	// If no-data or ttl flag is used the user should not get the default session id
 	noData := viper.GetBool("no-data")
@@ -267,19 +247,6 @@ func getSessionID(appID string) string {
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
-}
-
-// TryParseAppFromURL parses an url for an app identifier
-func TryParseAppFromURL(engineURL string) string {
-	// Find any string in the path succeeding "/app/", and excluding anything after "/"
-	re, _ := regexp.Compile("/app/([^/]+)")
-	values := re.FindStringSubmatch(engineURL)
-	if len(values) > 0 {
-		appName := values[1]
-		LogVerbose("Found app in engine url: " + appName)
-		return appName
-	}
-	return ""
 }
 
 func readCertificates(certificatesPath string) *tls.Config {

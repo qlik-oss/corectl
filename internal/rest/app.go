@@ -10,8 +10,11 @@ import (
 
 // ImportApp imports a local app into the engine using the rest api
 // To not have any dependency on internal, both appID and appName are returned.
-func ImportApp(appPath string, headers http.Header) (appID, appName string, err error) {
-	url := GetBaseURL()
+func ImportApp(appPath string, engine *neturl.URL, headers http.Header) (appID, appName string, err error) {
+	url := CreateBaseURL(*engine)
+	if err != nil {
+		return
+	}
 	url.Path = "/v1/apps/import"
 	headers.Add("Content-Type", "binary/octet-stream")
 	values := neturl.Values{}
