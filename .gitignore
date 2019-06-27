@@ -9,3 +9,4 @@ main
 *-unbuild/
 *.qvf
 !test/projects/import/test.qvf
+dist/

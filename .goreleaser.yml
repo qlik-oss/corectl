@@ -24,6 +24,14 @@ archives:
     files:
     - none*
 
+changelog:
+  filters:
+    exclude:
+      - '^Update .+ commit hash to'
+      - '^Update module .+ to'
+      - '^Automated: Bump Docker images$'
+      - '^Release v\d\.\d\.\d(-\w+)?$'
+
 snapcrafts:
   -
     name_template: "qlik-{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
