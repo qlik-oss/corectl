@@ -1,99 +1,39 @@
-package internal
+package rest
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	neturl "net/url"
-	"os"
 )
 
-// ReadRestMetadata fetches metadata from the rest api.
-func ReadRestMetadata(url string, headers http.Header) (*RestMetadata, error) {
-	if url == "" {
-		return nil, nil
+// ReadRestMetadata fetches the metadata for the specified app
+func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header) (*RestMetadata, error) {
+	url := CreateBaseURL(*engine)
+	url.Path = fmt.Sprintf("/v1/apps/%s/data/metadata", adaptAppID(appID))
+	req := &http.Request{
+		Method: "GET",
+		URL: url,
+		Header: headers,
 	}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
-		return nil, err
-	}
-	req.Header = headers
-	response, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Printf("The HTTP request failed with error %s\n", err)
-		return nil, err
-	}
-	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		return nil, nil
-	}
-	data, _ := ioutil.ReadAll(response.Body)
 	result := &RestMetadata{}
-	json.Unmarshal(data, result)
+	statusCodes := &map[int]bool{
+		200: true,
+	}
+	err := Call(req, result, statusCodes, json.Unmarshal)
+	if err != nil {
+		return nil, fmt.Errorf("could not get rest metadata: %s", err.Error())
+	}
 	return result, nil
 }
 
-func ImportApp(appPath, engine string, headers http.Header) string {
-	url, err := neturl.Parse(buildRestBaseURL(engine))
-	url.Path = "/v1/apps/import"
-	// You can specify name and mode with query but they only seem to work in ABAC mode.
-	values := neturl.Values{}
-	url.RawQuery = values.Encode()
-	file, err := os.Open(appPath)
-	if err != nil {
-		FatalError("could not open file: ", appPath)
-	}
-	defer file.Close()
-	req, err := http.NewRequest("POST", url.String(), file)
-	if err != nil {
-		FatalError(err)
-	}
-	req.Header = headers
-	req.Header.Add("Content-Type", "binary/octet-stream")
-	response, err := http.DefaultClient.Do(req)
-	if err != nil {
-		FatalError(err)
-	}
-	defer response.Body.Close()
-	data, _ := ioutil.ReadAll(response.Body)
-	if response.StatusCode != 200 {
-		FatalErrorf("could not import app: got status %d with message %s",
-			response.StatusCode, string(data))
-	}
-	appInfo := &RestNxApp{}
-	json.Unmarshal(data, appInfo)
-	appID := appInfo.Attributes["id"]
-	appName := appInfo.Attributes["name"]
-	setAppIDToKnownApps(engine, appName, appID, false)
-	return appID
-}
-
-func toFieldMetadataMap(fields []*RestFieldMetadata) map[string]*RestFieldMetadata {
-	result := make(map[string]*RestFieldMetadata)
-	for _, field := range fields {
-		result[field.Name] = field
-	}
-	return result
-}
-
-func toTableMetadataMap(tables []*RestTableMetadata) map[string]*RestTableMetadata {
-	result := make(map[string]*RestTableMetadata)
-	for _, table := range tables {
-		result[table.Name] = table
-	}
-	return result
-}
-
-//RestMetadata defines all available info from the metdata rest api.
 type RestMetadata struct {
 	StaticByteSize int                  `json:"static_byte_size,omitempty"`
 	Fields         []*RestFieldMetadata `json:"fields"`
 	Tables         []*RestTableMetadata `json:"tables"`
 }
 
-func (m *RestMetadata) tableByName(name string) *RestTableMetadata {
+func (m *RestMetadata) TableByName(name string) *RestTableMetadata {
 	if m != nil {
 		for _, table := range m.Tables {
 			if table.Name == name {
@@ -104,7 +44,7 @@ func (m *RestMetadata) tableByName(name string) *RestTableMetadata {
 	return nil
 }
 
-func (m *RestMetadata) fieldByName(name string) *RestFieldMetadata {
+func (m *RestMetadata) FieldByName(name string) *RestFieldMetadata {
 	if m != nil {
 		for _, field := range m.Fields {
 			if field.Name == name {
@@ -167,8 +107,4 @@ type RestFieldMetadata struct {
 	Tags []string `json:"tags"`
 	// Static RAM memory used in bytes.
 	ByteSize int `json:"byte_size"`
-}
-
-type RestNxApp struct {
-	Attributes map[string]string `json:"attributes"`
 }

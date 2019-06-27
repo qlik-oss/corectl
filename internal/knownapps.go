@@ -46,7 +46,7 @@ func getKnownApps() map[string]map[string]string {
 }
 
 // Add an app or remove an app from known apps
-func setAppIDToKnownApps(engineURL string, appName string, appID string, remove bool) {
+func SetAppIDToKnownApps(engineURL string, appName string, appID string, remove bool) {
 
 	createKnownAppsFileIfNotExist()
 	apps := getKnownApps()

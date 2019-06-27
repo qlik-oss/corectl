@@ -10,10 +10,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	neturl "net/url"
 	"os"
 	"os/user"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -28,7 +26,6 @@ type State struct {
 	Global  *enigma.Global
 	AppName string
 	AppID   string
-	MetaURL string
 	Verbose bool
 }
 
@@ -44,8 +41,8 @@ func logConnectError(err error, engine string) {
 	FatalError(msg)
 }
 
-func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {
-	engineURL := buildWebSocketURL(engine, ttl)
+func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header) *enigma.Global {
+	engineURL := buildWebSocketURL(ttl)
 	LogVerbose("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
@@ -69,7 +66,7 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
 	if err != nil {
-		logConnectError(err, engine)
+		logConnectError(err, engineURL)
 	}
 	return global
 }
@@ -95,7 +92,7 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	} else if !succ {
 		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
-	setAppIDToKnownApps(engine, appName, appID, true)
+	SetAppIDToKnownApps(engine, appName, appID, true)
 }
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
@@ -117,7 +114,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appID, _ := applyNameToIDTransformation(engine, appName)
 
 	LogVerbose("---------- Connecting to app ----------")
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	global := connectToEngine(ctx, appName, ttl, headers)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
@@ -146,7 +143,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 				FatalErrorf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
-			setAppIDToKnownApps(engine, appName, appID, false)
+			SetAppIDToKnownApps(engine, appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
 				FatalErrorf("could not do open app with ID '%s': %s", appID, err)
@@ -159,16 +156,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 		}
 	}
 
-	metaURL := buildMetadataURL(engine, appID)
-	LogVerbose("Meta: " + metaURL)
-
 	return &State{
 		Doc:     doc,
 		Global:  global,
 		AppName: appName,
 		AppID:   appID,
 		Ctx:     ctx,
-		MetaURL: metaURL,
 	}
 }
 
@@ -198,13 +191,12 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
-	engine := viper.GetString("engine")
 	ttl := viper.GetString("ttl")
 	certificates := viper.GetString("certificates")
 
 	LogVerbose("---------- Connecting to engine ----------")
 
-	engineURL := buildWebSocketURL(engine, ttl)
+	engineURL := buildWebSocketURL(ttl)
 
 	LogVerbose("Engine: " + engineURL)
 
@@ -222,7 +214,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	global, err := dialer.Dial(ctx, engineURL, headers)
 
 	if err != nil {
-		logConnectError(err, engine)
+		logConnectError(err, engineURL)
 	}
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)
@@ -237,40 +229,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 		AppName: "",
 		AppID:   "",
 		Ctx:     ctx,
-		MetaURL: "",
 	}
-}
-
-//TidyUpEngineURL tidies up an engine url fragment and returns a complete url.
-func TidyUpEngineURL(engine string) string {
-	if strings.HasPrefix(engine, "wss://") || strings.HasPrefix(engine, "ws://") {
-		return engine
-	}
-	return "ws://" + engine
-}
-
-func buildWebSocketURL(engine string, ttl string) string {
-	engine = TidyUpEngineURL(engine)
-	u, _ := neturl.Parse(engine)
-	// Only modify the url if it does not contain a path or ends with a "/"
-	if u.Path == "" && engine[len(engine)-1:] != "/" {
-		engine = engine + "/app/corectl/ttl/" + ttl
-	}
-	return engine
-}
-
-func buildRestBaseURL(engine string) string {
-	engineURL := TidyUpEngineURL(engine)
-	u, _ := neturl.Parse(engineURL)
-	// u.Scheme[2:] is "" for ws and s for wss
-	baseURL := "http" + u.Scheme[2:] + "://" + u.Host
-	return baseURL
-}
-
-func buildMetadataURL(engine string, appID string) string {
-	engine = buildRestBaseURL(engine)
-	url := fmt.Sprintf("%s/v1/apps/%s/data/metadata", engine, neturl.QueryEscape(appID))
-	return url
 }
 
 func getSessionID(appID string) string {
@@ -288,19 +247,6 @@ func getSessionID(appID string) string {
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
-}
-
-// TryParseAppFromURL parses an url for an app identifier
-func TryParseAppFromURL(engineURL string) string {
-	// Find any string in the path succeeding "/app/", and excluding anything after "/"
-	re, _ := regexp.Compile("/app/([^/]+)")
-	values := re.FindStringSubmatch(engineURL)
-	if len(values) > 0 {
-		appName := values[1]
-		LogVerbose("Found app in engine url: " + appName)
-		return appName
-	}
-	return ""
 }
 
 func readCertificates(certificatesPath string) *tls.Config {
