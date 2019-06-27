@@ -56,6 +56,6 @@ func Call(req *http.Request, certs *tls.Config, result interface{}, statusCodes 
 // Removes path and query escapes an app id.
 func adaptAppID(appID string) string {
 	split := strings.Split(appID, "/")
-	adaptedID := split[len(split)-1]
+	adaptedID := split[len(split) - 1]
 	return neturl.QueryEscape(adaptedID)
 }

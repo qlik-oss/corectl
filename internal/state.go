@@ -202,6 +202,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header, cert
 	}
 
 	if certificates != nil {
+		LogVerbose("Using certificates in: " + viper.GetString("certificates"))
 		dialer.TLSClientConfig = certificates
 	}
 
