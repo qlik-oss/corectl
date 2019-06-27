@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestParseEngineURL1(t *testing.T) {
+func TestParseEngineURL(t *testing.T) {
 	testURL(t, "engine", map[string]string{
 		"Scheme": "ws",
 		"Host": "engine",
@@ -98,11 +98,11 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 	return
 }
 
-func TestParseEngineUrl2(t *testing.T) {
+func TestGetEngineUrl(t *testing.T) {
 	// Wrapper function
 	f := func(s string) string {
 		viper.Set("engine", s)
-		return ParseEngineURL().String()
+		return GetEngineURL().String()
 	}
 	assert.Equal(t, "ws://engine", f("engine"))
 	assert.Equal(t, "ws://engine:1234", f("engine:1234"))

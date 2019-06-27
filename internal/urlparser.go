@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ParseEngineURL() (*url.URL) {
+func GetEngineURL() (*url.URL) {
 	engine := viper.GetString("engine")
 	if engine == "" {
 		FatalError("engine URL not specified")
@@ -20,7 +20,7 @@ func ParseEngineURL() (*url.URL) {
 	return u
 }
 
-// ParseEngineURL parses the engine parameter and returns an websocket URL if at all possible
+// parseEngineURL parses the engine parameter and returns an websocket URL if at all possible
 // The following quirks/behavior of net/url.Parse might be nice to know
 //
 // 'localhost'                    => path=localhost
@@ -88,7 +88,7 @@ func parseEngineURL(engine string) (*url.URL, error) {
 
 
 func buildWebSocketURL(ttl string) string {
-	u := ParseEngineURL()
+	u := GetEngineURL()
 	// Only modify the URL path if there is no path set
 	if u.Path == "" {
 		u.Path = "/app/corectl/ttl/" + ttl

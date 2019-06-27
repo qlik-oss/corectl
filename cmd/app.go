@@ -60,7 +60,7 @@ var importAppCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
-		engine := internal.ParseEngineURL()
+		engine := internal.GetEngineURL()
 		appID, appName, err := rest.ImportApp(appPath, engine, headers)
 		if err != nil {
 			internal.FatalError(err)
