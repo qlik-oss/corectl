@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,7 +11,7 @@ import (
 
 // ImportApp imports a local app into the engine using the rest api
 // To not have any dependency on internal, both appID and appName are returned.
-func ImportApp(appPath string, engine *neturl.URL, headers http.Header) (appID, appName string, err error) {
+func ImportApp(appPath string, engine *neturl.URL, headers http.Header, certs *tls.Config) (appID, appName string, err error) {
 	url := CreateBaseURL(*engine)
 	if err != nil {
 		return
@@ -35,7 +36,7 @@ func ImportApp(appPath string, engine *neturl.URL, headers http.Header) (appID, 
 	statusCodes := &map[int]bool{
 		200: true,
 	}
-	err = Call(req, appInfo, statusCodes, json.Unmarshal)
+	err = Call(req, certs, appInfo, statusCodes, json.Unmarshal)
 	if err != nil {
 		err = fmt.Errorf("could not import app: %s", err.Error())
 		return

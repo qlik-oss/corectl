@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"os"
 	"strings"
@@ -15,6 +16,7 @@ var headersMap = make(map[string]string)
 var explicitConfigFile = ""
 var version = ""
 var headers http.Header
+var certificates *tls.Config
 var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
@@ -36,6 +38,10 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		internal.ReadConfigFile(explicitConfigFile)
+
+		if certPath := viper.GetString("certificates"); certPath != "" {
+			certificates = internal.ReadCertificates(certPath)
+		}
 
 		if len(headersMap) == 0 {
 			headersMap = viper.GetStringMapString("headers")

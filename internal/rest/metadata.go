@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 )
 
 // ReadRestMetadata fetches the metadata for the specified app
-func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header) (*RestMetadata, error) {
+func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header, certs *tls.Config) (*RestMetadata, error) {
 	url := CreateBaseURL(*engine)
 	url.Path = fmt.Sprintf("/v1/apps/%s/data/metadata", adaptAppID(appID))
 	req := &http.Request{
@@ -20,7 +21,7 @@ func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header) (*R
 	statusCodes := &map[int]bool{
 		200: true,
 	}
-	err := Call(req, result, statusCodes, json.Unmarshal)
+	err := Call(req, certs, result, statusCodes, json.Unmarshal)
 	if err != nil {
 		return nil, fmt.Errorf("could not get rest metadata: %s", err.Error())
 	}

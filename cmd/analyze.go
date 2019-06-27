@@ -20,9 +20,9 @@ var getAssociationsCmd = &cobra.Command{
 corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintAssociations(data)
 	},
 }
@@ -36,9 +36,9 @@ var getTablesCmd = &cobra.Command{
 corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintTables(data)
 	},
 }
@@ -52,9 +52,9 @@ var getMetaCmd = &cobra.Command{
 corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintMetadata(data)
 	},
 }
@@ -67,7 +67,7 @@ var getValuesCmd = &cobra.Command{
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
 	},
 }
@@ -80,9 +80,9 @@ var getFieldsCmd = &cobra.Command{
 	Example: "corectl fields",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintFields(data, false)
 	},
 }
@@ -95,9 +95,9 @@ var getKeysCmd = &cobra.Command{
 	Example: "corectl keys",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintFields(data, true)
 	},
 }
@@ -113,7 +113,7 @@ corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" 
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
 }
@@ -143,7 +143,7 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 			catwalkURL += "?engine_url=" + engineURL.String()
 		}
 		if appSpecified {
-			if ok, err := internal.AppExists(rootCtx, engine, appID, headers); !ok {
+			if ok, err := internal.AppExists(rootCtx, engine, appID, headers, certificates); !ok {
 				internal.FatalError(err)
 			}
 		}

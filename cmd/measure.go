@@ -19,7 +19,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 		if commandLineMeasures == "" {
 			internal.FatalError("no measures specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetMeasures(rootCtx, state.Doc, commandLineMeasures)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -35,7 +35,7 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
@@ -58,7 +58,7 @@ var listMeasuresCmd = &cobra.Command{
 	Example: "corectl measure ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		items := internal.ListMeasures(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
@@ -72,7 +72,7 @@ var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure properties MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityProperties(state, args[0], "measure", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -85,7 +85,7 @@ var getMeasureLayoutCmd = &cobra.Command{
 	Example: "corectl measure layout MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityLayout(state, args[0], "measure")
 	},
 }

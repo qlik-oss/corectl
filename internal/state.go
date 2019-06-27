@@ -3,12 +3,10 @@ package internal
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/user"
@@ -41,7 +39,7 @@ func logConnectError(err error, engine string) {
 	FatalError(msg)
 }
 
-func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header) *enigma.Global {
+func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header, certificates *tls.Config) *enigma.Global {
 	engineURL := buildWebSocketURL(ttl)
 	LogVerbose("Engine: " + engineURL)
 
@@ -52,16 +50,14 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 	}
 	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
 
-	certificates := viper.GetString("certificates")
-
 	var dialer = enigma.Dialer{}
 
 	if LogTraffic {
 		dialer.TrafficLogger = TrafficLogger{}
 	}
 
-	if certificates != "" {
-		dialer.TLSClientConfig = readCertificates(certificates)
+	if certificates != nil {
+		dialer.TLSClientConfig = certificates
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
@@ -72,8 +68,8 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 }
 
 //AppExists returns wether or not an app exists along with any eventual error from engine
-func AppExists(ctx context.Context, engine string, appName string, headers http.Header) (bool, error) {
-	global := PrepareEngineStateWithoutApp(ctx, headers).Global
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) (bool, error) {
+	global := PrepareEngineStateWithoutApp(ctx, headers, certificates).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	_, err := global.GetAppEntry(ctx, appID)
 	if err != nil {
@@ -83,8 +79,8 @@ func AppExists(ctx context.Context, engine string, appName string, headers http.
 }
 
 //DeleteApp removes the specified app from the engine.
-func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header) {
-	global := PrepareEngineStateWithoutApp(ctx, headers).Global
+func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) {
+	global := PrepareEngineStateWithoutApp(ctx, headers, certificates).Global
 	appID, _ := applyNameToIDTransformation(engine, appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
@@ -97,7 +93,7 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMissing bool) *State {
+func PrepareEngineState(ctx context.Context, headers http.Header, certificates *tls.Config, createAppIfMissing bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
 	ttl := viper.GetString("ttl")
@@ -114,7 +110,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appID, _ := applyNameToIDTransformation(engine, appName)
 
 	LogVerbose("---------- Connecting to app ----------")
-	global := connectToEngine(ctx, appName, ttl, headers)
+	global := connectToEngine(ctx, appName, ttl, headers, certificates)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
@@ -190,9 +186,8 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 }
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
-func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
+func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header, certificates *tls.Config) *State {
 	ttl := viper.GetString("ttl")
-	certificates := viper.GetString("certificates")
 
 	LogVerbose("---------- Connecting to engine ----------")
 
@@ -206,8 +201,8 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 		dialer.TrafficLogger = TrafficLogger{}
 	}
 
-	if certificates != "" {
-		dialer.TLSClientConfig = readCertificates(certificates)
+	if certificates != nil {
+		dialer.TLSClientConfig = certificates
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
@@ -246,32 +241,4 @@ func getSessionID(appID string) string {
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID
-}
-
-func readCertificates(certificatesPath string) *tls.Config {
-	// Read client and root certificates.
-	certFile := certificatesPath + "/client.pem"
-	keyFile := certificatesPath + "/client_key.pem"
-	caFile := certificatesPath + "/root.pem"
-
-	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
-		FatalError("Failed to load client certificate: ", err)
-	}
-
-	caCert, err := ioutil.ReadFile(caFile)
-	if err != nil {
-		FatalError("Failed to read root certificate: ", err)
-	}
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(caCert)
-
-	// Setup TLS configuration.
-	tlsConfig := &tls.Config{
-		InsecureSkipVerify: true,
-		Certificates:       []tls.Certificate{cert},
-		RootCAs:            caCertPool,
-	}
-
-	return tlsConfig
 }

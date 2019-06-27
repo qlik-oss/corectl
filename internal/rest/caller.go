@@ -1,10 +1,11 @@
 package rest
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
-	neturl "net/url"
 	"net/http"
+	neturl "net/url"
 	"strings"
 )
 
@@ -12,8 +13,8 @@ import (
 // json.Unmarshal is an example.
 type parseFunction func([]byte, interface{}) error
 
-// GetBaseURL returns the base URL for Rest API calls based on the value of 'engine'
-func CreateBaseURL(u neturl.URL) (*neturl.URL) {
+// CreateBaseURL returns the base URL for Rest API calls based on the value of 'engine'
+func CreateBaseURL(u neturl.URL) *neturl.URL {
 	if u.Scheme == "ws" {
 		u.Scheme = "http"
 	} else if u.Scheme == "wss" {
@@ -26,8 +27,16 @@ func CreateBaseURL(u neturl.URL) (*neturl.URL) {
 // to parse the response into the supplied result.
 // If the response status code is not explicitly added to the map of accepted status codes
 // an error will be returned.
-func Call(req *http.Request, result interface{}, statusCodes *map[int]bool, read parseFunction) error {
-	response, err := http.DefaultClient.Do(req)
+func Call(req *http.Request, certs *tls.Config, result interface{}, statusCodes *map[int]bool, read parseFunction) error {
+	client := http.DefaultClient
+	if certs != nil {
+		client = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: certs,
+			},
+		}
+	}
+	response, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -47,6 +56,6 @@ func Call(req *http.Request, result interface{}, statusCodes *map[int]bool, read
 // Removes path and query escapes an app id.
 func adaptAppID(appID string) string {
 	split := strings.Split(appID, "/")
-	adaptedID := split[len(split) - 1]
+	adaptedID := split[len(split)-1]
 	return neturl.QueryEscape(adaptedID)
 }
