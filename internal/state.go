@@ -207,6 +207,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	}
 
 	if certificates != "" {
+		LogVerbose("Using certificates in: " + certificates)
 		dialer.TLSClientConfig = readCertificates(certificates)
 	}
 
