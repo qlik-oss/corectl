@@ -41,8 +41,8 @@ func logConnectError(err error, engine string) {
 	FatalError(msg)
 }
 
-func connectToEngine(ctx context.Context, engine string, appName string, ttl string, headers http.Header) *enigma.Global {
-	engineURL := buildWebSocketURL(engine, ttl)
+func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header) *enigma.Global {
+	engineURL := buildWebSocketURL(ttl)
 	LogVerbose("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
@@ -66,7 +66,7 @@ func connectToEngine(ctx context.Context, engine string, appName string, ttl str
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
 	if err != nil {
-		logConnectError(err, engine)
+		logConnectError(err, engineURL)
 	}
 	return global
 }
@@ -114,7 +114,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, createAppIfMis
 	appID, _ := applyNameToIDTransformation(engine, appName)
 
 	LogVerbose("---------- Connecting to app ----------")
-	global := connectToEngine(ctx, engine, appName, ttl, headers)
+	global := connectToEngine(ctx, appName, ttl, headers)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
@@ -191,13 +191,12 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 
 // PrepareEngineStateWithoutApp creates a connection to the engine with no dependency to any app.
 func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *State {
-	engine := viper.GetString("engine")
 	ttl := viper.GetString("ttl")
 	certificates := viper.GetString("certificates")
 
 	LogVerbose("---------- Connecting to engine ----------")
 
-	engineURL := buildWebSocketURL(engine, ttl)
+	engineURL := buildWebSocketURL(ttl)
 
 	LogVerbose("Engine: " + engineURL)
 
@@ -214,7 +213,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header) *Sta
 	global, err := dialer.Dial(ctx, engineURL, headers)
 
 	if err != nil {
-		logConnectError(err, engine)
+		logConnectError(err, engineURL)
 	}
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)

@@ -22,9 +22,7 @@ func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header) (*R
 	}
 	err := Call(req, result, statusCodes, json.Unmarshal)
 	if err != nil {
-		fmt.Println(url.String())
-		fmt.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("could not get rest metadata: %s", err.Error())
 	}
 	return result, nil
 }

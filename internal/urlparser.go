@@ -4,9 +4,12 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
-func ParseEngineURL(engine string) (*url.URL) {
+func ParseEngineURL() (*url.URL) {
+	engine := viper.GetString("engine")
 	if engine == "" {
 		FatalError("engine URL not specified")
 	}
@@ -20,20 +23,20 @@ func ParseEngineURL(engine string) (*url.URL) {
 // ParseEngineURL parses the engine parameter and returns an websocket URL if at all possible
 // The following quirks/behavior of net/url.Parse might be nice to know
 //
-// 'localhost'										=> path=localhost
-// 'localhost/app/foo'						=> path=localhost/app/foo
-// 'localhost:9076'								=> scheme=localhost, opaque=9076
-// 'localhost:9076/app/foo'				=> scheme=localhost, opaque=9076/app/foo
-// '127.0.0.1'										=> path=127.0.0.1
-// '127.0.0.1:1234								=> parse error
-// 'ws://localhost:9076'					=> scheme=ws, host=localhost:9076
-// 'ws://example.com'							=> scheme=ws, host=example.com
-// 'ws://localhost:9076/app/foo'	=> scheme=ws, host=localhost:9076, path=/app/foo
+// 'localhost'                    => path=localhost
+// 'localhost/app/foo'            => path=localhost/app/foo
+// 'localhost:9076'               => scheme=localhost, opaque=9076
+// 'localhost:9076/app/foo'       => scheme=localhost, opaque=9076/app/foo
+// '127.0.0.1'                    => path=127.0.0.1
+// '127.0.0.1:1234                => parse error
+// 'ws://localhost:9076'          => scheme=ws, host=localhost:9076
+// 'ws://example.com'             => scheme=ws, host=example.com
+// 'ws://localhost:9076/app/foo'  => scheme=ws, host=localhost:9076, path=/app/foo
 //
 // References, if you need to see it with your own eyes:
 //
 // Documentation: https://golang.org/pkg/net/url/#URL
-//				Source: https://github.com/golang/go/blob/master/src/net/url/url.go
+//        Source: https://github.com/golang/go/blob/master/src/net/url/url.go
 //
 func parseEngineURL(engine string) (*url.URL, error) {
 	u, err := url.Parse(engine)
@@ -84,8 +87,8 @@ func parseEngineURL(engine string) (*url.URL, error) {
 }
 
 
-func buildWebSocketURL(engine string, ttl string) string {
-	u := ParseEngineURL(engine)
+func buildWebSocketURL(ttl string) string {
+	u := ParseEngineURL()
 	// Only modify the URL path if there is no path set
 	if u.Path == "" {
 		u.Path = "/app/corectl/ttl/" + ttl

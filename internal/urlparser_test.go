@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/spf13/viper"
 )
 
-// This test is more like documentation of the golang's net/url
 func TestParseEngineURL1(t *testing.T) {
 	testURL(t, "engine", map[string]string{
 		"Scheme": "ws",
@@ -99,9 +99,10 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 }
 
 func TestParseEngineUrl2(t *testing.T) {
-	// Wrapper function for calling multireturn function
+	// Wrapper function
 	f := func(s string) string {
-		return ParseEngineURL(s).String()
+		viper.Set("engine", s)
+		return ParseEngineURL().String()
 	}
 	assert.Equal(t, "ws://engine", f("engine"))
 	assert.Equal(t, "ws://engine:1234", f("engine:1234"))
@@ -112,16 +113,21 @@ func TestParseEngineUrl2(t *testing.T) {
 }
 
 func TestBuildEngineUrl(t *testing.T) {
-	assert.Equal(t, "ws://engine/app/corectl/ttl/30", buildWebSocketURL("engine", "30"))
-	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", buildWebSocketURL("engine:1234", "30"))
-	assert.Equal(t, "wss://engine/app/corectl/ttl/30", buildWebSocketURL("wss://engine", "30"))
-	assert.Equal(t, "ws://engine/app/corectl/ttl/30", buildWebSocketURL("ws://engine", "30"))
-	assert.Equal(t, "wss://engine:1234/app/corectl/ttl/30", buildWebSocketURL("wss://engine:1234", "30"))
-	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", buildWebSocketURL("ws://engine:1234", "30"))
-	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", buildWebSocketURL("ws://engine:1234/sense/app/test.qvf", "30"))
-	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", buildWebSocketURL("engine:1234/sense/app/test.qvf", "30"))
-	assert.Equal(t, "ws://engine:1234/", buildWebSocketURL("ws://engine:1234/", "30"))
-	assert.Equal(t, "ws://engine:1234/", buildWebSocketURL("http://engine:1234/", "30"))
+	// Wrapper function
+	f := func(s, ttl string) string {
+		viper.Set("engine", s)
+		return buildWebSocketURL(ttl)
+	}
+	assert.Equal(t, "ws://engine/app/corectl/ttl/30", f("engine", "30"))
+	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", f("engine:1234", "30"))
+	assert.Equal(t, "wss://engine/app/corectl/ttl/30", f("wss://engine", "30"))
+	assert.Equal(t, "ws://engine/app/corectl/ttl/30", f("ws://engine", "30"))
+	assert.Equal(t, "wss://engine:1234/app/corectl/ttl/30", f("wss://engine:1234", "30"))
+	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", f("ws://engine:1234", "30"))
+	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("ws://engine:1234/sense/app/test.qvf", "30"))
+	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("engine:1234/sense/app/test.qvf", "30"))
+	assert.Equal(t, "ws://engine:1234/", f("ws://engine:1234/", "30"))
+	assert.Equal(t, "ws://engine:1234/", f("http://engine:1234/", "30"))
 }
 
 func TestParseAppFromUrl(t *testing.T) {

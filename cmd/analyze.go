@@ -21,7 +21,7 @@ corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		engine := internal.ParseEngineURL()
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
 		printer.PrintAssociations(data)
 	},
@@ -37,7 +37,7 @@ corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		engine := internal.ParseEngineURL()
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
 		printer.PrintTables(data)
 	},
@@ -53,7 +53,7 @@ corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		engine := internal.ParseEngineURL()
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
 		printer.PrintMetadata(data)
 	},
@@ -81,7 +81,7 @@ var getFieldsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		engine := internal.ParseEngineURL()
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
 		printer.PrintFields(data, false)
 	},
@@ -96,7 +96,7 @@ var getKeysCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, false)
-		engine := internal.ParseEngineURL(viper.GetString("engine"))
+		engine := internal.ParseEngineURL()
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, false)
 		printer.PrintFields(data, true)
 	},
@@ -131,7 +131,7 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 		engine := viper.GetString("engine")
 		appID := viper.GetString("app")
 		catwalkURL := viper.GetString("catwalk-url")
-		engineURL := internal.ParseEngineURL(viper.GetString("engine"))
+		engineURL := internal.ParseEngineURL()
 		if appID != "" {
 			engineURL.Path += "/app/" + appID
 			catwalkURL += "?engine_url=" + engineURL.String()
