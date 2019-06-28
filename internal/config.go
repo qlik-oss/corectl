@@ -130,7 +130,7 @@ func ReadConfigFile(explicitConfigFile string) {
 	}
 }
 
-// ReatCertificates reads and loads the specified certificates
+// ReadCertificates reads and loads the specified certificates
 func ReadCertificates(certificatesPath string) *tls.Config {
 	// Read client and root certificates.
 	certFile := certificatesPath + "/client.pem"
