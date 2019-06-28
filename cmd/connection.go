@@ -17,7 +17,7 @@ var setConnectionsCmd = &cobra.Command{
 	Example: "corectl connection set ./my-connections.yml",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		separateConnectionsFile := args[0]
 		if separateConnectionsFile == "" {
 			internal.FatalError("no connections config file specified")
@@ -39,7 +39,7 @@ corectl connection rm ID-1
 corectl connection rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		for _, connection := range args {
 			err := state.Doc.DeleteConnection(rootCtx, connection)
 			if err != nil {
@@ -60,7 +60,7 @@ var listConnectionsCmd = &cobra.Command{
 	Example: "corectl connection ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
 			internal.FatalErrorf("could not retrieve list of connections: %s", err)
@@ -77,7 +77,7 @@ var getConnectionCmd = &cobra.Command{
 	Example: "corectl connection get CONNECTION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
 			fmt.Printf("%T\n", err)

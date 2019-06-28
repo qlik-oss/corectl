@@ -18,7 +18,7 @@ var listAppsCmd = &cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers)
+		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers, certificates)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
 			internal.FatalErrorf("could not retrieve app list: %s", err)
@@ -37,23 +37,23 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := args[0]
 
-		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers); !ok {
+		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, certificates); !ok {
 			internal.FatalError(err)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
 		if confirmed {
-			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, headers)
+			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, headers, certificates)
 		}
 	},
 }, "suppress")
 
 var importAppCmd = &cobra.Command{
-	Use:			"import",
-	Args:			cobra.ExactArgs(1),
-	Short:		"Import the specified app into the engine, returns the ID of the created app",
-	Long:			"Import the specified app into the engine, returns the ID of the created app",
-	Example:	"corectl import <path-to-app.qvf>",
+	Use:     "import",
+	Args:    cobra.ExactArgs(1),
+	Short:   "Import the specified app into the engine, returns the ID of the created app",
+	Long:    "Import the specified app into the engine, returns the ID of the created app",
+	Example: "corectl import <path-to-app.qvf>",
 	Annotations: map[string]string{
 		"x-qlik-stability": "experimental",
 	},
@@ -61,7 +61,7 @@ var importAppCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
 		engine := internal.GetEngineURL()
-		appID, appName, err := rest.ImportApp(appPath, engine, headers)
+		appID, appName, err := rest.ImportApp(appPath, engine, headers, certificates)
 		if err != nil {
 			internal.FatalError(err)
 		}

@@ -17,7 +17,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		scriptFile := args[0]
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
@@ -38,7 +38,7 @@ var getScriptCmd = &cobra.Command{
 	Example: "corectl script get",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
 			internal.FatalErrorf("could not retrieve script: %s", err)
