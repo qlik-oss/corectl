@@ -2,7 +2,7 @@ module github.com/qlik-oss/corectl
 
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
-	github.com/google/go-github/v26 v26.0.10
+	github.com/google/go-github/v26 v26.1.3
 	github.com/hashicorp/go-version v1.2.0
 	github.com/olekukonko/tablewriter v0.0.1
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
