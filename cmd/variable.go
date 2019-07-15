@@ -19,7 +19,7 @@ var setVariablesCmd = withLocalFlags(&cobra.Command{
 		if commandLineVariables == "" {
 			internal.FatalError("no variables specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetVariables(rootCtx, state.Doc, commandLineVariables)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -35,7 +35,7 @@ var removeVariableCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl variable rm NAME-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyVariableByName(rootCtx, entity)
 			if err != nil {
@@ -58,7 +58,7 @@ var listVariablesCmd = &cobra.Command{
 	Example: "corectl variable ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		items := internal.ListVariables(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), true)
 	},
@@ -72,7 +72,7 @@ var getVariablePropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl variable properties VARIABLE-NAME",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityProperties(state, args[0], "variable", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -85,7 +85,7 @@ var getVariableLayoutCmd = &cobra.Command{
 	Example: "corectl variable layout VARIABLE-NAME",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityLayout(state, args[0], "variable")
 	},
 }

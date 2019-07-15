@@ -9,34 +9,68 @@ builds:
   goarch:
     - amd64
 
-archive:
-  name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
-  replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    amd64: x86_64
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
-  files:
-  - none*
+archives:
+  -
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+    - none*
 
-snapcraft:
-  name_template: "qlik-{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
-  name: qlik-corectl
+changelog:
+  filters:
+    exclude:
+      - '^Update .+ commit hash to'
+      - '^Update module .+ to'
+      - '^Automated: Bump Docker images$'
+      - '^Release v\d\.\d\.\d(-\w+)?$'
 
-  publish: true
+snapcrafts:
+  -
+    name_template: "qlik-{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}"
+    name: qlik-corectl
 
-  summary: A command line interface tool for the Qlik Associative Engine
-  description: |
-    Qlik Core Control (corectl) is a tool that delivers a
-    command line interface (CLI) for the Qlik Associative Engine.
-    With corectl you can interact with your apps, objects, and data.
-  grade: stable
-  confinement: strict
+    publish: true
 
-  apps:
-    corectl:
-      plugs: ["home", "network"]
+    summary: A command line interface tool for the Qlik Associative Engine
+    description: |
+      Qlik Core Control (corectl) is a tool that delivers a
+      command line interface (CLI) for the Qlik Associative Engine.
+      With corectl you can interact with your apps, objects, and data.
+    grade: stable
+    confinement: strict
+
+    apps:
+      corectl:
+        plugs: ["home", "network"]
+
+brews:
+  -
+    name: qlik-corectl
+
+    github:
+      owner: qlik-oss
+      name: homebrew-taps
+
+    commit_author:
+      name: qlikossbuild
+      email: qlikossbuild@qlik.com
+
+    folder: Formula
+
+    homepage: "https://github.com/qlik-oss/corectl"
+
+    description: "corectl is a CLI tool for using Qlik Associative Engine."
+
+    test: |
+      assert_equal "corectl version: #{version}", shell_output("#{bin}/corectl version").chomp
+
+    install: |
+      bin.install "corectl"

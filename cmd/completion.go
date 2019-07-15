@@ -36,6 +36,8 @@ Note that bash-completion is required and needs to be installed on your system.`
 			rootCmd.GenBashCompletion(os.Stdout)
 		case args[0] == "zsh":
 			genZshCompletion()
+		case args[0] == "ps":
+			rootCmd.GenPowerShellCompletion(os.Stdout)
 		default:
 			fmt.Printf("'%s' is not a supported shell\n", args[0])
 		}
@@ -44,7 +46,7 @@ Note that bash-completion is required and needs to be installed on your system.`
 
 const bashCompletionFunc = `
 
-__custom_func()
+__corectl_custom_func()
 {
 	case ${last_command} in
 		corectl_dimension_properties | corectl_dimension_layout | corectl_dimension_rm)
@@ -70,6 +72,18 @@ __custom_func()
 			;;
 		corectl_context_rm | corectl_context_set)
 			__corectl_get_contexts
+			;;
+		corectl_app_import)
+			__corectl_handle_filename_extension_flag "qvf"
+			;;
+		corectl_script_set)
+			__corectl_handle_filename_extension_flag "qvs"
+			;;
+		corectl_dimension_set | corectl_measure_set | corectl_bookmark_set | corectl_variable_set | corectl_object_set)
+			__corectl_handle_filename_extension_flag "json"
+			;;
+		corectl_connection_set)
+			__corectl_handle_filename_extension_flag "yaml|yml"
 			;;
     *)
 			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )

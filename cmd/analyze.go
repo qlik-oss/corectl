@@ -20,8 +20,9 @@ var getAssociationsCmd = &cobra.Command{
 corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		engine := internal.GetEngineURL()
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintAssociations(data)
 	},
 }
@@ -35,8 +36,9 @@ var getTablesCmd = &cobra.Command{
 corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		engine := internal.GetEngineURL()
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintTables(data)
 	},
 }
@@ -50,8 +52,9 @@ var getMetaCmd = &cobra.Command{
 corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		engine := internal.GetEngineURL()
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintMetadata(data)
 	},
 }
@@ -64,7 +67,7 @@ var getValuesCmd = &cobra.Command{
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
 	},
 }
@@ -77,8 +80,9 @@ var getFieldsCmd = &cobra.Command{
 	Example: "corectl fields",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		engine := internal.GetEngineURL()
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintFields(data, false)
 	},
 }
@@ -91,8 +95,9 @@ var getKeysCmd = &cobra.Command{
 	Example: "corectl keys",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.MetaURL, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		engine := internal.GetEngineURL()
+		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintFields(data, true)
 	},
 }
@@ -108,7 +113,7 @@ corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" 
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		internal.Eval(rootCtx, state.Doc, args)
 	},
 }
@@ -123,20 +128,22 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		var appSpecified bool
-		engineURL := viper.GetString("engine")
+		engine := viper.GetString("engine")
 		appID := viper.GetString("app")
 		catwalkURL := viper.GetString("catwalk-url")
+		engineURL := internal.GetEngineURL()
 		if appID != "" {
-			catwalkURL += "?engine_url=" + internal.TidyUpEngineURL(engineURL) + "/app/" + appID
+			engineURL.Path += "/app/" + appID
+			catwalkURL += "?engine_url=" + engineURL.String()
 			appSpecified = true
 		} else {
-			if internal.TryParseAppFromURL(viper.GetString("engine")) != "" {
+			if internal.TryParseAppFromURL(engine) != "" {
 				appSpecified = true
 			}
-			catwalkURL += "?engine_url=" + internal.TidyUpEngineURL(engineURL)
+			catwalkURL += "?engine_url=" + engineURL.String()
 		}
 		if appSpecified {
-			if ok, err := internal.AppExists(rootCtx, engineURL, appID, headers); !ok {
+			if ok, err := internal.AppExists(rootCtx, engine, appID, headers, certificates); !ok {
 				internal.FatalError(err)
 			}
 		}

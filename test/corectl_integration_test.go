@@ -128,7 +128,6 @@ func TestVariableManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
-
 	// Build with both variables and check
 	p.ExpectOK().Run("build")
 	p.ExpectGolden().Run("variable", "ls")
@@ -413,4 +412,20 @@ func TestImportApp(t *testing.T) {
 		p.ExpectOK().Run("app", "rm", appID, "--suppress")
 		p.Reset()
 	}
+}
+
+func TestUnbuild(t *testing.T) {
+	os.Setenv("CONN_TYPE", "folder")
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p2 := toolkit.Params{T: t, Config: "test/golden/unbuild/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-rebuild"}
+	defer p.Reset()
+
+	p.ExpectOK().Run("build")
+	p.ExpectOK().Run("unbuild", "--dir", "test/golden/unbuild")
+	p2.ExpectOK().Run("build")
+	p2.ExpectGolden().Run("object", "ls")
+	p2.ExpectGolden().Run("measure", "ls")
+	p2.ExpectGolden().Run("dimension", "ls")
+	p2.ExpectGolden().Run("meta")
+	os.RemoveAll("test/golden/unbuild")
 }

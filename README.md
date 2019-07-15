@@ -88,6 +88,8 @@ Also check out the blog post about utilizing `corectl` and `catwalk` to build yo
 
 Usage documentation can be found [here](./docs/corectl.md).
 
+### bash & zsh
+
 `corectl` provides auto completion of commands and flags for `bash` and `zsh`. To load completion in your shell add the following to your `~/.bashrc` or `~/.zshrc` file depending on shell.
 
 ```bash
@@ -96,7 +98,7 @@ if [ $(which corectl) ]; then
 fi
 ```
 
-(Substitute <shell> with `bash` or `zsh`.)
+(Substitute `<shell>` with `bash` or `zsh`.)
 Auto completion requires `bash-completion` to be installed.
 
 If you want add an alias for `corectl`, you can add the following snippet into your `rc` file aswell
@@ -105,6 +107,19 @@ alias <myalias>=corectl
 complete -o default -F __start_corectl <myalias>
 ```
 where `<myalias>` should be substituted for whatever you wish to call `corectl`.
+
+### PowerShell
+
+`corectl` has some basic auto completion for PowerShell. It can be used by doing the following.
+
+First generate the PowerShell script by running:
+```powershell
+corectl completion ps > <file-path.ps1>
+```
+followed by adding the following to your PowerShell [profile](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-6)
+```powershell
+. <file-path.ps1>
+```
 
 # Development
 
@@ -174,14 +189,12 @@ To regenerate the documentation:
 corectl generate-docs
 ```
 
-To regenerate the api spec, first build with latest release
+To regenerate the api spec, first build and run with latest release
 tag as version and then generate the spec using:
 
 ```bash
-go build -ldflags "-X main.version=$(git describe --tag --abbrev=0)"
-./corectl generate-spec
+go run -ldflags "-X main.version=$(git describe --tag --abbrev=0)" main.go generate-spec
 ```
-
 ## Contributing
 
 We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source)

@@ -13,14 +13,14 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 	Short:   "Set or update the bookmarks in the current app",
 	Long:    "Set or update the bookmarks in the current app",
 	Example: "corectl bookmark set ./my-bookmarks-glob-path.json",
-	Hidden: true,
+	Hidden:  true,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineBookmarks := args[0]
 		if commandLineBookmarks == "" {
 			internal.FatalError("no bookmarks specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetBookmarks(rootCtx, state.Doc, commandLineBookmarks)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -36,7 +36,7 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyBookmark(rootCtx, entity)
 			if err != nil {
@@ -59,7 +59,7 @@ var listBookmarksCmd = &cobra.Command{
 	Example: "corectl bookmark ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		items := internal.ListBookmarks(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
@@ -73,7 +73,7 @@ var getBookmarkPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl bookmark properties BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityProperties(state, args[0], "bookmark", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -86,15 +86,15 @@ var getBookmarkLayoutCmd = &cobra.Command{
 	Example: "corectl bBookmark layout BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		printer.PrintGenericEntityLayout(state, args[0], "bookmark")
 	},
 }
 
 var bookmarkCmd = &cobra.Command{
-	Use:		"bookmark",
-	Short:	"Explore and manage bookmarks",
-	Long:		"Explore and manage bookmarks",
+	Use:   "bookmark",
+	Short: "Explore and manage bookmarks",
+	Long:  "Explore and manage bookmarks",
 	Annotations: map[string]string{
 		"command_category": "sub",
 		"x-qlik-stability": "experimental",

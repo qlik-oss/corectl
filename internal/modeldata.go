@@ -2,10 +2,13 @@ package internal
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
+	neturl "net/url"
 
 	"github.com/qlik-oss/enigma-go"
+	"github.com/qlik-oss/corectl/internal/rest"
 )
 
 // ModelMetadata defines all available metadata around the data model.
@@ -13,9 +16,9 @@ type ModelMetadata struct {
 	Tables                   []*TableModel
 	Fields                   []*FieldModel
 	SourceKeys               []*enigma.SourceKeyRecord
-	RestMetadata             *RestMetadata
-	RestTableMetadataByName  map[string]*RestTableMetadata
-	RestFieldMetadataByName  map[string]*RestFieldMetadata
+	RestMetadata             *rest.RestMetadata
+	RestTableMetadataByName  map[string]*rest.RestTableMetadata
+	RestFieldMetadataByName  map[string]*rest.RestFieldMetadata
 	FieldsInTableTexts       map[string]string
 	SampleContentByFieldName map[string]string
 }
@@ -23,14 +26,14 @@ type ModelMetadata struct {
 // TableModel represents one table in the data model. It contains information from both the QIX and Rest apis
 type TableModel struct {
 	*enigma.TableRecord
-	RestMetadata *RestTableMetadata
+	RestMetadata *rest.RestTableMetadata
 }
 
 // FieldModel represents one field in the data model. It contains information from both the QIX and Rest apis.
 // It also contains an array (with compatible ordering with the main Table model ordering) with field per source table info.
 type FieldModel struct {
 	*enigma.FieldDescription
-	RestMetadata *RestFieldMetadata
+	RestMetadata *rest.RestFieldMetadata
 	//Sparse array with information about the source tables.
 	FieldInTable []*enigma.FieldInTableData
 }
@@ -67,7 +70,7 @@ func (m *ModelMetadata) tableByName(name string) *TableModel {
 	return nil
 }
 
-func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string, restMetadata *RestMetadata) []*FieldModel {
+func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string, restMetadata *rest.RestMetadata) []*FieldModel {
 	result := make([]*FieldModel, len(fieldNames))
 
 	type GetFieldDescriptionResultEntry struct {
@@ -80,7 +83,7 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 	for i, fieldName := range fieldNames {
 		result[i] = &FieldModel{
 			FieldDescription: nil, //Fill in later
-			RestMetadata:     restMetadata.fieldByName(fieldName),
+			RestMetadata:     restMetadata.FieldByName(fieldName),
 		}
 		//Run field description fetching in parallel threads
 		go func(index int, fieldName string) {
@@ -100,10 +103,10 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 	return result
 }
 
-func createTableModels(ctx context.Context, doc *enigma.Doc, tableRecords []*enigma.TableRecord, restMetadata *RestMetadata) []*TableModel {
+func createTableModels(ctx context.Context, doc *enigma.Doc, tableRecords []*enigma.TableRecord, restMetadata *rest.RestMetadata) []*TableModel {
 	tableModels := make([]*TableModel, len(tableRecords))
 	for i, tableRecord := range tableRecords {
-		tableModels[i] = &TableModel{TableRecord: tableRecord, RestMetadata: restMetadata.tableByName(tableRecord.Name)}
+		tableModels[i] = &TableModel{TableRecord: tableRecord, RestMetadata: restMetadata.TableByName(tableRecord.Name)}
 	}
 	return tableModels
 }
@@ -123,7 +126,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 }
 
 // GetModelMetadata retrives all available metadata about the app
-func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, headers http.Header, keyOnly bool) *ModelMetadata {
+func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, certificates *tls.Config, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		FatalErrorf("could not retrieve tables and keys: %s", err)
@@ -131,7 +134,7 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, metaURL string, head
 	if len(tables) == 0 {
 		FatalErrorf("the data model is empty")
 	}
-	restMetadata, err := ReadRestMetadata(metaURL, headers)
+	restMetadata, err := rest.ReadRestMetadata(appID, engine, headers, certificates)
 
 	if len(tables) > 0 && restMetadata == nil {
 		fmt.Println("No REST metadata available.")

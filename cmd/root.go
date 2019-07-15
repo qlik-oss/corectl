@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -14,6 +16,7 @@ var headersMap = make(map[string]string)
 var explicitConfigFile = ""
 var version = ""
 var headers http.Header
+var certificates *tls.Config
 var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
@@ -36,6 +39,10 @@ var rootCmd = &cobra.Command{
 		}
 		internal.ReadConfigFile(explicitConfigFile)
 
+		if certPath := viper.GetString("certificates"); certPath != "" {
+			certificates = internal.ReadCertificates(certPath)
+		}
+
 		if len(headersMap) == 0 {
 			headersMap = viper.GetStringMapString("headers")
 		}
@@ -55,7 +62,8 @@ var rootCmd = &cobra.Command{
 func Execute(mainVersion string) {
 	version = mainVersion
 	if err := rootCmd.Execute(); err != nil {
-		internal.FatalErrorf("error at start: %s", err)
+		// Cobra already prints an error message so we just want to exit
+		os.Exit(1)
 	}
 }
 
@@ -94,6 +102,7 @@ func init() {
 	rootCmd.AddCommand(getValuesCmd)
 	rootCmd.AddCommand(getMetaCmd)
 	rootCmd.AddCommand(contextCmd)
+	rootCmd.AddCommand(unbuildCmd)
 
 	// Subcommands
 	rootCmd.AddCommand(measureCmd)

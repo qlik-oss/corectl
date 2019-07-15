@@ -2,6 +2,8 @@ package internal
 
 import (
 	"bytes"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -127,6 +129,36 @@ func ReadConfigFile(explicitConfigFile string) {
 		LogVerbose("No config file specified, using default values.")
 	}
 }
+
+// ReadCertificates reads and loads the specified certificates
+func ReadCertificates(certificatesPath string) *tls.Config {
+	// Read client and root certificates.
+	certFile := certificatesPath + "/client.pem"
+	keyFile := certificatesPath + "/client_key.pem"
+	caFile := certificatesPath + "/root.pem"
+
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		FatalError("Failed to load client certificate: ", err)
+	}
+
+	caCert, err := ioutil.ReadFile(caFile)
+	if err != nil {
+		FatalError("Failed to read root certificate: ", err)
+	}
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
+
+	// Setup TLS configuration.
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		Certificates:       []tls.Certificate{cert},
+		RootCAs:            caCertPool,
+	}
+
+	return tlsConfig
+}
+
 
 // AddValidProp adds the given property to the set of valid properties.
 func AddValidProp(propName string) {
