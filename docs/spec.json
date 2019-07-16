@@ -193,14 +193,14 @@
     "context": {
       "description": "Explore and manage contexts",
       "commands": {
-        "add": {
-          "description": "Add a new context",
+        "create": {
+          "description": "Create a new context",
           "flags": {
             "comment": {
               "description": "Comment for the context"
             },
             "product": {
-              "description": "Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud)",
+              "description": "Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterpries on Kubernetes) or QSEoW (Qlik Sense Enterpries on Windows)",
               "default": "QC"
             }
           }

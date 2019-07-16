@@ -1,28 +1,28 @@
-## corectl context add
+## corectl context create
 
-Add a new context
+Create a new context
 
 ### Synopsis
 
-Add a new context
+Create a new context
 
 ```
-corectl context add <context name> [flags]
+corectl context create <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl add create local-engine
-corectl context add rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"
+corectl context create local-engine
+corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
       --comment string   Comment for the context
-  -h, --help             help for add
-      --product string   Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud) (default "QC")
+  -h, --help             help for create
+      --product string   Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterpries on Kubernetes) or QSEoW (Qlik Sense Enterpries on Windows) (default "QC")
 ```
 
 ### Options inherited from parent commands

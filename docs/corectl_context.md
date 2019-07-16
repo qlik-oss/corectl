@@ -31,7 +31,7 @@ Explore and manage contexts
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl context add](corectl_context_add.md)	 - Add a new context
+* [corectl context create](corectl_context_create.md)	 - Create a new context
 * [corectl context get](corectl_context_get.md)	 - Get context, current context by default
 * [corectl context ls](corectl_context_ls.md)	 - List all contexts
 * [corectl context rm](corectl_context_rm.md)	 - Removes a context
