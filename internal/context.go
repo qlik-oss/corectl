@@ -122,6 +122,12 @@ func SetCurrentContext(contextName string) {
 	handler.Save()
 }
 
+func UnsetCurrentContext() {
+	handler := NewContextHandler()
+	handler.UnsetCurrent()
+	handler.Save()
+}
+
 func NewContextHandler() *ContextHandler {
 	handler := &ContextHandler{}
 	if !fileExists(contextFilePath) {
@@ -180,6 +186,17 @@ func (ch *ContextHandler) SetCurrent(contextName string) {
 	LogVerbose("Set current context to: " + contextName)
 
 	ch.Current = contextName
+}
+
+func (ch *ContextHandler) UnsetCurrent() (previous string) {
+	if ch.Current == "" {
+		LogVerbose("No context is set")
+		return ""
+	}
+	previous = ch.Current
+	LogVerbose(fmt.Sprintf("Unset context '%s'", previous))
+	ch.Current = ""
+	return
 }
 
 func (ch *ContextHandler) Remove(contextName string) {

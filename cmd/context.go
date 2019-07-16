@@ -78,6 +78,18 @@ var setContextCmd = &cobra.Command{
 	},
 }
 
+var unsetContextCmd = &cobra.Command{
+	Use:	"unset",
+	Args:	cobra.ExactArgs(0),
+	Short: "Unset current context",
+	Long: "Unset current context",
+	Example: "corectl context unset",
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		internal.UnsetCurrentContext()
+	},
+}
+
 var contextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Explore and manage contexts",
@@ -88,5 +100,5 @@ var contextCmd = &cobra.Command{
 }
 
 func init() {
-	contextCmd.AddCommand(createContextCmd, removeContextCmd, listContextsCmd, setContextCmd, getContextCmd)
+	contextCmd.AddCommand(createContextCmd, removeContextCmd, listContextsCmd, setContextCmd, getContextCmd, unsetContextCmd)
 }
