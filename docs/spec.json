@@ -362,6 +362,21 @@
         }
       }
     },
+    "state": {
+      "alias": "alternatestate",
+      "description": "Explore and manage alternate states",
+      "commands": {
+        "add": {
+          "description": "Add an alternate states in the current app"
+        },
+        "ls": {
+          "description": "Print a list of all alternate states in the current app"
+        },
+        "rm": {
+          "description": "Removes an alternate states in the current app"
+        }
+      }
+    },
     "status": {
       "description": "Print status info about the connection to the engine and current app, and also the status of the data model"
     },
