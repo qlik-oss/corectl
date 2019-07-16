@@ -44,6 +44,7 @@ jobs:
             ENGINE_STD_CONTAINER_ID=$(docker ps -aqf "name=engine-std")
             ENGINE_ABAC_CONTAINER_ID=$(docker ps -aqf "name=engine-abac")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_STD_CONTAINER_ID")
+            echo $TEST_HOST
             # Start a container for test execution
             TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.12-alpine tail -f /dev/null)
             # Install packages
