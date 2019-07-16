@@ -1,15 +1,26 @@
-## corectl context
+## corectl context get
 
-Explore and manage contexts
+Get context, current context by default
 
 ### Synopsis
 
-Explore and manage contexts
+Get context, current context by default
+
+```
+corectl context get [flags]
+```
+
+### Examples
+
+```
+corectl context get
+corectl context get local-engine
+```
 
 ### Options
 
 ```
-  -h, --help   help for context
+  -h, --help   help for get
 ```
 
 ### Options inherited from parent commands
@@ -30,10 +41,5 @@ Explore and manage contexts
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl context add](corectl_context_add.md)	 - Add a new context
-* [corectl context get](corectl_context_get.md)	 - Get context, current context by default
-* [corectl context ls](corectl_context_ls.md)	 - List all contexts
-* [corectl context rm](corectl_context_rm.md)	 - Removes a context
-* [corectl context set](corectl_context_set.md)	 - Set a current context
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

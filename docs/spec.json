@@ -205,6 +205,9 @@
             }
           }
         },
+        "get": {
+          "description": "Get context, current context by default"
+        },
         "ls": {
           "description": "List all contexts"
         },
