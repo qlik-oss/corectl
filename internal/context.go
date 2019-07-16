@@ -9,122 +9,143 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type ContextHandler struct {
+	Current  string `yaml:"current-context"`
+	Contexts map[string]*Context
+}
+
+type Context struct {
+	Engine       string
+	Headers      map[string]string
+	Certificates string
+	Product      string
+	Comment      string
+}
+
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
 func AddContext(contextName string, productName string, comment string) {
-	createContextFileIfNotExist()
-	_, contexts := GetContexts()
+	handler := NewContextHandler()
 
-	if contextExists(contexts, contextName) {
+	if handler.Exists(contextName) {
 		FatalErrorf("context with name '%s' already exists", contextName)
 	}
 
-	mymap := map[interface{}]interface{}{}
-	mymap["engine"] = viper.GetString("engine")
-	mymap["headers"] = viper.GetStringMapString("headers")
-	mymap["certificates"] = viper.GetString("certificates")
-	mymap["product"] = productName
-	mymap["comment"] = comment
+	context := &Context{
+		Engine:       viper.GetString("engine"),
+		Headers:      viper.GetStringMapString("headers"),
+		Certificates: viper.GetString("certificates"),
+		Product:      productName,
+		Comment:      comment,
+	}
 
-	contexts[contextName] = mymap
+	handler.Contexts[contextName] = context
 
 	LogVerbose("Added context with name: " + contextName)
 
-	setContexts(contextName, contexts)
+	handler.Current = contextName
+	handler.Save()
 }
 
 func RemoveContext(contextName string) {
-	createContextFileIfNotExist()
-	currentContext, contexts := GetContexts()
+	handler := NewContextHandler()
 
-	if !contextExists(contexts, contextName) {
+	if handler.Exists(contextName) {
 		FatalErrorf("context with name '%s' does not exist", contextName)
 	}
 
-	delete(contexts, contextName)
+	handler.Remove(contextName)
 	LogVerbose("Removed context with name: " + contextName)
-
-	if currentContext == contextName {
-		setContexts("", contexts)
-	} else {
-		setContexts(currentContext, contexts)
-	}
+	handler.Save()
 }
 
-func contextExists(contexts map[interface{}]interface{}, contextName string) bool {
-	if _, exists := contexts[contextName]; exists {
+func SetCurrentContext(contextName string) {
+	handler := NewContextHandler()
+	handler.SetCurrent(contextName)
+	handler.Save()
+}
+
+func NewContextHandler() *ContextHandler {
+	createContextFileIfNotExist()
+	handler := &ContextHandler{}
+	yamlFile, err := ioutil.ReadFile(contextFilePath)
+	if err != nil {
+		return nil
+	}
+	err = yaml.Unmarshal(yamlFile, &handler)
+	if err != nil {
+		FatalErrorf("could not parse content of contexts yaml '%s': %s", yamlFile, err)
+	}
+
+	if len(handler.Contexts) == 0 {
+		return handler
+	}
+	return handler
+}
+
+func (ch *ContextHandler) Exists(contextName string) bool {
+	if _, ok := ch.Contexts[contextName]; ok {
 		LogVerbose("Found context: " + contextName)
-		return true
+		return ok
 	}
 	return false
 }
 
-func SetCurrentContext(contextName string) {
-	currentContext, contexts := GetContexts()
+func (ch *ContextHandler) Get(contextName string) *Context {
+	if context, ok := ch.Contexts[contextName]; ok {
+		return context
+	}
+	return nil
+}
 
-	if !contextExists(contexts, contextName) {
+func (ch *ContextHandler) GetCurrent() *Context {
+	cur := ch.Current
+	if cur == "" {
+		return nil
+	}
+	return ch.Get(cur)
+}
+
+func (ch *ContextHandler) SetCurrent(contextName string) {
+	if !ch.Exists(contextName) {
 		FatalErrorf("context with name '%s' does not exist", contextName)
 	}
-
-	if currentContext == contextName {
+	if ch.Current == contextName {
 		LogVerbose("Current context already set to " + contextName)
 		return
 	}
-
 	LogVerbose("Set current context to: " + contextName)
 
-	setContexts(contextName, contexts)
+	ch.Current = contextName
 }
 
-func setContexts(currentContext string, contexts map[interface{}]interface{}) {
-	contexts["current-context"] = currentContext
+func (ch *ContextHandler) Remove(contextName string) {
+	if !ch.Exists(contextName) {
+		FatalErrorf("context with name '%s' does not exist", contextName)
+	}
+	delete(ch.Contexts, contextName)
+	LogVerbose("Removed context with name: " + contextName)
+	if ch.Current == contextName {
+		ch.Current = ""
+	}
+}
 
-	out, _ := yaml.Marshal(contexts)
+func (ch *ContextHandler) Save() {
+	out, _ := yaml.Marshal(*ch)
 
 	if err := ioutil.WriteFile(contextFilePath, out, 0644); err != nil {
 		FatalErrorf("could not write to '%s': %s", contextFilePath, err)
 	}
 }
 
-func GetContexts() (string, map[interface{}]interface{}) {
-	var contexts = map[interface{}]interface{}{}
-	yamlFile, err := ioutil.ReadFile(contextFilePath)
-	if err != nil {
-		return "", nil
-	}
-	err = yaml.Unmarshal(yamlFile, &contexts)
-	if err != nil {
-		FatalErrorf("could not parse content of contexts yaml '%s': %s", yamlFile, err)
-	}
-
-	if len(contexts) == 0 {
-		return "", map[interface{}]interface{}{}
-	}
-
-	currentContext := contexts["current-context"].(string)
-	delete(contexts, "current-context")
-
-	return currentContext, contexts
-}
-
-func GetCurrentContext() map[interface{}]interface{} {
-	currentContext, contexts := GetContexts()
-	if currentContext == "" {
-		return nil
-	}
-	res, _ := contexts[currentContext].(map[interface{}]interface{})
-	return res
-}
-
-func GetSpecificContext(contextName string) map[interface{}]interface{} {
-	_, contexts := GetContexts()
-
-	if !contextExists(contexts, contextName) {
-		return nil
-	}
-
-	res, _ := contexts[contextName].(map[interface{}]interface{})
-	return res
+func (c *Context) ToMap() map[interface{}]interface{} {
+	m := map[interface{}]interface{}{}
+	m["engine"] = c.Engine
+	m["headers"] = c.Headers
+	m["certificates"] = c.Certificates
+	m["product"] = c.Product
+	m["comment"] = c.Comment
+	return m
 }
 
 // Create a contexts.yml if one does not exist

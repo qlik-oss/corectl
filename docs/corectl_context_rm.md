@@ -1,26 +1,25 @@
-## corectl tables
+## corectl context rm
 
-Print tables
+Removes a context
 
 ### Synopsis
 
-Print tables for the data model in an app
+Removes a context
 
 ```
-corectl tables [flags]
+corectl context rm <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl tables
-corectl tables --app=my-app.qvf
+corectl context rm local-engine
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tables
+  -h, --help   help for rm
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +40,5 @@ corectl tables --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

@@ -1,26 +1,25 @@
-## corectl tables
+## corectl context ls
 
-Print tables
+List all contexts
 
 ### Synopsis
 
-Print tables for the data model in an app
+List all contexts
 
 ```
-corectl tables [flags]
+corectl context ls [flags]
 ```
 
 ### Examples
 
 ```
-corectl tables
-corectl tables --app=my-app.qvf
+corectl context ls
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tables
+  -h, --help   help for ls
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +40,5 @@ corectl tables --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

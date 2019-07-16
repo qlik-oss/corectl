@@ -294,20 +294,23 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 }
 
 func mergeGlobalAndLocalConfig(config map[interface{}]interface{}) map[interface{}]interface{} {
-	var context map[interface{}]interface{}
+	contextHandler := NewContextHandler()
+	var context *Context
 	if viper.GetString("context") != "" {
-		context = GetSpecificContext(viper.GetString("context"))
+		context = contextHandler.Get(viper.GetString("context"))
 	} else {
-		context = GetCurrentContext()
+		context = contextHandler.GetCurrent()
 	}
 
 	if context == nil {
 		return config
 	}
 
+	contextMap := context.ToMap()
+
 	for k, v := range config {
-		context[k.(string)] = v
+		contextMap[k.(string)] = v
 	}
 
-	return context
+	return contextMap
 }

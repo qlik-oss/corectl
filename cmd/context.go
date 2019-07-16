@@ -33,6 +33,19 @@ var removeContextCmd = &cobra.Command{
 	},
 }
 
+var getContextCmd = &cobra.Command{
+	Use:     "get",
+	Args:    cobra.ExactArgs(0),
+	Short:   "Get current context",
+	Long:    "Get current context",
+	Example: "corectl context get",
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		//TODO
+		internal.FatalError("not yet implemented")
+	},
+}
+
 var listContextsCmd = &cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
@@ -41,8 +54,8 @@ var listContextsCmd = &cobra.Command{
 	Example: "corectl context ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		currentContext, contexts := internal.GetContexts()
-		printer.PrintContexts(contexts, currentContext, viper.GetBool("bash"))
+		handler := internal.NewContextHandler()
+		printer.PrintContexts(handler, viper.GetBool("bash"))
 	},
 }
 

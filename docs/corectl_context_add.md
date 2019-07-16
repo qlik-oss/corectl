@@ -1,26 +1,28 @@
-## corectl tables
+## corectl context add
 
-Print tables
+Add a new context
 
 ### Synopsis
 
-Print tables for the data model in an app
+Add a new context
 
 ```
-corectl tables [flags]
+corectl context add <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl tables
-corectl tables --app=my-app.qvf
+corectl add create local-engine
+corectl context add rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tables
+      --comment string   Comment for the context
+  -h, --help             help for add
+      --product string   Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud) (default "QC")
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +43,5 @@ corectl tables --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

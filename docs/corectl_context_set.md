@@ -1,26 +1,25 @@
-## corectl tables
+## corectl context set
 
-Print tables
+Set a current context
 
 ### Synopsis
 
-Print tables for the data model in an app
+Set a current context
 
 ```
-corectl tables [flags]
+corectl context set [flags]
 ```
 
 ### Examples
 
 ```
-corectl tables
-corectl tables --app=my-app.qvf
+corectl context set local-engine
 ```
 
 ### Options
 
 ```
-  -h, --help   help for tables
+  -h, --help   help for set
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +40,5 @@ corectl tables --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

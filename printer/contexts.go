@@ -4,14 +4,15 @@ import (
 	"os"
 	"sort"
 
+	"github.com/qlik-oss/corectl/internal"
 	"github.com/olekukonko/tablewriter"
 )
 
 // PrintContexts prints a list of contexts to standard out
-func PrintContexts(contexts map[interface{}]interface{}, currentContext string, printAsBash bool) {
+func PrintContexts(handler *internal.ContextHandler, printAsBash bool) {
 	var sortedContextKeys []string
-	for k := range contexts {
-		sortedContextKeys = append(sortedContextKeys, k.(string))
+	for k := range handler.Contexts {
+		sortedContextKeys = append(sortedContextKeys, k)
 	}
 
 	sort.Strings(sortedContextKeys)
@@ -26,14 +27,13 @@ func PrintContexts(contexts map[interface{}]interface{}, currentContext string, 
 		writer.SetRowLine(true)
 		writer.SetHeader([]string{"Name", "Product", "Current", "Comment"})
 
-		for _, v := range sortedContextKeys {
-			context := map[interface{}]interface{}{}
-			context = contexts[v].(map[interface{}]interface{})
-			if v == currentContext {
-				writer.Append([]string{v, context["product"].(string), "*", context["comment"].(string)})
-			} else {
-				writer.Append([]string{v, context["product"].(string), "", context["comment"].(string)})
+		for _, k := range sortedContextKeys {
+			context := handler.Get(k)
+			row := []string{k, context.Product, "", context.Comment}
+			if k == handler.Current {
+				row[2] = "*"
 			}
+			writer.Append(row)
 		}
 		writer.Render()
 	}

@@ -24,6 +24,9 @@
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"
     },
+    "context": {
+      "description": "Specific context that should be used when connecting"
+    },
     "engine": {
       "alias": "e",
       "description": "URL to the Qlik Associative Engine",
@@ -184,6 +187,32 @@
         },
         "set": {
           "description": "Set or update the connections in the current app"
+        }
+      }
+    },
+    "context": {
+      "description": "Explore and manage contexts",
+      "commands": {
+        "add": {
+          "description": "Add a new context",
+          "flags": {
+            "comment": {
+              "description": "Comment for the context"
+            },
+            "product": {
+              "description": "Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud)",
+              "default": "QC"
+            }
+          }
+        },
+        "ls": {
+          "description": "List all contexts"
+        },
+        "rm": {
+          "description": "Removes a context"
+        },
+        "set": {
+          "description": "Set a current context"
         }
       }
     },
