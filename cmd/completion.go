@@ -67,6 +67,9 @@ __corectl_custom_func()
 		corectl_connection_get | corectl_connection_rm)
 			__corectl_get_connections
 			;;
+		corectl_state_rm)
+			__corectl_state_ls
+			;;
 		corectl_app_rm)
 			__corectl_get_apps
 			;;
@@ -168,6 +171,11 @@ __corectl_get_objects()
 __corectl_get_connections()
 {
 	__corectl_call_corectl "connection ls --bash"
+}
+
+__corectl_state_ls()
+{
+	__corectl_call_corectl "state ls --bash"
 }
 
 __corectl_get_apps()

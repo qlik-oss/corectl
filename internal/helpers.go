@@ -26,3 +26,14 @@ func FormatBytes(bytes int) string {
 	prefix := string("kMGTPE"[exponent-1])
 	return fmt.Sprintf("%.1f%s", byteFloat/math.Pow(unit, float64(exponent)), prefix)
 }
+
+// Contains will return true if slice contains string
+func Contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
+}
