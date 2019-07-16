@@ -35,14 +35,22 @@ var removeContextCmd = &cobra.Command{
 
 var getContextCmd = &cobra.Command{
 	Use:     "get",
-	Args:    cobra.ExactArgs(0),
-	Short:   "Get current context",
-	Long:    "Get current context",
-	Example: "corectl context get",
+	Args:    cobra.RangeArgs(0, 1),
+	Short:   "Get context, current context by default",
+	Long:    "Get context, current context by default",
+	Example: `corectl context get
+corectl context get local-engine`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		//TODO
-		internal.FatalError("not yet implemented")
+		handler := internal.NewContextHandler()
+		var name string
+		if len(args) == 1 {
+			name = args[0]
+		} else {
+			name = handler.Current
+		}
+		context := handler.Get(name)
+		printer.PrintContext(name, context)
 	},
 }
 
@@ -81,5 +89,5 @@ var contextCmd = &cobra.Command{
 }
 
 func init() {
-	contextCmd.AddCommand(addContextCmd, removeContextCmd, listContextsCmd, setContextCmd)
+	contextCmd.AddCommand(addContextCmd, removeContextCmd, listContextsCmd, setContextCmd, getContextCmd)
 }

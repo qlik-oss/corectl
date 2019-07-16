@@ -1,12 +1,26 @@
 package printer
 
 import (
+	"fmt"
 	"os"
 	"sort"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/olekukonko/tablewriter"
 )
+
+// PrintContext prints all information in a context
+func PrintContext(name string, context *internal.Context) {
+	fmt.Printf("Context name: %s\n", name)
+	fmt.Printf("  Product: %s\n", context.Product)
+	fmt.Printf("  Comment: %s\n", context.Comment)
+	fmt.Printf("  Engine: %s\n", context.Engine)
+	fmt.Printf("  Certificates: %s\n", context.Certificates)
+	fmt.Println("  Headers:")
+	for k, v := range context.Headers {
+		fmt.Printf("    %s: %s\n", k, v)
+	}
+}
 
 // PrintContexts prints a list of contexts to standard out
 func PrintContexts(handler *internal.ContextHandler, printAsBash bool) {

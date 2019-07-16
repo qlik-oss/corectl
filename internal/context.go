@@ -25,6 +25,10 @@ type Context struct {
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
 func AddContext(contextName string, productName string, comment string) {
+	if contextName == "" {
+		FatalError("\"\" is not a valid context name")
+	}
+	createContextFileIfNotExist()
 	handler := NewContextHandler()
 
 	if handler.Exists(contextName) {
@@ -49,11 +53,6 @@ func AddContext(contextName string, productName string, comment string) {
 
 func RemoveContext(contextName string) {
 	handler := NewContextHandler()
-
-	if handler.Exists(contextName) {
-		FatalErrorf("context with name '%s' does not exist", contextName)
-	}
-
 	handler.Remove(contextName)
 	LogVerbose("Removed context with name: " + contextName)
 	handler.Save()
@@ -66,15 +65,21 @@ func SetCurrentContext(contextName string) {
 }
 
 func NewContextHandler() *ContextHandler {
-	createContextFileIfNotExist()
 	handler := &ContextHandler{}
+	if !fileExists(contextFilePath) {
+		return handler
+	}
 	yamlFile, err := ioutil.ReadFile(contextFilePath)
 	if err != nil {
-		return nil
+		return handler
 	}
 	err = yaml.Unmarshal(yamlFile, &handler)
 	if err != nil {
 		FatalErrorf("could not parse content of contexts yaml '%s': %s", yamlFile, err)
+	}
+
+	if handler.Contexts == nil {
+		handler.Contexts = map[string]*Context{}
 	}
 
 	if len(handler.Contexts) == 0 {
@@ -148,9 +153,16 @@ func (c *Context) ToMap() map[interface{}]interface{} {
 	return m
 }
 
+func fileExists(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
 // Create a contexts.yml if one does not exist
 func createContextFileIfNotExist() {
-	if _, err := os.Stat(contextFilePath); os.IsNotExist(err) {
+	if !fileExists(contextFilePath) {
 
 		// Create .corectl folder in home directory
 		if _, err := os.Stat(path.Join(userHomeDir(), ".corectl")); os.IsNotExist(err) {
