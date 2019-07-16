@@ -1,15 +1,25 @@
-## corectl context
+## corectl context unset
 
-Explore and manage contexts
+Unset current context
 
 ### Synopsis
 
-Explore and manage contexts
+Unset current context
+
+```
+corectl context unset [flags]
+```
+
+### Examples
+
+```
+corectl context unset
+```
 
 ### Options
 
 ```
-  -h, --help   help for context
+  -h, --help   help for unset
 ```
 
 ### Options inherited from parent commands
@@ -30,11 +40,5 @@ Explore and manage contexts
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl context create](corectl_context_create.md)	 - Create a new context
-* [corectl context get](corectl_context_get.md)	 - Get context, current context by default
-* [corectl context ls](corectl_context_ls.md)	 - List all contexts
-* [corectl context rm](corectl_context_rm.md)	 - Removes a context
-* [corectl context set](corectl_context_set.md)	 - Set a current context
-* [corectl context unset](corectl_context_unset.md)	 - Unset current context
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 

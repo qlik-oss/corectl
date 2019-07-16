@@ -216,6 +216,9 @@
         },
         "set": {
           "description": "Set a current context"
+        },
+        "unset": {
+          "description": "Unset current context"
         }
       }
     },
