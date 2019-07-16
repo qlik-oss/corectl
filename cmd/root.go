@@ -33,11 +33,13 @@ var rootCmd = &cobra.Command{
 	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-		// if help, version or generate-docs command, no prerun is needed.
+		// If help, version or generate-docs command, no prerun is needed.
 		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-spec" || ccmd.Use == "version" {
 			return
 		}
-		internal.ReadConfigFile(explicitConfigFile)
+		// Depending on the command, we might not want to use context when loading config.
+		withContext := shouldUseContext(ccmd)
+		internal.ReadConfigFile(explicitConfigFile, withContext)
 
 		if certPath := viper.GetString("certificates"); certPath != "" {
 			certificates = internal.ReadCertificates(certPath)
@@ -56,6 +58,17 @@ var rootCmd = &cobra.Command{
 		ccmd.HelpFunc()(ccmd, args)
 	},
 }
+
+func shouldUseContext(ccmd *cobra.Command) bool {
+	path := ccmd.CommandPath()
+	// Switch so cases can be easily added
+	switch {
+	case strings.Contains(path, "context create"):
+		return false
+	}
+	return true
+}
+
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.

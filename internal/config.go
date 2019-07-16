@@ -106,19 +106,21 @@ func ReadConnectionsFile(path string) ConnectionsConfig {
 
 // ReadConfigFile checks that the config file does not contain any unknown properties
 // and then, if the config is valid, reads it.
-func ReadConfigFile(explicitConfigFile string) {
+// withContext specifies whether a context should be included when looking setting the
+// config or not.
+func ReadConfigFile(explicitConfigFile string, withContext bool) {
 	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		setConfigFile(explicitConfigFile)
+		setConfigFile(explicitConfigFile, withContext)
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
 		if configFile != "" {
-			setConfigFile(configFile)
+			setConfigFile(configFile, withContext)
 		}
 	}
 	InitLogOutput() // sets json, verbose and traffic
@@ -166,7 +168,7 @@ func AddValidProp(propName string) {
 }
 
 // setConfigFile reads in a config file and processes it before providing viper with it.
-func setConfigFile(configPath string) {
+func setConfigFile(configPath string, withContext bool) {
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalErrorf("could not find config file '%s'", configPath)
@@ -179,7 +181,9 @@ func setConfigFile(configPath string) {
 	if err != nil {
 		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
 	}
-	config = mergeGlobalAndLocalConfig(config)
+	if withContext {
+		mergeContext(&config)
+	}
 	validateProps(config, configPath)
 	err = subEnvVars(&config)
 	if err != nil {
@@ -192,7 +196,7 @@ func setConfigFile(configPath string) {
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
 	if err != nil {
-		FatalErrorf("unexpected error after parseing config: %s", err)
+		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 }
 
@@ -293,7 +297,7 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 	return suggestion
 }
 
-func mergeGlobalAndLocalConfig(config map[interface{}]interface{}) map[interface{}]interface{} {
+func mergeContext(config *map[interface{}]interface{}) {
 	contextHandler := NewContextHandler()
 	var context *Context
 	if viper.GetString("context") != "" {
@@ -303,14 +307,13 @@ func mergeGlobalAndLocalConfig(config map[interface{}]interface{}) map[interface
 	}
 
 	if context == nil {
-		return config
+		return
 	}
 
-	contextMap := context.ToMap()
-
-	for k, v := range config {
-		contextMap[k.(string)] = v
+	for k, v := range context.ToMap() {
+		if _, ok := (*config)[k]; ok {
+			LogVerbose(fmt.Sprint(k, " exists in both context and config, using context"))
+		}
+		(*config)[k] = v
 	}
-
-	return contextMap
 }
