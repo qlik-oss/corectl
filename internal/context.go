@@ -1,19 +1,28 @@
 package internal
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"sort"
+	"strings"
 
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
+// ContextHandler maps strings to contexts and keeps track of the current context.
+// It has various methods for manipulating and accessing Contexts.
 type ContextHandler struct {
 	Current  string `yaml:"current-context"`
 	Contexts map[string]*Context
 }
 
+// Context represents a context. As of now it only contains information regarding connections.
+// Meaning: engine url, certificates path and any headers.
+// It also keeps the product it is meant to be used for as well as the user's comments
+// regarding the context.
 type Context struct {
 	Engine       string
 	Headers      map[string]string
@@ -22,11 +31,60 @@ type Context struct {
 	Comment      string
 }
 
+// products contains a mapping from shorthand to proper name of Qlik products.
+// This map should not be modified.
+var products = map[string]string{
+	"QC": "Qlik Core",
+	"QSC": "Qlik Sense Cloud",
+	"QSD": "Qlik Sense Desktop",
+	"QSE": "Qlik Sense Enterprise",
+	"QSEoK": "Qlik Sense Enterpries on Kubernetes",
+	"QSEoW": "Qlik Sense Enterpries on Windows",
+}
+
+func sortKeys(m map[string]string) []string {
+	keys := make([]string, len(m))
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func GetProducts() string {
+	keys := sortKeys(products)
+	l := len(keys)
+	str := make([]string, l)
+	for i, k := range keys {
+		str[i] = fmt.Sprintf("%s (%s)", k, products[k])
+	}
+	prods := strings.Join(str[:l - 1], ", ")
+	prods += " or " + str[l - 1]
+	return prods
+}
+
+func isProduct(p string) bool {
+	if _, ok := products[p]; ok {
+		return true
+	}
+	return false
+}
+
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-func AddContext(contextName string, productName string, comment string) {
+func CreateContext(contextName string, productName string, comment string) {
 	if contextName == "" {
 		FatalError("\"\" is not a valid context name")
+	}
+	if !isProduct(productName) {
+		// How we print string arrays should be handled by some utils or such
+		keys := sortKeys(products)
+		for i, k := range keys {
+			keys[i] = "\"" + k + "\""
+		}
+		FatalErrorf("no product by the name '%s', should be one of: [%s]", productName, strings.Join(keys, ", "))
 	}
 	createContextFileIfNotExist()
 	handler := NewContextHandler()

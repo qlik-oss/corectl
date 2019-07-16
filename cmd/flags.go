@@ -90,7 +90,7 @@ func initLocalFlags() {
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
 	localFlags.Bool("minimum", false, "Only print properties required by engine")
-	localFlags.String("product", "QC", "Qlik product the context is connecting to. One of QC (Qlik Core), QSE (Qlik Sense Enterprise), QSD (Qlik Sense Desktop), QSEoK (Qlik Sense Enterprise on Kubernetes), QSEoW (Qlik Sense Enterprise on Windows) or QSC (Qlik Sense Cloud)")
+	localFlags.String("product", "QC", "Qlik product the context is connecting to. One of: " + internal.GetProducts())
 	localFlags.String("comment", "", "Comment for the context")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
