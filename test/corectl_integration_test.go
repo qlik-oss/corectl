@@ -43,6 +43,37 @@ func TestReload(t *testing.T) {
 	p.ExpectGolden().Run("reload", "--silent", "--no-save")
 }
 
+func TestContextManagement(t *testing.T) {
+	jwt := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
+	abac := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
+	params := []toolkit.Params{jwt, abac}
+	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
+	for i, p := range params {
+		// Create a context using the config and engine url
+		p.ExpectOK().Run("context", "create", contexts[i])
+		// Remove config and engine from p to see if context stored them
+		p.Config, p.Engine = "", ""
+		p.ExpectOK().Run("status")
+	}
+	// Empty params, should only be able to connect to an engine if there is context
+	p := toolkit.Params{T: t}
+	// Context stored locally
+	p.ExpectOK().Run("context", "ls")
+	// See if all context commands work
+	for _, ctx := range contexts {
+		p.ExpectOK().Run("context", "get", ctx)
+		// With context status should work
+		p.ExpectOK().Run("context", "set", ctx)
+		p.ExpectOK().Run("status")
+		// Without context status should not
+		p.ExpectOK().Run("context", "unset")
+		p.ExpectError().Run("status")
+		p.ExpectOK().Run("context", "rm", ctx)
+	}
+	// No context here, expecting error
+	p.ExpectError().Run("status")
+}
+
 func TestConnectionManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
