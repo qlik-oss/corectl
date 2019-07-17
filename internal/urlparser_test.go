@@ -6,75 +6,75 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseEngineURL(t *testing.T) {
 	testURL(t, "engine", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine",
-		"Path": "",
+		"Host":   "engine",
+		"Path":   "",
 	}, true)
 	testURL(t, "engine:1234", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine:1234",
-		"Path": "",
+		"Host":   "engine:1234",
+		"Path":   "",
 	}, true)
 	testURL(t, "localhost:1234", map[string]string{
 		"Scheme": "ws",
-		"Host": "localhost:1234",
-		"Path": "",
+		"Host":   "localhost:1234",
+		"Path":   "",
 	}, true)
 	testURL(t, "localhost:1234/app/apa", map[string]string{
 		"Scheme": "ws",
-		"Host": "localhost:1234",
-		"Path": "/app/apa",
+		"Host":   "localhost:1234",
+		"Path":   "/app/apa",
 	}, true)
 	testURL(t, "engine/path", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine",
-		"Path": "/path",
+		"Host":   "engine",
+		"Path":   "/path",
 	}, true)
 	testURL(t, "engine.com", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine.com",
-		"Path": "",
+		"Host":   "engine.com",
+		"Path":   "",
 	}, true)
 	testURL(t, "http://engine.com", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine.com",
-		"Path": "",
+		"Host":   "engine.com",
+		"Path":   "",
 	}, true)
 	testURL(t, "http://engine/path", map[string]string{
 		"Scheme": "ws",
-		"Host": "engine",
-		"Path": "/path",
+		"Host":   "engine",
+		"Path":   "/path",
 	}, true)
 	testURL(t, "http://127.0.0.1:1234", map[string]string{
 		"Scheme": "ws",
-		"Host": "127.0.0.1:1234",
-		"Path": "",
+		"Host":   "127.0.0.1:1234",
+		"Path":   "",
 	}, true)
 	testURL(t, "127.0.0.1:1234", map[string]string{
 		"Scheme": "ws",
-		"Host": "127.0.0.1:1234",
-		"Path": "",
+		"Host":   "127.0.0.1:1234",
+		"Path":   "",
 	}, true)
 	testURL(t, "127.0.0.1", map[string]string{
 		"Scheme": "ws",
-		"Host": "127.0.0.1",
-		"Path": "",
+		"Host":   "127.0.0.1",
+		"Path":   "",
 	}, true)
 	testURL(t, "127.0.0.1/app/foo", map[string]string{
 		"Scheme": "ws",
-		"Host": "127.0.0.1",
-		"Path": "/app/foo",
+		"Host":   "127.0.0.1",
+		"Path":   "/app/foo",
 	}, true)
 	testURL(t, "ws://localhost:1234/app/foo", map[string]string{
 		"Scheme": "ws",
-		"Host": "localhost:1234",
-		"Path": "/app/foo",
+		"Host":   "localhost:1234",
+		"Path":   "/app/foo",
 	}, true)
 }
 
@@ -89,7 +89,7 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 		return
 	}
 	v := reflect.ValueOf(*u)
-	for f, expected := range(fields) {
+	for f, expected := range fields {
 		fval := string(v.FieldByName(f).String())
 		s_exp := fmt.Sprintf("'%s'= %s", f, expected)
 		s_fval := fmt.Sprintf("'%s'= %s", f, fval)
