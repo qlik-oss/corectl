@@ -30,7 +30,7 @@ jobs:
           command: |
             rm docs/*.md
             ./corectl generate-docs
-            if [[ ! -z $(git status) ]]; then exit 1; fi
+            if [[ ! -z $(git status --porcelain) ]]; then exit 1; fi
       - run:
           name: Check if changes has been done to the CLI API
           command: |
