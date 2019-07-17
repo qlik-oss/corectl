@@ -29,7 +29,7 @@ corectl dimension layout DIMENSION-ID
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
       --context string           Specific context that should be used when connecting
-  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
+  -e, --engine string            URL to the Qlik Associative Engine
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
