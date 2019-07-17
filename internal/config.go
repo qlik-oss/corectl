@@ -182,7 +182,6 @@ func AddValidProp(propName string) {
 
 // readConfig reads in a config file and processes it before providing viper with it.
 func readConfig(configPath string, config *map[interface{}]interface{}) {
-	fmt.Println("calling setConfigFile")
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalErrorf("could not find config file '%s'", configPath)
@@ -299,17 +298,23 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 }
 
 func mergeContext(config *map[interface{}]interface{}) {
+	// TODO: Create some sort of log buffer so verbose logs can be added
+	// before the config is complete.
+	LogVerbose("Merging context")
 	contextHandler := NewContextHandler()
-	var context *Context
-	if viper.GetString("context") != "" {
-		context = contextHandler.Get(viper.GetString("context"))
-	} else {
-		context = contextHandler.GetCurrent()
+	contextName := viper.GetString("context")
+
+	if contextName == "" {
+		contextName = contextHandler.Current
 	}
+
+	context := contextHandler.Get(contextName)
 
 	if context == nil {
 		return
 	}
+
+	LogVerbose("Using context: " + contextName)
 
 	for k, v := range context.ToMap() {
 		if _, ok := (*config)[k]; ok {

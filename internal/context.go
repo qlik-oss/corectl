@@ -114,11 +114,11 @@ func CreateContext(contextName string, productName string, comment string) strin
 	return contextName
 }
 
-func RemoveContext(contextName string) {
+func RemoveContext(contextName string) (string, bool) {
 	handler := NewContextHandler()
-	handler.Remove(contextName)
-	LogVerbose("Removed context with name: " + contextName)
+	contextName, wasCurrent := handler.Remove(contextName)
 	handler.Save()
+	return contextName, wasCurrent
 }
 
 func SetCurrentContext(contextName string) string {
@@ -205,15 +205,18 @@ func (ch *ContextHandler) UnsetCurrent() (previous string) {
 	return
 }
 
-func (ch *ContextHandler) Remove(contextName string) {
+func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 	if !ch.Exists(contextName) {
 		FatalErrorf("context with name '%s' does not exist", contextName)
 	}
 	delete(ch.Contexts, contextName)
 	LogVerbose("Removed context with name: " + contextName)
+	wasCurrent := false
 	if ch.Current == contextName {
 		ch.Current = ""
+		wasCurrent = true
 	}
+	return contextName, wasCurrent
 }
 
 func (ch *ContextHandler) Save() {

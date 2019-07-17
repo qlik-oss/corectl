@@ -29,8 +29,10 @@ var removeContextCmd = &cobra.Command{
 	Example: "corectl context rm local-engine",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		internal.RemoveContext(args[0])
-		printer.PrintCurrentContext("")
+		_, wasCurrent := internal.RemoveContext(args[0])
+		if wasCurrent {
+			printer.PrintCurrentContext("")
+		}
 	},
 }
 
