@@ -21,7 +21,7 @@ list:
 `)
 
 func TestEnvVarSubstitution(t *testing.T) {
-	test := func (source []byte) (config *map[interface{}]interface{}) {
+	test := func(source []byte) (config *map[interface{}]interface{}) {
 		config = &(map[interface{}]interface{}{})
 		if err := yaml.Unmarshal(source, config); err != nil {
 			fmt.Println(err)

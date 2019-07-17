@@ -34,10 +34,10 @@ type Context struct {
 // products contains a mapping from shorthand to proper name of Qlik products.
 // This map should not be modified.
 var products = map[string]string{
-	"QC": "Qlik Core",
-	"QSC": "Qlik Sense Cloud",
-	"QSD": "Qlik Sense Desktop",
-	"QSE": "Qlik Sense Enterprise",
+	"QC":    "Qlik Core",
+	"QSC":   "Qlik Sense Cloud",
+	"QSD":   "Qlik Sense Desktop",
+	"QSE":   "Qlik Sense Enterprise",
 	"QSEoK": "Qlik Sense Enterpries on Kubernetes",
 	"QSEoW": "Qlik Sense Enterpries on Windows",
 }
@@ -60,8 +60,8 @@ func GetProducts() string {
 	for i, k := range keys {
 		str[i] = fmt.Sprintf("%s (%s)", k, products[k])
 	}
-	prods := strings.Join(str[:l - 1], ", ")
-	prods += " or " + str[l - 1]
+	prods := strings.Join(str[:l-1], ", ")
+	prods += " or " + str[l-1]
 	return prods
 }
 

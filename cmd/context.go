@@ -37,10 +37,10 @@ var removeContextCmd = &cobra.Command{
 }
 
 var getContextCmd = &cobra.Command{
-	Use:     "get",
-	Args:    cobra.RangeArgs(0, 1),
-	Short:   "Get context, current context by default",
-	Long:    "Get context, current context by default",
+	Use:   "get",
+	Args:  cobra.RangeArgs(0, 1),
+	Short: "Get context, current context by default",
+	Long:  "Get context, current context by default",
 	Example: `corectl context get
 corectl context get local-engine`,
 
@@ -84,10 +84,10 @@ var setContextCmd = &cobra.Command{
 }
 
 var unsetContextCmd = &cobra.Command{
-	Use:	"unset",
-	Args:	cobra.ExactArgs(0),
-	Short: "Unset current context",
-	Long: "Unset current context",
+	Use:     "unset",
+	Args:    cobra.ExactArgs(0),
+	Short:   "Unset current context",
+	Long:    "Unset current context",
 	Example: "corectl context unset",
 
 	Run: func(ccmd *cobra.Command, args []string) {

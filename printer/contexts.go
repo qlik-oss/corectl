@@ -5,8 +5,8 @@ import (
 	"os"
 	"sort"
 
-	"github.com/qlik-oss/corectl/internal"
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/internal"
 )
 
 // PrintContext prints all information in a context
