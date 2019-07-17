@@ -15,7 +15,7 @@ func PrintContext(name string, context *internal.Context) {
 		fmt.Println("No current context")
 		return
 	}
-	PrintCurrentContext(name)
+	fmt.Printf("Name: %s\n", name)
 	fmt.Printf("  Product: %s\n", context.Product)
 	fmt.Printf("  Comment: %s\n", context.Comment)
 	fmt.Printf("  Engine: %s\n", context.Engine)

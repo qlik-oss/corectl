@@ -70,7 +70,7 @@ __corectl_custom_func()
 		corectl_app_rm)
 			__corectl_get_apps
 			;;
-		corectl_context_rm | corectl_context_set)
+		corectl_context_rm | corectl_context_set | corectl_context_get)
 			__corectl_get_contexts
 			;;
 		corectl_app_import)
