@@ -11,7 +11,11 @@ import (
 
 // PrintContext prints all information in a context
 func PrintContext(name string, context *internal.Context) {
-	fmt.Printf("Context name: %s\n", name)
+	if context == nil {
+		fmt.Println("No current context")
+		return
+	}
+	PrintCurrentContext(name)
 	fmt.Printf("  Product: %s\n", context.Product)
 	fmt.Printf("  Comment: %s\n", context.Comment)
 	fmt.Printf("  Engine: %s\n", context.Engine)
@@ -19,6 +23,14 @@ func PrintContext(name string, context *internal.Context) {
 	fmt.Println("  Headers:")
 	for k, v := range context.Headers {
 		fmt.Printf("    %s: %s\n", k, v)
+	}
+}
+
+func PrintCurrentContext(name string) {
+	if name == "" {
+		fmt.Println("Context: <NONE>")
+	} else {
+		fmt.Printf("Context: %s\n", name)
 	}
 }
 

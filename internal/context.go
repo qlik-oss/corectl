@@ -74,7 +74,7 @@ func isProduct(p string) bool {
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-func CreateContext(contextName string, productName string, comment string) {
+func CreateContext(contextName string, productName string, comment string) string {
 	if contextName == "" {
 		FatalError("\"\" is not a valid context name")
 	}
@@ -111,6 +111,7 @@ func CreateContext(contextName string, productName string, comment string) {
 
 	handler.Current = contextName
 	handler.Save()
+	return contextName
 }
 
 func RemoveContext(contextName string) {
@@ -120,10 +121,11 @@ func RemoveContext(contextName string) {
 	handler.Save()
 }
 
-func SetCurrentContext(contextName string) {
+func SetCurrentContext(contextName string) string {
 	handler := NewContextHandler()
 	handler.SetCurrent(contextName)
 	handler.Save()
+	return contextName
 }
 
 func UnsetCurrentContext() {

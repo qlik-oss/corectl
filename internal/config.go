@@ -104,24 +104,37 @@ func ReadConnectionsFile(path string) ConnectionsConfig {
 	return config
 }
 
-// ReadConfigFile checks that the config file does not contain any unknown properties
+// ReadConfig checks that the config file does not contain any unknown properties
 // and then, if the config is valid, reads it.
 // withContext specifies whether a context should be included when looking setting the
 // config or not.
-func ReadConfigFile(explicitConfigFile string, withContext bool) {
+func ReadConfig(explicitConfigFile string, withContext bool) {
 	configFile := "" // Just for logging
+	config := map[interface{}]interface{}{}
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		setConfigFile(explicitConfigFile, withContext)
+		readConfig(explicitConfigFile, &config)
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
 		if configFile != "" {
-			setConfigFile(configFile, withContext)
+			readConfig(configFile, &config)
 		}
+	}
+	if withContext {
+		mergeContext(&config)
+	}
+	configBytes, err := yaml.Marshal(config)
+	if err != nil {
+		FatalErrorf("unexpected error after parsing config: %s", err)
+	}
+	viper.SetConfigType("yaml")
+	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
+	if err != nil {
+		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 	InitLogOutput() // sets json, verbose and traffic
 	if configFile != "" {
@@ -167,8 +180,9 @@ func AddValidProp(propName string) {
 	validProps[propName] = struct{}{}
 }
 
-// setConfigFile reads in a config file and processes it before providing viper with it.
-func setConfigFile(configPath string, withContext bool) {
+// readConfig reads in a config file and processes it before providing viper with it.
+func readConfig(configPath string, config *map[interface{}]interface{}) {
+	fmt.Println("calling setConfigFile")
 	source, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		FatalErrorf("could not find config file '%s'", configPath)
@@ -176,27 +190,14 @@ func setConfigFile(configPath string, withContext bool) {
 	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
 	// However, this make validateProps a tiny bit more complex
 
-	config := map[interface{}]interface{}{}
-	err = yaml.Unmarshal(source, &config)
+	err = yaml.Unmarshal(source, config)
 	if err != nil {
 		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
 	}
-	if withContext {
-		mergeContext(&config)
-	}
-	validateProps(config, configPath)
-	err = subEnvVars(&config)
+	validateProps(*config, configPath)
+	err = subEnvVars(config)
 	if err != nil {
 		FatalErrorf("bad substitution in '%s': %s", configPath, err)
-	}
-	configBytes, err := yaml.Marshal(config)
-	if err != nil {
-		FatalErrorf("unexpected error after parsing config: %s", err)
-	}
-	viper.SetConfigType("yaml")
-	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
-	if err != nil {
-		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 }
 

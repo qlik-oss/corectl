@@ -16,7 +16,8 @@ var createContextCmd = withLocalFlags(&cobra.Command{
 corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		internal.CreateContext(args[0], viper.GetString("product"), viper.GetString("comment"))
+		name := internal.CreateContext(args[0], viper.GetString("product"), viper.GetString("comment"))
+		printer.PrintCurrentContext(name)
 	},
 }, "product", "comment")
 
@@ -29,6 +30,7 @@ var removeContextCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		internal.RemoveContext(args[0])
+		printer.PrintCurrentContext("")
 	},
 }
 
@@ -74,7 +76,8 @@ var setContextCmd = &cobra.Command{
 	Example: "corectl context set local-engine",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		internal.SetCurrentContext(args[0])
+		name := internal.SetCurrentContext(args[0])
+		printer.PrintCurrentContext(name)
 	},
 }
 
@@ -87,6 +90,7 @@ var unsetContextCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		internal.UnsetCurrentContext()
+		printer.PrintCurrentContext("")
 	},
 }
 

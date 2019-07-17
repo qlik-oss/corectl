@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
 		}
 		// Depending on the command, we might not want to use context when loading config.
 		withContext := shouldUseContext(ccmd)
-		internal.ReadConfigFile(explicitConfigFile, withContext)
+		internal.ReadConfig(explicitConfigFile, withContext)
 
 		if certPath := viper.GetString("certificates"); certPath != "" {
 			certificates = internal.ReadCertificates(certPath)
