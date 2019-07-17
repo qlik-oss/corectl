@@ -128,10 +128,11 @@ func SetCurrentContext(contextName string) string {
 	return contextName
 }
 
-func UnsetCurrentContext() {
+func UnsetCurrentContext() string {
 	handler := NewContextHandler()
-	handler.UnsetCurrent()
+	previous := handler.UnsetCurrent()
 	handler.Save()
+	return previous
 }
 
 func NewContextHandler() *ContextHandler {

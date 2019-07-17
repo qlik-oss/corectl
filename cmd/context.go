@@ -91,8 +91,10 @@ var unsetContextCmd = &cobra.Command{
 	Example: "corectl context unset",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		internal.UnsetCurrentContext()
-		printer.PrintCurrentContext("")
+		previousContext := internal.UnsetCurrentContext()
+		if previousContext != "" {
+			printer.PrintCurrentContext("")
+		}
 	},
 }
 
