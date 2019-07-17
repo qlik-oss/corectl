@@ -101,6 +101,10 @@ func CreateContext(contextName string, productName string, comment string) {
 		Comment:      comment,
 	}
 
+	if err := context.Validate(); err != nil {
+		FatalErrorf("cannot create context '%s': %s", contextName, err.Error())
+	}
+
 	handler.Contexts[contextName] = context
 
 	LogVerbose("Added context with name: " + contextName)
@@ -226,6 +230,13 @@ func (c *Context) ToMap() map[interface{}]interface{} {
 	m["product"] = c.Product
 	m["comment"] = c.Comment
 	return m
+}
+
+func (c *Context) Validate() error {
+	if c.Engine == "" && c.Certificates == "" && (c.Headers == nil || len(c.Headers) == 0) {
+		return fmt.Errorf("empty context: no engine url, certificates path or headers specified, need at least one")
+	}
+	return nil
 }
 
 func fileExists(path string) bool {
