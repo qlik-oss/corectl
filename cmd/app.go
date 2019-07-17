@@ -27,21 +27,6 @@ var listAppsCmd = &cobra.Command{
 	},
 }
 
-var listMoreAppsCmd = &cobra.Command{
-	Use: "more!",
-	Short:   "Print a list of all apps available in the current engine",
-	Long:    "Print a list of all apps available in the current engine",
-	Example: "corectl app ls",
-	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers, certificates)
-		docList, err := state.Global.GetDocList(rootCtx)
-		if err != nil {
-			internal.FatalErrorf("could not retrieve app list: %s", err)
-		}
-		printer.PrintApps(docList, viper.GetBool("bash"))
-	},
-}
-
 var removeAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <app-id>",
 	Args:    cobra.ExactArgs(1),
@@ -96,5 +81,5 @@ var appCmd = &cobra.Command{
 }
 
 func init() {
-	appCmd.AddCommand(listAppsCmd, removeAppCmd, importAppCmd, listMoreAppsCmd)
+	appCmd.AddCommand(listAppsCmd, removeAppCmd, importAppCmd)
 }
