@@ -14,7 +14,7 @@ func ReadRestMetadata(appID string, engine *neturl.URL, headers http.Header, cer
 	url.Path = fmt.Sprintf("/v1/apps/%s/data/metadata", adaptAppID(appID))
 	req := &http.Request{
 		Method: "GET",
-		URL: url,
+		URL:    url,
 		Header: headers,
 	}
 	result := &RestMetadata{}

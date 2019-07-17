@@ -7,8 +7,8 @@ import (
 	"net/http"
 	neturl "net/url"
 
-	"github.com/qlik-oss/enigma-go"
 	"github.com/qlik-oss/corectl/internal/rest"
+	"github.com/qlik-oss/enigma-go"
 )
 
 // ModelMetadata defines all available metadata around the data model.

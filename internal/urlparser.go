@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func GetEngineURL() (*url.URL) {
+func GetEngineURL() *url.URL {
 	engine := viper.GetString("engine")
 	if engine == "" {
 		FatalError("engine URL not specified")
@@ -85,7 +85,6 @@ func parseEngineURL(engine string) (*url.URL, error) {
 	}
 	return u, nil
 }
-
 
 func buildWebSocketURL(ttl string) string {
 	u := GetEngineURL()

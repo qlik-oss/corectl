@@ -18,16 +18,22 @@ jobs:
       - run:
           name: Linting
           command: |
+            go fmt ./...
+            git diff --exit-code
             go get -u golang.org/x/lint/golint
             golint -set_exit_status
+            # golint adds stuff to go.mod and go.sum that mess
+            # with git status --porcelain later
+            git checkout go.mod go.sum
       - run:
           name: Test
           command: go test -v -race ./...
       - run:
           name: Check if documentation needs to be updated
           command: |
+            rm docs/*.md
             ./corectl generate-docs
-            git diff --exit-code --name-only docs/*.md
+            if [[ ! -z $(git status --porcelain) ]]; then exit 1; fi
       - run:
           name: Check if changes has been done to the CLI API
           command: |
