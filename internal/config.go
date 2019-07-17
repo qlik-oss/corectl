@@ -110,31 +110,18 @@ func ReadConnectionsFile(path string) ConnectionsConfig {
 // config or not.
 func ReadConfig(explicitConfigFile string, withContext bool) {
 	configFile := "" // Just for logging
-	config := map[interface{}]interface{}{}
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		readConfig(explicitConfigFile, &config)
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
-		if configFile != "" {
-			readConfig(configFile, &config)
-		}
 	}
-	if withContext {
-		mergeContext(&config)
-	}
-	configBytes, err := yaml.Marshal(config)
-	if err != nil {
-		FatalErrorf("unexpected error after parsing config: %s", err)
-	}
-	viper.SetConfigType("yaml")
-	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
-	if err != nil {
-		FatalErrorf("unexpected error after parsing config: %s", err)
+	// If there is a config file or context should be used
+	if configFile != "" || withContext {
+		readConfig(configFile, withContext)
 	}
 	InitLogOutput() // sets json, verbose and traffic
 	if configFile != "" {
@@ -180,23 +167,40 @@ func AddValidProp(propName string) {
 	validProps[propName] = struct{}{}
 }
 
-// readConfig reads in a config file and processes it before providing viper with it.
-func readConfig(configPath string, config *map[interface{}]interface{}) {
-	source, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		FatalErrorf("could not find config file '%s'", configPath)
-	}
-	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
-	// However, this make validateProps a tiny bit more complex
+// readConfig reads in a config file (if any) and merges it with context.
+// After the merge, the resulting configuration is processesed before providing viper with it.
+func readConfig(configPath string, withContext bool) {
+	config := &map[interface{}]interface{}{}
+	if configPath != "" {
+		source, err := ioutil.ReadFile(configPath)
+		if err != nil {
+			FatalErrorf("could not find config file '%s'", configPath)
+		}
+		// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
+		// However, this make validateProps a tiny bit more complex
 
-	err = yaml.Unmarshal(source, config)
-	if err != nil {
-		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
+		err = yaml.Unmarshal(source, config)
+		if err != nil {
+			FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
+		}
+	}
+	// Merge before validation and env substitution since it might not be needed due to context.
+	if withContext {
+		mergeContext(config)
 	}
 	validateProps(*config, configPath)
-	err = subEnvVars(config)
+	err := subEnvVars(config)
 	if err != nil {
 		FatalErrorf("bad substitution in '%s': %s", configPath, err)
+	}
+	configBytes, err := yaml.Marshal(config)
+	if err != nil {
+		FatalErrorf("unexpected error after parsing config: %s", err)
+	}
+	viper.SetConfigType("yaml")
+	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
+	if err != nil {
+		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 }
 
