@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
+
 var source = []byte(`test: ${_TEST1_}
 nested:
   nest2:

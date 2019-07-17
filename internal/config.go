@@ -159,7 +159,6 @@ func ReadCertificates(certificatesPath string) *tls.Config {
 	return tlsConfig
 }
 
-
 // AddValidProp adds the given property to the set of valid properties.
 func AddValidProp(propName string) {
 	validProps[propName] = struct{}{}
