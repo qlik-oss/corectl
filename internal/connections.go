@@ -19,7 +19,6 @@ func flattenSettings(settings map[string]string) string {
 // the list of connections in the app.
 func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsFile string) error {
 
-
 	var config *ConnectionsConfig
 
 	if separateConnectionsFile != "" {
