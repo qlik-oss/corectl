@@ -70,7 +70,7 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 //AppExists returns wether or not an app exists along with any eventual error from engine
 func AppExists(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) (bool, error) {
 	global := PrepareEngineStateWithoutApp(ctx, headers, certificates).Global
-	appID, _ := applyNameToIDTransformation(engine, appName)
+	appID, _ := applyNameToIDTransformation(appName)
 	_, err := global.GetAppEntry(ctx, appID)
 	if err != nil {
 		return false, fmt.Errorf("could not find any app by ID '%s': %s", appID, err)
@@ -81,14 +81,14 @@ func AppExists(ctx context.Context, engine string, appName string, headers http.
 //DeleteApp removes the specified app from the engine.
 func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) {
 	global := PrepareEngineStateWithoutApp(ctx, headers, certificates).Global
-	appID, _ := applyNameToIDTransformation(engine, appName)
+	appID, _ := applyNameToIDTransformation(appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
 		FatalErrorf("could not delete app with name '%s' and ID '%s': %s", appName, appID, err)
 	} else if !succ {
 		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
-	SetAppIDToKnownApps(engine, appName, appID, true)
+	SetAppIDToKnownApps(appName, appID, true)
 }
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
@@ -107,7 +107,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 		}
 	}
 
-	appID, _ := applyNameToIDTransformation(engine, appName)
+	appID, _ := applyNameToIDTransformation(appName)
 
 	LogVerbose("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, appName, ttl, headers, certificates)
@@ -139,7 +139,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 				FatalErrorf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
-			SetAppIDToKnownApps(engine, appName, appID, false)
+			SetAppIDToKnownApps(appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
 				FatalErrorf("could not do open app with ID '%s': %s", appID, err)

@@ -13,7 +13,7 @@ var knownAppsFilePath = path.Join(userHomeDir(), ".corectl", "knownApps.yml")
 
 // Fetch a matching app id from known apps for a specified app name
 // If not found return the appName and found bool set to false
-func applyNameToIDTransformation(engineURL string, appName string) (appID string, found bool) {
+func applyNameToIDTransformation(appName string) (appID string, found bool) {
 	apps := getKnownApps()
 
 	if apps == nil {
@@ -21,8 +21,11 @@ func applyNameToIDTransformation(engineURL string, appName string) (appID string
 		return appName, false
 	}
 
-	if id, exists := apps[engineURL][appName]; exists {
-		LogVerbose("Found id: " + id + " for app with name: " + appName + " @" + engineURL)
+	engineURL := GetEngineURL()
+	host := engineURL.Host
+
+	if id, exists := apps[host][appName]; exists {
+		LogVerbose("Found id: " + id + " for app with name: " + appName + " @" + host)
 		return id, true
 	}
 
@@ -46,23 +49,26 @@ func getKnownApps() map[string]map[string]string {
 }
 
 // Add an app or remove an app from known apps
-func SetAppIDToKnownApps(engineURL string, appName string, appID string, remove bool) {
+func SetAppIDToKnownApps(appName string, appID string, remove bool) {
 
 	createKnownAppsFileIfNotExist()
 	apps := getKnownApps()
 
+	engineURL := GetEngineURL()
+	host := engineURL.Host
+
 	// Either remove or add an entry
 	if remove {
-		if _, exists := apps[engineURL][appName]; exists {
-			delete(apps[engineURL], appName)
-			LogVerbose("Removed app with name: " + appName + " and id: " + appID + " @" + engineURL + " from known apps")
+		if _, exists := apps[host][appName]; exists {
+			delete(apps[host], appName)
+			LogVerbose("Removed app with name: " + appName + " and id: " + appID + " @" + host + " from known apps")
 		}
 	} else {
-		if apps[engineURL] == nil {
-			apps[engineURL] = map[string]string{}
+		if apps[host] == nil {
+			apps[host] = map[string]string{}
 		}
-		apps[engineURL][appName] = appID
-		LogVerbose("Added app with name: " + appName + " and id: " + appID + " @" + engineURL + " to known apps")
+		apps[host][appName] = appID
+		LogVerbose("Added app with name: " + appName + " and id: " + appID + " @" + host + " to known apps")
 	}
 
 	// Write to knownApps.yml
@@ -78,9 +84,12 @@ func createKnownAppsFileIfNotExist() {
 	if _, err := os.Stat(knownAppsFilePath); os.IsNotExist(err) {
 
 		// Create .corectl folder in home directory
-		err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
-		if err != nil {
-			FatalError("could not create .corectl folder in home directory: ", err)
+		corectlDir := path.Join(userHomeDir(), ".corectl")
+		if _, err := os.Stat(corectlDir); os.IsNotExist(err) {
+			err = os.Mkdir(corectlDir, os.ModePerm)
+			if err != nil {
+				FatalError("could not create .corectl folder in home directory: ", err)
+			}
 		}
 
 		// Create knownApps.yml in .corectl folder
