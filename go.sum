@@ -105,6 +105,8 @@ github.com/qlik-oss/enigma-go v0.0.0-20190719112048-de4d701843710 h1:iFW2lWRaJIq
 github.com/qlik-oss/enigma-go v0.0.0-20190719112048-de4d701843710/go.mod h1:NdPfB2FwdBpYUQcPFi8MQsH336Rii3IA/p4QOeSIj7w=
 github.com/qlik-oss/enigma-go v0.0.0-20190719113446-b3bdc7ff2942d h1:BreSX9BXTLhy+mCjCCQuYTf9tGIKJdJs5ghKjlhsRes=
 github.com/qlik-oss/enigma-go v0.0.0-20190719113446-b3bdc7ff2942d/go.mod h1:NdPfB2FwdBpYUQcPFi8MQsH336Rii3IA/p4QOeSIj7w=
+github.com/qlik-oss/enigma-go v0.0.0-20190719113806-672aa4844e2a h1:CAhda9+irPs7pfGbbGsnrEeUXaMKROwi1ISGusWL7Uc=
+github.com/qlik-oss/enigma-go v0.0.0-20190719113806-672aa4844e2a/go.mod h1:NdPfB2FwdBpYUQcPFi8MQsH336Rii3IA/p4QOeSIj7w=
 github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6SoW27p1b0cqNHllgS5HIMJraePCO15w5zCzIWYg=
 github.com/russross/blackfriday v1.5.2 h1:HyvC0ARfnZBqnXwABFeSZHpKvJHJJfPz81GNueLj0oo=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
