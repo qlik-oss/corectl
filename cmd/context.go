@@ -57,6 +57,23 @@ corectl context get local-engine`,
 	},
 }
 
+var updateContextCmd = withLocalFlags(&cobra.Command{
+	Use: "update",
+	Args: cobra.RangeArgs(0, 1),
+	Short: "Update context, current context by default",
+	Long: "Update context, current context by default",
+	Example: `corectl context update
+corectl context update local-engine`,
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		var name string
+		if len(args) == 1 {
+			name = args[0]
+		}
+		internal.UpdateContext(name, viper.GetString("product"), viper.GetString("comment"))
+	},
+}, "product", "comment")
+
 var listContextsCmd = &cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
@@ -108,5 +125,5 @@ var contextCmd = &cobra.Command{
 }
 
 func init() {
-	contextCmd.AddCommand(createContextCmd, removeContextCmd, listContextsCmd, setContextCmd, getContextCmd, unsetContextCmd)
+	contextCmd.AddCommand(createContextCmd, removeContextCmd, updateContextCmd, listContextsCmd, setContextCmd, getContextCmd, unsetContextCmd)
 }

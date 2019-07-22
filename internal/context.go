@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -74,7 +75,7 @@ func isProduct(p string) bool {
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-func CreateContext(contextName string, productName string, comment string) string {
+func CreateContext(contextName, productName, comment string) string {
 	if contextName == "" {
 		FatalError("\"\" is not a valid context name")
 	}
@@ -93,13 +94,14 @@ func CreateContext(contextName string, productName string, comment string) strin
 		FatalErrorf("context with name '%s' already exists", contextName)
 	}
 
-	context := &Context{
-		Engine:       viper.GetString("engine"),
-		Headers:      viper.GetStringMapString("headers"),
-		Certificates: viper.GetString("certificates"),
-		Product:      productName,
-		Comment:      comment,
-	}
+	context := &Context{}
+	context.Update(&map[string]interface{}{
+		"engine":       viper.GetString("engine"),
+		"headers":      viper.GetStringMapString("headers"),
+		"certificates": viper.GetString("certificates"),
+		"product":      productName,
+		"comment":      comment,
+	})
 
 	if err := context.Validate(); err != nil {
 		FatalErrorf("cannot create context '%s': %s", contextName, err.Error())
@@ -119,6 +121,26 @@ func RemoveContext(contextName string) (string, bool) {
 	contextName, wasCurrent := handler.Remove(contextName)
 	handler.Save()
 	return contextName, wasCurrent
+}
+
+func UpdateContext(contextName, productName, comment string) {
+	handler := NewContextHandler()
+	var context *Context
+	if contextName != "" {
+		handler.Exists(contextName)
+		context = handler.Get(contextName)
+	} else {
+		context = handler.GetCurrent()
+	}
+	updated := context.Update(&map[string]interface{}{
+		"engine":       viper.GetString("engine"),
+		"headers":      viper.GetStringMapString("headers"),
+		"certificates": viper.GetString("certificates"),
+		"product":      productName,
+		"comment":      comment,
+	})
+	LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
+	handler.Save()
 }
 
 func SetCurrentContext(contextName string) string {
@@ -228,6 +250,27 @@ func (ch *ContextHandler) Save() {
 	}
 }
 
+// Update uses reflection to update a Context's fields.
+// This method ignores empty strings and nil values so it will
+// only update context with new information provided.
+// It returns the names of the updated fiels.
+func (c *Context) Update(m *map[string]interface{}) []string {
+	ptr := reflect.ValueOf(c)
+	val := reflect.Indirect(ptr)
+	updated := []string{}
+	for k, v := range *m {
+		f := val.FieldByName(strings.Title(k))
+		if f.IsValid() {
+			vval := reflect.ValueOf(v)
+			if hasValue(vval) && f.Type() == vval.Type() {
+				f.Set(vval)
+				updated = append(updated, k)
+			}
+		}
+	}
+	return updated
+}
+
 func (c *Context) ToMap() map[interface{}]interface{} {
 	m := map[interface{}]interface{}{}
 	m["engine"] = c.Engine
@@ -243,6 +286,16 @@ func (c *Context) Validate() error {
 		return fmt.Errorf("empty context: no engine url, certificates path or headers specified, need at least one")
 	}
 	return nil
+}
+
+func hasValue(v reflect.Value) bool {
+	switch k := v.Kind(); k {
+	case reflect.String:
+		return v.String() != ""
+	case reflect.Map, reflect.Struct, reflect.Slice:
+		return !v.IsNil()
+	}
+	return false
 }
 
 func fileExists(path string) bool {
