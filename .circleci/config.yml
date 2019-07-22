@@ -28,7 +28,11 @@ jobs:
             git diff --exit-code
       - run:
           name: Test
-          command: go test -v -race ./...
+          command: |
+            go test -v -race ./...
+            # go test can also modify go.mod and go.sum, ruining
+            # the pristine state required for our tests to pass
+            git checkout go.mod go.sum
       - run:
           name: Check if documentation needs to be updated
           command: |
