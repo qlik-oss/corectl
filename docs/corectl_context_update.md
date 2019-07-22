@@ -1,15 +1,28 @@
-## corectl context
+## corectl context update
 
-Explore and manage contexts
+Update context, current context by default
 
 ### Synopsis
 
-Explore and manage contexts
+Update context, current context by default
+
+```
+corectl context update [flags]
+```
+
+### Examples
+
+```
+corectl context update
+corectl context update local-engine
+```
 
 ### Options
 
 ```
-  -h, --help   help for context
+      --comment string   Comment for the context
+  -h, --help             help for update
+      --product string   Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterpries on Kubernetes) or QSEoW (Qlik Sense Enterpries on Windows) (default "QC")
 ```
 
 ### Options inherited from parent commands
@@ -30,12 +43,5 @@ Explore and manage contexts
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl context create](corectl_context_create.md)	 - Create a new context
-* [corectl context get](corectl_context_get.md)	 - Get context, current context by default
-* [corectl context ls](corectl_context_ls.md)	 - List all contexts
-* [corectl context rm](corectl_context_rm.md)	 - Removes a context
-* [corectl context set](corectl_context_set.md)	 - Set a current context
-* [corectl context unset](corectl_context_unset.md)	 - Unset current context
-* [corectl context update](corectl_context_update.md)	 - Update context, current context by default
+* [corectl context](corectl_context.md)	 - Explore and manage contexts
 
