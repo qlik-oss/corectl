@@ -58,10 +58,10 @@ corectl context get local-engine`,
 }
 
 var updateContextCmd = withLocalFlags(&cobra.Command{
-	Use: "update",
-	Args: cobra.RangeArgs(0, 1),
+	Use:   "update",
+	Args:  cobra.RangeArgs(0, 1),
 	Short: "Update context, current context by default",
-	Long: "Update context, current context by default",
+	Long:  "Update context, current context by default",
 	Example: `corectl context update
 corectl context update local-engine`,
 
