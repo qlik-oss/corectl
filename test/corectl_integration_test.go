@@ -45,7 +45,7 @@ func TestReload(t *testing.T) {
 
 func TestContextManagement(t *testing.T) {
 	jwt := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
-	abac := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
+	abac := toolkit.Params{T: t, Config: "test/projects/abac/corectl.yml", Engine: *toolkit.EngineAbacIP}
 	params := []toolkit.Params{jwt, abac}
 	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
 	for i, p := range params {
@@ -55,16 +55,23 @@ func TestContextManagement(t *testing.T) {
 		p.Config, p.Engine = "", ""
 		p.ExpectOK().Run("status")
 	}
+	// Context will be the last created (abac) so status should fail
+	jwt.ExpectError().Run("status")
+	// Change engine to jwt one
+	jwt.ExpectOK().Run("context", "update", "--engine=" + *toolkit.EngineJwtIP)
+	jwt.ExpectOK().Run("status")
+	// Change back to abac
+	jwt.ExpectOK().Run("context", "update", "--engine=" + *toolkit.EngineAbacIP)
 	// Empty params, should only be able to connect to an engine if there is context
 	p := toolkit.Params{T: t}
 	// Context stored locally
 	p.ExpectOK().Run("context", "ls")
 	// See if all context commands work
-	for _, ctx := range contexts {
+	for i, ctx := range contexts {
 		p.ExpectOK().Run("context", "get", ctx)
 		// With context status should work
 		p.ExpectOK().Run("context", "set", ctx)
-		p.ExpectOK().Run("status")
+		p.ExpectIncludes(params[i].Engine).Run("status")
 		// Without context status should not
 		p.ExpectOK().Run("context", "unset")
 		p.ExpectError().Run("status")
