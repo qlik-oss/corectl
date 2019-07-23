@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/internal/rest"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -21,7 +22,7 @@ var listAppsCmd = &cobra.Command{
 		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers, certificates)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
-			internal.FatalErrorf("could not retrieve app list: %s", err)
+			log.Fatalf("could not retrieve app list: %s", err)
 		}
 		printer.PrintApps(docList, viper.GetBool("bash"))
 	},
@@ -38,7 +39,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 		app := args[0]
 
 		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, certificates); !ok {
-			internal.FatalError(err)
+			log.Fatalln(err)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
@@ -63,10 +64,10 @@ var importAppCmd = &cobra.Command{
 		engine := internal.GetEngineURL()
 		appID, appName, err := rest.ImportApp(appPath, engine, headers, certificates)
 		if err != nil {
-			internal.FatalError(err)
+			log.Fatalln(err)
 		}
 		internal.SetAppIDToKnownApps(appName, appID, false)
-		fmt.Println("Imported app with new ID: " + appID)
+		log.Infoln("Imported app with new ID: " + appID)
 	},
 }
 

@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 	"github.com/spf13/viper"
 )
@@ -36,24 +37,24 @@ func logConnectError(err error, engine string) {
 		msg += fmt.Sprintln("This probably means that there is no engine running on the specified url.")
 		msg += fmt.Sprintln("Check that the engine is up and that the url specified is correct.")
 	}
-	FatalError(msg)
+	log.Fatalln(msg)
 }
 
 func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header, certificates *tls.Config) *enigma.Global {
 	engineURL := buildWebSocketURL(ttl)
-	LogVerbose("Engine: " + engineURL)
+	log.Debugln("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
 		sessionID := getSessionID(appName)
-		LogVerbose("SessionId: " + sessionID)
+		log.Debugln("SessionId: " + sessionID)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
-	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
+	log.Debugln("SessionId " + headers.Get("X-Qlik-Session"))
 
 	var dialer = enigma.Dialer{}
 
-	if LogTraffic {
-		dialer.TrafficLogger = TrafficLogger{}
+	if log.Traffic {
+		dialer.TrafficLogger = log.TrafficLogger{}
 	}
 
 	if certificates != nil {
@@ -84,9 +85,9 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	appID, _ := applyNameToIDTransformation(appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
-		FatalErrorf("could not delete app with name '%s' and ID '%s': %s", appName, appID, err)
+		log.Fatalf("could not delete app with name '%s' and ID '%s': %s", appName, appID, err)
 	} else if !succ {
-		FatalErrorf("could not delete app with name '%s' and ID '%s'", appName, appID)
+		log.Fatalf("could not delete app with name '%s' and ID '%s'", appName, appID)
 	}
 	SetAppIDToKnownApps(appName, appID, true)
 }
@@ -103,52 +104,52 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 		// No app name provided, lets check if one exists in the url
 		appName = TryParseAppFromURL(engine)
 		if appName == "" {
-			FatalError("no app specified")
+			log.Fatalln("no app specified")
 		}
 	}
 
 	appID, _ := applyNameToIDTransformation(appName)
 
-	LogVerbose("---------- Connecting to app ----------")
+	log.Debugln("---------- Connecting to app ----------")
 	global := connectToEngine(ctx, appName, ttl, headers, certificates)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("could not connect to engine: ", err)
+		log.Fatalln("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 	doc, err := global.GetActiveDoc(ctx)
 	if doc != nil {
 		// There is an already opened doc!
-		LogVerbose("App with name: " + appName + " and id: " + appID + "(reconnected)")
+		log.Debugln("App with name: " + appName + " and id: " + appID + "(reconnected)")
 	} else {
 		doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 		if doc != nil {
 			if noData {
-				LogVerbose("Opened app with name: " + appName + " and id: " + appID + " without data")
+				log.Debugln("Opened app with name: " + appName + " and id: " + appID + " without data")
 			} else {
-				LogVerbose("Opened app with name: " + appName + " and id: " + appID)
+				log.Debugln("Opened app with name: " + appName + " and id: " + appID)
 			}
 		} else if createAppIfMissing {
 			var success bool
 			success, appID, err = global.CreateApp(ctx, appName, "")
 			if err != nil {
-				FatalErrorf("could not create app with name '%s': %s", appName, err)
+				log.Fatalf("could not create app with name '%s': %s", appName, err)
 			}
 			if !success {
-				FatalErrorf("could not create app with name '%s'", appName)
+				log.Fatalf("could not create app with name '%s'", appName)
 			}
 			// Write app id to config
 			SetAppIDToKnownApps(appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
-				FatalErrorf("could not do open app with ID '%s': %s", appID, err)
+				log.Fatalf("could not do open app with ID '%s': %s", appID, err)
 			}
 			if doc != nil {
-				LogVerbose("App with name: " + appName + " and id: " + appID + "(new)")
+				log.Debugln("App with name: " + appName + " and id: " + appID + "(new)")
 			}
 		} else {
-			FatalErrorf("could not open app with ID '%s': %s", appID, err)
+			log.Fatalf("could not open app with ID '%s': %s", appID, err)
 		}
 	}
 
@@ -163,12 +164,12 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 
 func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
 	for sessionEvent := range sessionMessages {
-		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		log.Debugln(sessionEvent.Topic + " " + string(sessionEvent.Content))
 		if sessionEvent.Topic == "OnConnected" {
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
 			if err != nil {
-				FatalError("could not parse response from engine: ", err)
+				log.Fatalln("could not parse response from engine: ", err)
 			}
 			if parsedEvent["qSessionState"] == "SESSION_CREATED" || parsedEvent["qSessionState"] == "SESSION_ATTACHED" {
 				return nil
@@ -181,7 +182,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
 	for sessionEvent := range sessionMessages {
-		LogVerbose(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		log.Debugln(sessionEvent.Topic + " " + string(sessionEvent.Content))
 	}
 }
 
@@ -189,20 +190,20 @@ func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMess
 func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header, certificates *tls.Config) *State {
 	ttl := viper.GetString("ttl")
 
-	LogVerbose("---------- Connecting to engine ----------")
+	log.Debugln("---------- Connecting to engine ----------")
 
 	engineURL := buildWebSocketURL(ttl)
 
-	LogVerbose("Engine: " + engineURL)
+	log.Debugln("Engine: " + engineURL)
 
 	var dialer = enigma.Dialer{}
 
-	if LogTraffic {
-		dialer.TrafficLogger = TrafficLogger{}
+	if log.Traffic {
+		dialer.TrafficLogger = log.TrafficLogger{}
 	}
 
 	if certificates != nil {
-		LogVerbose("Using certificates in: " + viper.GetString("certificates"))
+		log.Debugln("Using certificates in: " + viper.GetString("certificates"))
 		dialer.TLSClientConfig = certificates
 	}
 
@@ -214,7 +215,7 @@ func PrepareEngineStateWithoutApp(ctx context.Context, headers http.Header, cert
 	sessionMessages := global.SessionMessageChannel()
 	err = waitForOnConnectedMessage(sessionMessages)
 	if err != nil {
-		FatalError("could not connect to engine: ", err)
+		log.Fatalln("could not connect to engine: ", err)
 	}
 	go printSessionMessagesIfInVerboseMode(sessionMessages)
 
@@ -234,11 +235,11 @@ func getSessionID(appID string) string {
 
 	currentUser, err := user.Current()
 	if err != nil {
-		FatalError("unexpected error when retrieving current user: ", err)
+		log.Fatalln("unexpected error when retrieving current user: ", err)
 	}
 	hostName, err := os.Hostname()
 	if err != nil {
-		FatalError("unexpected error when retrieving hostname: ", err)
+		log.Fatalln("unexpected error when retrieving hostname: ", err)
 	}
 	sessionID := base64.StdEncoding.EncodeToString([]byte("corectl-" + currentUser.Username + "-" + hostName + "-" + appID + "-" + ttl + "-" + strconv.FormatBool(noData)))
 	return sessionID

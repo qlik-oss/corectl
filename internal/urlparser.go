@@ -5,17 +5,18 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/viper"
 )
 
 func GetEngineURL() *url.URL {
 	engine := viper.GetString("engine")
 	if engine == "" {
-		FatalError("engine URL not specified")
+		log.Fatalln("engine URL not specified")
 	}
 	u, err := parseEngineURL(engine)
 	if err != nil {
-		FatalErrorf("could not parse engine url '%s' got error: '%s'", engine, err)
+		log.Fatalf("could not parse engine url '%s' got error: '%s'", engine, err)
 	}
 	return u
 }
@@ -102,7 +103,7 @@ func TryParseAppFromURL(engineURL string) string {
 	values := re.FindStringSubmatch(engineURL)
 	if len(values) > 0 {
 		appName := values[1]
-		LogVerbose("Found app in engine url: " + appName)
+		log.Debugln("Found app in engine url: " + appName)
 		return appName
 	}
 	return ""

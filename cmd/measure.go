@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,7 +18,7 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineMeasures := args[0]
 		if commandLineMeasures == "" {
-			internal.FatalError("no measures specified")
+			log.Fatalln("no measures specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetMeasures(rootCtx, state.Doc, commandLineMeasures)
@@ -39,9 +40,9 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
-				internal.FatalErrorf("could not remove generic measure '%s': %s", entity, err)
+				log.Fatalf("could not remove generic measure '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalErrorf("could not remove generic measure '%s'", entity)
+				log.Fatalf("could not remove generic measure '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

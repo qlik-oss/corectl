@@ -7,9 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qlik-oss/corectl/internal"
-
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -17,7 +16,7 @@ import (
 func PrintApps(docList []*enigma.DocListEntry, printAsBash bool) {
 	switch mode {
 	case jsonMode:
-		internal.PrintAsJSON(filterDocEntries(docList))
+		log.PrintAsJSON(filterDocEntries(docList))
 	case bashMode:
 		for _, app := range docList {
 			PrintToBashComp(app.DocName)

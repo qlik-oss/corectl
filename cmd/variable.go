@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,7 +18,7 @@ var setVariablesCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineVariables := args[0]
 		if commandLineVariables == "" {
-			internal.FatalError("no variables specified")
+			log.Fatalln("no variables specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetVariables(rootCtx, state.Doc, commandLineVariables)
@@ -39,9 +40,9 @@ var removeVariableCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyVariableByName(rootCtx, entity)
 			if err != nil {
-				internal.FatalErrorf("could not remove generic variable '%s': %s", entity, err)
+				log.Fatalf("could not remove generic variable '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalErrorf("could not remove generic variable '%s'", entity)
+				log.Fatalf("could not remove generic variable '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

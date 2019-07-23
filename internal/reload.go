@@ -2,12 +2,12 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 	"github.com/spf13/viper"
 )
@@ -53,41 +53,40 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 		//fetch the progress but do nothing, othwerwise we will get it for the next non silent call
 		_, getProgressErr := global.GetProgress(ctx, 0)
 		if getProgressErr != nil {
-			fmt.Println(getProgressErr)
+			log.Errorln(getProgressErr)
 		}
 	}
 
 	if err != nil {
-		FatalError("could not reload app: ", err)
+		log.Fatalln("could not reload app: ", err)
 	}
 	if !reloadSuccessful {
-		FatalError("reload was not successful")
+		log.Fatalln("reload was not successful")
 	}
 
-	fmt.Println("Reload finished successfully")
-
+	log.Infoln("Reload finished successfully")
 }
 
 func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID int, skipTransientLogs bool) {
 	progress, err := global.GetProgress(ctx, reservedRequestID)
 	if err != nil {
-		fmt.Println(err)
+		log.Errorln(err)
 	} else {
 		var text string
 		if progress.TransientProgress != "" {
 			if !skipTransientLogs {
 				text = progress.TransientProgress
-				fmt.Print("\r" + text)
+				log.Info("\r" + text)
 				transientLogged = true
 			}
 		} else if progress.PersistentProgress != "" {
 			text = progress.PersistentProgress
 			// If a transient progress was logged we should update that progress with the persistent one
 			if transientLogged {
-				fmt.Print("\r" + text)
+				log.Info("\r" + text)
 				transientLogged = false
 			} else {
-				fmt.Print(text)
+				log.Info(text)
 			}
 		}
 	}
@@ -100,16 +99,15 @@ func Save(ctx context.Context, doc *enigma.Doc) {
 
 	// If app is opened without data we should only save the objects
 	if noData {
-		fmt.Print("Saving objects in app... ")
+		log.Infoln("Saving objects in app")
 		err = doc.SaveObjects(ctx)
 	} else {
-		fmt.Print("Saving app... ")
+		log.Infoln("Saving app")
 		err = doc.DoSave(ctx, "")
 	}
 	if err == nil {
-		fmt.Print("Done")
+		log.Infoln("App saved")
 	} else {
-		fmt.Print("Save failed")
+		log.Errorln("Save failed")
 	}
-	fmt.Println()
 }

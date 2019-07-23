@@ -6,6 +6,7 @@ import (
 	"path"
 	"runtime"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"gopkg.in/yaml.v2"
 )
 
@@ -17,7 +18,7 @@ func applyNameToIDTransformation(appName string) (appID string, found bool) {
 	apps := getKnownApps()
 
 	if apps == nil {
-		LogVerbose("knownApps yaml file not found")
+		log.Debugln("knownApps yaml file not found")
 		return appName, false
 	}
 
@@ -25,11 +26,11 @@ func applyNameToIDTransformation(appName string) (appID string, found bool) {
 	host := engineURL.Host
 
 	if id, exists := apps[host][appName]; exists {
-		LogVerbose("Found id: " + id + " for app with name: " + appName + " @" + host)
+		log.Debugln("Found id: " + id + " for app with name: " + appName + " @" + host)
 		return id, true
 	}
 
-	LogVerbose("No known id for app with name: " + appName)
+	log.Debugln("No known id for app with name: " + appName)
 	return appName, false
 }
 
@@ -42,7 +43,7 @@ func getKnownApps() map[string]map[string]string {
 	}
 	err = yaml.Unmarshal(yamlFile, &knownApps)
 	if err != nil {
-		FatalErrorf("could not parse content of knownApps yaml '%s': %s", yamlFile, err)
+		log.Fatalf("could not parse content of knownApps yaml '%s': %s", yamlFile, err)
 	}
 
 	return knownApps
@@ -61,21 +62,21 @@ func SetAppIDToKnownApps(appName string, appID string, remove bool) {
 	if remove {
 		if _, exists := apps[host][appName]; exists {
 			delete(apps[host], appName)
-			LogVerbose("Removed app with name: " + appName + " and id: " + appID + " @" + host + " from known apps")
+			log.Debugln("Removed app with name: " + appName + " and id: " + appID + " @" + host + " from known apps")
 		}
 	} else {
 		if apps[host] == nil {
 			apps[host] = map[string]string{}
 		}
 		apps[host][appName] = appID
-		LogVerbose("Added app with name: " + appName + " and id: " + appID + " @" + host + " to known apps")
+		log.Debugln("Added app with name: " + appName + " and id: " + appID + " @" + host + " to known apps")
 	}
 
 	// Write to knownApps.yml
 	out, _ := yaml.Marshal(apps)
 
 	if err := ioutil.WriteFile(knownAppsFilePath, out, 0644); err != nil {
-		FatalErrorf("could not write to '%s': %s", knownAppsFilePath, err)
+		log.Fatalf("could not write to '%s': %s", knownAppsFilePath, err)
 	}
 }
 
@@ -88,17 +89,17 @@ func createKnownAppsFileIfNotExist() {
 		if _, err := os.Stat(corectlDir); os.IsNotExist(err) {
 			err = os.Mkdir(corectlDir, os.ModePerm)
 			if err != nil {
-				FatalError("could not create .corectl folder in home directory: ", err)
+				log.Fatalln("could not create .corectl folder in home directory: ", err)
 			}
 		}
 
 		// Create knownApps.yml in .corectl folder
 		_, err := os.Create(knownAppsFilePath)
 		if err != nil {
-			FatalErrorf("could not create %s: %s", knownAppsFilePath, err)
+			log.Fatalf("could not create %s: %s", knownAppsFilePath, err)
 		}
 
-		LogVerbose("Created ~/.corectl/knownApps.yml for storage of app ids")
+		log.Debugln("Created ~/.corectl/knownApps.yml for storage of app ids")
 	}
 }
 

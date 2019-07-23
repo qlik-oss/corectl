@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,7 +23,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 		if scriptFile != "" {
 			internal.SetScript(rootCtx, state.Doc, scriptFile)
 		} else {
-			internal.FatalError("no loadscript (.qvs) file specified.")
+			log.Fatalln("no loadscript (.qvs) file specified.")
 		}
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -41,7 +42,7 @@ var getScriptCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
-			internal.FatalErrorf("could not retrieve script: %s", err)
+			log.Fatalf("could not retrieve script: %s", err)
 		}
 		if len(script) == 0 { // This happens if the script is set to an empty file
 			fmt.Println("The loadscript is empty")

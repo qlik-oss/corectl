@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"runtime"
@@ -13,6 +12,7 @@ import (
 	"github.com/google/go-github/v27/github"
 	ver "github.com/hashicorp/go-version"
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -111,12 +111,12 @@ func checkLatestVersion() {
 func isLatestVersion(currentTag string, latestTag string) (string, bool) {
 	currentVersion, err := ver.NewVersion(currentTag)
 	if err != nil {
-		internal.FatalErrorf("Current version is not semantically versioned: %s", currentTag)
+		log.Fatalf("Current version is not semantically versioned: %s", currentTag)
 	}
 
 	latestVersion, err := ver.NewVersion(latestTag[1:]) // Remove 'v' from the tag
 	if err != nil {
-		internal.FatalErrorf("Latest version is not semantically versioned: %s", latestVersion)
+		log.Fatalf("Latest version is not semantically versioned: %s", latestVersion)
 	}
 
 	if currentVersion.LessThan(latestVersion) {
@@ -134,7 +134,7 @@ func askForConfirmation(s string) bool {
 		fmt.Printf("%s [y/n]: ", s)
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 		}
 		response = strings.ToLower(strings.TrimSpace(response))
 		if response == "y" || response == "yes" {

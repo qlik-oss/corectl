@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -78,26 +79,26 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "objects")
 	if err != nil {
-		FatalError("could not interpret glob pattern: ", err)
+		log.Fatalln("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalErrorf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
 			var object Object
 			err = json.Unmarshal(raw, &object)
 			if err != nil {
-				FatalErrorf("could not parse data in file %s: %s", path, err)
+				log.Fatalf("could not parse data in file %s: %s", path, err)
 			}
 			err = object.validate()
 			if err != nil {
-				FatalErrorf("validation error in file %s: %s", path, err)
+				log.Fatalf("validation error in file %s: %s", path, err)
 			}
 			err = setObject(ctx, doc, object.Info, object.Properties, raw)
 			if err != nil {
-				FatalError(err)
+				log.Fatalln(err)
 			}
 		}
 	}
@@ -118,22 +119,22 @@ func setObject(ctx context.Context, doc *enigma.Doc, info *enigma.NxInfo, props 
 	}
 	if object.Handle != 0 {
 		if isGenericObjectEntry {
-			LogVerbose("Updating object " + objectID + " using SetFullPropertyTree")
+			log.Debugln("Updating object " + objectID + " using SetFullPropertyTree")
 			err = object.SetFullPropertyTreeRaw(ctx, raw)
 		} else {
-			LogVerbose("Updating object " + objectID + " using SetProperties")
+			log.Debugln("Updating object " + objectID + " using SetProperties")
 			err = object.SetPropertiesRaw(ctx, raw)
 		}
 		if err != nil {
 			return fmt.Errorf("failed to update %s %s: %s", "object", objectID, err)
 		}
 	} else {
-		LogVerbose("Creating object " + objectID)
+		log.Debugln("Creating object " + objectID)
 		if isGenericObjectEntry {
 			var createdObject *enigma.GenericObject
 			objectType := props.Info.Type
 			createdObject, err = doc.CreateObject(ctx, &enigma.GenericObjectProperties{Info: &enigma.NxInfo{Id: objectID, Type: objectType}})
-			LogVerbose("Setting object  " + objectID + " using SetFullPropertyTree")
+			log.Debugln("Setting object  " + objectID + " using SetFullPropertyTree")
 			err = createdObject.SetFullPropertyTreeRaw(ctx, raw)
 		} else {
 			_, err = doc.CreateObjectRaw(ctx, raw)

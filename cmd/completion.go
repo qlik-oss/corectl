@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/cobra"
 )
 
 // completionCmd generates auto completion commands
 var completionCmd = &cobra.Command{
 	Use:       "completion <shell>",
-	ValidArgs: []string{"zsh", "bash"},
-	Args:      cobra.MinimumNArgs(1),
+	ValidArgs: []string{"zsh", "bash", "ps"},
+	Args:      cobra.ExactValidArgs(1),
 	Short:     "Generate auto completion scripts",
 	Long: `Generate a shell completion script for the specified shell (bash or zsh). The shell script must be evaluated to provide
 interactive completion. This can be done by sourcing it in your ~/.bashrc or ~/.zshrc file.
@@ -39,7 +40,7 @@ Note that bash-completion is required and needs to be installed on your system.`
 		case args[0] == "ps":
 			rootCmd.GenPowerShellCompletion(os.Stdout)
 		default:
-			fmt.Printf("'%s' is not a supported shell\n", args[0])
+			log.Errorf("'%s' is not a supported shell", args[0])
 		}
 	},
 }

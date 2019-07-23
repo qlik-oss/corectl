@@ -9,6 +9,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 )
 
 func uniqueAndTotal(field *internal.FieldModel) string {
@@ -25,10 +26,10 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 	if len(data.Fields) == 0 {
 		if keyOnly {
-			fmt.Println("No key fields found.")
+			log.Infoln("No key fields found.")
 			return
 		}
-		fmt.Println("No fields found.")
+		log.Infoln("No fields found.")
 		return
 	}
 	writer := tablewriter.NewWriter(os.Stdout)

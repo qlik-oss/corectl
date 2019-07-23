@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,7 +19,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineObjects := args[0]
 		if commandLineObjects == "" {
-			internal.FatalError("no objects specified")
+			log.Fatalln("no objects specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetObjects(rootCtx, state.Doc, commandLineObjects)
@@ -40,9 +41,9 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {
-				internal.FatalErrorf("could not remove generic object '%s': %s", entity, err)
+				log.Fatalf("could not remove generic object '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalErrorf("could not remove generic object '%s'", entity)
+				log.Fatalf("could not remove generic object '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

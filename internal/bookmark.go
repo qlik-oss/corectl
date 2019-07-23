@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -59,26 +60,26 @@ func ListBookmarks(ctx context.Context, doc *enigma.Doc) []NamedItem {
 func SetBookmarks(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "bookmarks")
 	if err != nil {
-		FatalError("could not interpret glob pattern: ", err)
+		log.Fatalln("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalErrorf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s", path, err)
 		}
 		for _, raw := range rawEntities {
 			var bm Bookmark
 			err := json.Unmarshal(raw, &bm)
 			if err != nil {
-				FatalErrorf("could not parse data in file %s: %s", path, err)
+				log.Fatalf("could not parse data in file %s: %s", path, err)
 			}
 			err = bm.validate()
 			if err != nil {
-				FatalErrorf("validation error in file %s: %s", path, err)
+				log.Fatalf("validation error in file %s: %s", path, err)
 			}
 			err = setBookmark(ctx, doc, bm.Info.Id, raw)
 			if err != nil {
-				FatalError(err)
+				log.Fatalln(err)
 			}
 		}
 	}
@@ -90,13 +91,13 @@ func setBookmark(ctx context.Context, doc *enigma.Doc, bookmarkID string, raw js
 		return err
 	}
 	if bookmark.Handle != 0 {
-		LogVerbose("Updating bookmark " + bookmarkID)
+		log.Debugln("Updating bookmark " + bookmarkID)
 		err = bookmark.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not update %s with %s: %s", "bookmark", bookmarkID, err)
 		}
 	} else {
-		LogVerbose("Creating bookmark " + bookmarkID)
+		log.Debugln("Creating bookmark " + bookmarkID)
 		_, err = doc.CreateBookmarkRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not create %s with %s: %s", "bookmark", bookmarkID, err)

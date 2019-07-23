@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,7 +18,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineDimensions := args[0]
 		if commandLineDimensions == "" {
-			internal.FatalError("no dimensions specified")
+			log.Fatalln("no dimensions specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetDimensions(rootCtx, state.Doc, commandLineDimensions)
@@ -39,9 +40,9 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
-				internal.FatalErrorf("could not remove generic dimension '%s': %s", entity, err)
+				log.Fatalf("could not remove generic dimension '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalErrorf("could not remove generic dimension '%s'", entity)
+				log.Fatalf("could not remove generic dimension '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

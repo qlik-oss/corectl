@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,7 +19,7 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		commandLineBookmarks := args[0]
 		if commandLineBookmarks == "" {
-			internal.FatalError("no bookmarks specified")
+			log.Fatalln("no bookmarks specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
 		internal.SetBookmarks(rootCtx, state.Doc, commandLineBookmarks)
@@ -40,9 +41,9 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyBookmark(rootCtx, entity)
 			if err != nil {
-				internal.FatalErrorf("could not remove generic bookmark '%s': %s", entity, err)
+				log.Fatalf("could not remove generic bookmark '%s': %s", entity, err)
 			} else if !destroyed {
-				internal.FatalErrorf("could not remove generic bookmark '%s'", entity)
+				log.Fatalf("could not remove generic bookmark '%s'", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

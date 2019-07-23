@@ -4,15 +4,15 @@ import (
 	"os"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/qlik-oss/corectl/internal"
-	enigma "github.com/qlik-oss/enigma-go"
+	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/enigma-go"
 )
 
 // PrintConnections prints a list of connections to standard out
 func PrintConnections(connections []*enigma.Connection, printAsBash bool) {
 	switch mode {
 	case jsonMode:
-		internal.PrintAsJSON(connections)
+		log.PrintAsJSON(connections)
 	case quietMode:
 		fallthrough
 	case bashMode:
@@ -33,5 +33,5 @@ func PrintConnections(connections []*enigma.Connection, printAsBash bool) {
 
 // PrintConnection prints a connection to standard out
 func PrintConnection(connection *enigma.Connection) {
-	internal.PrintAsJSON(connection)
+	log.PrintAsJSON(connection)
 }
