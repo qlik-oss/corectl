@@ -107,9 +107,9 @@ func Save(ctx context.Context, doc *enigma.Doc) {
 		err = doc.DoSave(ctx, "")
 	}
 	if err == nil {
-		fmt.Println("Done")
+		fmt.Print("Done")
 	} else {
-		fmt.Println("Save failed")
+		fmt.Print("Save failed")
 	}
 	fmt.Println()
 }
