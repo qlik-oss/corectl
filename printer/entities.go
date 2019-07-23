@@ -14,7 +14,12 @@ import (
 
 // PrintNamedItemsList prints a list of the id and type and title of the supplied items
 func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitle bool) {
-	if printAsBash {
+	switch mode {
+	case jsonMode:
+		internal.PrintAsJSON(items)
+	case bashMode:
+		fallthrough
+	case quietMode:
 		if printTitle {
 			for _, item := range items {
 				fmt.Println(item.Title)
@@ -24,9 +29,7 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitl
 				fmt.Println(item.Id)
 			}
 		}
-	} else if internal.PrintJSON {
-		internal.PrintAsJSON(items)
-	} else {
+	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Id", "Title"})
@@ -39,13 +42,16 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitl
 
 // PrintNamedItemsListWithType prints a list of the id and type and title of the supplied items
 func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash bool) {
-	if printAsBash {
+	switch mode {
+	case jsonMode:
+		internal.PrintAsJSON(items)
+	case bashMode:
+		fallthrough
+	case quietMode:
 		for _, item := range items {
 			fmt.Println(item.Id)
 		}
-	} else if internal.PrintJSON {
-		internal.PrintAsJSON(items)
-	} else {
+	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Id", "Type", "Title"})

@@ -10,13 +10,16 @@ import (
 
 // PrintConnections prints a list of connections to standard out
 func PrintConnections(connections []*enigma.Connection, printAsBash bool) {
-	if internal.PrintJSON {
+	switch mode {
+	case jsonMode:
 		internal.PrintAsJSON(connections)
-	} else if printAsBash {
+	case quietMode:
+		fallthrough
+	case bashMode:
 		for _, connection := range connections {
 			PrintToBashComp(connection.Id)
 		}
-	} else {
+	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Id", "Name", "Type"})

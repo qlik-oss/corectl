@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -50,6 +51,8 @@ var rootCmd = &cobra.Command{
 		for key, value := range headersMap {
 			headers.Set(key, value)
 		}
+		// Initiate the printers mode
+		printer.SetMode()
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
