@@ -1,5 +1,5 @@
-New connection created with id: <filtered for gold shininess>
-datacsv << data 1 Lines fetched
-Reload finished successfully
-Saving app... Done
-
+INFO: New connection created with id: <filtered for gold shininess>
+INFO: datacsv << data 1 Lines fetched
+INFO: Reload finished successfully
+INFO: Saving app...
+INFO: App successfully saved

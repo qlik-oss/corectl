@@ -17,7 +17,7 @@ type logLevel int
 func (l logLevel) String() string {
 	switch l {
 	case quiet:
-		return ""
+		return "QUIET"
 	case fatal:
 		return "FATAL"
 	case err:
@@ -52,6 +52,8 @@ var printJSON bool
 // Traffic represents wether traffic should be printed or not.
 var Traffic bool
 
+var initiated bool
+
 // Init reads the log-related viper flags json, verbose, traffic and quiet and sets the
 // internal (log.) level, printJSON and traffic variables accordingly.
 func Init() {
@@ -71,6 +73,10 @@ func Init() {
 	}
 }
 
+func init() {
+	level = info
+}
+
 func Quietln(a ...interface{}) {
 	println(quiet, a...)
 }
@@ -84,17 +90,17 @@ func Quiet(a ...interface{}) {
 }
 
 func Fatalf(format string, a ...interface{}) {
-	printf(err, format, a...)
+	printf(fatal, format, a...)
 	os.Exit(1)
 }
 
 func Fatalln(a ...interface{}) {
-	println(err, a...)
+	println(fatal, a...)
 	os.Exit(1)
 }
 
 func Fatal(a ...interface{}) {
-	print(err, a...)
+	print(fatal, a...)
 	os.Exit(1)
 }
 

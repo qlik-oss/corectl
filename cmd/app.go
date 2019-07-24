@@ -67,7 +67,8 @@ var importAppCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 		internal.SetAppIDToKnownApps(appName, appID, false)
-		log.Infoln("Imported app with new ID: " + appID)
+		log.Info("Imported app with new ID: ")
+		log.Quiet(appID)
 	},
 }
 

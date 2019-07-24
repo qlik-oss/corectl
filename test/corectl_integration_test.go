@@ -6,7 +6,6 @@ import (
 	"github.com/qlik-oss/corectl/test/toolkit"
 	"os"
 	"testing"
-	"strings"
 )
 
 func TestBasicAnalyzing(t *testing.T) {
@@ -177,7 +176,7 @@ func TestOpeningWithoutData(t *testing.T) {
 	p.ExpectIncludes(`{"qSessionState":"SESSION_CREATED"}`, "without data").Run("connection", "ls", "--no-data", "--verbose")
 
 	// Save objects in app opened without data
-	p.ExpectIncludes("Saving objects in app... Done").Run("build", "--no-data")
+	p.ExpectIncludes("Saving objects in app...", "App successfully saved").Run("build", "--no-data")
 }
 
 func TestScriptManagementCommands(t *testing.T) {
@@ -340,7 +339,7 @@ func TestChildObjectsAndFullPropertyTree(t *testing.T) {
 	p.ExpectGolden().Run("object", "ls", "--json")
 
 	// Remove the main object
-	p.ExpectIncludes("Saving app... Done").Run("object", "rm", "a699ee97-152d-4470-9655-ae7c82d71491")
+	p.ExpectIncludes("Saving app...", "App successfully saved").Run("object", "rm", "a699ee97-152d-4470-9655-ae7c82d71491")
 
 	// Verify that all three object are gone
 	p.ExpectEqual("[]").Run("object", "ls", "--json")
@@ -395,10 +394,6 @@ func TestCommandLineOverridingConfigFile(t *testing.T) {
 }
 
 func TestImportApp(t *testing.T) {
-	parseID := func (output []byte) string {
-		appID := strings.Split(string(output), ": ")[1]
-		return strings.TrimSpace(appID)
-	}
 	// Create tests for the standard, abac and jwt case.
 	pStd := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
 	pAbac := toolkit.Params{T: t, Engine: *toolkit.EngineAbacIP}
@@ -406,10 +401,9 @@ func TestImportApp(t *testing.T) {
 	params := []toolkit.Params{pStd, pAbac, pJwt}
 	for _, p := range params {
 		// See if we can import the app test.qvf
-		output := p.ExpectOK().Run("app", "import", "test/projects/import/test.qvf")
-		appID := parseID(output)
+		output := p.ExpectOK().Run("app", "import", "test/projects/import/test.qvf", "-q")
 		// If it was created, we can remove it
-		p.ExpectOK().Run("app", "rm", appID, "--suppress")
+		p.ExpectOK().Run("app", "rm", string(output), "--suppress")
 		p.Reset()
 	}
 }

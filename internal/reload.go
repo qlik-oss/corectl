@@ -99,14 +99,14 @@ func Save(ctx context.Context, doc *enigma.Doc) {
 
 	// If app is opened without data we should only save the objects
 	if noData {
-		log.Infoln("Saving objects in app")
+		log.Infoln("Saving objects in app...")
 		err = doc.SaveObjects(ctx)
 	} else {
-		log.Infoln("Saving app")
+		log.Infoln("Saving app...")
 		err = doc.DoSave(ctx, "")
 	}
 	if err == nil {
-		log.Infoln("App saved")
+		log.Infoln("App successfully saved")
 	} else {
 		log.Errorln("Save failed")
 	}
