@@ -52,8 +52,6 @@ var printJSON bool
 // Traffic represents wether traffic should be printed or not.
 var Traffic bool
 
-var initiated bool
-
 // Init reads the log-related viper flags json, verbose, traffic and quiet and sets the
 // internal (log.) level, printJSON and traffic variables accordingly.
 func Init() {
@@ -160,8 +158,11 @@ func println(lvl logLevel, a ...interface{}) {
 	print(lvl, fmt.Sprintln(a...))
 }
 
+// print handles all the printing.
+// If it is called for a higher log level than what is set, it will not print.
+// If printJSON is set it will print as json instead, using the log level as the key.
 func print(lvl logLevel, a ...interface{}) {
-	if lvl > level { //If level supplied is larger than the current log level, don't print
+	if lvl > level { //If level supplied is larger than the current log level, don't print.
 		return
 	}
 	if printJSON {
@@ -174,28 +175,34 @@ func print(lvl logLevel, a ...interface{}) {
 	} else {
 		str := fmt.Sprint(a...)
 		// If the string has a carriage return ('\r') as its first character
-		// we need to remove it while adding prefixes and prepend it before printing.
+		// we need to remove it before adding prefixes and prepend it to the formatted string.
 		cr := false
 		if str[0] == '\r' {
 			cr = true
 			str = str[1:]
 		}
-		lines := strings.Split(str, "\n")
 		prefix := ""
 		if lvl != quiet {
 			prefix = lvl.String() + ": "
 		}
-		for i, l := range lines {
-			if l != "" {
-				lines[i] = prefix + l
-			}
-		}
-		str = strings.Join(lines, "\n")
+		formatted := format(prefix, str)
 		if cr {
-			str = "\r" + str
+			formatted = "\r" + formatted
 		}
-		fmt.Print(str)
+		fmt.Print(formatted)
 	}
+}
+
+// format adds the specified prefix to each line contained in the specified string
+// returns the resulting string
+func format(prefix, str string) string {
+	lines := strings.Split(str, "\n")
+	for i, l := range lines {
+		if l != "" {
+			lines[i] = prefix + l
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 // PrintAsJSON prints data as JSON. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
