@@ -36,9 +36,8 @@ jobs:
       - run:
           name: Check if documentation needs to be updated
           command: |
-            rm docs/*.md
             ./corectl generate-docs
-            if [[ ! -z $(git status --porcelain) ]]; then exit 1; fi
+            git diff --exit-code --name-only docs/*.md
       - run:
           name: Check if changes has been done to the CLI API
           command: |
