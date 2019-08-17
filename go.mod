@@ -11,7 +11,7 @@ require (
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	github.com/texttheater/golang-levenshtein v0.0.0-20190720003124-b7aaf30637d6
 	golang.org/x/crypto v0.0.0-20190708061434-4def268fd1a4
 	golang.org/x/sys v0.0.0-20190812081724-9eafafc0a87e // indirect
