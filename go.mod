@@ -14,6 +14,6 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/texttheater/golang-levenshtein v0.0.0-20190720003124-b7aaf30637d6
 	golang.org/x/crypto v0.0.0-20190708061434-4def268fd1a4
-	golang.org/x/sys v0.0.0-20190812081724-9eafafc0a87e // indirect
+	golang.org/x/sys v0.0.0-20190818153728-fde4db37ae7a // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
