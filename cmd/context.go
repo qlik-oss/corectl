@@ -121,6 +121,7 @@ var contextCmd = &cobra.Command{
 	Long:  "Explore and manage contexts",
 	Annotations: map[string]string{
 		"command_category": "sub",
+		"x-qlik-stability": "experimental",
 	},
 }
 
