@@ -11,7 +11,7 @@ var createContextCmd = withLocalFlags(&cobra.Command{
 	Use:   "create <context name>",
 	Args:  cobra.ExactArgs(1),
 	Short: "Create a new context",
-	Long:  `Create a new context
+	Long: `Create a new context
 
 This command creates a new context using the supplied flags and any relevant
 config information found in the config file (if any). The information stored
@@ -124,7 +124,7 @@ var unsetContextCmd = &cobra.Command{
 var contextCmd = &cobra.Command{
 	Use:   "context",
 	Short: "Create, update and use contexts",
-	Long:  `Create, update and use contexts
+	Long: `Create, update and use contexts
 
 Contexts store connection information such as engine url, certificates and headers,
 similar to a config. The main difference between contexts and configs (corectl.yml files)
