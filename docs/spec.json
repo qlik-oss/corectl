@@ -192,6 +192,7 @@
     },
     "context": {
       "description": "Explore and manage contexts",
+      "x-qlik-stability": "experimental",
       "commands": {
         "create": {
           "description": "Create a new context",

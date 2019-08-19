@@ -23,7 +23,7 @@ corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deploy
 
 var removeContextCmd = &cobra.Command{
 	Use:     "rm <context name>",
-	Args:    cobra.ExactArgs(1),
+	Args:    cobra.MinimumNArgs(1),
 	Short:   "Removes a context",
 	Long:    "Removes a context",
 	Example: "corectl context rm local-engine",
