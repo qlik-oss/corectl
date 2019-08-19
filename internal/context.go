@@ -39,8 +39,8 @@ var products = map[string]string{
 	"QSC":   "Qlik Sense Cloud",
 	"QSD":   "Qlik Sense Desktop",
 	"QSE":   "Qlik Sense Enterprise",
-	"QSEoK": "Qlik Sense Enterpries on Kubernetes",
-	"QSEoW": "Qlik Sense Enterpries on Windows",
+	"QSEoK": "Qlik Sense Enterprise on Kubernetes",
+	"QSEoW": "Qlik Sense Enterprise on Windows",
 }
 
 func sortKeys(m map[string]string) []string {
