@@ -22,7 +22,7 @@ corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deploy
 ```
       --comment string   Comment for the context
   -h, --help             help for create
-      --product string   Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterpries on Kubernetes) or QSEoW (Qlik Sense Enterpries on Windows) (default "QC")
+      --product string   Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterprise on Kubernetes) or QSEoW (Qlik Sense Enterprise on Windows) (default "QC")
 ```
 
 ### Options inherited from parent commands
