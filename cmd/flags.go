@@ -47,7 +47,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	// bound to viper
 	globalFlags.BoolP("verbose", "v", false, "Log extra information")
 	globalFlags.BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
-	globalFlags.StringP("engine", "e", "", "URL to the Qlik Associative Engine")
+	globalFlags.StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
 	globalFlags.StringP("app", "a", "", "Name or identifier of the app")
 	globalFlags.String("ttl", "0", "Qlik Associative Engine session time to live in seconds")
 	globalFlags.Bool("json", false, "Returns output in JSON format if possible, disables verbose and traffic output")
