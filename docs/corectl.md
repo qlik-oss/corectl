@@ -36,7 +36,7 @@ corectl [flags]
 * [corectl catwalk](corectl_catwalk.md)	 - Open the specified app in catwalk
 * [corectl completion](corectl_completion.md)	 - Generate auto completion scripts
 * [corectl connection](corectl_connection.md)	 - Explore and manage connections
-* [corectl context](corectl_context.md)	 - Explore and manage contexts
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 * [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
 * [corectl eval](corectl_eval.md)	 - Evaluate a list of measures and dimensions
 * [corectl fields](corectl_fields.md)	 - Print field list

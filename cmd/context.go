@@ -11,9 +11,15 @@ var createContextCmd = withLocalFlags(&cobra.Command{
 	Use:   "create <context name>",
 	Args:  cobra.ExactArgs(1),
 	Short: "Create a new context",
-	Long:  "Create a new context",
+	Long:  `Create a new context
+
+This command creates a new context using the supplied flags and any relevant
+config information found in the config file (if any). The information stored
+will be engine url, headers and certificates (if present) along with comment
+and the context-name. The created context will become the newly created one.`,
+
 	Example: `corectl context create local-engine
-corectl context create rd-sense --comment "R&D Qlik Sense deployment"`,
+corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		name := internal.CreateContext(args[0], viper.GetString("comment"))
@@ -117,10 +123,20 @@ var unsetContextCmd = &cobra.Command{
 
 var contextCmd = &cobra.Command{
 	Use:   "context",
-	Short: "Explore and manage contexts",
-	Long:  "Explore and manage contexts",
+	Short: "Create, update and use contexts",
+	Long:  `Create, update and use contexts
+
+Contexts store connection information such as engine url, certificates and headers,
+similar to a config. The main difference between contexts and configs (corectl.yml files)
+is that they can be used globally. Used the context subcommands to configure contexts to
+facilitate app development in environments that certificates and headers are needed.
+
+The current context is the one that is being used. You can change it by setting another
+context with "context set" or unset the current context with "context unset".
+
+The contexts are stored in the ~/.corectl/contexts.yml file.`,
 	Annotations: map[string]string{
-		"command_category": "sub",
+		"command_category": "other",
 		"x-qlik-stability": "experimental",
 	},
 }

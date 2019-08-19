@@ -1,10 +1,20 @@
 ## corectl context
 
-Explore and manage contexts
+Create, update and use contexts
 
 ### Synopsis
 
-Explore and manage contexts
+Create, update and use contexts
+
+Contexts store connection information such as engine url, certificates and headers,
+similar to a config. The main difference between contexts and configs (corectl.yml files)
+is that they can be used globally. Used the context subcommands to configure contexts to
+facilitate app development in environments that certificates and headers are needed.
+
+The current context is the one that is being used. You can change it by setting another
+context with "context set" or unset the current context with "context unset".
+
+The contexts are stored in the ~/.corectl/contexts.yml file.
 
 ### Options
 

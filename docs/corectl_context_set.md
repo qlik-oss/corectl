@@ -40,5 +40,5 @@ corectl context set local-engine
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Explore and manage contexts
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 
