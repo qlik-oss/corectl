@@ -16,7 +16,6 @@ func PrintContext(name string, context *internal.Context) {
 		return
 	}
 	fmt.Printf("Name: %s\n", name)
-	fmt.Printf("  Product: %s\n", context.Product)
 	fmt.Printf("  Comment: %s\n", context.Comment)
 	fmt.Printf("  Engine: %s\n", context.Engine)
 	fmt.Printf("  Certificates: %s\n", context.Certificates)
@@ -51,12 +50,12 @@ func PrintContexts(handler *internal.ContextHandler, printAsBash bool) {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetRowLine(true)
-		header := []string{"Name", "Product", "Engine", "Current", "Comment"}
+		header := []string{"Name", "Engine", "Current", "Comment"}
 		writer.SetHeader(header)
 
 		for _, k := range sortedContextKeys {
 			context := handler.Get(k)
-			row := []string{k, context.Product, context.Engine, "", context.Comment}
+			row := []string{k, context.Engine, "", context.Comment}
 			if k == handler.Current {
 				// In case we change header order
 				for i, h := range header {

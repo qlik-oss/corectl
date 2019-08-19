@@ -22,7 +22,6 @@ corectl context update local-engine
 ```
       --comment string   Comment for the context
   -h, --help             help for update
-      --product string   Qlik product the context is connecting to. One of: QC (Qlik Core), QSC (Qlik Sense Cloud), QSD (Qlik Sense Desktop), QSE (Qlik Sense Enterprise), QSEoK (Qlik Sense Enterprise on Kubernetes) or QSEoW (Qlik Sense Enterprise on Windows) (default "QC")
 ```
 
 ### Options inherited from parent commands

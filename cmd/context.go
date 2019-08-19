@@ -13,13 +13,13 @@ var createContextCmd = withLocalFlags(&cobra.Command{
 	Short: "Create a new context",
 	Long:  "Create a new context",
 	Example: `corectl context create local-engine
-corectl context create rd-sense --product "QSE" --comment "R&D Qlik Sense deployment"`,
+corectl context create rd-sense --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		name := internal.CreateContext(args[0], viper.GetString("product"), viper.GetString("comment"))
+		name := internal.CreateContext(args[0], viper.GetString("comment"))
 		printer.PrintCurrentContext(name)
 	},
-}, "product", "comment")
+}, "comment")
 
 var removeContextCmd = &cobra.Command{
 	Use:     "rm <context name>",
@@ -70,9 +70,9 @@ corectl context update local-engine`,
 		if len(args) == 1 {
 			name = args[0]
 		}
-		internal.UpdateContext(name, viper.GetString("product"), viper.GetString("comment"))
+		internal.UpdateContext(name, viper.GetString("comment"))
 	},
-}, "product", "comment")
+}, "comment")
 
 var listContextsCmd = &cobra.Command{
 	Use:     "ls",
