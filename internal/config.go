@@ -305,7 +305,6 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 func mergeContext(config *map[interface{}]interface{}) {
 	// TODO: Create some sort of log buffer so verbose logs can be added
 	// before the config is complete.
-	LogVerbose("Merging context")
 	contextHandler := NewContextHandler()
 	contextName := viper.GetString("context")
 
@@ -319,12 +318,13 @@ func mergeContext(config *map[interface{}]interface{}) {
 		return
 	}
 
-	LogVerbose("Using context: " + contextName)
+	LogVerbose("Merging config with context: " + contextName)
 
 	for k, v := range context.ToMap() {
 		if _, ok := (*config)[k]; ok {
-			LogVerbose(fmt.Sprint(k, " exists in both context and config, using context"))
+			LogVerbose(fmt.Sprint(k, " exists in both context and config, using config"))
+		} else {
+			(*config)[k] = v
 		}
-		(*config)[k] = v
 	}
 }
