@@ -53,13 +53,11 @@ corectl context get local-engine`,
 	Run: func(ccmd *cobra.Command, args []string) {
 		handler := internal.NewContextHandler()
 		var name string
+
 		if len(args) == 1 {
 			name = args[0]
-		} else {
-			name = handler.Current
 		}
-		context := handler.Get(name)
-		printer.PrintContext(name, context)
+		printer.PrintContext(name, handler)
 	},
 }
 
@@ -98,8 +96,7 @@ This effectively sets the current context to none.`,
 	Example: "corectl clear",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		handler := internal.NewContextHandler()
-		previous := handler.Clear()
+		previous := internal.ClearContext()
 		if previous != "" {
 			printer.PrintCurrentContext("")
 		}

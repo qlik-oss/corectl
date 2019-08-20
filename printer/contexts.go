@@ -10,9 +10,17 @@ import (
 )
 
 // PrintContext prints all information in a context
-func PrintContext(name string, context *internal.Context) {
+func PrintContext(name string, handler *internal.ContextHandler) {
+	if name == "" {
+		name = handler.Current
+		if name == "" {
+			fmt.Println("No current context")
+			return
+		}
+	}
+	context := handler.Get(name)
 	if context == nil {
-		fmt.Println("No current context")
+		fmt.Printf("No context with name: '%s'\n", name)
 		return
 	}
 	fmt.Printf("Context: %s\n", name)
