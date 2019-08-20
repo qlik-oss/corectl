@@ -54,7 +54,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.Bool("no-data", false, "Open app without data")
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
-	globalFlags.String("context", "", "Specific context that should be used when connecting")
+	globalFlags.String("context", "", "Name of the context used when connecting to Qlik Associative Engine")
 
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

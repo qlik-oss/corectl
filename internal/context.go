@@ -33,7 +33,7 @@ var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
 func SetContext(contextName, comment string) string {
 	if contextName == "" {
-		FatalError("\"\" is not a valid context name")
+		FatalError("context name not supplied")
 	}
 
 	createContextFileIfNotExist()

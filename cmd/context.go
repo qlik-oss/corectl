@@ -117,7 +117,7 @@ The current context is the one that is being used. You can use "context get" to
 display the contents of the current context and switch context with "context set"
 or unset the current context with "context unset".
 
-Note that contexts have the lowest precedence. This means that a e.g. an --engine flag
+Note that contexts have the lowest precedence. This means that e.g. an --engine flag
 (or an engine field in a config) will override the engine url in the current context.
 
 Contexts are stored locally in your ~/.corectl/contexts.yml file.`,

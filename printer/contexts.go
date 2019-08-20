@@ -23,11 +23,11 @@ func PrintContext(name string, handler *internal.ContextHandler) {
 		fmt.Printf("No context with name: '%s'\n", name)
 		return
 	}
-	fmt.Printf("Context: %s\n", name)
-	fmt.Printf("  Comment: %s\n", context.Comment)
-	fmt.Printf("  Engine: %s\n", context.Engine)
-	fmt.Printf("  Certificates: %s\n", context.Certificates)
-	fmt.Println("  Headers:")
+	fmt.Printf("Name: %s\n", name)
+	fmt.Printf("Comment: %s\n", context.Comment)
+	fmt.Printf("Engine: %s\n", context.Engine)
+	fmt.Printf("Certificates: %s\n", context.Certificates)
+	fmt.Println("Headers:")
 	for k, v := range context.Headers {
 		fmt.Printf("    %s: %s\n", k, v)
 	}
