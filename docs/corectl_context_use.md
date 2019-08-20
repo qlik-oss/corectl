@@ -1,32 +1,25 @@
-## corectl context create
+## corectl context use
 
-Create a new context
+Specify what context to use
 
 ### Synopsis
 
-Create a new context
-
-This command creates a new context using the supplied flags and any relevant
-config information found in the config file (if any). The information stored
-will be engine url, headers and certificates (if present) along with comment
-and the context-name. The current context will become the newly created one.
+Specify what context to use
 
 ```
-corectl context create <context name> [flags]
+corectl context use <context-name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context create local-engine
-corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
+corectl context use local-engine
 ```
 
 ### Options
 
 ```
-      --comment string   Comment for the context
-  -h, --help             help for create
+  -h, --help   help for use
 ```
 
 ### Options inherited from parent commands

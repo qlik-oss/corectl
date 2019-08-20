@@ -50,16 +50,16 @@ func TestContextManagement(t *testing.T) {
 	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
 	for i, p := range params {
 		// Create a context using the config and engine url
-		p.ExpectOK().Run("context", "create", contexts[i])
+		p.ExpectOK().Run("context", "set", contexts[i])
 		// Remove config and engine from p to see if context stored them
 		p.Config, p.Engine = "", ""
 		p.ExpectOK().Run("status")
 	}
 	// Test update by changing to the jwt engine
-	jwt.ExpectOK().Run("context", "update", "--engine=" + *toolkit.EngineJwtIP)
+	jwt.ExpectOK().Run("context", "set", contexts[1])
 	jwt.ExpectOK().Run("status")
 	// Change back to abac
-	jwt.ExpectOK().Run("context", "update", "--engine=" + *toolkit.EngineAbacIP)
+	jwt.ExpectOK().Run("context", "set", contexts[1], "--engine=" + *toolkit.EngineAbacIP)
 	// Empty params, should default to localhost:9076 when there is no context
 	p := toolkit.Params{T: t}
 	// Context stored locally
@@ -68,11 +68,11 @@ func TestContextManagement(t *testing.T) {
 	for i, ctx := range contexts {
 		p.ExpectOK().Run("context", "get", ctx)
 		// With context status should work
-		p.ExpectOK().Run("context", "set", ctx)
+		p.ExpectOK().Run("context", "use", ctx)
 		p.ExpectIncludes(params[i].Engine).Run("status")
 		// Without context status should default to localhost:9076
-		p.ExpectOK().Run("context", "unset")
-		p.ExpectIncludes("localhost:9076").Run("status")
+		p.ExpectOK().Run("context", "clear")
+		p.ExpectIncludes(params[i].Engine).Run("status")
 		p.ExpectOK().Run("context", "rm", ctx)
 	}
 	// No context here, expecting default

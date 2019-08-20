@@ -1,25 +1,26 @@
-## corectl context unset
+## corectl context clear
 
-Unset current context
+Clears the current context
 
 ### Synopsis
 
-Unset current context
+Clears the current context.
+This effectively sets the current context to none.
 
 ```
-corectl context unset [flags]
+corectl context clear [flags]
 ```
 
 ### Examples
 
 ```
-corectl context unset
+corectl clear
 ```
 
 ### Options
 
 ```
-  -h, --help   help for unset
+  -h, --help   help for clear
 ```
 
 ### Options inherited from parent commands

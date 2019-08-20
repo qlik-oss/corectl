@@ -7,7 +7,7 @@ Get context, current context by default
 Get context, current context by default
 
 ```
-corectl context get [flags]
+corectl context get [context name] [flags]
 ```
 
 ### Examples

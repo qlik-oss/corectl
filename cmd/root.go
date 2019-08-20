@@ -63,9 +63,7 @@ func shouldUseContext(ccmd *cobra.Command) bool {
 	path := ccmd.CommandPath()
 	// Switch so cases can be easily added
 	switch {
-	case strings.Contains(path, "context create"):
-		return false
-	case strings.Contains(path, "context update"):
+	case strings.Contains(path, "context set"):
 		return false
 	}
 	return true

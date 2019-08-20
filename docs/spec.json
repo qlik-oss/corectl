@@ -194,13 +194,8 @@
       "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that a e.g. an --engine flag\n(or an engine field in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.corectl/contexts.yml file.",
       "x-qlik-stability": "experimental",
       "commands": {
-        "create": {
-          "description": "Create a new context\n\nThis command creates a new context using the supplied flags and any relevant\nconfig information found in the config file (if any). The information stored\nwill be engine url, headers and certificates (if present) along with comment\nand the context-name. The current context will become the newly created one.",
-          "flags": {
-            "comment": {
-              "description": "Comment for the context"
-            }
-          }
+        "clear": {
+          "description": "Clears the current context.\nThis effectively sets the current context to none."
         },
         "get": {
           "description": "Get context, current context by default"
@@ -212,18 +207,15 @@
           "description": "Removes a context"
         },
         "set": {
-          "description": "Set a current context"
-        },
-        "unset": {
-          "description": "Unset current context"
-        },
-        "update": {
-          "description": "Update context, current context by default",
+          "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",
           "flags": {
             "comment": {
               "description": "Comment for the context"
             }
           }
+        },
+        "use": {
+          "description": "Specify what context to use"
         }
       }
     },

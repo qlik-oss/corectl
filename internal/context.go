@@ -31,7 +31,7 @@ type Context struct {
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-func CreateContext(contextName, comment string) string {
+func SetContext(contextName, comment string) string {
 	if contextName == "" {
 		FatalError("\"\" is not a valid context name")
 	}
@@ -39,25 +39,36 @@ func CreateContext(contextName, comment string) string {
 	createContextFileIfNotExist()
 	handler := NewContextHandler()
 
+	var context *Context
+	var update bool
+
 	if handler.Exists(contextName) {
-		FatalErrorf("context with name '%s' already exists", contextName)
+		context = handler.Get(contextName)
+		LogVerbose("Updating context: " + contextName)
+		update = true
+	} else {
+		context = &Context{}
+		LogVerbose("Creating context: " + contextName)
 	}
 
-	context := &Context{}
-	context.Update(&map[string]interface{}{
+	updated := context.Update(&map[string]interface{}{
 		"engine":       viper.GetString("engine"),
 		"headers":      viper.GetStringMapString("headers"),
 		"certificates": viper.GetString("certificates"),
 		"comment":      comment,
 	})
 
-	if err := context.Validate(); err != nil {
-		FatalErrorf("cannot create context '%s': %s", contextName, err.Error())
+	if update {
+		LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
 	}
 
-	handler.Contexts[contextName] = context
+	if err := context.Validate(); err != nil {
+		FatalErrorf("context '%s' is not valid: %s", contextName, err.Error())
+	}
 
-	LogVerbose("Added context with name: " + contextName)
+	if !update {
+		handler.Contexts[contextName] = context
+	}
 
 	handler.Current = contextName
 	handler.Save()
@@ -71,35 +82,16 @@ func RemoveContext(contextName string) (string, bool) {
 	return contextName, wasCurrent
 }
 
-func UpdateContext(contextName, comment string) {
+func UseContext(contextName string) string {
 	handler := NewContextHandler()
-	var context *Context
-	if contextName != "" {
-		handler.Exists(contextName)
-		context = handler.Get(contextName)
-	} else {
-		context = handler.GetCurrent()
-	}
-	updated := context.Update(&map[string]interface{}{
-		"engine":       viper.GetString("engine"),
-		"headers":      viper.GetStringMapString("headers"),
-		"certificates": viper.GetString("certificates"),
-		"comment":      comment,
-	})
-	LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
-	handler.Save()
-}
-
-func SetCurrentContext(contextName string) string {
-	handler := NewContextHandler()
-	handler.SetCurrent(contextName)
+	handler.Use(contextName)
 	handler.Save()
 	return contextName
 }
 
-func UnsetCurrentContext() string {
+func ClearContext() string {
 	handler := NewContextHandler()
-	previous := handler.UnsetCurrent()
+	previous := handler.Clear()
 	handler.Save()
 	return previous
 }
@@ -151,7 +143,7 @@ func (ch *ContextHandler) GetCurrent() *Context {
 	return ch.Get(cur)
 }
 
-func (ch *ContextHandler) SetCurrent(contextName string) {
+func (ch *ContextHandler) Use(contextName string) {
 	if !ch.Exists(contextName) {
 		FatalErrorf("context with name '%s' does not exist", contextName)
 	}
@@ -164,7 +156,7 @@ func (ch *ContextHandler) SetCurrent(contextName string) {
 	ch.Current = contextName
 }
 
-func (ch *ContextHandler) UnsetCurrent() (previous string) {
+func (ch *ContextHandler) Clear() (previous string) {
 	if ch.Current == "" {
 		LogVerbose("No context is set")
 		return ""
@@ -199,8 +191,8 @@ func (ch *ContextHandler) Save() {
 
 // Update uses reflection to update a Context's fields.
 // This method ignores empty strings and nil values so it will
-// only update context with new information provided.
-// It returns the names of the updated fiels.
+// only update the context with new information provided.
+// It returns the names of the updated fields.
 func (c *Context) Update(m *map[string]interface{}) []string {
 	ptr := reflect.ValueOf(c)
 	val := reflect.Indirect(ptr)
