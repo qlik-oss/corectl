@@ -72,7 +72,7 @@ func TestContextManagement(t *testing.T) {
 		p.ExpectIncludes(params[i].Engine).Run("status")
 		// Without context status should default to localhost:9076
 		p.ExpectOK().Run("context", "clear")
-		p.ExpectIncludes(params[i].Engine).Run("status")
+		p.ExpectOK().Run("status")
 		p.ExpectOK().Run("context", "rm", ctx)
 	}
 	// No context here, expecting default

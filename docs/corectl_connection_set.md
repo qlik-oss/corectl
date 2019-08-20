@@ -28,7 +28,7 @@ corectl connection set ./my-connections.yml
   -a, --app string               Name or identifier of the app
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
-      --context string           Specific context that should be used when connecting
+      --context string           Name of the context used when connecting to Qlik Associative Engine
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
