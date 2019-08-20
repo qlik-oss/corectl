@@ -128,16 +128,15 @@ var contextCmd = &cobra.Command{
 
 Contexts store connection information such as engine url, certificates and headers,
 similar to a config. The main difference between contexts and configs is that they
-can be used globally. Used the context subcommands to configure contexts to
-facilitate app development in environments that certificates and headers are needed.
+can be used globally. Use the context subcommands to configure contexts which
+facilitate app development in environments where certificates and headers are needed.
 
 The current context is the one that is being used. You can use "context get" to
-display what is in the current context and change it by setting another context with
-"context set" or unset the current context with "context unset".
+display the contents of the current context and switch context with "context set"
+or unset the current context with "context unset".
 
-Note that contexts have the lowest precedence, meaning it is the last place where
-corectl looks for information. This means that a e.g. an --engine flag (or an engine
-field in a config) will override the engine url in the current context.
+Note that contexts have the lowest precedence. This means that a e.g. an --engine flag
+(or an engine field in a config) will override the engine url in the current context.
 
 Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 	Annotations: map[string]string{
