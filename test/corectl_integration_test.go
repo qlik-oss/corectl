@@ -55,15 +55,19 @@ func TestContextManagement(t *testing.T) {
 		p.Config, p.Engine = "", ""
 		p.ExpectOK().Run("status")
 	}
-	// Test update by changing to the jwt engine
-	jwt.ExpectOK().Run("context", "set", contexts[1])
-	jwt.ExpectOK().Run("status")
-	// Change back to abac
-	jwt.ExpectOK().Run("context", "set", contexts[1], "--engine=" + *toolkit.EngineAbacIP)
+
 	// Empty params, should default to localhost:9076 when there is no context
 	p := toolkit.Params{T: t}
-	// Context stored locally
+	// Contexts stored locally
 	p.ExpectOK().Run("context", "ls")
+	// Current context should be abac, connecting to jwt shouldn't work
+	p.ExpectIncludes(contexts[1]).Run("context", "get")
+	p.ExpectError().Run("status", "--engine", *toolkit.EngineJwtIP)
+	// Check if we can update contexts
+	p.ExpectOK().Run("context", "set", contexts[1], "--engine", *toolkit.EngineStdIP)
+	p.ExpectIncludes(*toolkit.EngineStdIP).Run("status")
+	abac.ExpectOK().Run("context", "set", contexts[1])
+	p.ExpectIncludes(*toolkit.EngineAbacIP).Run("context", "get")
 	// See if all context commands work
 	for i, ctx := range contexts {
 		p.ExpectOK().Run("context", "get", ctx)
@@ -72,7 +76,7 @@ func TestContextManagement(t *testing.T) {
 		p.ExpectIncludes(params[i].Engine).Run("status")
 		// Without context status should default to localhost:9076
 		p.ExpectOK().Run("context", "clear")
-		p.ExpectOK().Run("status")
+		p.ExpectIncludes("No current context").Run("context", "get")
 		p.ExpectOK().Run("context", "rm", ctx)
 	}
 	// No context here, expecting default
