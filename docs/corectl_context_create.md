@@ -9,7 +9,7 @@ Create a new context
 This command creates a new context using the supplied flags and any relevant
 config information found in the config file (if any). The information stored
 will be engine url, headers and certificates (if present) along with comment
-and the context-name. The created context will become the newly created one.
+and the context-name. The current context will become the newly created one.
 
 ```
 corectl context create <context name> [flags]

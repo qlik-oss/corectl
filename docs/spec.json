@@ -191,11 +191,11 @@
       }
     },
     "context": {
-      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs (corectl.yml files)\nis that they can be used globally. Used the context subcommands to configure contexts to\nfacilitate app development in environments that certificates and headers are needed.\n\nThe current context is the one that is being used. You can change it by setting another\ncontext with \"context set\" or unset the current context with \"context unset\".\n\nThe contexts are stored in the ~/.corectl/contexts.yml file.",
+      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Used the context subcommands to configure contexts to\nfacilitate app development in environments that certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay what is in the current context and change it by setting another context with\n\"context set\" or unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence, meaning it is the last place where\ncorectl looks for information. This means that a e.g. an --engine flag (or an engine\nfield in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.corectl/contexts.yml file.",
       "x-qlik-stability": "experimental",
       "commands": {
         "create": {
-          "description": "Create a new context\n\nThis command creates a new context using the supplied flags and any relevant\nconfig information found in the config file (if any). The information stored\nwill be engine url, headers and certificates (if present) along with comment\nand the context-name. The created context will become the newly created one.",
+          "description": "Create a new context\n\nThis command creates a new context using the supplied flags and any relevant\nconfig information found in the config file (if any). The information stored\nwill be engine url, headers and certificates (if present) along with comment\nand the context-name. The current context will become the newly created one.",
           "flags": {
             "comment": {
               "description": "Comment for the context"

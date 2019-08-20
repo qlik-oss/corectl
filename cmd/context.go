@@ -16,7 +16,7 @@ var createContextCmd = withLocalFlags(&cobra.Command{
 This command creates a new context using the supplied flags and any relevant
 config information found in the config file (if any). The information stored
 will be engine url, headers and certificates (if present) along with comment
-and the context-name. The created context will become the newly created one.`,
+and the context-name. The current context will become the newly created one.`,
 
 	Example: `corectl context create local-engine
 corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
@@ -127,14 +127,19 @@ var contextCmd = &cobra.Command{
 	Long: `Create, update and use contexts
 
 Contexts store connection information such as engine url, certificates and headers,
-similar to a config. The main difference between contexts and configs (corectl.yml files)
-is that they can be used globally. Used the context subcommands to configure contexts to
+similar to a config. The main difference between contexts and configs is that they
+can be used globally. Used the context subcommands to configure contexts to
 facilitate app development in environments that certificates and headers are needed.
 
-The current context is the one that is being used. You can change it by setting another
-context with "context set" or unset the current context with "context unset".
+The current context is the one that is being used. You can use "context get" to
+display what is in the current context and change it by setting another context with
+"context set" or unset the current context with "context unset".
 
-The contexts are stored in the ~/.corectl/contexts.yml file.`,
+Note that contexts have the lowest precedence, meaning it is the last place where
+corectl looks for information. This means that a e.g. an --engine flag (or an engine
+field in a config) will override the engine url in the current context.
+
+Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 	Annotations: map[string]string{
 		"command_category": "other",
 		"x-qlik-stability": "experimental",
