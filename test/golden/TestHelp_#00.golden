@@ -23,7 +23,6 @@ Advanced Commands:
   app           Explore and manage apps
   bookmark      Explore and manage bookmarks
   connection    Explore and manage connections
-  context       Explore and manage contexts
   dimension     Explore and manage dimensions
   measure       Explore and manage measures
   object        Explore and manage generic objects
@@ -32,6 +31,7 @@ Advanced Commands:
 
 Other Commands:
   completion    Generate auto completion scripts
+  context       Create, update and use contexts
   help          Help about any command
   status        Print status info about the connection to the engine and current app
   version       Print the version of corectl
