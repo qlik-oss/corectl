@@ -322,7 +322,7 @@ func mergeContext(config *map[interface{}]interface{}) {
 
 	for k, v := range context.ToMap() {
 		if _, ok := (*config)[k]; ok {
-			LogVerbose(fmt.Sprint(k, " exists in both context and config, using config"))
+			fmt.Printf("Warning: property '%s' exists in both current context and config, using property from config\n", k)
 		} else {
 			(*config)[k] = v
 		}
