@@ -27,6 +27,7 @@ func InitLogOutput() {
 
 // LogVerbose prints the supplied message to system out if verbose logging is enabled.
 func LogVerbose(message string) {
+	// TODO Create a log buffer that prints its contents after InitLogOutput
 	if PrintVerbose {
 		fmt.Println(message)
 	}

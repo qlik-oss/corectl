@@ -32,12 +32,12 @@ type ConnectionConfigEntry struct {
 
 // ConnectionsConfig represents how the connections are configured.
 type ConnectionsConfig struct {
-	Connections map[string]ConnectionConfigEntry
+	Connections *map[string]ConnectionConfigEntry
 }
 
 // GetConnectionsConfig returns a the current connections configuration.
-func GetConnectionsConfig() ConnectionsConfig {
-	var config ConnectionsConfig
+func GetConnectionsConfig() *ConnectionsConfig {
+	var config *ConnectionsConfig
 	conn := viper.Get("connections")
 	switch conn.(type) {
 	case string:
@@ -45,10 +45,12 @@ func GetConnectionsConfig() ConnectionsConfig {
 		config = ReadConnectionsFile(connFile)
 	case map[string]interface{}:
 		connMap := conn.(map[string]interface{})
-		err := reMarshal(connMap, &config.Connections)
+		configEntries := &map[string]ConnectionConfigEntry{}
+		err := reMarshal(connMap, configEntries)
 		if err != nil {
 			FatalErrorf("could not parse connections configuration: %s", err)
 		}
+		config = &ConnectionsConfig{Connections: configEntries}
 	}
 	return config
 }
@@ -81,12 +83,11 @@ func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 }
 
 // ReadConnectionsFile reads the connections config file from the supplied path.
-func ReadConnectionsFile(path string) ConnectionsConfig {
+func ReadConnectionsFile(path string) *ConnectionsConfig {
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
 		FatalErrorf("could not find connections config file '%s'", path)
 	}
-	var config ConnectionsConfig
 	tempConfig := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &tempConfig)
 	if err != nil {
@@ -96,30 +97,33 @@ func ReadConnectionsFile(path string) ConnectionsConfig {
 	if err != nil {
 		FatalErrorf("bad substitution in '%s': %s", path, err)
 	}
+	config := &ConnectionsConfig{}
 	if strConfig, err := convertMap(tempConfig); err == nil {
-		reMarshal(strConfig, &config)
+		reMarshal(strConfig, config)
 	} else {
 		FatalErrorf("could not parse connections config file '%s': %s", path, err)
 	}
 	return config
 }
 
-// ReadConfigFile checks that the config file does not contain any unknown properties
+// ReadConfig checks that the config file does not contain any unknown properties
 // and then, if the config is valid, reads it.
-func ReadConfigFile(explicitConfigFile string) {
+// withContext specifies whether a context should be included when looking setting the
+// config or not.
+func ReadConfig(explicitConfigFile string, withContext bool) {
 	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		setConfigFile(explicitConfigFile)
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
-		if configFile != "" {
-			setConfigFile(configFile)
-		}
+	}
+	// If there is a config file or context should be used
+	if configFile != "" || withContext {
+		readConfig(configFile, withContext)
 	}
 	InitLogOutput() // sets json, verbose and traffic
 	if configFile != "" {
@@ -164,21 +168,29 @@ func AddValidProp(propName string) {
 	validProps[propName] = struct{}{}
 }
 
-// setConfigFile reads in a config file and processes it before providing viper with it.
-func setConfigFile(configPath string) {
-	source, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		FatalErrorf("could not find config file '%s'", configPath)
-	}
+// readConfig reads in a config file (if any) and merges it with context.
+// After the merge, the resulting configuration is processesed before providing viper with it.
+func readConfig(configPath string, withContext bool) {
 	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
 	// However, this make validateProps a tiny bit more complex
-	config := map[interface{}]interface{}{}
-	err = yaml.Unmarshal(source, &config)
-	if err != nil {
-		FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
+	config := &map[interface{}]interface{}{}
+	if configPath != "" {
+		source, err := ioutil.ReadFile(configPath)
+		if err != nil {
+			FatalErrorf("could not find config file '%s'", configPath)
+		}
+
+		err = yaml.Unmarshal(source, config)
+		if err != nil {
+			FatalErrorf("invalid syntax in config file '%s': %s", configPath, err)
+		}
 	}
-	validateProps(config, configPath)
-	err = subEnvVars(&config)
+	// Merge before validation and env substitution since it might not be needed due to context.
+	if withContext {
+		mergeContext(config)
+	}
+	validateProps(*config, configPath)
+	err := subEnvVars(config)
 	if err != nil {
 		FatalErrorf("bad substitution in '%s': %s", configPath, err)
 	}
@@ -189,7 +201,7 @@ func setConfigFile(configPath string) {
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
 	if err != nil {
-		FatalErrorf("unexpected error after parseing config: %s", err)
+		FatalErrorf("unexpected error after parsing config: %s", err)
 	}
 }
 
@@ -288,4 +300,31 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 		}
 	}
 	return suggestion
+}
+
+func mergeContext(config *map[interface{}]interface{}) {
+	// TODO: Create some sort of log buffer so verbose logs can be added
+	// before the config is complete.
+	contextHandler := NewContextHandler()
+	contextName := viper.GetString("context")
+
+	if contextName == "" {
+		contextName = contextHandler.Current
+	}
+
+	context := contextHandler.Get(contextName)
+
+	if context == nil {
+		return
+	}
+
+	LogVerbose("Merging config with context: " + contextName)
+
+	for k, v := range context.ToMap() {
+		if _, ok := (*config)[k]; ok {
+			fmt.Printf("Warning: property '%s' exists in both current context and config, using property from config\n", k)
+		} else {
+			(*config)[k] = v
+		}
+	}
 }

@@ -1,15 +1,25 @@
-## corectl script
+## corectl context use
 
-Explore and manage the script
+Specify what context to use
 
 ### Synopsis
 
-Explore and manage the script
+Specify what context to use
+
+```
+corectl context use <context-name> [flags]
+```
+
+### Examples
+
+```
+corectl context use local-engine
+```
 
 ### Options
 
 ```
-  -h, --help   help for script
+  -h, --help   help for use
 ```
 
 ### Options inherited from parent commands
@@ -30,7 +40,5 @@ Explore and manage the script
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl script get](corectl_script_get.md)	 - Print the reload script
-* [corectl script set](corectl_script_set.md)	 - Set the script in the current app
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 
