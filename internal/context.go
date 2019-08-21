@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/spf13/viper"
 	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
