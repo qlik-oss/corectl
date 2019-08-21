@@ -1,26 +1,26 @@
-## corectl app rm
+## corectl context get
 
-Remove the specified app
+Get context, current context by default
 
 ### Synopsis
 
-Remove the specified app
+Get context, current context by default
 
 ```
-corectl app rm <app-id> [flags]
+corectl context get [context name] [flags]
 ```
 
 ### Examples
 
 ```
-corectl app rm APP-ID
+corectl context get
+corectl context get local-engine
 ```
 
 ### Options
 
 ```
-  -h, --help       help for rm
-      --suppress   Suppress confirmation dialogue
+  -h, --help   help for get
 ```
 
 ### Options inherited from parent commands
@@ -34,7 +34,6 @@ corectl app rm APP-ID
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
-  -q, --quiet                    Terse logging, limited to printing IDs where possible
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information
@@ -42,5 +41,5 @@ corectl app rm APP-ID
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 

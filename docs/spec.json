@@ -24,6 +24,9 @@
       "alias": "c",
       "description": "path/to/config.yml where parameters can be set instead of on the command line"
     },
+    "context": {
+      "description": "Name of the context used when connecting to Qlik Associative Engine"
+    },
     "engine": {
       "alias": "e",
       "description": "URL to the Qlik Associative Engine",
@@ -189,6 +192,35 @@
         },
         "set": {
           "description": "Set or update the connections in the current app"
+        }
+      }
+    },
+    "context": {
+      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that e.g. an --engine flag\n(or an engine field in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.corectl/contexts.yml file.",
+      "x-qlik-stability": "experimental",
+      "commands": {
+        "clear": {
+          "description": "Set the current context to none"
+        },
+        "get": {
+          "description": "Get context, current context by default"
+        },
+        "ls": {
+          "description": "List all contexts"
+        },
+        "rm": {
+          "description": "Remove a context"
+        },
+        "set": {
+          "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",
+          "flags": {
+            "comment": {
+              "description": "Comment for the context"
+            }
+          }
+        },
+        "use": {
+          "description": "Specify what context to use"
         }
       }
     },

@@ -1,26 +1,32 @@
-## corectl app rm
+## corectl context set
 
-Remove the specified app
+Set a context to the current configuration
 
 ### Synopsis
 
-Remove the specified app
+Set a context to the current configuration
+
+This command creates or updates a context by using the supplied flags and any
+relevant config information found in the config file (if any).
+The information stored will be engine url, headers and certificates (if present)
+along with comment and the context-name.
 
 ```
-corectl app rm <app-id> [flags]
+corectl context set <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl app rm APP-ID
+corectl context set local-engine
+corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
-  -h, --help       help for rm
-      --suppress   Suppress confirmation dialogue
+      --comment string   Comment for the context
+  -h, --help             help for set
 ```
 
 ### Options inherited from parent commands
@@ -34,7 +40,6 @@ corectl app rm APP-ID
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
-  -q, --quiet                    Terse logging, limited to printing IDs where possible
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information
@@ -42,5 +47,5 @@ corectl app rm APP-ID
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 

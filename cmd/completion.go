@@ -71,6 +71,9 @@ __corectl_custom_func()
 		corectl_app_rm)
 			__corectl_get_apps
 			;;
+		corectl_context_rm | corectl_context_set | corectl_context_get | corectl_context_use)
+			__corectl_get_contexts
+			;;
 		corectl_app_import)
 			__corectl_handle_filename_extension_flag "qvf"
 			;;
@@ -188,6 +191,11 @@ __corectl_get_local_engines()
 	else
 		COMPREPLY=()
 	fi;
+}
+
+__corectl_get_contexts()
+{
+	__corectl_call_corectl "context ls --bash"
 }
 
 `
