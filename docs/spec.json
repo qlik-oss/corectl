@@ -195,7 +195,7 @@
       "x-qlik-stability": "experimental",
       "commands": {
         "clear": {
-          "description": "Clears the current context.\nThis effectively sets the current context to none."
+          "description": "Set the current context to none"
         },
         "get": {
           "description": "Get context, current context by default"
@@ -204,7 +204,7 @@
           "description": "List all contexts"
         },
         "rm": {
-          "description": "Removes a context"
+          "description": "Remove a context"
         },
         "set": {
           "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",

@@ -1,11 +1,10 @@
 ## corectl context clear
 
-Clears the current context
+Set the current context to none
 
 ### Synopsis
 
-Clears the current context.
-This effectively sets the current context to none.
+Set the current context to none
 
 ```
 corectl context clear [flags]

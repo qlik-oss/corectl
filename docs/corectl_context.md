@@ -45,10 +45,10 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.
 ### SEE ALSO
 
 * [corectl](corectl.md)	 - 
-* [corectl context clear](corectl_context_clear.md)	 - Clears the current context
+* [corectl context clear](corectl_context_clear.md)	 - Set the current context to none
 * [corectl context get](corectl_context_get.md)	 - Get context, current context by default
 * [corectl context ls](corectl_context_ls.md)	 - List all contexts
-* [corectl context rm](corectl_context_rm.md)	 - Removes a context
+* [corectl context rm](corectl_context_rm.md)	 - Remove a context
 * [corectl context set](corectl_context_set.md)	 - Set a context to the current configuration
 * [corectl context use](corectl_context_use.md)	 - Specify what context to use
 

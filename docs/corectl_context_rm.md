@@ -1,10 +1,10 @@
 ## corectl context rm
 
-Removes a context
+Remove a context
 
 ### Synopsis
 
-Removes a context
+Remove a context
 
 ```
 corectl context rm <context name> [flags]
