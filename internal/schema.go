@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-const baseSchemaURL string = "https://core.qlik.com/json-schema/"
+const baseSchemaURL string = "https://deploy-preview-514--core-website.netlify.com/json-schema/"
 
 // InjectSchemaIntoProperties adds a '$schema' property to the object with the url to the json definition for IntelliSense usage
 func InjectSchemaIntoProperties(properties json.RawMessage, entityType string) json.RawMessage {
