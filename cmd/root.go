@@ -41,7 +41,12 @@ var rootCmd = &cobra.Command{
 		withContext := shouldUseContext(ccmd)
 		internal.ReadConfig(explicitConfigFile, withContext)
 
-		if certPath := viper.GetString("certificates"); certPath != "" {
+		// Check if certificates are specified with a flag or defined in config
+		certPath := ccmd.Flag("certificates").Value.String()
+		if certPath == "" {
+			certPath = getPathFlagFromConfigFile("certificates")
+		}
+		if certPath != "" {
 			certificates = internal.ReadCertificates(certPath)
 		}
 
