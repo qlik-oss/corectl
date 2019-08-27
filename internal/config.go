@@ -18,6 +18,9 @@ import (
 // ConfigDir represents the directory of the config file used.
 var ConfigDir string
 
+// ConfigFile represents the full file path of the config
+var ConfigFile string
+
 // validProps is the set of valid config properties.
 var validProps = map[string]struct{}{}
 
@@ -41,16 +44,13 @@ func GetConnectionsConfig() *ConnectionsConfig {
 	conn := viper.Get("connections")
 	switch conn.(type) {
 	case string:
+		// Read connections from a separate yaml file
 		connFile := RelativeToProject(conn.(string))
 		config = ReadConnectionsFile(connFile)
 	case map[string]interface{}:
-		connMap := conn.(map[string]interface{})
-		configEntries := &map[string]ConnectionConfigEntry{}
-		err := reMarshal(connMap, configEntries)
-		if err != nil {
-			FatalErrorf("could not parse connections configuration: %s", err)
-		}
-		config = &ConnectionsConfig{Connections: configEntries}
+		// Read connections from config file
+		// Not using viper due to camel case insensitivity
+		config = ReadConnectionsFile(ConfigFile)
 	}
 	return config
 }
@@ -111,24 +111,23 @@ func ReadConnectionsFile(path string) *ConnectionsConfig {
 // withContext specifies whether a context should be included when looking setting the
 // config or not.
 func ReadConfig(explicitConfigFile string, withContext bool) {
-	configFile := "" // Just for logging
 	if explicitConfigFile != "" {
 		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		configFile = explicitConfigFile
+		ConfigFile = explicitConfigFile
 	} else {
-		configFile = findConfigFile("corectl") // name of config file (without extension)
+		ConfigFile = findConfigFile("corectl") // name of config file (without extension)
 	}
 	// If there is a config file or context should be used
-	if configFile != "" || withContext {
-		readConfig(configFile, withContext)
+	if ConfigFile != "" || withContext {
+		readConfig(ConfigFile, withContext)
 	}
 	InitLogOutput() // sets json, verbose and traffic
-	if configFile != "" {
-		ConfigDir = filepath.Dir(configFile)
-		LogVerbose("Using config file: " + configFile)
+	if ConfigFile != "" {
+		ConfigDir = filepath.Dir(ConfigFile)
+		LogVerbose("Using config file: " + ConfigFile)
 	} else {
 		LogVerbose("No config file specified, using default values.")
 	}
