@@ -18,8 +18,8 @@ import (
 // ConfigDir represents the directory of the config file used.
 var ConfigDir string
 
-// ConfigFile represents the full file path of the config
-var ConfigFile string
+// configFile represents the full file path of the config
+var configFile string
 
 // validProps is the set of valid config properties.
 var validProps = map[string]struct{}{}
@@ -50,7 +50,7 @@ func GetConnectionsConfig() *ConnectionsConfig {
 	case map[string]interface{}:
 		// Read connections from config file
 		// Not using viper due to camel case insensitivity
-		config = ReadConnectionsFile(ConfigFile)
+		config = ReadConnectionsFile(configFile)
 	}
 	return config
 }
@@ -116,18 +116,18 @@ func ReadConfig(explicitConfigFile string, withContext bool) {
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
-		ConfigFile = explicitConfigFile
+		configFile = explicitConfigFile
 	} else {
-		ConfigFile = findConfigFile("corectl") // name of config file (without extension)
+		configFile = findConfigFile("corectl") // name of config file (without extension)
 	}
 	// If there is a config file or context should be used
-	if ConfigFile != "" || withContext {
-		readConfig(ConfigFile, withContext)
+	if configFile != "" || withContext {
+		readConfig(configFile, withContext)
 	}
 	InitLogOutput() // sets json, verbose and traffic
-	if ConfigFile != "" {
-		ConfigDir = filepath.Dir(ConfigFile)
-		LogVerbose("Using config file: " + ConfigFile)
+	if configFile != "" {
+		ConfigDir = filepath.Dir(configFile)
+		LogVerbose("Using config file: " + configFile)
 	} else {
 		LogVerbose("No config file specified, using default values.")
 	}
