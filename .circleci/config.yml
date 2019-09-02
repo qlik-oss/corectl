@@ -18,11 +18,21 @@ jobs:
       - run:
           name: Linting
           command: |
+            go fmt ./...
             go get -u golang.org/x/lint/golint
             golint -set_exit_status
+            # go fmt and golint can alter go.mod and go.sum,
+            # this will cause the git diff to give false negative
+            # restore those files before proceeding
+            git checkout go.mod go.sum
+            git diff --exit-code
       - run:
           name: Test
-          command: go test -v -race ./...
+          command: |
+            go test -v -race ./...
+            # go test can also modify go.mod and go.sum, ruining
+            # the pristine state required for our tests to pass
+            git checkout go.mod go.sum
       - run:
           name: Check if documentation needs to be updated
           command: |
@@ -63,7 +73,7 @@ jobs:
   validate:
     working_directory: ~/corectl
     docker:
-      - image: circleci/node:8.16.0
+      - image: circleci/node:8.16.1
     steps:
       - checkout
       - run:

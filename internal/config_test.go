@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
+
 var source = []byte(`test: ${_TEST1_}
 nested:
   nest2:
@@ -20,27 +21,26 @@ list:
 `)
 
 func TestEnvVarSubstitution(t *testing.T) {
-	config := readConfig(source)
+	test := func(source []byte) (config *map[interface{}]interface{}) {
+		config = &(map[interface{}]interface{}{})
+		if err := yaml.Unmarshal(source, config); err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		return
+	}
+	config := test(source)
 	fmt.Println(config)
 	err := subEnvVars(config)
 	assert.Error(t, err)
 	os.Setenv("_TEST1_", "TEST1")
-	err = subEnvVars(readConfig(source))
+	err = subEnvVars(test(source))
 	assert.Error(t, err)
 	os.Setenv("_TEST2_", "TEST2")
-	err = subEnvVars(readConfig(source))
+	err = subEnvVars(test(source))
 	assert.Error(t, err)
 	os.Setenv("_TEST3_", "TEST3")
-	err = subEnvVars(readConfig(source))
+	err = subEnvVars(test(source))
 	// We don't substitute env-variables in lists
 	assert.Nil(t, err)
-}
-
-func readConfig(source []byte) (config *map[interface{}]interface{}) {
-	config = &(map[interface{}]interface{}{})
-	if err := yaml.Unmarshal(source, config); err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	return
 }

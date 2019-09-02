@@ -1,15 +1,25 @@
-## corectl script
+## corectl context rm
 
-Explore and manage the script
+Remove a context
 
 ### Synopsis
 
-Explore and manage the script
+Remove a context
+
+```
+corectl context rm <context name> [flags]
+```
+
+### Examples
+
+```
+corectl context rm local-engine
+```
 
 ### Options
 
 ```
-  -h, --help   help for script
+  -h, --help   help for rm
 ```
 
 ### Options inherited from parent commands
@@ -30,7 +40,5 @@ Explore and manage the script
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl script get](corectl_script_get.md)	 - Print the reload script
-* [corectl script set](corectl_script_set.md)	 - Set the script in the current app
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 

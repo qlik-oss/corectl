@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/google/go-github/v26/github"
+	"github.com/google/go-github/v27/github"
 	ver "github.com/hashicorp/go-version"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/printer"

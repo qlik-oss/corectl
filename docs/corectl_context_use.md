@@ -1,26 +1,25 @@
-## corectl bookmark set
+## corectl context use
 
-Set or update the bookmarks in the current app
+Specify what context to use
 
 ### Synopsis
 
-Set or update the bookmarks in the current app
+Specify what context to use
 
 ```
-corectl bookmark set <glob-pattern-path-to-bookmark-files.json> [flags]
+corectl context use <context-name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl bookmark set ./my-bookmarks-glob-path.json
+corectl context use local-engine
 ```
 
 ### Options
 
 ```
-  -h, --help      help for set
-      --no-save   Do not save the app
+  -h, --help   help for use
 ```
 
 ### Options inherited from parent commands
@@ -29,6 +28,7 @@ corectl bookmark set ./my-bookmarks-glob-path.json
   -a, --app string               Name or identifier of the app
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
+      --context string           Name of the context used when connecting to Qlik Associative Engine
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
@@ -40,5 +40,5 @@ corectl bookmark set ./my-bookmarks-glob-path.json
 
 ### SEE ALSO
 
-* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 

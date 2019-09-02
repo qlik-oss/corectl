@@ -11,7 +11,7 @@ import (
 
 type Variable struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
-	Name string					`json:"qName,omitempty"`
+	Name string         `json:"qName,omitempty"`
 }
 
 func (v Variable) validate() error {

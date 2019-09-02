@@ -65,8 +65,7 @@ var importAppCmd = &cobra.Command{
 		if err != nil {
 			internal.FatalError(err)
 		}
-		// TODO: Do we want to parse to map to host specifically or just the engine property?
-		internal.SetAppIDToKnownApps(viper.GetString("engine"), appName, appID, false)
+		internal.SetAppIDToKnownApps(appName, appID, false)
 		fmt.Println("Imported app with new ID: " + appID)
 	},
 }

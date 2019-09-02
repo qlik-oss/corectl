@@ -58,7 +58,8 @@
         "qAttrDimInfo": [],
         "qCardinalities": {
           "qCardinal": 3,
-          "qHypercubeCardinal": 3
+          "qHypercubeCardinal": 3,
+          "qAllValuesCardinal": -1
         }
       }
     ],

@@ -19,20 +19,19 @@ func flattenSettings(settings map[string]string) string {
 // the list of connections in the app.
 func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsFile string) error {
 
-	connectionConfigEntries := map[string]ConnectionConfigEntry{}
+	var config *ConnectionsConfig
 
 	if separateConnectionsFile != "" {
-		config := ReadConnectionsFile(separateConnectionsFile)
-		for name, configEntry := range config.Connections {
-			connectionConfigEntries[name] = configEntry
-		}
+		config = ReadConnectionsFile(separateConnectionsFile)
 	} else if ConfigDir != "" {
-		config := GetConnectionsConfig()
-		for name, configEntry := range config.Connections {
-			connectionConfigEntries[name] = configEntry
-		}
+		config = GetConnectionsConfig()
 	}
 
+	if config == nil {
+		return nil
+	}
+
+	connectionConfigEntries := *config.Connections
 	connections, err := doc.GetConnections(ctx)
 
 	for name, configEntry := range connectionConfigEntries {

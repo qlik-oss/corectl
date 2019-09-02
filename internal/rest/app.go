@@ -4,9 +4,9 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"os"
-	neturl "net/url"
 	"net/http"
+	neturl "net/url"
+	"os"
 )
 
 // ImportApp imports a local app into the engine using the rest api
@@ -28,9 +28,9 @@ func ImportApp(appPath string, engine *neturl.URL, headers http.Header, certs *t
 	defer file.Close()
 	req := &http.Request{
 		Method: "POST",
-		URL: url,
+		URL:    url,
 		Header: headers,
-		Body: file,
+		Body:   file,
 	}
 	appInfo := &RestNxApp{}
 	statusCodes := &map[int]bool{
