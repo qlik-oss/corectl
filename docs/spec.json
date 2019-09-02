@@ -405,7 +405,7 @@
           "description": "Print a list of all alternate states in the current app"
         },
         "rm": {
-          "description": "Removes an alternate states in the current app"
+          "description": "Removes an alternate state in the current app"
         }
       }
     },
