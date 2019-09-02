@@ -1,10 +1,10 @@
 ## corectl state rm
 
-Removes an alternate states in the current app
+Removes an alternate state in the current app
 
 ### Synopsis
 
-Removes an alternate states in the current app
+Removes an alternate state in the current app
 
 ```
 corectl state rm <alternate-state-name> [flags]

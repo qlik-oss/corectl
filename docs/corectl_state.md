@@ -33,5 +33,5 @@ Explore and manage alternate states
 * [corectl](corectl.md)	 - 
 * [corectl state add](corectl_state_add.md)	 - Add an alternate states in the current app
 * [corectl state ls](corectl_state_ls.md)	 - Print a list of all alternate states in the current app
-* [corectl state rm](corectl_state_rm.md)	 - Removes an alternate states in the current app
+* [corectl state rm](corectl_state_rm.md)	 - Removes an alternate state in the current app
 
