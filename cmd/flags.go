@@ -61,10 +61,10 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 		viper.BindPFlag(flag.Name, flag)
 	})
 
-	// not bound to viper
+	// Not bound to viper. Certificates are handled similarly to config as the path might be relative.
 	globalFlags.StringVarP(&explicitConfigFile, "config", "c", "", "path/to/config.yml where parameters can be set instead of on the command line")
 	globalFlags.StringToStringVar(&headersMap, "headers", nil, "Http headers to use when connecting to Qlik Associative Engine")
-	globalFlags.String("certificates", "", "path/to/folder containing client.pem, client_key.pem and root.pem certificates")
+	globalFlags.StringVar(&explicitCertificatePath, "certificates", "", "path/to/folder containing client.pem, client_key.pem and root.pem certificates")
 
 	// Set annotation to run bash completion function
 	globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
