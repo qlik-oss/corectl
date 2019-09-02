@@ -26,7 +26,7 @@ func RemoveAlternateState(ctx context.Context, doc *enigma.Doc, alternateStateNa
 	stateNameExists := Contains(states, alternateStateName)
 
 	if !stateNameExists {
-		FatalErrorf("no state with the name '%s' found in the app", alternateStateName)
+		FatalErrorf("no alternate state with the name '%s' found in the app", alternateStateName)
 	}
 
 	err := doc.RemoveAlternateState(ctx, alternateStateName)

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var listAlternateStateCmd = &cobra.Command{
+var listAlternateStatesCmd = &cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all alternate states in the current app",
@@ -44,8 +44,8 @@ var addAlternateStateCmd = &cobra.Command{
 var removeAlternateStateCmd = &cobra.Command{
 	Use:     "rm <alternate-state-name>",
 	Args:    cobra.ExactArgs(1),
-	Short:   "Removes an alternate states in the current app",
-	Long:    "Removes an alternate states in the current app",
+	Short:   "Removes an alternate state in the current app",
+	Long:    "Removes an alternate state in the current app",
 	Example: "corectl state rm NAME-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
@@ -72,5 +72,5 @@ var alternateStateCmd = &cobra.Command{
 }
 
 func init() {
-	alternateStateCmd.AddCommand(listAlternateStateCmd, addAlternateStateCmd, removeAlternateStateCmd)
+	alternateStateCmd.AddCommand(listAlternateStatesCmd, addAlternateStateCmd, removeAlternateStateCmd)
 }
