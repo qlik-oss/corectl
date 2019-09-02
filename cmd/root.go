@@ -14,6 +14,7 @@ import (
 
 var headersMap = make(map[string]string)
 var explicitConfigFile = ""
+var explicitCertificatePath = ""
 var version = ""
 var headers http.Header
 var certificates *tls.Config
@@ -39,14 +40,9 @@ var rootCmd = &cobra.Command{
 		}
 		// Depending on the command, we might not want to use context when loading config.
 		withContext := shouldUseContext(ccmd)
-		internal.ReadConfig(explicitConfigFile, withContext)
+		internal.ReadConfig(explicitConfigFile, explicitCertificatePath, withContext)
 
-		// Check if certificates are specified with a flag or defined in config
-		certPath := ccmd.Flag("certificates").Value.String()
-		if certPath == "" {
-			certPath = getPathFlagFromConfigFile("certificates")
-		}
-		if certPath != "" {
+		if certPath := viper.GetString("certificates"); certPath != "" {
 			certificates = internal.ReadCertificates(certPath)
 		}
 
