@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -50,12 +49,6 @@ func SetContext(contextName, comment string) string {
 	} else {
 		context = &Context{}
 		LogVerbose("Creating context: " + contextName)
-	}
-
-	// Check if certificates should be added, if so we should add them with an absolute path
-	certificates := viper.GetString("certificates")
-	if certificates != "" {
-		certificates, _ = filepath.Abs(certificates)
 	}
 
 	updated := context.Update(&map[string]interface{}{
