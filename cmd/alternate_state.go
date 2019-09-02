@@ -16,7 +16,7 @@ var listAlternateStatesCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
-		items := internal.ListAlternateState(state.Ctx, state.Doc)
+		items := internal.ListAlternateStates(state.Ctx, state.Doc)
 		printer.PrintStates(items, viper.GetBool("bash"))
 	},
 }

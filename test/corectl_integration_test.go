@@ -477,4 +477,6 @@ func TestAddState(t *testing.T) {
 	p.ExpectOK().Run("build")
 	p.ExpectIncludes("Saving app... Done").Run("state", "add", "MyTestState")
 	p.ExpectGolden().Run("state", "ls")
+	p.ExpectOK().Run("state", "rm", "MyTestState")
+	p.ExpectError().Run("state", "rm", "MyTestState")
 }
