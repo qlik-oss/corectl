@@ -61,7 +61,7 @@ func SetContext(contextName, comment string) string {
 	updated := context.Update(&map[string]interface{}{
 		"engine":       viper.GetString("engine"),
 		"headers":      viper.GetStringMapString("headers"),
-		"certificates": certificates,
+		"certificates": viper.GetString("certificates"),
 		"comment":      comment,
 	})
 
