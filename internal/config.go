@@ -110,19 +110,32 @@ func ReadConnectionsFile(path string) *ConnectionsConfig {
 // and then, if the config is valid, reads it.
 // withContext specifies whether a context should be included when looking setting the
 // config or not.
-func ReadConfig(explicitConfigFile string, withContext bool) {
+func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
+	var err error
 	if explicitConfigFile != "" {
-		explicitConfigFile, err := filepath.Abs(strings.TrimSpace(explicitConfigFile))
-		if err != nil {
-			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
+		if !filepath.IsAbs(explicitConfigFile) {
+			explicitConfigFile, err = filepath.Abs(strings.TrimSpace(explicitConfigFile))
+			if err != nil {
+				FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
+			}
 		}
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
 	}
+	if certPath != "" && !filepath.IsAbs(certPath) {
+		certPath, err = filepath.Abs(strings.TrimSpace(certPath))
+		if err != nil {
+			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
+		}
+	}
 	// If there is a config file or context should be used
 	if configFile != "" || withContext {
 		readConfig(configFile, withContext)
+	}
+	// Overwrite config field certificates if present from flag.
+	if certPath != "" {
+		viper.Set("certificates", certPath)
 	}
 	InitLogOutput() // sets json, verbose and traffic
 	if configFile != "" {
