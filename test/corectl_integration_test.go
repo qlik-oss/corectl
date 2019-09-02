@@ -3,10 +3,11 @@
 package test
 
 import (
-	"github.com/qlik-oss/corectl/test/toolkit"
 	"os"
-	"testing"
 	"strings"
+	"testing"
+
+	"github.com/qlik-oss/corectl/test/toolkit"
 )
 
 func TestBasicAnalyzing(t *testing.T) {
@@ -435,7 +436,7 @@ func TestCommandLineOverridingConfigFile(t *testing.T) {
 }
 
 func TestImportApp(t *testing.T) {
-	parseID := func (output []byte) string {
+	parseID := func(output []byte) string {
 		appID := strings.Split(string(output), ": ")[1]
 		return strings.TrimSpace(appID)
 	}
@@ -468,4 +469,12 @@ func TestUnbuild(t *testing.T) {
 	p2.ExpectGolden().Run("dimension", "ls")
 	p2.ExpectGolden().Run("meta")
 	os.RemoveAll("test/golden/unbuild")
+}
+
+func TestAddState(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+	p.ExpectOK().Run("build")
+	p.ExpectIncludes("Saving app... Done").Run("state", "add", "MyTestState")
+	p.ExpectGolden().Run("state", "ls")
 }
