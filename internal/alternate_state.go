@@ -23,7 +23,13 @@ func AddAlternateState(ctx context.Context, doc *enigma.Doc, alternateStateName 
 // RemoveAlternateState will remove a named alternate state in the app
 func RemoveAlternateState(ctx context.Context, doc *enigma.Doc, alternateStateName string) {
 	states := ListAlternateState(ctx, doc)
-	stateNameExists := Contains(states, alternateStateName)
+	var stateNameExists bool
+	for _, state := range(states) {
+		if state == alternateStateName {
+			stateNameExists = true
+			break
+		}
+	}
 
 	if !stateNameExists {
 		FatalErrorf("no alternate state with the name '%s' found in the app", alternateStateName)
