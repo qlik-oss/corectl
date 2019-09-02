@@ -68,6 +68,7 @@ var alternateStateCmd = &cobra.Command{
 	Aliases: []string{"alternatestate"},
 	Annotations: map[string]string{
 		"command_category": "sub",
+		"x-qlik-stability": "experimental",
 	},
 }
 

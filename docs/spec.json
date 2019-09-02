@@ -397,6 +397,7 @@
     "state": {
       "alias": "alternatestate",
       "description": "Explore and manage alternate states",
+      "x-qlik-stability": "experimental",
       "commands": {
         "add": {
           "description": "Add an alternate states in the current app"
