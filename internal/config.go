@@ -138,10 +138,13 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 		viper.Set("certificates", certPath)
 	}
 	InitLogOutput() // sets json, verbose and traffic
-	if configFile != "" {
+	switch {
+	case configFile != "":
 		ConfigDir = filepath.Dir(configFile)
 		LogVerbose("Using config file: " + configFile)
-	} else {
+	case withContext:
+		LogVerbose("No config file specified, using context.")
+	default:
 		LogVerbose("No config file specified, using default values.")
 	}
 }
