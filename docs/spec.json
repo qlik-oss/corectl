@@ -394,6 +394,22 @@
         }
       }
     },
+    "state": {
+      "alias": "alternatestate",
+      "description": "Explore and manage alternate states",
+      "x-qlik-stability": "experimental",
+      "commands": {
+        "add": {
+          "description": "Add an alternate states in the current app"
+        },
+        "ls": {
+          "description": "Print a list of all alternate states in the current app"
+        },
+        "rm": {
+          "description": "Removes an alternate state in the current app"
+        }
+      }
+    },
     "status": {
       "description": "Print status info about the connection to the engine and current app, and also the status of the data model"
     },

@@ -118,6 +118,7 @@ func init() {
 	rootCmd.AddCommand(unbuildCmd)
 
 	// Subcommands
+	rootCmd.AddCommand(alternateStateCmd)
 	rootCmd.AddCommand(measureCmd)
 	rootCmd.AddCommand(dimensionCmd)
 	rootCmd.AddCommand(objectCmd)
