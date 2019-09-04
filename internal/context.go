@@ -51,12 +51,16 @@ func SetContext(contextName, comment string) string {
 		LogVerbose("Creating context: " + contextName)
 	}
 
+	certificates := RelativeToProject(viper.GetString("certificates"))
+
 	updated := context.Update(&map[string]interface{}{
 		"engine":       viper.GetString("engine"),
 		"headers":      viper.GetStringMapString("headers"),
-		"certificates": viper.GetString("certificates"),
+		"certificates": certificates,
 		"comment":      comment,
 	})
+
+	fmt.Printf("%#v\n", context)
 
 	if update {
 		LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
