@@ -31,7 +31,7 @@ var removeContextCmd = &cobra.Command{
 	Use:   "rm <context name>...",
 	Args:  cobra.MinimumNArgs(1),
 	Short: "Remove one or more contexts",
-	Long:  "Remove one or more context",
+	Long:  "Remove one or more contexts",
 	Example: `corectl context rm local-engine
 corectl context rm ctx1 ctx2`,
 
