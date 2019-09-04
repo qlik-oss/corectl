@@ -63,8 +63,6 @@ func SetContext(contextName, comment string) string {
 		"comment":      comment,
 	})
 
-	fmt.Printf("%#v\n", context)
-
 	if update {
 		LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
 	}
