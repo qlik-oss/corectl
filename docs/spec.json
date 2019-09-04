@@ -204,7 +204,7 @@
           "description": "List all contexts"
         },
         "rm": {
-          "description": "Remove one or more context"
+          "description": "Remove one or more contexts"
         },
         "set": {
           "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",

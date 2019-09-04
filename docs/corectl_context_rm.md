@@ -4,7 +4,7 @@ Remove one or more contexts
 
 ### Synopsis
 
-Remove one or more context
+Remove one or more contexts
 
 ```
 corectl context rm <context name>... [flags]
