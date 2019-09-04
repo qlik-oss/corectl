@@ -113,18 +113,16 @@ func ReadConnectionsFile(path string) *ConnectionsConfig {
 func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 	var err error
 	if explicitConfigFile != "" {
-		if !filepath.IsAbs(explicitConfigFile) {
-			explicitConfigFile, err = filepath.Abs(strings.TrimSpace(explicitConfigFile))
-			if err != nil {
-				FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
-			}
+		explicitConfigFile, err = toAbsPath(strings.TrimSpace(explicitConfigFile))
+		if err != nil {
+			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
 	}
-	if certPath != "" && !filepath.IsAbs(certPath) {
-		certPath, err = filepath.Abs(strings.TrimSpace(certPath))
+	if certPath != "" {
+		certPath, err = toAbsPath(strings.TrimSpace(certPath))
 		if err != nil {
 			FatalErrorf("unexpected error when converting to absolute filepath: %s", err)
 		}
@@ -152,9 +150,10 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 // ReadCertificates reads and loads the specified certificates
 func ReadCertificates(certificatesPath string) *tls.Config {
 	// Read client and root certificates.
-	certFile := certificatesPath + "/client.pem"
-	keyFile := certificatesPath + "/client_key.pem"
-	caFile := certificatesPath + "/root.pem"
+	certPath := RelativeToProject(certificatesPath)
+	certFile := certPath + "/client.pem"
+	keyFile := certPath + "/client_key.pem"
+	caFile := certPath + "/root.pem"
 
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
@@ -342,4 +341,11 @@ func mergeContext(config *map[interface{}]interface{}) {
 			(*config)[k] = v
 		}
 	}
+}
+
+func toAbsPath(path string) (string, error) {
+	if !filepath.IsAbs(path) {
+		return filepath.Abs(path)
+	}
+	return path, nil
 }
