@@ -43,7 +43,7 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 	engineURL := buildWebSocketURL(ttl)
 	LogVerbose("Engine: " + engineURL)
 
-	if headers.Get("X-Qlik-Session") == "" && appName != "" {
+	if headers.Get("X-Qlik-Session") == "" {
 		sessionID := getSessionID(appName)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
@@ -92,7 +92,6 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 
 // PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
 // depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
-// If withoutApp is true then only global is used
 func PrepareEngineState(ctx context.Context, headers http.Header, certificates *tls.Config, createAppIfMissing, withoutApp bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
