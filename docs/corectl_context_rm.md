@@ -1,19 +1,20 @@
 ## corectl context rm
 
-Remove a context
+Remove one or more contexts
 
 ### Synopsis
 
-Remove a context
+Remove one or more context
 
 ```
-corectl context rm <context name> [flags]
+corectl context rm <context name>... [flags]
 ```
 
 ### Examples
 
 ```
 corectl context rm local-engine
+corectl context rm ctx1 ctx2
 ```
 
 ### Options

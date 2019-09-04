@@ -28,10 +28,10 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 }, "comment")
 
 var removeContextCmd = &cobra.Command{
-	Use:     "rm <context name>...",
-	Args:    cobra.MinimumNArgs(1),
-	Short:   "Remove one or more contexts",
-	Long:    "Remove one or more context",
+	Use:   "rm <context name>...",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "Remove one or more contexts",
+	Long:  "Remove one or more context",
 	Example: `corectl context rm local-engine
 corectl context rm ctx1 ctx2`,
 
