@@ -41,6 +41,7 @@ func SetContext(contextName, comment string) string {
 
 	var context *Context
 	var update bool
+	var certificates string
 
 	if handler.Exists(contextName) {
 		context = handler.Get(contextName)
@@ -51,7 +52,9 @@ func SetContext(contextName, comment string) string {
 		LogVerbose("Creating context: " + contextName)
 	}
 
-	certificates := RelativeToProject(viper.GetString("certificates"))
+	if certPath := viper.GetString("certificates"); certPath != "" {
+		certificates = RelativeToProject(viper.GetString("certificates"))
+	}
 
 	updated := context.Update(&map[string]interface{}{
 		"engine":       viper.GetString("engine"),
