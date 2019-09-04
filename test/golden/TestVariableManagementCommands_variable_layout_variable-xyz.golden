@@ -7,7 +7,8 @@
     "privileges": [
       "read",
       "update",
-      "delete"
+      "delete",
+      "exportdata"
     ]
   },
   "qText": "1",
