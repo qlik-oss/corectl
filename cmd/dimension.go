@@ -19,7 +19,7 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 		if commandLineDimensions == "" {
 			internal.FatalError("no dimensions specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true, false)
 		internal.SetDimensions(rootCtx, state.Doc, commandLineDimensions)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -35,7 +35,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyDimension(rootCtx, entity)
 			if err != nil {
@@ -58,7 +58,7 @@ var listDimensionsCmd = &cobra.Command{
 	Example: "corectl dimension ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		items := internal.ListDimensions(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
@@ -72,7 +72,7 @@ var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension properties DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityProperties(state, args[0], "dimension", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -85,7 +85,7 @@ var getDimensionLayoutCmd = &cobra.Command{
 	Example: "corectl dimension layout DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityLayout(state, args[0], "dimension")
 	},
 }

@@ -20,7 +20,7 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 		if commandLineBookmarks == "" {
 			internal.FatalError("no bookmarks specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true, false)
 		internal.SetBookmarks(rootCtx, state.Doc, commandLineBookmarks)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -36,7 +36,7 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyBookmark(rootCtx, entity)
 			if err != nil {
@@ -59,7 +59,7 @@ var listBookmarksCmd = &cobra.Command{
 	Example: "corectl bookmark ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		items := internal.ListBookmarks(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
@@ -73,7 +73,7 @@ var getBookmarkPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl bookmark properties BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityProperties(state, args[0], "bookmark", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -86,7 +86,7 @@ var getBookmarkLayoutCmd = &cobra.Command{
 	Example: "corectl bBookmark layout BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityLayout(state, args[0], "bookmark")
 	},
 }
