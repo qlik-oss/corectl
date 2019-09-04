@@ -45,10 +45,9 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 
 	if headers.Get("X-Qlik-Session") == "" {
 		sessionID := getSessionID(appName)
-		LogVerbose("SessionId: " + sessionID)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
-	LogVerbose("SessionId " + headers.Get("X-Qlik-Session"))
+	LogVerbose("SessionId: " + headers.Get("X-Qlik-Session"))
 
 	var dialer = enigma.Dialer{}
 
