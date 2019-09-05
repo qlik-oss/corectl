@@ -395,6 +395,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-2"}
 	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-3"}
 	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-4"}
+	pConnectionsFileEmpty := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref-empty.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-5"}
 	defer pNoConnections.Reset() //This resets all apps since last reset
 
 	//Build the apps
@@ -402,6 +403,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 	pCommandLine.ExpectOK().Run("build", "--connections=test/projects/connections/connections.yml")
 	pWithConnections.ExpectOK().Run("build")
 	pConnectionsFile.ExpectOK().Run("build")
+	pConnectionsFileEmpty.ExpectOK().Run("build")
 
 	pNoConnections.ExpectEmptyJsonArray().Run("connection", "ls", "--json")
 	pCommandLine.ExpectJsonArray("qName", "testdata-separate-file").Run("connection", "ls", "--json")
