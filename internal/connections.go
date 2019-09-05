@@ -27,7 +27,7 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		config = GetConnectionsConfig()
 	}
 
-	if config == nil {
+	if config == nil || config.Connections == nil {
 		return nil
 	}
 
