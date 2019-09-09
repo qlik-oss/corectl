@@ -12,7 +12,7 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.4.0
-	github.com/texttheater/golang-levenshtein v0.0.0-20190720003124-b7aaf30637d6
+	github.com/texttheater/golang-levenshtein v0.0.0-20190717060638-b7aaf30637d6
 	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472
 	golang.org/x/sys v0.0.0-20190909082730-f460065e899a // indirect
 	gopkg.in/yaml.v2 v2.2.2
