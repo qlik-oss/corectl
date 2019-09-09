@@ -55,7 +55,7 @@ jobs:
             ENGINE_ABAC_CONTAINER_ID=$(docker ps -aqf "name=engine-abac")
             TEST_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' "$ENGINE_STD_CONTAINER_ID")
             # Start a container for test execution
-            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.12-alpine tail -f /dev/null)
+            TEST_CONTAINER=$(docker run -e TEST_HOST=$TEST_HOST -d golang:1.13-alpine tail -f /dev/null)
             # Install packages
             docker exec $TEST_CONTAINER sh -c 'apk update && apk add --no-cache bash gcc git libc-dev'
             # Copy code into container
@@ -99,8 +99,8 @@ jobs:
           name: install go
           command: |
             cd /tmp
-            wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
-            tar -xvf go1.12.2.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.12.2.linux-amd64.tar.gz
+            wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz
+            tar -xvf go1.13.linux-amd64.tar.gz > /dev/null && sudo mv go /usr/local && rm go1.13.linux-amd64.tar.gz
       - run:
           name: setup snap credentials
           command: |
