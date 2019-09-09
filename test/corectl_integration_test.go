@@ -108,7 +108,7 @@ func TestObjectManagementCommands(t *testing.T) {
 	p.ExpectGolden().Run("object", "layout", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-dims-and-measures")
-	p.ExpectErrorIncludes("Invalid handle: Invalid Params (-32602)").Run("object", "data", "nosuchobject")
+	p.ExpectErrorIncludes("Invalid handle: Invalid Params (-32602").Run("object", "data", "nosuchobject")
 
 	p.ExpectJsonArray("qId", "object-using-dims-and-measures", "object-using-inline").Run("object", "ls", "--json")
 
@@ -329,7 +329,7 @@ func TestWithUnknownApp(t *testing.T) {
 
 func TestEvalOnUnknownAppl(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
-	p.ExpectIncludes("Could not find app: App not found (1003)").Run("eval", "count(numbers)", "by", "xyz")
+	p.ExpectIncludes("Could not find app: App not found (1003").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestEvalOnUnknownAppEngine(t *testing.T) {
