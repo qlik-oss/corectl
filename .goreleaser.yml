@@ -26,11 +26,8 @@ archives:
 
 changelog:
   filters:
-    exclude:
-      - '^Update .+ commit hash to'
-      - '^Update module .+ to'
-      - '^Automated: Bump Docker images$'
-      - '^Release v\d\.\d\.\d(-\w+)?$'
+    include:
+      - '^(feat|fix|perf):'
 
 snapcrafts:
   -
