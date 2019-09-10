@@ -18,7 +18,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		ctx := rootCtx
-		state := internal.PrepareEngineState(ctx, headers, certificates, true)
+		state := internal.PrepareEngineState(ctx, headers, certificates, true, false)
 
 		separateConnectionsFile := ccmd.Flag("connections").Value.String()
 		if separateConnectionsFile == "" {
@@ -59,7 +59,7 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		silent := viper.GetBool("silent")
 
 		internal.Reload(rootCtx, state.Doc, state.Global, silent)

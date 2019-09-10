@@ -1,5 +1,4 @@
 engine: ${ENGINE_STD_URL}
-ttl: 1
 script: ./script.qvs
 connections:
   myconnection:
