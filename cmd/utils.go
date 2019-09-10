@@ -52,9 +52,9 @@ corectl status --app=my-app.qvf`,
 		appName := viper.GetString("app")
 		var state *internal.State
 		if appName != "" {
-			state = internal.PrepareEngineState(rootCtx, headers, certificates, false)
+			state = internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		} else {
-			state = internal.PrepareEngineStateWithoutApp(rootCtx, headers, certificates)
+			state = internal.PrepareEngineState(rootCtx, headers, certificates, false, true)
 		}
 		printer.PrintStatus(state, viper.GetString("engine"))
 	},
