@@ -66,7 +66,7 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 	return global
 }
 
-//AppExists returns wether or not an app exists along with any eventual error from engine
+//AppExists returns wether or not an app exists along with any eventual error from engine.
 func AppExists(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) (bool, error) {
 	global := PrepareEngineState(ctx, headers, certificates, false, true).Global
 	appID, _ := applyNameToIDTransformation(appName)
@@ -90,8 +90,13 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 	SetAppIDToKnownApps(appName, appID, true)
 }
 
-// PrepareEngineState makes sure that the app idenfied by the supplied parameters is created or opened or reconnected to
-// depending on the state. The TTL feature is used to keep the app session loaded to improve performance.
+// PrepareEngineState connects to engine with or without an app. It returns a *State
+// which contains at least *enigma.Global (connection to engine used to open apps) and a context.Context.
+// If called with app (withoutApp = false) it will also return *enigma.Doc (the representation of a qlik-app)
+// as well as app name and ID.
+//
+// Any ttl supplied (through viper) specifies how long the engine should keep the session alive which affects
+// performance. (It is cheaper to reattach to a pre-existing session, performance-wise.)
 func PrepareEngineState(ctx context.Context, headers http.Header, certificates *tls.Config, createAppIfMissing, withoutApp bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
@@ -99,9 +104,9 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 	noData := viper.GetBool("no-data")
 
 	var doc *enigma.Doc
-	appID := ""
+	var appID string
 
-	// If no app was supplied but is needed, check the url
+	// If no app was supplied but is needed, check the url.
 	if appName == "" && !withoutApp {
 		appName = TryParseAppFromURL(engine)
 
