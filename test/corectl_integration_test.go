@@ -485,8 +485,9 @@ func TestAddState(t *testing.T) {
 }
 
 func TestCertificatesPathFlag(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "./test/projects/certificates/"}
-	absolutePath, _ := filepath.Abs("./certs")
+	relativePath := "test/projects/certificates/"
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	absolutePath, _ := filepath.Abs(relativePath)
 	contextName := "cert-test-flag"
 
 	defer p.Reset()
@@ -496,8 +497,9 @@ func TestCertificatesPathFlag(t *testing.T) {
 }
 
 func TestCertificatesPathConfig(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates.yml"}
-	absolutePath, _ := filepath.Abs("./certs")
+	relativePath := "test/projects/certificates/"
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
+	absolutePath, _ := filepath.Abs(relativePath)
 	contextName := "cert-test-config"
 
 	defer p.Reset()
