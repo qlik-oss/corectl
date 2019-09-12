@@ -499,3 +499,15 @@ func TestCertificatesPath(t *testing.T) {
 		p.ExpectOK().Run("context", "rm", contextName)
 	}
 }
+
+func TestCertificatesPathNegative(t *testing.T) {
+	pFlagNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/"}
+	pConfigNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates-invalid-path.yml"}
+	pInvalidPath := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/non-existing-folder"}
+
+	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectError().Run("context", "set", "cert-test")
+	}
+}
