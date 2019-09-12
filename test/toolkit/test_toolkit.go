@@ -17,15 +17,16 @@ var (
 )
 
 type Params struct {
-	T       *testing.T
-	App     string
-	Config  string
-	Engine  string
-	Headers string
-	NoData  string
-	Traffic string
-	Ttl     string
-	Verbose string
+	T            *testing.T
+	App          string
+	Config       string
+	Engine       string
+	Headers      string
+	NoData       string
+	Traffic      string
+	Ttl          string
+	Verbose      string
+	Certificates string
 
 	expectError bool
 	expectOK    bool
@@ -196,6 +197,9 @@ func (p *Params) Run(command ...string) []byte {
 		}
 		if p.Ttl != "" {
 			args = append(args, "--ttl", p.Ttl)
+		}
+		if p.Certificates != "" {
+			args = append(args, "--certificates", p.Certificates)
 		}
 		args = append(args, command...)
 

@@ -1,9 +1,8 @@
-// +build integration
-
 package test
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -481,4 +480,26 @@ func TestAddState(t *testing.T) {
 	p.ExpectGolden().Run("state", "ls")
 	p.ExpectOK().Run("state", "rm", "MyTestState")
 	p.ExpectError().Run("state", "rm", "MyTestState")
+}
+
+func TestCertificatesPathFlag(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "./test/projects/certificates/"}
+	absolutePath, _ := filepath.Abs("./certs")
+	contextName := "cert-test-flag"
+
+	defer p.Reset()
+	p.ExpectOK().Run("context", "set", contextName)
+	p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+	p.ExpectOK().Run("context", "rm", contextName)
+}
+
+func TestCertificatesPathConfig(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates.yml"}
+	absolutePath, _ := filepath.Abs("./certs")
+	contextName := "cert-test-config"
+
+	defer p.Reset()
+	p.ExpectOK().Run("context", "set", contextName)
+	p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+	p.ExpectOK().Run("context", "rm", contextName)
 }
