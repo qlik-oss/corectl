@@ -4,6 +4,7 @@ package test
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -481,4 +482,32 @@ func TestAddState(t *testing.T) {
 	p.ExpectGolden().Run("state", "ls")
 	p.ExpectOK().Run("state", "rm", "MyTestState")
 	p.ExpectError().Run("state", "rm", "MyTestState")
+}
+
+func TestCertificatesPath(t *testing.T) {
+	relativePath := "test/projects/certificates/"
+	pFlag := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	pConfig := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
+	absolutePath, _ := filepath.Abs(relativePath)
+	contextName := "cert-test"
+
+	params := []toolkit.Params{pFlag, pConfig}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectOK().Run("context", "set", contextName)
+		p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+		p.ExpectOK().Run("context", "rm", contextName)
+	}
+}
+
+func TestCertificatesPathNegative(t *testing.T) {
+	pFlagNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/"}
+	pConfigNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates-invalid-path.yml"}
+	pInvalidPath := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/non-existing-folder"}
+
+	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectErrorIncludes("ERROR Failed to load client certificate").Run("context", "set", "cert-test")
+	}
 }
