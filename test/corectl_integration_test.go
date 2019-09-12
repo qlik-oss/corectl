@@ -508,6 +508,6 @@ func TestCertificatesPathNegative(t *testing.T) {
 	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
 	for _, p := range params {
 		defer p.Reset()
-		p.ExpectError().Run("context", "set", "cert-test")
+		p.ExpectErrorIncludes("ERROR Failed to load client certificate").Run("context", "set", "cert-test")
 	}
 }
