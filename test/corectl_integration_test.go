@@ -484,26 +484,18 @@ func TestAddState(t *testing.T) {
 	p.ExpectError().Run("state", "rm", "MyTestState")
 }
 
-func TestCertificatesPathFlag(t *testing.T) {
+func TestCertificatesPath(t *testing.T) {
 	relativePath := "test/projects/certificates/"
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	pFlag := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	pConfig := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
 	absolutePath, _ := filepath.Abs(relativePath)
-	contextName := "cert-test-flag"
+	contextName := "cert-test"
 
-	defer p.Reset()
-	p.ExpectOK().Run("context", "set", contextName)
-	p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
-	p.ExpectOK().Run("context", "rm", contextName)
-}
-
-func TestCertificatesPathConfig(t *testing.T) {
-	relativePath := "test/projects/certificates/"
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
-	absolutePath, _ := filepath.Abs(relativePath)
-	contextName := "cert-test-config"
-
-	defer p.Reset()
-	p.ExpectOK().Run("context", "set", contextName)
-	p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
-	p.ExpectOK().Run("context", "rm", contextName)
+	params := []toolkit.Params{pFlag, pConfig}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectOK().Run("context", "set", contextName)
+		p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+		p.ExpectOK().Run("context", "rm", contextName)
+	}
 }
