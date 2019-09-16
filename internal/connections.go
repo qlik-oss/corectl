@@ -27,12 +27,13 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		config = GetConnectionsConfig()
 	}
 
+	connections, err := doc.GetConnections(ctx)
+
 	if config == nil || config.Connections == nil {
 		return nil
 	}
 
 	connectionConfigEntries := *config.Connections
-	connections, err := doc.GetConnections(ctx)
 
 	for name, configEntry := range connectionConfigEntries {
 		var connection = &enigma.Connection{
