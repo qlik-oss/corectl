@@ -40,7 +40,7 @@ func TestBasicAnalyzing(t *testing.T) {
 func TestReload(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
-	p.ExpectOK().Run("build")
+	p.ExpectIncludes("<<  5 Lines fetched").Run("build")
 	p.ExpectIncludes("<<  3 Lines fetched").Run("build", "--limit", "3")
 	p.ExpectIncludes("<<  3 Lines fetched").Run("reload", "--limit", "3")
 	p.ExpectGolden().Run("reload", "--silent")
