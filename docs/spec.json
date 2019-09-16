@@ -135,6 +135,10 @@
         "dimensions": {
           "description": "A list of generic dimension json paths"
         },
+        "limit": {
+          "description": "Limit the number of rows to load",
+          "default": "0"
+        },
         "measures": {
           "description": "A list of generic measures json paths"
         },
@@ -367,6 +371,10 @@
     "reload": {
       "description": "Reload and save the app",
       "flags": {
+        "limit": {
+          "description": "Limit the number of rows to load",
+          "default": "0"
+        },
         "no-save": {
           "description": "Do not save the app",
           "default": "false"
