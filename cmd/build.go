@@ -39,14 +39,15 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 
 		if !viper.GetBool("no-reload") {
 			silent := viper.GetBool("silent")
-			internal.Reload(ctx, state.Doc, state.Global, silent)
+			limit := viper.GetInt("limit")
+			internal.Reload(ctx, state.Doc, state.Global, silent, limit)
 		}
 
 		if !viper.GetBool("no-save") {
 			internal.Save(ctx, state.Doc)
 		}
 	},
-}, "script", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save")
+}, "script", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save", "limit")
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",
@@ -61,11 +62,12 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		silent := viper.GetBool("silent")
+		limit := viper.GetInt("limit")
 
-		internal.Reload(rootCtx, state.Doc, state.Global, silent)
+		internal.Reload(rootCtx, state.Doc, state.Global, silent, limit)
 
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
 		}
 	},
-}, "silent", "no-save")
+}, "silent", "no-save", "limit")
