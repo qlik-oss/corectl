@@ -24,6 +24,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
       --connections string   Path to a yml file containing the data connection definitions
       --dimensions string    A list of generic dimension json paths
   -h, --help                 help for build
+      --limit int            Limit the number of rows to load
       --measures string      A list of generic measures json paths
       --no-reload            Do not run the reload script
       --no-save              Do not save the app

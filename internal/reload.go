@@ -15,7 +15,7 @@ import (
 var transientLogged bool
 
 // Reload reloads the app and prints the progress to system out.
-func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool) {
+func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent bool, limit int) {
 
 	var (
 		reloadSuccessful  bool
@@ -45,7 +45,13 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 				}
 			}
 		}()
-		reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, false)
+		if limit == 0 {
+			reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, false)
+		} else {
+			doc.SetFetchLimit(ctx, limit)
+			reloadSuccessful, err = doc.DoReload(ctxWithReservedRequestID, 0, false, true)
+		}
+
 		close(reloadDone)
 		<-loggingDone
 	} else {
@@ -69,10 +75,17 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 }
 
 func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID int, skipTransientLogs bool) {
+	InteractDef := &enigma.InteractDef{}
+
 	progress, err := global.GetProgress(ctx, reservedRequestID)
 	if err != nil {
 		fmt.Println(err)
 	} else {
+		// While doing reload in debug mode (required for limit) engine will "pause" and InteractDone has to be sent to continue
+		if progress.UserInteractionWanted {
+			global.InteractDone(ctx, reservedRequestID, InteractDef)
+		}
+
 		var text string
 		if progress.TransientProgress != "" {
 			if !skipTransientLogs {
