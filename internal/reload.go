@@ -75,27 +75,15 @@ func Reload(ctx context.Context, doc *enigma.Doc, global *enigma.Global, silent 
 }
 
 func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID int, skipTransientLogs bool) {
-	InteractDef := enigma.InteractDef{
-		Type:      "IT_SCRIPTLINE",
-		Title:     "",
-		Msg:       "",
-		Buttons:   0,
-		Line:      "",
-		OldLineNr: 0,
-		NewLineNr: 0,
-		Path:      "",
-		Hidden:    false,
-		Result:    0,
-		Input:     "",
-	}
+	InteractDef := &enigma.InteractDef{}
 
 	progress, err := global.GetProgress(ctx, reservedRequestID)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		// If debug is set just "OK" interaction
+		// While doing reload in debug mode (required for limit) engine will "pause" and InteractDone has to be sent to continue
 		if progress.UserInteractionWanted {
-			global.InteractDone(ctx, reservedRequestID, &InteractDef)
+			global.InteractDone(ctx, reservedRequestID, InteractDef)
 		}
 
 		var text string
