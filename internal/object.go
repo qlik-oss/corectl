@@ -43,13 +43,12 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
 	unsortedResult := make(map[string]*NamedItemWithType)
 	resultInAlphabeticalOrder := []NamedItemWithType{}
-	keys := make([]string, 0, len(allInfos))
+	keys := []string{}
 
 	waitChannel := make(chan *NamedItemWithType)
 	defer close(waitChannel)
 
 	for _, item := range allInfos {
-		keys = append(keys, item.Id)
 		go func(item *enigma.NxInfo) {
 			object, _ := doc.GetObject(ctx, item.Id)
 			if object != nil && object.Type != "" {
@@ -66,15 +65,14 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	for range allInfos {
 		item := <-waitChannel
 		if item != nil {
+			keys = append(keys, item.Id)
 			unsortedResult[item.Id] = item
 		}
 	}
 	//Loop over the keys that are sorted in alphabetical order and fetch the result for each object
 	sort.Strings(keys)
 	for _, key := range keys {
-		if unsortedResult[key] != nil {
-			resultInAlphabeticalOrder = append(resultInAlphabeticalOrder, *unsortedResult[key])
-		}
+		resultInAlphabeticalOrder = append(resultInAlphabeticalOrder, *unsortedResult[key])
 	}
 	return resultInAlphabeticalOrder
 }
