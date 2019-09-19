@@ -10,6 +10,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// Object is a struct describing the generic object
 type Object struct {
 	Info       *enigma.NxInfo                  `json:"qInfo,omitempty"`
 	Properties *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
@@ -39,6 +40,7 @@ func (o Object) validate() error {
 	return nil
 }
 
+// ListObjects fetches all generic objects and returns them sorted in an array
 func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
 	unsortedResult := make(map[string]*NamedItemWithType)
