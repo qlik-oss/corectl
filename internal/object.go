@@ -42,7 +42,6 @@ func (o Object) validate() error {
 func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
 	unsortedResult := make(map[string]*NamedItemWithType)
-	resultInSortedOrder := []NamedItemWithType{}
 	keys := []string{}
 
 	waitChannel := make(chan *NamedItemWithType)
@@ -71,8 +70,9 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	}
 	//Loop over the keys that are sorted on qId and fetch the result for each object
 	sort.Strings(keys)
-	for _, key := range keys {
-		resultInSortedOrder = append(resultInSortedOrder, *unsortedResult[key])
+	resultInSortedOrder := make([]NamedItemWithType, len(keys))
+	for i, key := range keys {
+		resultInSortedOrder[i] = *unsortedResult[key]
 	}
 	return resultInSortedOrder
 }
