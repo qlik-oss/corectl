@@ -42,7 +42,7 @@ func (o Object) validate() error {
 func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
 	unsortedResult := make(map[string]*NamedItemWithType)
-	resultInAlphabeticalOrder := []NamedItemWithType{}
+	resultInSortedOrder := []NamedItemWithType{}
 	keys := []string{}
 
 	waitChannel := make(chan *NamedItemWithType)
@@ -69,12 +69,12 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 			unsortedResult[item.Id] = item
 		}
 	}
-	//Loop over the keys that are sorted in alphabetical order and fetch the result for each object
+	//Loop over the keys that are sorted on qId and fetch the result for each object
 	sort.Strings(keys)
 	for _, key := range keys {
-		resultInAlphabeticalOrder = append(resultInAlphabeticalOrder, *unsortedResult[key])
+		resultInSortedOrder = append(resultInSortedOrder, *unsortedResult[key])
 	}
-	return resultInAlphabeticalOrder
+	return resultInSortedOrder
 }
 
 // SetObjects creates or updates all objects on given glob patterns
@@ -90,29 +90,29 @@ func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern str
 		}
 
 		// Run in parallel
-		waitChannel := make(chan error)
+		ch := make(chan error)
 
 		for _, raw := range rawEntities {
 			go func(raw json.RawMessage) {
 				var object Object
 				err = json.Unmarshal(raw, &object)
 				if err != nil {
-					waitChannel <- fmt.Errorf("could not parse data in file %s: %s", path, err)
+					ch <- fmt.Errorf("could not parse data in file %s: %s", path, err)
 					return
 				}
 				err = object.validate()
 				if err != nil {
-					waitChannel <- fmt.Errorf("validation error in file %s: %s", path, err)
+					ch <- fmt.Errorf("validation error in file %s: %s", path, err)
 					return
 				}
-				waitChannel <- setObject(ctx, doc, object.Info, object.Properties, raw)
+				ch <- setObject(ctx, doc, object.Info, object.Properties, raw)
 			}(raw)
 		}
 
 		// Loop through the responses and see if there are any failures, if so exit with a fatal
 		success := true
 		for range rawEntities {
-			err := <-waitChannel
+			err := <-ch
 			if err != nil {
 				fmt.Printf("ERROR " + err.Error())
 				success = false
