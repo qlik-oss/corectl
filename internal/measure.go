@@ -74,13 +74,13 @@ func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern st
 		FatalError("could not interpret glob pattern: ", err)
 	}
 
-	ch := make(chan error)
-
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
 			FatalErrorf("could not parse file %s: %s", path, err)
 		}
+		ch := make(chan error)
+
 		for _, raw := range rawEntities {
 			go func(raw json.RawMessage) {
 				var measure Measure
