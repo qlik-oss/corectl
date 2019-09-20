@@ -513,3 +513,12 @@ func TestCertificatesPathNegative(t *testing.T) {
 		p.ExpectErrorIncludes("could not load client certificate").Run("context", "set", "cert-test")
 	}
 }
+
+func TestLogging(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+	p.ExpectErrorIncludes("FATAL").Run("status") // Because we have an app name
+	p.ExpectIncludes("INFO").Run("build")
+	p.ExpectIncludes("DEBUG").Run("status", "-v")
+	p.ExpectIncludes("WARN").Run("build", "--objects", "*.foo")
+}
