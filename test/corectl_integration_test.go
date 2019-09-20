@@ -5,6 +5,7 @@ package test
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/qlik-oss/corectl/test/toolkit"
@@ -517,8 +518,17 @@ func TestCertificatesPathNegative(t *testing.T) {
 func TestLogging(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
-	p.ExpectErrorIncludes("FATAL").Run("status") // Because we have an app name
+	p.ExpectErrorIncludes("FATAL").Run("status") // Status will fail due to non-existing app.
 	p.ExpectIncludes("INFO").Run("build")
 	p.ExpectIncludes("DEBUG").Run("status", "-v")
 	p.ExpectIncludes("WARN").Run("build", "--objects", "*.foo")
+	out := p.ExpectOK().Run("variable", "set", "test/projects/using-entities/variables.json", "-v")
+	// Extract the names of the created variables.
+	vars := []string{}
+	for _, line := range strings.Split(string(out), "\n") {
+		if strings.Contains(line, "DEBUG: Creating variable ") {
+			vars = append(vars, strings.Split(line, " ")[3])
+		}
+	}
+	p.ExpectEqual(strings.Join(vars, "\n")).Run("variable", "ls", "-q")
 }
