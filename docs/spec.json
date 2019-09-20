@@ -46,7 +46,7 @@
     },
     "quiet": {
       "alias": "q",
-      "description": "Terse logging, limited to printing IDs where possible",
+      "description": "Minimal logging, limited to printing IDs where possible",
       "default": "false"
     },
     "traffic": {

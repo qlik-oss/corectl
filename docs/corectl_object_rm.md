@@ -34,7 +34,7 @@ corectl object rm ID-1 ID-2
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
-  -q, --quiet                    Terse logging, limited to printing IDs where possible
+  -q, --quiet                    Minimal logging, limited to printing IDs where possible
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information
