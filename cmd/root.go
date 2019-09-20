@@ -35,8 +35,8 @@ var rootCmd = &cobra.Command{
 	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-		// If help, version or generate-docs command, no prerun is needed.
-		if strings.Contains(ccmd.Use, "help") || ccmd.Use == "generate-docs" || ccmd.Use == "generate-spec" || ccmd.Use == "version" {
+		// For some commands we don't want to do a prerun.
+		if skipPreRun(ccmd) {
 			return
 		}
 		// Depending on the command, we might not want to use context when loading config.
@@ -63,9 +63,37 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func skipPreRun(ccmd *cobra.Command) bool {
+	// Depending on what command we are using, we might not want to do the prerun,
+	// i.e. reading config and such.
+	// Note: 'path' is the complete path for the command for example: 'corectl app build'.
+	// Using path instead of 'ccmd.Use' since it only gives you the last word of the command.
+	path := ccmd.CommandPath()
+	switch {
+	case strings.Contains(path, "help"):
+		return true
+	case strings.Contains(path, "generate-docs"):
+		return true
+	case strings.Contains(path, "generate-spec"):
+		return true
+	case strings.Contains(path, "version"):
+		return true
+	// For contexts we only want to do a prerun for context set.
+	case strings.Contains(path, "context"):
+		if strings.Contains(path, "context set") {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
 func shouldUseContext(ccmd *cobra.Command) bool {
 	path := ccmd.CommandPath()
-	// Switch so cases can be easily added
+	// Switch so cases can be easily added.
+	// Note that this is only import for commands that
+	// actually do the complete prerun. That is: not the
+	// ones included in the skipPreRun function.
 	switch {
 	case strings.Contains(path, "context set"):
 		return false
@@ -121,6 +149,7 @@ func init() {
 	rootCmd.AddCommand(unbuildCmd)
 
 	// Subcommands
+	rootCmd.AddCommand(alternateStateCmd)
 	rootCmd.AddCommand(measureCmd)
 	rootCmd.AddCommand(dimensionCmd)
 	rootCmd.AddCommand(objectCmd)

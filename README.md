@@ -124,7 +124,7 @@ followed by adding the following to your PowerShell [profile](https://docs.micro
 # Development
 
 ## Prerequisite
-- golang >= 1.11
+- golang >= 1.13
 
 ## Build
 

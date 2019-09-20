@@ -3,7 +3,7 @@
   "info": {
     "title": "Specification for corectl",
     "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "license": "MIT"
   },
   "clispec": "0.1.0",
@@ -140,6 +140,10 @@
         "dimensions": {
           "description": "A list of generic dimension json paths"
         },
+        "limit": {
+          "description": "Limit the number of rows to load",
+          "default": "0"
+        },
         "measures": {
           "description": "A list of generic measures json paths"
         },
@@ -209,7 +213,7 @@
           "description": "List all contexts"
         },
         "rm": {
-          "description": "Remove a context"
+          "description": "Remove one or more contexts"
         },
         "set": {
           "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",
@@ -372,6 +376,10 @@
     "reload": {
       "description": "Reload and save the app",
       "flags": {
+        "limit": {
+          "description": "Limit the number of rows to load",
+          "default": "0"
+        },
         "no-save": {
           "description": "Do not save the app",
           "default": "false"
@@ -396,6 +404,22 @@
               "default": "false"
             }
           }
+        }
+      }
+    },
+    "state": {
+      "alias": "alternatestate",
+      "description": "Explore and manage alternate states",
+      "x-qlik-stability": "experimental",
+      "commands": {
+        "add": {
+          "description": "Add an alternate states in the current app"
+        },
+        "ls": {
+          "description": "Print a list of all alternate states in the current app"
+        },
+        "rm": {
+          "description": "Removes an alternate state in the current app"
         }
       }
     },

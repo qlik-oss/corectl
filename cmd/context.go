@@ -28,15 +28,22 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 }, "comment")
 
 var removeContextCmd = &cobra.Command{
-	Use:     "rm <context name>",
-	Args:    cobra.MinimumNArgs(1),
-	Short:   "Remove a context",
-	Long:    "Remove a context",
-	Example: "corectl context rm local-engine",
+	Use:   "rm <context name>...",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "Remove one or more contexts",
+	Long:  "Remove one or more contexts",
+	Example: `corectl context rm local-engine
+corectl context rm ctx1 ctx2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		_, wasCurrent := internal.RemoveContext(args[0])
-		if wasCurrent {
+		var removedCurrent bool
+		for _, arg := range args {
+			_, wasCurrent := internal.RemoveContext(arg)
+			if wasCurrent {
+				removedCurrent = true
+			}
+		}
+		if removedCurrent {
 			printer.PrintCurrentContext("")
 		}
 	},

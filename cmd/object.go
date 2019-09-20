@@ -21,7 +21,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		if commandLineObjects == "" {
 			log.Fatalln("no objects specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, true)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, true, false)
 		internal.SetObjects(rootCtx, state.Doc, commandLineObjects)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -37,7 +37,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {
@@ -60,7 +60,7 @@ var listObjectsCmd = &cobra.Command{
 	Example: "corectl object ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		items := internal.ListObjects(state.Ctx, state.Doc)
 		printer.PrintNamedItemsListWithType(items, viper.GetBool("bash"))
 	},
@@ -74,7 +74,7 @@ var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityProperties(state, args[0], "object", viper.GetBool("minimum"))
 	},
 }, "minimum")
@@ -87,7 +87,7 @@ var getObjectLayoutCmd = &cobra.Command{
 	Example: "corectl object layout OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.PrintGenericEntityLayout(state, args[0], "object")
 	},
 }
@@ -100,7 +100,7 @@ var getObjectDataCmd = &cobra.Command{
 	Example: "corectl object data OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		printer.EvalObject(rootCtx, state.Doc, args[0])
 	},
 }

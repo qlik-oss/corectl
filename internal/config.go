@@ -118,18 +118,16 @@ func ReadConnectionsFile(path string) *ConnectionsConfig {
 func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 	var err error
 	if explicitConfigFile != "" {
-		if !filepath.IsAbs(explicitConfigFile) {
-			explicitConfigFile, err = filepath.Abs(strings.TrimSpace(explicitConfigFile))
-			if err != nil {
-				log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
-			}
+		explicitConfigFile, err = toAbsPath(strings.TrimSpace(explicitConfigFile))
+		if err != nil {
+			log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
 		}
 		configFile = explicitConfigFile
 	} else {
 		configFile = findConfigFile("corectl") // name of config file (without extension)
 	}
-	if certPath != "" && !filepath.IsAbs(certPath) {
-		certPath, err = filepath.Abs(strings.TrimSpace(certPath))
+	if certPath != "" {
+		certPath, err = toAbsPath(strings.TrimSpace(certPath))
 		if err != nil {
 			log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
 		}
@@ -143,10 +141,13 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 		viper.Set("certificates", certPath)
 	}
 	log.Init() // sets json, verbose and traffic
-	if configFile != "" {
+	switch {
+	case configFile != "":
 		ConfigDir = filepath.Dir(configFile)
 		log.Debugln("Using config file: " + configFile)
-	} else {
+	case withContext:
+		log.Debugln("No config file specified, using context.")
+	default:
 		log.Debugln("No config file specified, using default values.")
 	}
 }
@@ -154,18 +155,19 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 // ReadCertificates reads and loads the specified certificates
 func ReadCertificates(certificatesPath string) *tls.Config {
 	// Read client and root certificates.
-	certFile := certificatesPath + "/client.pem"
-	keyFile := certificatesPath + "/client_key.pem"
-	caFile := certificatesPath + "/root.pem"
+	certPath := RelativeToProject(certificatesPath)
+	certFile := certPath + "/client.pem"
+	keyFile := certPath + "/client_key.pem"
+	caFile := certPath + "/root.pem"
 
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
-		log.Fatalln("Failed to load client certificate: ", err)
+		log.Fatalln("could not load client certificate: ", err)
 	}
 
 	caCert, err := ioutil.ReadFile(caFile)
 	if err != nil {
-		log.Fatalln("Failed to read root certificate: ", err)
+		log.Fatalln("could not read root certificate: ", err)
 	}
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
@@ -344,4 +346,11 @@ func mergeContext(config *map[interface{}]interface{}) {
 			(*config)[k] = v
 		}
 	}
+}
+
+func toAbsPath(path string) (string, error) {
+	if !filepath.IsAbs(path) {
+		return filepath.Abs(path)
+	}
+	return path, nil
 }

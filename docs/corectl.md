@@ -47,6 +47,7 @@ corectl [flags]
 * [corectl object](corectl_object.md)	 - Explore and manage generic objects
 * [corectl reload](corectl_reload.md)	 - Reload and save the app
 * [corectl script](corectl_script.md)	 - Explore and manage the script
+* [corectl state](corectl_state.md)	 - Explore and manage alternate states
 * [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
 * [corectl tables](corectl_tables.md)	 - Print tables
 * [corectl unbuild](corectl_unbuild.md)	 - Split up an existing app into separate json and yaml files

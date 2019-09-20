@@ -19,7 +19,7 @@ var listAppsCmd = &cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineStateWithoutApp(rootCtx, headers, certificates)
+		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, true)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
 			log.Fatalf("could not retrieve app list: %s", err)

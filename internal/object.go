@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
@@ -42,7 +43,7 @@ func (o Object) validate() error {
 func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	allInfos, _ := doc.GetAllInfos(ctx)
 	unsortedResult := make(map[string]*NamedItemWithType)
-	resultInOriginalOrder := []NamedItemWithType{}
+	keys := []string{}
 
 	waitChannel := make(chan *NamedItemWithType)
 	defer close(waitChannel)
@@ -64,18 +65,20 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	for range allInfos {
 		item := <-waitChannel
 		if item != nil {
+			keys = append(keys, item.Id)
 			unsortedResult[item.Id] = item
 		}
 	}
-	//Loop over the original sort order, fetch the result items from the map and build the final result array
-	for _, item := range allInfos {
-		if unsortedResult[item.Id] != nil {
-			resultInOriginalOrder = append(resultInOriginalOrder, *unsortedResult[item.Id])
-		}
+	//Loop over the keys that are sorted on qId and fetch the result for each object
+	sort.Strings(keys)
+	resultInSortedOrder := make([]NamedItemWithType, len(keys))
+	for i, key := range keys {
+		resultInSortedOrder[i] = *unsortedResult[key]
 	}
-	return resultInOriginalOrder
+	return resultInSortedOrder
 }
 
+// SetObjects creates or updates all objects on given glob patterns
 func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "objects")
 	if err != nil {
@@ -86,20 +89,39 @@ func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern str
 		if err != nil {
 			log.Fatalf("could not parse file %s: %s", path, err)
 		}
+
+		// Run in parallel
+		ch := make(chan error)
+
 		for _, raw := range rawEntities {
-			var object Object
-			err = json.Unmarshal(raw, &object)
+			go func(raw json.RawMessage) {
+				var object Object
+				err = json.Unmarshal(raw, &object)
+				if err != nil {
+					ch <- fmt.Errorf("could not parse data in file %s: %s", path, err)
+					return
+				}
+				err = object.validate()
+				if err != nil {
+					ch <- fmt.Errorf("validation error in file %s: %s", path, err)
+					return
+				}
+				ch <- setObject(ctx, doc, object.Info, object.Properties, raw)
+			}(raw)
+		}
+
+		// Loop through the responses and see if there are any failures, if so exit with a fatal
+		success := true
+		for range rawEntities {
+			err := <-ch
 			if err != nil {
-				log.Fatalf("could not parse data in file %s: %s", path, err)
+				fmt.Printf("ERROR " + err.Error())
+				success = false
 			}
-			err = object.validate()
-			if err != nil {
-				log.Fatalf("validation error in file %s: %s", path, err)
-			}
-			err = setObject(ctx, doc, object.Info, object.Properties, raw)
-			if err != nil {
-				log.Fatalln(err)
-			}
+		}
+
+		if !success {
+			log.Fatalln("One or more objects failed to be created or updated")
 		}
 	}
 }

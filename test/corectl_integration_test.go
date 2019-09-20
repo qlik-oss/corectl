@@ -3,9 +3,11 @@
 package test
 
 import (
-	"github.com/qlik-oss/corectl/test/toolkit"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/qlik-oss/corectl/test/toolkit"
 )
 
 func TestBasicAnalyzing(t *testing.T) {
@@ -37,7 +39,9 @@ func TestBasicAnalyzing(t *testing.T) {
 func TestReload(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
-	p.ExpectOK().Run("build")
+	p.ExpectIncludes("<<  5 Lines fetched").Run("build")
+	p.ExpectIncludes("<<  3 Lines fetched").Run("build", "--limit", "3")
+	p.ExpectIncludes("<<  3 Lines fetched").Run("reload", "--limit", "3")
 	p.ExpectGolden().Run("reload", "--silent")
 	p.ExpectGolden().Run("reload", "--silent", "--no-save")
 }
@@ -87,7 +91,6 @@ func TestConnectionManagementCommands(t *testing.T) {
 	defer p.Reset()
 	p.Run("build")
 	p.ExpectIncludes(`myconnection | testconnector`).Run("connection", "ls")
-	p.ExpectIncludes(`"qConnectionString": "CUSTOM CONNECT TO \"provider=testconnector;host=corectl-test-connector;\""`).Run("connection", "ls", "--json")
 	p.ExpectOK().Run("connection", "ls", "--bash")
 }
 
@@ -106,7 +109,7 @@ func TestObjectManagementCommands(t *testing.T) {
 	p.ExpectGolden().Run("object", "layout", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-inline")
 	p.ExpectGolden().Run("object", "data", "object-using-dims-and-measures")
-	p.ExpectErrorIncludes("Invalid handle: Invalid Params (-32602)").Run("object", "data", "nosuchobject")
+	p.ExpectErrorIncludes("Invalid handle: Invalid Params (-32602").Run("object", "data", "nosuchobject")
 
 	p.ExpectJsonArray("qId", "object-using-dims-and-measures", "object-using-inline").Run("object", "ls", "--json")
 
@@ -327,7 +330,7 @@ func TestWithUnknownApp(t *testing.T) {
 
 func TestEvalOnUnknownAppl(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
-	p.ExpectIncludes("Could not find app: App not found (1003)").Run("eval", "count(numbers)", "by", "xyz")
+	p.ExpectIncludes("Could not find app: App not found (1003").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestEvalOnUnknownAppEngine(t *testing.T) {
@@ -393,6 +396,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-2"}
 	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-3"}
 	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-4"}
+	pConnectionsFileEmpty := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref-empty.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-5"}
 	defer pNoConnections.Reset() //This resets all apps since last reset
 
 	//Build the apps
@@ -400,6 +404,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 	pCommandLine.ExpectOK().Run("build", "--connections=test/projects/connections/connections.yml")
 	pWithConnections.ExpectOK().Run("build")
 	pConnectionsFile.ExpectOK().Run("build")
+	pConnectionsFileEmpty.ExpectOK().Run("build")
 
 	pNoConnections.ExpectEmptyJsonArray().Run("connection", "ls", "--json")
 	pCommandLine.ExpectJsonArray("qName", "testdata-separate-file").Run("connection", "ls", "--json")
@@ -462,4 +467,49 @@ func TestUnbuild(t *testing.T) {
 	p2.ExpectGolden().Run("dimension", "ls")
 	p2.ExpectGolden().Run("meta")
 	os.RemoveAll("test/golden/unbuild")
+}
+
+func TestAddState(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
+	p.ExpectOK().Run("build")
+	p.ExpectIncludes("Saving app...", "success").Run("state", "add", "MyTestState")
+	p.ExpectGolden().Run("state", "ls")
+	p.ExpectOK().Run("state", "rm", "MyTestState")
+	p.ExpectError().Run("state", "rm", "MyTestState")
+}
+
+func TestCertificatesPath(t *testing.T) {
+	relativePath := "test/projects/certificates/"
+	pFlag := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	pConfig := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
+	absolutePath, _ := filepath.Abs(relativePath)
+	contextName := "cert-test"
+
+	params := []toolkit.Params{pFlag, pConfig}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectOK().Run("context", "set", contextName)
+		p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+		p.ExpectOK().Run("context", "rm", contextName)
+		params := []toolkit.Params{pFlag, pConfig}
+		for _, p := range params {
+			defer p.Reset()
+			p.ExpectOK().Run("context", "set", contextName)
+			p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
+			p.ExpectOK().Run("context", "rm", contextName)
+		}
+	}
+}
+
+func TestCertificatesPathNegative(t *testing.T) {
+	pFlagNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/"}
+	pConfigNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates-invalid-path.yml"}
+	pInvalidPath := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/non-existing-folder"}
+
+	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
+	for _, p := range params {
+		defer p.Reset()
+		p.ExpectErrorIncludes("could not load client certificate").Run("context", "set", "cert-test")
+	}
 }

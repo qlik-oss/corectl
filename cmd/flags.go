@@ -87,6 +87,7 @@ func initLocalFlags() {
 	//bound to viper
 	localFlags.Bool("no-save", false, "Do not save the app")
 	localFlags.Bool("silent", false, "Do not log reload output")
+	localFlags.Int("limit", 0, "Limit the number of rows to load")
 	localFlags.Bool("no-reload", false, "Do not run the reload script")
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")

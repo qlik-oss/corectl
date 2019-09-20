@@ -1,20 +1,19 @@
-## corectl context rm
+## corectl state rm
 
-Remove one or more contexts
+Removes an alternate state in the current app
 
 ### Synopsis
 
-Remove one or more contexts
+Removes an alternate state in the current app
 
 ```
-corectl context rm <context name>... [flags]
+corectl state rm <alternate-state-name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context rm local-engine
-corectl context rm ctx1 ctx2
+corectl state rm NAME-1
 ```
 
 ### Options
@@ -34,7 +33,6 @@ corectl context rm ctx1 ctx2
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
-  -q, --quiet                    Terse logging, limited to printing IDs where possible
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information
@@ -42,5 +40,5 @@ corectl context rm ctx1 ctx2
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl state](corectl_state.md)	 - Explore and manage alternate states
 

@@ -19,9 +19,10 @@ corectl reload
 ### Options
 
 ```
-  -h, --help      help for reload
-      --no-save   Do not save the app
-      --silent    Do not log reload output
+  -h, --help        help for reload
+      --limit int   Limit the number of rows to load
+      --no-save     Do not save the app
+      --silent      Do not log reload output
 ```
 
 ### Options inherited from parent commands
