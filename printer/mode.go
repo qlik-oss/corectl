@@ -32,9 +32,9 @@ const (
 
 var mode pmode
 
-// SetMode sets the printing mode based on the flags provided to viper.
+// Init sets the printing mode based on the flags provided to viper.
 // The flags have the following precedence: json > bash > quiet
-func SetMode() {
+func Init() {
 	switch {
 	case viper.GetBool("json"):
 		mode = jsonMode

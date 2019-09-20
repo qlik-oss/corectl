@@ -91,13 +91,13 @@ func setBookmark(ctx context.Context, doc *enigma.Doc, bookmarkID string, raw js
 		return err
 	}
 	if bookmark.Handle != 0 {
-		log.Debugln("Updating bookmark " + bookmarkID)
+		log.Infoln("Updating bookmark " + bookmarkID)
 		err = bookmark.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not update %s with %s: %s", "bookmark", bookmarkID, err)
 		}
 	} else {
-		log.Debugln("Creating bookmark " + bookmarkID)
+		log.Infoln("Creating bookmark " + bookmarkID)
 		_, err = doc.CreateBookmarkRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not create %s with %s: %s", "bookmark", bookmarkID, err)

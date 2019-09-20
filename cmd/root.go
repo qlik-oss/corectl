@@ -55,7 +55,7 @@ var rootCmd = &cobra.Command{
 			headers.Set(key, value)
 		}
 		// Initiate the printers mode
-		printer.SetMode()
+		printer.Init()
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
