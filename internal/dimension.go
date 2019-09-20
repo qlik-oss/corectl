@@ -105,7 +105,7 @@ func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern 
 		}
 
 		if !success {
-			FatalError("One or more measures failed to be created or updated")
+			FatalError("One or more dimensions failed to be created or updated")
 		}
 	}
 }
