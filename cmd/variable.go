@@ -40,9 +40,9 @@ var removeVariableCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyVariableByName(rootCtx, entity)
 			if err != nil {
-				log.Fatalf("could not remove generic variable '%s': %s", entity, err)
+				log.Fatalf("could not remove generic variable '%s': %s\n", entity, err)
 			} else if !destroyed {
-				log.Fatalf("could not remove generic variable '%s'", entity)
+				log.Fatalf("could not remove generic variable '%s'\n", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

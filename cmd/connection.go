@@ -42,7 +42,7 @@ corectl connection rm ID-1 ID-2`,
 		for _, connection := range args {
 			err := state.Doc.DeleteConnection(rootCtx, connection)
 			if err != nil {
-				log.Fatalf("could not remove connection '%s': %s", connection, err)
+				log.Fatalf("could not remove connection '%s': %s\n", connection, err)
 			}
 		}
 		if !viper.GetBool("no-save") {
@@ -62,7 +62,7 @@ var listConnectionsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		connections, err := state.Doc.GetConnections(rootCtx)
 		if err != nil {
-			log.Fatalf("could not retrieve list of connections: %s", err)
+			log.Fatalf("could not retrieve list of connections: %s\n", err)
 		}
 		printer.PrintConnections(connections, viper.GetBool("bash"))
 	},
@@ -79,7 +79,7 @@ var getConnectionCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		connection, err := state.Doc.GetConnection(rootCtx, args[0])
 		if err != nil {
-			log.Fatalf("could not retrieve connection '%s': %s", args[0], err)
+			log.Fatalf("could not retrieve connection '%s': %s\n", args[0], err)
 		}
 		printer.PrintConnection(connection)
 	},

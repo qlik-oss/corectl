@@ -16,7 +16,7 @@ func GetEngineURL() *url.URL {
 	}
 	u, err := parseEngineURL(engine)
 	if err != nil {
-		log.Fatalf("could not parse engine url '%s' got error: '%s'", engine, err)
+		log.Fatalf("could not parse engine url '%s' got error: '%s'\n", engine, err)
 	}
 	return u
 }

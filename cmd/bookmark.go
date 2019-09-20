@@ -41,9 +41,9 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyBookmark(rootCtx, entity)
 			if err != nil {
-				log.Fatalf("could not remove generic bookmark '%s': %s", entity, err)
+				log.Fatalf("could not remove generic bookmark '%s': %s\n", entity, err)
 			} else if !destroyed {
-				log.Fatalf("could not remove generic bookmark '%s'", entity)
+				log.Fatalf("could not remove generic bookmark '%s'\n", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

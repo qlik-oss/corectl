@@ -111,12 +111,12 @@ func checkLatestVersion() {
 func isLatestVersion(currentTag string, latestTag string) (string, bool) {
 	currentVersion, err := ver.NewVersion(currentTag)
 	if err != nil {
-		log.Fatalf("Current version is not semantically versioned: %s", currentTag)
+		log.Fatalf("Current version is not semantically versioned: %s\n", currentTag)
 	}
 
 	latestVersion, err := ver.NewVersion(latestTag[1:]) // Remove 'v' from the tag
 	if err != nil {
-		log.Fatalf("Latest version is not semantically versioned: %s", latestVersion)
+		log.Fatalf("Latest version is not semantically versioned: %s\n", latestVersion)
 	}
 
 	if currentVersion.LessThan(latestVersion) {

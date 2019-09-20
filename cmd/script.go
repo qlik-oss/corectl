@@ -42,7 +42,7 @@ var getScriptCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		script, err := state.Doc.GetScript(rootCtx)
 		if err != nil {
-			log.Fatalf("could not retrieve script: %s", err)
+			log.Fatalf("could not retrieve script: %s\n", err)
 		}
 		if len(script) == 0 { // This happens if the script is set to an empty file
 			fmt.Println("The loadscript is empty")

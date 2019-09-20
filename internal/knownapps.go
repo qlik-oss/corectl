@@ -43,7 +43,7 @@ func getKnownApps() map[string]map[string]string {
 	}
 	err = yaml.Unmarshal(yamlFile, &knownApps)
 	if err != nil {
-		log.Fatalf("could not parse content of knownApps yaml '%s': %s", yamlFile, err)
+		log.Fatalf("could not parse content of knownApps yaml '%s': %s\n", yamlFile, err)
 	}
 
 	return knownApps
@@ -76,7 +76,7 @@ func SetAppIDToKnownApps(appName string, appID string, remove bool) {
 	out, _ := yaml.Marshal(apps)
 
 	if err := ioutil.WriteFile(knownAppsFilePath, out, 0644); err != nil {
-		log.Fatalf("could not write to '%s': %s", knownAppsFilePath, err)
+		log.Fatalf("could not write to '%s': %s\n", knownAppsFilePath, err)
 	}
 }
 
@@ -96,7 +96,7 @@ func createKnownAppsFileIfNotExist() {
 		// Create knownApps.yml in .corectl folder
 		_, err := os.Create(knownAppsFilePath)
 		if err != nil {
-			log.Fatalf("could not create %s: %s", knownAppsFilePath, err)
+			log.Fatalf("could not create %s: %s\n", knownAppsFilePath, err)
 		}
 
 		log.Debugln("Created ~/.corectl/knownApps.yml for storage of app ids")

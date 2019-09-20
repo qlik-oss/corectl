@@ -65,17 +65,17 @@ func SetBookmarks(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern s
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			log.Fatalf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
 		for _, raw := range rawEntities {
 			var bm Bookmark
 			err := json.Unmarshal(raw, &bm)
 			if err != nil {
-				log.Fatalf("could not parse data in file %s: %s", path, err)
+				log.Fatalf("could not parse data in file %s: %s\n", path, err)
 			}
 			err = bm.validate()
 			if err != nil {
-				log.Fatalf("validation error in file %s: %s", path, err)
+				log.Fatalf("validation error in file %s: %s\n", path, err)
 			}
 			err = setBookmark(ctx, doc, bm.Info.Id, raw)
 			if err != nil {

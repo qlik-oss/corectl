@@ -40,7 +40,7 @@ Note that bash-completion is required and needs to be installed on your system.`
 		case args[0] == "ps":
 			rootCmd.GenPowerShellCompletion(os.Stdout)
 		default:
-			log.Fatalf("'%s' is not a supported shell", args[0])
+			log.Fatalf("'%s' is not a supported shell\n", args[0])
 		}
 	},
 }

@@ -41,9 +41,9 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
 			if err != nil {
-				log.Fatalf("could not remove generic object '%s': %s", entity, err)
+				log.Fatalf("could not remove generic object '%s': %s\n", entity, err)
 			} else if !destroyed {
-				log.Fatalf("could not remove generic object '%s'", entity)
+				log.Fatalf("could not remove generic object '%s'\n", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

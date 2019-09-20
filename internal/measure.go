@@ -63,17 +63,17 @@ func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern st
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			log.Fatalf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
 		for _, raw := range rawEntities {
 			var measure Measure
 			err := json.Unmarshal(raw, &measure)
 			if err != nil {
-				log.Fatalf("could not parse data in file %s: %s", path, err)
+				log.Fatalf("could not parse data in file %s: %s\n", path, err)
 			}
 			err = measure.validate()
 			if err != nil {
-				log.Fatalf("validation error in file %s: %s", path, err)
+				log.Fatalf("validation error in file %s: %s\n", path, err)
 			}
 			err = setMeasure(ctx, doc, measure.Info.Id, raw)
 			if err != nil {

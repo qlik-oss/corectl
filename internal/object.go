@@ -87,7 +87,7 @@ func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern str
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			log.Fatalf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
 
 		// Run in parallel

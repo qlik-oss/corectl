@@ -12,7 +12,7 @@ import (
 func SetScript(ctx context.Context, doc *enigma.Doc, scriptFilePath string) {
 	loadScript, err := ioutil.ReadFile(scriptFilePath)
 	if err != nil {
-		log.Fatalf("could not find loadscript: %s", scriptFilePath)
+		log.Fatalf("could not find loadscript: %s\n", scriptFilePath)
 	}
 
 	err = doc.SetScript(ctx, string(loadScript))

@@ -59,7 +59,7 @@ func getEntityPaths(commandLineGlobPattern string, configEntityParam string) ([]
 		for _, pattern := range globPatterns {
 			pathMatches, err = filepath.Glob(pattern)
 			if err != nil {
-				log.Fatalf("could not interpret glob pattern '%s': %s", pattern, err)
+				log.Fatalf("could not interpret glob pattern '%s': %s\n", pattern, err)
 			} else if len(pathMatches) == 0 {
 				log.Warnf("no '%s' found for pattern %s", configEntityParam, pattern)
 			} else {

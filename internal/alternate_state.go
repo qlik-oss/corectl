@@ -17,7 +17,7 @@ func ListAlternateStates(ctx context.Context, doc *enigma.Doc) []string {
 func AddAlternateState(ctx context.Context, doc *enigma.Doc, alternateStateName string) {
 	err := doc.AddAlternateState(ctx, alternateStateName)
 	if err != nil {
-		log.Fatalf("could not add state %s: %s ", alternateStateName, err)
+		log.Fatalf("could not add state %s: %s \n", alternateStateName, err)
 	}
 }
 
@@ -33,11 +33,11 @@ func RemoveAlternateState(ctx context.Context, doc *enigma.Doc, alternateStateNa
 	}
 
 	if !stateNameExists {
-		log.Fatalf("no alternate state with the name '%s' found in the app", alternateStateName)
+		log.Fatalf("no alternate state with the name '%s' found in the app\n", alternateStateName)
 	}
 
 	err := doc.RemoveAlternateState(ctx, alternateStateName)
 	if err != nil {
-		log.Fatalf("could not remove state %s: %s ", alternateStateName, err)
+		log.Fatalf("could not remove state %s: %s \n", alternateStateName, err)
 	}
 }

@@ -53,7 +53,7 @@ func GetConnectionsConfig() *ConnectionsConfig {
 		configEntries := &map[string]ConnectionConfigEntry{}
 		err := reMarshal(connMap, configEntries)
 		if err != nil {
-			log.Fatalf("could not parse connections configuration: %s", err)
+			log.Fatalf("could not parse connections configuration: %s\n", err)
 		}
 		config = &ConnectionsConfig{Connections: configEntries}
 	}
@@ -91,22 +91,22 @@ func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 func ReadConnectionsFile(path string) *ConnectionsConfig {
 	source, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("could not find connections config file '%s'", path)
+		log.Fatalf("could not find connections config file '%s'\n", path)
 	}
 	tempConfig := map[interface{}]interface{}{}
 	err = yaml.Unmarshal(source, &tempConfig)
 	if err != nil {
-		log.Fatalf("invalid syntax in connections config file '%s': %s", path, err)
+		log.Fatalf("invalid syntax in connections config file '%s': %s\n", path, err)
 	}
 	err = subEnvVars(&tempConfig)
 	if err != nil {
-		log.Fatalf("bad substitution in '%s': %s", path, err)
+		log.Fatalf("bad substitution in '%s': %s\n", path, err)
 	}
 	config := &ConnectionsConfig{}
 	if strConfig, err := convertMap(tempConfig); err == nil {
 		reMarshal(strConfig, config)
 	} else {
-		log.Fatalf("could not parse connections config file '%s': %s", path, err)
+		log.Fatalf("could not parse connections config file '%s': %s\n", path, err)
 	}
 	return config
 }
@@ -120,7 +120,7 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 	if explicitConfigFile != "" {
 		explicitConfigFile, err = toAbsPath(strings.TrimSpace(explicitConfigFile))
 		if err != nil {
-			log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
+			log.Fatalf("unexpected error when converting to absolute filepath: %s\n", err)
 		}
 		configFile = explicitConfigFile
 	} else {
@@ -129,7 +129,7 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 	if certPath != "" {
 		certPath, err = toAbsPath(strings.TrimSpace(certPath))
 		if err != nil {
-			log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
+			log.Fatalf("unexpected error when converting to absolute filepath: %s\n", err)
 		}
 	}
 	// If there is a config file or context should be used
@@ -196,12 +196,12 @@ func readConfig(configPath string, withContext bool) {
 	if configPath != "" {
 		source, err := ioutil.ReadFile(configPath)
 		if err != nil {
-			log.Fatalf("could not find config file '%s'", configPath)
+			log.Fatalf("could not find config file '%s'\n", configPath)
 		}
 
 		err = yaml.Unmarshal(source, config)
 		if err != nil {
-			log.Fatalf("invalid syntax in config file '%s': %s", configPath, err)
+			log.Fatalf("invalid syntax in config file '%s': %s\n", configPath, err)
 		}
 	}
 	// Merge before validation and env substitution since it might not be needed due to context.
@@ -211,16 +211,16 @@ func readConfig(configPath string, withContext bool) {
 	validateProps(*config, configPath)
 	err := subEnvVars(config)
 	if err != nil {
-		log.Fatalf("bad substitution in '%s': %s", configPath, err)
+		log.Fatalf("bad substitution in '%s': %s\n", configPath, err)
 	}
 	configBytes, err := yaml.Marshal(config)
 	if err != nil {
-		log.Fatalf("unexpected error after parsing config: %s", err)
+		log.Fatalf("unexpected error after parsing config: %s\n", err)
 	}
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(bytes.NewBuffer(configBytes))
 	if err != nil {
-		log.Fatalf("unexpected error after parseing config: %s", err)
+		log.Fatalf("unexpected error after parseing config: %s\n", err)
 	}
 }
 
@@ -236,7 +236,7 @@ func findConfigFile(fileName string) string {
 	if configFile != "" {
 		absConfig, err := filepath.Abs(configFile) // Convert to abs path
 		if err != nil {
-			log.Fatalf("unexpected error when converting to absolute filepath: %s", err)
+			log.Fatalf("unexpected error when converting to absolute filepath: %s\n", err)
 		}
 		configFile = absConfig
 	}

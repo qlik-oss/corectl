@@ -69,7 +69,7 @@ func SetContext(contextName, comment string) string {
 	}
 
 	if err := context.Validate(); err != nil {
-		log.Fatalf("context '%s' is not valid: %s", contextName, err.Error())
+		log.Fatalf("context '%s' is not valid: %s\n", contextName, err.Error())
 	}
 
 	if !update {
@@ -113,7 +113,7 @@ func NewContextHandler() *ContextHandler {
 	}
 	err = yaml.Unmarshal(yamlFile, &handler)
 	if err != nil {
-		log.Fatalf("could not parse content of contexts yaml '%s': %s", yamlFile, err)
+		log.Fatalf("could not parse content of contexts yaml '%s': %s\n", yamlFile, err)
 	}
 
 	if handler.Contexts == nil {
@@ -151,7 +151,7 @@ func (ch *ContextHandler) GetCurrent() *Context {
 
 func (ch *ContextHandler) Use(contextName string) {
 	if !ch.Exists(contextName) {
-		log.Fatalf("context with name '%s' does not exist", contextName)
+		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	if ch.Current == contextName {
 		log.Debugln("Current context already set to " + contextName)
@@ -175,7 +175,7 @@ func (ch *ContextHandler) Clear() (previous string) {
 
 func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 	if !ch.Exists(contextName) {
-		log.Fatalf("context with name '%s' does not exist", contextName)
+		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	delete(ch.Contexts, contextName)
 	log.Debugln("Removed context with name: " + contextName)
@@ -191,7 +191,7 @@ func (ch *ContextHandler) Save() {
 	out, _ := yaml.Marshal(*ch)
 
 	if err := ioutil.WriteFile(contextFilePath, out, 0644); err != nil {
-		log.Fatalf("could not write to '%s': %s", contextFilePath, err)
+		log.Fatalf("could not write to '%s': %s\n", contextFilePath, err)
 	}
 }
 
@@ -264,7 +264,7 @@ func createContextFileIfNotExist() {
 		// Create contexts.yml in .corectl folder
 		_, err := os.Create(contextFilePath)
 		if err != nil {
-			log.Fatalf("could not create %s: %s", contextFilePath, err)
+			log.Fatalf("could not create %s: %s\n", contextFilePath, err)
 		}
 
 		log.Debugln("Created ~/.corectl/contexts.yml for storage of corectl contexts")

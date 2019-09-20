@@ -40,9 +40,9 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 		for _, entity := range args {
 			destroyed, err := state.Doc.DestroyMeasure(rootCtx, entity)
 			if err != nil {
-				log.Fatalf("could not remove generic measure '%s': %s", entity, err)
+				log.Fatalf("could not remove generic measure '%s': %s\n", entity, err)
 			} else if !destroyed {
-				log.Fatalf("could not remove generic measure '%s'", entity)
+				log.Fatalf("could not remove generic measure '%s'\n", entity)
 			}
 		}
 		if !viper.GetBool("no-save") {

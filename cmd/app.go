@@ -22,7 +22,7 @@ var listAppsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, true)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
-			log.Fatalf("could not retrieve app list: %s", err)
+			log.Fatalf("could not retrieve app list: %s\n", err)
 		}
 		printer.PrintApps(docList, viper.GetBool("bash"))
 	},

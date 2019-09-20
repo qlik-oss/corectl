@@ -150,12 +150,12 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 		}
 
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			log.Fatalf("%s is not a valid url\nPlease provide a valid URL starting with 'https://', 'http://' or 'www'", catwalkURL)
+			log.Fatalf("%s is not a valid url\nPlease provide a valid URL starting with 'https://', 'http://' or 'www'\n", catwalkURL)
 		}
 
 		err := browser.OpenURL(catwalkURL)
 		if err != nil {
-			log.Fatalf("could not open URL: %s", err)
+			log.Fatalf("could not open URL: %s\n", err)
 		}
 	},
 }, "catwalk-url")
