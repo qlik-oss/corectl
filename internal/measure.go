@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
+// Measure is a struct describing a generic measure
 type Measure struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 }
@@ -30,6 +32,7 @@ func (m Measure) validate() error {
 	return nil
 }
 
+// ListMeasures fetches all measures and returns them in an array
 func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	props := &enigma.GenericObjectProperties{
 		Info: &enigma.NxInfo{
@@ -46,39 +49,66 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	sessionObject, _ := doc.CreateSessionObject(ctx, props)
 	defer doc.DestroySessionObject(ctx, sessionObject.GenericId)
 	layout, _ := sessionObject.GetLayout(ctx)
-	result := []NamedItem{}
+
+	unsortedResult := make(map[string]*NamedItem)
+	keys := make([]string, len(unsortedResult))
 	for _, item := range layout.MeasureList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
-		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
+		unsortedResult[item.Info.Id] = &NamedItem{Title: parsedRawData.Title, Id: item.Info.Id}
+		keys = append(keys, item.Info.Id)
 	}
-	return result
+
+	//Loop over the keys that are sorted on qId and fetch the result for each object
+	sort.Strings(keys)
+	sortedResult := make([]NamedItem, len(keys))
+	for i, key := range keys {
+		sortedResult[i] = *unsortedResult[key]
+	}
+	return sortedResult
 }
 
+// SetMeasures creates or updates all measures on given glob patterns
 func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "measures")
 	if err != nil {
 		log.Fatalln("could not interpret glob pattern: ", err)
 	}
+
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
 			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
+		ch := make(chan error)
+
 		for _, raw := range rawEntities {
-			var measure Measure
-			err := json.Unmarshal(raw, &measure)
+			go func(raw json.RawMessage) {
+				var measure Measure
+				err := json.Unmarshal(raw, &measure)
+				if err != nil {
+					ch <- fmt.Errorf("could not parse data in file %s: %s", path, err)
+				}
+				err = measure.validate()
+				if err != nil {
+					ch <- fmt.Errorf("validation error in file %s: %s", path, err)
+				}
+				ch <- setMeasure(ctx, doc, measure.Info.Id, raw)
+			}(raw)
+		}
+
+		// Loop through the responses and see if there are any failures, if so exit with a fatal
+		success := true
+		for range rawEntities {
+			err := <-ch
 			if err != nil {
-				log.Fatalf("could not parse data in file %s: %s\n", path, err)
+				log.Errorln(err)
+				success = false
 			}
-			err = measure.validate()
-			if err != nil {
-				log.Fatalf("validation error in file %s: %s\n", path, err)
-			}
-			err = setMeasure(ctx, doc, measure.Info.Id, raw)
-			if err != nil {
-				log.Fatalln(err)
-			}
+		}
+
+		if !success {
+			log.Fatalln("One or more measures failed to be created or updated")
 		}
 	}
 }

@@ -142,7 +142,7 @@ func TestDimensionManagementCommands(t *testing.T) {
 
 	// Re-add the measure and check
 	p.ExpectOK().Run("dimension", "set", "test/projects/using-entities/dimensions.json")
-	p.ExpectJsonArray("qId", "dimension-xyz", "dimension-abcs").Run("dimension", "ls", "--json")
+	p.ExpectJsonArray("qId", "dimension-abcs", "dimension-xyz").Run("dimension", "ls", "--json")
 }
 
 func TestMeasureManagementCommands(t *testing.T) {
@@ -164,7 +164,7 @@ func TestMeasureManagementCommands(t *testing.T) {
 
 	// Re-add the measure and check
 	p.ExpectOK().Run("measure", "set", "test/projects/using-entities/measures.json")
-	p.ExpectJsonArray("qId", "measure-sum-numbers", "measure-count-numbers").Run("measure", "ls", "--json")
+	p.ExpectJsonArray("qId", "measure-count-numbers", "measure-sum-numbers").Run("measure", "ls", "--json")
 }
 
 func TestVariableManagementCommands(t *testing.T) {
