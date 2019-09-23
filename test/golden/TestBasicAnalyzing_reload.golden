@@ -1,6 +1,6 @@
-INFO: Connected
-INFO: TableA <<  5 Lines fetched
-INFO: TableB <<  5 Lines fetched
-INFO: Reload finished successfully
-INFO: Saving app...
-INFO: App successfully saved
+Connected
+TableA <<  5 Lines fetched
+TableB <<  5 Lines fetched
+Reload finished successfully
+Saving app...
+App successfully saved
