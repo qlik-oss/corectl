@@ -117,13 +117,13 @@ func setDimension(ctx context.Context, doc *enigma.Doc, dimensionID string, raw 
 		return err
 	}
 	if dimension.Handle != 0 {
-		log.Debugln("Updating dimension " + dimensionID)
+		log.Verboseln("Updating dimension " + dimensionID)
 		err = dimension.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not update %s with %s: %s", "dimension", dimensionID, err)
 		}
 	} else {
-		log.Debugln("Creating dimension " + dimensionID)
+		log.Verboseln("Creating dimension " + dimensionID)
 		_, err = doc.CreateDimensionRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not create %s with %s: %s", "dimension", dimensionID, err)

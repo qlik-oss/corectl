@@ -17,19 +17,17 @@ type logLevel int
 func (l logLevel) String() string {
 	switch l {
 	case quiet:
-		return "QUIET"
+		return ""
 	case fatal:
-		return "FATAL"
+		return "ERROR"
 	case err:
 		return "ERROR"
 	case warn:
-		return "WARN"
+		return ""
 	case info:
-		return "INFO"
-	case debug:
-		return "DEBUG"
-	case trace:
-		return "TRACE"
+		return ""
+	case verbose:
+		return ""
 	}
 	return ""
 }
@@ -40,8 +38,7 @@ const (
 	err
 	warn
 	info
-	debug
-	trace // not used
+	verbose
 )
 
 var level logLevel
@@ -62,7 +59,7 @@ func Init() {
 		case viper.GetBool("quiet"):
 			level = quiet
 		case viper.GetBool("verbose"):
-			level = debug
+			level = verbose
 		default:
 			level = info
 		}
@@ -138,16 +135,16 @@ func Info(a ...interface{}) {
 	print(info, a...)
 }
 
-func Debugln(a ...interface{}) {
-	println(debug, a...)
+func Verboseln(a ...interface{}) {
+	println(verbose, a...)
 }
 
-func Debugf(format string, a ...interface{}) {
-	printf(debug, format, a...)
+func Verbosef(format string, a ...interface{}) {
+	printf(verbose, format, a...)
 }
 
-func Debug(a ...interface{}) {
-	print(debug, a...)
+func Verbose(a ...interface{}) {
+	print(verbose, a...)
 }
 
 func printf(lvl logLevel, format string, a ...interface{}) {
@@ -182,7 +179,7 @@ func print(lvl logLevel, a ...interface{}) {
 			str = str[1:]
 		}
 		prefix := ""
-		if lvl != quiet {
+		if lvl.String() != "" {
 			prefix = lvl.String() + ": "
 		}
 		formatted := format(prefix, str)

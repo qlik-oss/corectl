@@ -18,7 +18,7 @@ func applyNameToIDTransformation(appName string) (appID string, found bool) {
 	apps := getKnownApps()
 
 	if apps == nil {
-		log.Debugln("knownApps yaml file not found")
+		log.Verboseln("knownApps yaml file not found")
 		return appName, false
 	}
 
@@ -26,11 +26,11 @@ func applyNameToIDTransformation(appName string) (appID string, found bool) {
 	host := engineURL.Host
 
 	if id, exists := apps[host][appName]; exists {
-		log.Debugln("Found id: " + id + " for app with name: " + appName + " @" + host)
+		log.Verboseln("Found id: " + id + " for app with name: " + appName + " @" + host)
 		return id, true
 	}
 
-	log.Debugln("No known id for app with name: " + appName)
+	log.Verboseln("No known id for app with name: " + appName)
 	return appName, false
 }
 
@@ -62,14 +62,14 @@ func SetAppIDToKnownApps(appName string, appID string, remove bool) {
 	if remove {
 		if _, exists := apps[host][appName]; exists {
 			delete(apps[host], appName)
-			log.Debugln("Removed app with name: " + appName + " and id: " + appID + " @" + host + " from known apps")
+			log.Verboseln("Removed app with name: " + appName + " and id: " + appID + " @" + host + " from known apps")
 		}
 	} else {
 		if apps[host] == nil {
 			apps[host] = map[string]string{}
 		}
 		apps[host][appName] = appID
-		log.Debugln("Added app with name: " + appName + " and id: " + appID + " @" + host + " to known apps")
+		log.Verboseln("Added app with name: " + appName + " and id: " + appID + " @" + host + " to known apps")
 	}
 
 	// Write to knownApps.yml
@@ -99,7 +99,7 @@ func createKnownAppsFileIfNotExist() {
 			log.Fatalf("could not create %s: %s\n", knownAppsFilePath, err)
 		}
 
-		log.Debugln("Created ~/.corectl/knownApps.yml for storage of app ids")
+		log.Verboseln("Created ~/.corectl/knownApps.yml for storage of app ids")
 	}
 }
 

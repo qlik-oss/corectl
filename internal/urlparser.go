@@ -103,7 +103,7 @@ func TryParseAppFromURL(engineURL string) string {
 	values := re.FindStringSubmatch(engineURL)
 	if len(values) > 0 {
 		appName := values[1]
-		log.Debugln("Found app in engine url: " + appName)
+		log.Verboseln("Found app in engine url: " + appName)
 		return appName
 	}
 	return ""

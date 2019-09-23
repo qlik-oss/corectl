@@ -42,13 +42,13 @@ func logConnectError(err error, engine string) {
 
 func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header, certificates *tls.Config) *enigma.Global {
 	engineURL := buildWebSocketURL(ttl)
-	log.Debugln("Engine: " + engineURL)
+	log.Verboseln("Engine: " + engineURL)
 
 	if headers.Get("X-Qlik-Session") == "" {
 		sessionID := getSessionID(appName)
 		headers.Set("X-Qlik-Session", sessionID)
 	}
-	log.Debugln("SessionId " + headers.Get("X-Qlik-Session"))
+	log.Verboseln("SessionId " + headers.Get("X-Qlik-Session"))
 
 	var dialer = enigma.Dialer{}
 
@@ -116,7 +116,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 		}
 	}
 
-	log.Debugln("---------- Connecting to engine ----------")
+	log.Verboseln("---------- Connecting to engine ----------")
 	global := connectToEngine(ctx, appName, ttl, headers, certificates)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
@@ -130,14 +130,14 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 		doc, _ = global.GetActiveDoc(ctx)
 		if doc != nil {
 			// There is an already opened doc!
-			log.Debugln("App with name: " + appName + " and id: " + appID + "(reconnected)")
+			log.Verboseln("App with name: " + appName + " and id: " + appID + "(reconnected)")
 		} else {
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if doc != nil {
 				if noData {
-					log.Debugln("Opened app with name: " + appName + " and id: " + appID + " without data")
+					log.Verboseln("Opened app with name: " + appName + " and id: " + appID + " without data")
 				} else {
-					log.Debugln("Opened app with name: " + appName + " and id: " + appID)
+					log.Verboseln("Opened app with name: " + appName + " and id: " + appID)
 				}
 			} else if createAppIfMissing {
 				var success bool
@@ -155,7 +155,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 					log.Fatalf("could not do open app with ID '%s': %s\n", appID, err)
 				}
 				if doc != nil {
-					log.Debugln("App with name: " + appName + " and id: " + appID + "(new)")
+					log.Verboseln("App with name: " + appName + " and id: " + appID + "(new)")
 				}
 			} else {
 				log.Fatalf("could not open app with ID '%s': %s\n", appID, err)
@@ -174,7 +174,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 
 func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error {
 	for sessionEvent := range sessionMessages {
-		log.Debugln(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		log.Verboseln(sessionEvent.Topic + " " + string(sessionEvent.Content))
 		if sessionEvent.Topic == "OnConnected" {
 			var parsedEvent map[string]string
 			err := json.Unmarshal(sessionEvent.Content, &parsedEvent)
@@ -192,7 +192,7 @@ func waitForOnConnectedMessage(sessionMessages chan enigma.SessionMessage) error
 
 func printSessionMessagesIfInVerboseMode(sessionMessages chan enigma.SessionMessage) {
 	for sessionEvent := range sessionMessages {
-		log.Debugln(sessionEvent.Topic + " " + string(sessionEvent.Content))
+		log.Verboseln(sessionEvent.Topic + " " + string(sessionEvent.Content))
 	}
 }
 

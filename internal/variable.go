@@ -94,13 +94,13 @@ func setVariable(ctx context.Context, doc *enigma.Doc, variableName string, raw 
 		return err
 	}
 	if variable.Handle != 0 {
-		log.Debugln("Updating variable " + variableName)
+		log.Verboseln("Updating variable " + variableName)
 		err = variable.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not update %s with %s: %s", "variable", variableName, err)
 		}
 	} else {
-		log.Debugln("Creating variable " + variableName)
+		log.Verboseln("Creating variable " + variableName)
 		_, err = doc.CreateVariableExRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not create %s with %s: %s", "variable", variableName, err)

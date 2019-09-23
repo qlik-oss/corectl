@@ -46,11 +46,11 @@ func SetContext(contextName, comment string) string {
 
 	if handler.Exists(contextName) {
 		context = handler.Get(contextName)
-		log.Debugln("Updating context: " + contextName)
+		log.Verboseln("Updating context: " + contextName)
 		update = true
 	} else {
 		context = &Context{}
-		log.Debugln("Creating context: " + contextName)
+		log.Verboseln("Creating context: " + contextName)
 	}
 
 	if certPath := viper.GetString("certificates"); certPath != "" {
@@ -65,7 +65,7 @@ func SetContext(contextName, comment string) string {
 	})
 
 	if update {
-		log.Debugf("Updated fields %v of context %s\n", updated, contextName)
+		log.Verbosef("Updated fields %v of context %s\n", updated, contextName)
 	}
 
 	if err := context.Validate(); err != nil {
@@ -128,7 +128,7 @@ func NewContextHandler() *ContextHandler {
 
 func (ch *ContextHandler) Exists(contextName string) bool {
 	if _, ok := ch.Contexts[contextName]; ok {
-		log.Debugln("Found context: " + contextName)
+		log.Verboseln("Found context: " + contextName)
 		return ok
 	}
 	return false
@@ -154,21 +154,21 @@ func (ch *ContextHandler) Use(contextName string) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	if ch.Current == contextName {
-		log.Debugln("Current context already set to " + contextName)
+		log.Verboseln("Current context already set to " + contextName)
 		return
 	}
-	log.Debugln("Set current context to: " + contextName)
+	log.Verboseln("Set current context to: " + contextName)
 
 	ch.Current = contextName
 }
 
 func (ch *ContextHandler) Clear() (previous string) {
 	if ch.Current == "" {
-		log.Debugln("No context is set")
+		log.Verboseln("No context is set")
 		return ""
 	}
 	previous = ch.Current
-	log.Debugf("Unset current context '%s'\n", previous)
+	log.Verbosef("Unset current context '%s'\n", previous)
 	ch.Current = ""
 	return
 }
@@ -178,7 +178,7 @@ func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	delete(ch.Contexts, contextName)
-	log.Debugln("Removed context with name: " + contextName)
+	log.Verboseln("Removed context with name: " + contextName)
 	wasCurrent := false
 	if ch.Current == contextName {
 		ch.Current = ""
@@ -267,6 +267,6 @@ func createContextFileIfNotExist() {
 			log.Fatalf("could not create %s: %s\n", contextFilePath, err)
 		}
 
-		log.Debugln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
+		log.Verboseln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
 	}
 }

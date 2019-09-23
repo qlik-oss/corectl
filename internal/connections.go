@@ -50,10 +50,10 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		}
 
 		if existingConnectionID := findExistingConnection(connections, connection.Name); existingConnectionID != "" {
-			log.Debugln("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
+			log.Verboseln("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
 			err = doc.ModifyConnection(ctx, existingConnectionID, connection, true)
 		} else {
-			log.Debugln("Creating new connection: " + connection.Name)
+			log.Verboseln("Creating new connection: " + connection.Name)
 			var id string
 			id, err = doc.CreateConnection(ctx, connection)
 			if err == nil {

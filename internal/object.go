@@ -143,22 +143,22 @@ func setObject(ctx context.Context, doc *enigma.Doc, info *enigma.NxInfo, props 
 	}
 	if object.Handle != 0 {
 		if isGenericObjectEntry {
-			log.Debugln("Updating object " + objectID + " using SetFullPropertyTree")
+			log.Verboseln("Updating object " + objectID + " using SetFullPropertyTree")
 			err = object.SetFullPropertyTreeRaw(ctx, raw)
 		} else {
-			log.Debugln("Updating object " + objectID + " using SetProperties")
+			log.Verboseln("Updating object " + objectID + " using SetProperties")
 			err = object.SetPropertiesRaw(ctx, raw)
 		}
 		if err != nil {
 			return fmt.Errorf("failed to update %s %s: %s", "object", objectID, err)
 		}
 	} else {
-		log.Debugln("Creating object " + objectID)
+		log.Verboseln("Creating object " + objectID)
 		if isGenericObjectEntry {
 			var createdObject *enigma.GenericObject
 			objectType := props.Info.Type
 			createdObject, err = doc.CreateObject(ctx, &enigma.GenericObjectProperties{Info: &enigma.NxInfo{Id: objectID, Type: objectType}})
-			log.Debugln("Setting object  " + objectID + " using SetFullPropertyTree")
+			log.Verboseln("Setting object  " + objectID + " using SetFullPropertyTree")
 			err = createdObject.SetFullPropertyTreeRaw(ctx, raw)
 		} else {
 			_, err = doc.CreateObjectRaw(ctx, raw)

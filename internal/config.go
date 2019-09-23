@@ -144,11 +144,11 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 	switch {
 	case configFile != "":
 		ConfigDir = filepath.Dir(configFile)
-		log.Debugln("Using config file: " + configFile)
+		log.Verboseln("Using config file: " + configFile)
 	case withContext:
-		log.Debugln("No config file specified, using context.")
+		log.Verboseln("No config file specified, using context.")
 	default:
-		log.Debugln("No config file specified, using default values.")
+		log.Verboseln("No config file specified, using default values.")
 	}
 }
 
@@ -337,7 +337,7 @@ func mergeContext(config *map[interface{}]interface{}) {
 		return
 	}
 
-	log.Debugln("Merging config with context: " + contextName)
+	log.Verboseln("Merging config with context: " + contextName)
 
 	for k, v := range context.ToMap() {
 		if _, ok := (*config)[k]; ok {

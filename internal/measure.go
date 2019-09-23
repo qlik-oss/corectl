@@ -119,13 +119,13 @@ func setMeasure(ctx context.Context, doc *enigma.Doc, measureID string, raw json
 		return err
 	}
 	if measure.Handle != 0 {
-		log.Debugln("Updating measure " + measureID)
+		log.Verboseln("Updating measure " + measureID)
 		err = measure.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("failed to update %s with %s: %s", "measure", measureID, err)
 		}
 	} else {
-		log.Debugln("Creating measure " + measureID)
+		log.Verboseln("Creating measure " + measureID)
 		_, err = doc.CreateMeasureRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("failed to create %s with %s: %s", "measure", measureID, err)
