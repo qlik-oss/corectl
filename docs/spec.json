@@ -46,7 +46,7 @@
     },
     "quiet": {
       "alias": "q",
-      "description": "Minimal logging, limited to printing IDs where possible",
+      "description": "Restrict output to consist of IDs only. This can be useful for scripting.",
       "default": "false"
     },
     "traffic": {
