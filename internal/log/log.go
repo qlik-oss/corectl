@@ -19,9 +19,9 @@ func (l logLevel) String() string {
 	case quiet:
 		return ""
 	case fatal:
-		return "ERROR"
+		return "Error"
 	case err:
-		return "ERROR"
+		return "Error"
 	case warn:
 		return ""
 	case info:
@@ -170,36 +170,13 @@ func print(lvl logLevel, a ...interface{}) {
 			PrintAsJSON(msg)
 		}
 	} else {
-		str := fmt.Sprint(a...)
-		// If the string has a carriage return ('\r') as its first character
-		// we need to remove it before adding prefixes and prepend it to the formatted string.
-		cr := false
-		if str[0] == '\r' {
-			cr = true
-			str = str[1:]
+		prefix := lvl.String()
+		if prefix != "" {
+			prefix += ": "
 		}
-		prefix := ""
-		if lvl.String() != "" {
-			prefix = lvl.String() + ": "
-		}
-		formatted := format(prefix, str)
-		if cr {
-			formatted = "\r" + formatted
-		}
-		fmt.Print(formatted)
+		str := prefix + fmt.Sprint(a...)
+		fmt.Print(str)
 	}
-}
-
-// format adds the specified prefix to each line contained in the specified string
-// returns the resulting string
-func format(prefix, str string) string {
-	lines := strings.Split(str, "\n")
-	for i, l := range lines {
-		if l != "" {
-			lines[i] = prefix + l
-		}
-	}
-	return strings.Join(lines, "\n")
 }
 
 // PrintAsJSON prints data as JSON. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
