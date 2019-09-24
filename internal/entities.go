@@ -44,7 +44,7 @@ func getEntityPaths(commandLineGlobPattern string, configEntityParam string) ([]
 			return paths, err
 		}
 		if len(paths) == 0 {
-			log.Warnf("no '%s' found for pattern %s", configEntityParam, commandLineGlobPattern)
+			log.Warnf("No '%s' found for pattern %s\n", configEntityParam, commandLineGlobPattern)
 		}
 	} else {
 		if ConfigDir == "" {
@@ -61,7 +61,7 @@ func getEntityPaths(commandLineGlobPattern string, configEntityParam string) ([]
 			if err != nil {
 				log.Fatalf("could not interpret glob pattern '%s': %s\n", pattern, err)
 			} else if len(pathMatches) == 0 {
-				log.Warnf("no '%s' found for pattern %s", configEntityParam, pattern)
+				log.Warnf("No '%s' found for pattern %s\n", configEntityParam, pattern)
 			} else {
 				paths = append(paths, pathMatches...)
 			}

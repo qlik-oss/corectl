@@ -47,7 +47,6 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	// bound to viper
 	globalFlags.BoolP("verbose", "v", false, "Log extra information")
 	globalFlags.BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
-	globalFlags.BoolP("quiet", "q", false, "Restrict output to consist of IDs only. This can be useful for scripting.")
 	globalFlags.StringP("engine", "e", "localhost:9076", "URL to the Qlik Associative Engine")
 	globalFlags.StringP("app", "a", "", "Name or identifier of the app")
 	globalFlags.String("ttl", "0", "Qlik Associative Engine session time to live in seconds")
@@ -93,6 +92,7 @@ func initLocalFlags() {
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
 	localFlags.Bool("minimum", false, "Only print properties required by engine")
 	localFlags.String("comment", "", "Comment for the context")
+	localFlags.BoolP("quiet", "q", false, "Only print IDs. Useful for scripting")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

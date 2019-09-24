@@ -51,7 +51,7 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var listMeasuresCmd = &cobra.Command{
+var listMeasuresCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic measures in the current app",
@@ -63,7 +63,7 @@ var listMeasuresCmd = &cobra.Command{
 		items := internal.ListMeasures(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
-}
+}, "quiet")
 
 var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <measure-id>",

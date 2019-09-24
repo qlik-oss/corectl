@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var listAppsCmd = &cobra.Command{
+var listAppsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all apps available in the current engine",
@@ -26,7 +26,7 @@ var listAppsCmd = &cobra.Command{
 		}
 		printer.PrintApps(docList, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <app-id>",
@@ -49,7 +49,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	},
 }, "suppress")
 
-var importAppCmd = &cobra.Command{
+var importAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "import",
 	Args:    cobra.ExactArgs(1),
 	Short:   "Import the specified app into the engine, returns the ID of the created app",
@@ -70,7 +70,7 @@ var importAppCmd = &cobra.Command{
 		log.Info("Imported app with new ID: ")
 		log.Quiet(appID)
 	},
-}
+}, "quiet")
 
 var appCmd = &cobra.Command{
 	Use:   "app",

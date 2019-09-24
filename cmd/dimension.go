@@ -51,7 +51,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var listDimensionsCmd = &cobra.Command{
+var listDimensionsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic dimensions in the current app",
@@ -63,7 +63,7 @@ var listDimensionsCmd = &cobra.Command{
 		items := internal.ListDimensions(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
 	},
-}
+}, "quiet")
 
 var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <dimension-id>",

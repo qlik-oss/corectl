@@ -51,7 +51,7 @@ var removeVariableCmd = withLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var listVariablesCmd = &cobra.Command{
+var listVariablesCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic variables in the current app",
@@ -63,7 +63,7 @@ var listVariablesCmd = &cobra.Command{
 		items := internal.ListVariables(state.Ctx, state.Doc)
 		printer.PrintNamedItemsList(items, viper.GetBool("bash"), true)
 	},
-}
+}, "quiet")
 
 var getVariablePropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <variable-name>",

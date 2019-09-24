@@ -52,7 +52,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	},
 }, "no-save")
 
-var listObjectsCmd = &cobra.Command{
+var listObjectsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all generic objects in the current app",
@@ -64,7 +64,7 @@ var listObjectsCmd = &cobra.Command{
 		items := internal.ListObjects(state.Ctx, state.Doc)
 		printer.PrintNamedItemsListWithType(items, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Use:     "properties <object-id>",

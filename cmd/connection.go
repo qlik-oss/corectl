@@ -51,7 +51,7 @@ corectl connection rm ID-1 ID-2`,
 	},
 }
 
-var listConnectionsCmd = &cobra.Command{
+var listConnectionsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all connections in the current app",
@@ -66,7 +66,7 @@ var listConnectionsCmd = &cobra.Command{
 		}
 		printer.PrintConnections(connections, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var getConnectionCmd = &cobra.Command{
 	Use:     "get <connection-id>",

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var listAlternateStatesCmd = &cobra.Command{
+var listAlternateStatesCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all alternate states in the current app",
@@ -20,7 +20,7 @@ var listAlternateStatesCmd = &cobra.Command{
 		items := internal.ListAlternateStates(state.Ctx, state.Doc)
 		printer.PrintStates(items, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var addAlternateStateCmd = &cobra.Command{
 	Use:     "add <alternate-state-name>",
