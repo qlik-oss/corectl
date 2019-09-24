@@ -3,6 +3,7 @@
 package test
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -84,6 +85,26 @@ func TestContextManagement(t *testing.T) {
 	}
 	// No context here, expecting default
 	p.ExpectIncludes("localhost:9076").Run("status")
+}
+
+func TestQuietCommands(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	cmds := []string{
+		"connection", "dimension", "measure",
+		"object", "state", "variable",
+	}
+	defer p.Reset()
+	p.ExpectOK().Run("build")
+	for _, cmd := range cmds {
+		out := p.ExpectOK().Run(cmd, "ls", "-q")
+		ids := bytes.Split(out, []byte("\n"))
+		for _, id := range ids {
+			if len(id) > 0 {
+				p.ExpectOK().Run(cmd, "rm", string(id))
+			}
+		}
+	}
+	p.ExpectIncludes(t.Name()).Run("app", "ls", "-q")
 }
 
 func TestConnectionManagementCommands(t *testing.T) {
