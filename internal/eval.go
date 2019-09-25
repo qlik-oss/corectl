@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -30,12 +31,12 @@ func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 	layout, err := object.GetLayout(ctx)
 
 	if err != nil {
-		FatalErrorf("could not get hypercube layout: %s", err)
+		log.Fatalf("could not get hypercube layout: %s\n", err)
 	}
 
 	// If the dimension info contains an error element the expression failed to evaluate
 	if len(layout.HyperCube.DimensionInfo) != 0 && layout.HyperCube.DimensionInfo[0].Error != nil {
-		FatalErrorf("could not evaluate expression, error returned code: %d", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
+		log.Fatalf("could not evaluate expression, error returned code: %d\n", layout.HyperCube.DimensionInfo[0].Error.ErrorCode)
 	}
 
 	writer := tablewriter.NewWriter(os.Stdout)

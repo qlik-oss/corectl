@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/browser"
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -144,17 +145,17 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 		}
 		if appSpecified {
 			if ok, err := internal.AppExists(rootCtx, engine, appID, headers, certificates); !ok {
-				internal.FatalError(err)
+				log.Fatalln(err)
 			}
 		}
 
 		if !strings.HasPrefix(catwalkURL, "www") && !strings.HasPrefix(catwalkURL, "https://") && !strings.HasPrefix(catwalkURL, "http://") {
-			internal.FatalErrorf("%s is not a valid url\nPlease provide a valid URL starting with 'https://', 'http://' or 'www'", catwalkURL)
+			log.Fatalf("%s is not a valid url\nPlease provide a valid URL starting with 'https://', 'http://' or 'www'\n", catwalkURL)
 		}
 
 		err := browser.OpenURL(catwalkURL)
 		if err != nil {
-			internal.FatalErrorf("could not open URL: %s", err)
+			log.Fatalf("could not open URL: %s\n", err)
 		}
 	},
 }, "catwalk-url")

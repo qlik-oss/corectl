@@ -19,7 +19,8 @@ corectl connection ls
 ### Options
 
 ```
-  -h, --help   help for ls
+  -h, --help    help for ls
+  -q, --quiet   Only print IDs. Useful for scripting
 ```
 
 ### Options inherited from parent commands

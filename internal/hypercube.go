@@ -3,13 +3,14 @@ package internal
 import (
 	"context"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
 func applySelection(ctx context.Context, doc *enigma.Doc, fieldName string, value string) {
 	field, err := doc.GetField(ctx, fieldName, "")
 	if err != nil {
-		FatalErrorf("could not find field '%s': %s", fieldName, err)
+		log.Fatalf("could not find field '%s': %s\n", fieldName, err)
 	}
 	field.Clear(ctx)
 	if value != "" {

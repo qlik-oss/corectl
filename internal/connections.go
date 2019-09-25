@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -50,19 +50,19 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsF
 		}
 
 		if existingConnectionID := findExistingConnection(connections, connection.Name); existingConnectionID != "" {
-			LogVerbose("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
+			log.Verboseln("Modifying connection: " + connection.Name + " (" + existingConnectionID + ")")
 			err = doc.ModifyConnection(ctx, existingConnectionID, connection, true)
 		} else {
-			LogVerbose("Creating new connection: " + fmt.Sprint(connection.Name))
+			log.Verboseln("Creating new connection: " + connection.Name)
 			var id string
 			id, err = doc.CreateConnection(ctx, connection)
 			if err == nil {
-				fmt.Println("New connection created with id:", id)
+				log.Infoln("New connection created with id:", id)
 			}
 		}
 
 		if err != nil {
-			FatalError("could not create/modify connection", err)
+			log.Fatalln("could not create/modify connection", err)
 		}
 	}
 	return err

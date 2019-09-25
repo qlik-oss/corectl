@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/internal/rest"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var listAppsCmd = &cobra.Command{
+var listAppsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all apps available in the current engine",
@@ -21,11 +22,11 @@ var listAppsCmd = &cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, true)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
-			internal.FatalErrorf("could not retrieve app list: %s", err)
+			log.Fatalf("could not retrieve app list: %s\n", err)
 		}
 		printer.PrintApps(docList, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var removeAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "rm <app-id>",
@@ -38,7 +39,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 		app := args[0]
 
 		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, certificates); !ok {
-			internal.FatalError(err)
+			log.Fatalln(err)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
@@ -48,7 +49,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	},
 }, "suppress")
 
-var importAppCmd = &cobra.Command{
+var importAppCmd = withLocalFlags(&cobra.Command{
 	Use:     "import",
 	Args:    cobra.ExactArgs(1),
 	Short:   "Import the specified app into the engine, returns the ID of the created app",
@@ -63,12 +64,13 @@ var importAppCmd = &cobra.Command{
 		engine := internal.GetEngineURL()
 		appID, appName, err := rest.ImportApp(appPath, engine, headers, certificates)
 		if err != nil {
-			internal.FatalError(err)
+			log.Fatalln(err)
 		}
 		internal.SetAppIDToKnownApps(appName, appID, false)
-		fmt.Println("Imported app with new ID: " + appID)
+		log.Info("Imported app with new ID: ")
+		log.Quiet(appID)
 	},
-}
+}, "quiet")
 
 var appCmd = &cobra.Command{
 	Use:   "app",

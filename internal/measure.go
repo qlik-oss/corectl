@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -71,13 +72,13 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "measures")
 	if err != nil {
-		FatalError("could not interpret glob pattern: ", err)
+		log.Fatalln("could not interpret glob pattern: ", err)
 	}
 
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalErrorf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
 		ch := make(chan error)
 
@@ -101,13 +102,13 @@ func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern st
 		for range rawEntities {
 			err := <-ch
 			if err != nil {
-				fmt.Printf("ERROR " + err.Error())
+				log.Errorln(err)
 				success = false
 			}
 		}
 
 		if !success {
-			FatalError("One or more measures failed to be created or updated")
+			log.Fatalln("One or more measures failed to be created or updated")
 		}
 	}
 }
@@ -118,13 +119,13 @@ func setMeasure(ctx context.Context, doc *enigma.Doc, measureID string, raw json
 		return err
 	}
 	if measure.Handle != 0 {
-		LogVerbose("Updating measure " + measureID)
+		log.Verboseln("Updating measure " + measureID)
 		err = measure.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("failed to update %s with %s: %s", "measure", measureID, err)
 		}
 	} else {
-		LogVerbose("Creating measure " + measureID)
+		log.Verboseln("Creating measure " + measureID)
 		_, err = doc.CreateMeasureRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("failed to create %s with %s: %s", "measure", measureID, err)

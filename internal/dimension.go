@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -70,12 +71,12 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
 	paths, err := getEntityPaths(commandLineGlobPattern, "dimensions")
 	if err != nil {
-		FatalError("could not interpret glob pattern: ", err)
+		log.Fatalln("could not interpret glob pattern: ", err)
 	}
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {
-			FatalErrorf("could not parse file %s: %s", path, err)
+			log.Fatalf("could not parse file %s: %s\n", path, err)
 		}
 		ch := make(chan error)
 
@@ -99,13 +100,13 @@ func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern 
 		for range rawEntities {
 			err := <-ch
 			if err != nil {
-				fmt.Printf("ERROR " + err.Error())
+				log.Errorln(err)
 				success = false
 			}
 		}
 
 		if !success {
-			FatalError("One or more dimensions failed to be created or updated")
+			log.Fatalln("One or more dimensions failed to be created or updated")
 		}
 	}
 }
@@ -116,13 +117,13 @@ func setDimension(ctx context.Context, doc *enigma.Doc, dimensionID string, raw 
 		return err
 	}
 	if dimension.Handle != 0 {
-		LogVerbose("Updating dimension " + dimensionID)
+		log.Verboseln("Updating dimension " + dimensionID)
 		err = dimension.SetPropertiesRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not update %s with %s: %s", "dimension", dimensionID, err)
 		}
 	} else {
-		LogVerbose("Creating dimension " + dimensionID)
+		log.Verboseln("Creating dimension " + dimensionID)
 		_, err = doc.CreateDimensionRaw(ctx, raw)
 		if err != nil {
 			return fmt.Errorf("could not create %s with %s: %s", "dimension", dimensionID, err)

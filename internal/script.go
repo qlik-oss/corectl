@@ -4,6 +4,7 @@ import (
 	"context"
 	"io/ioutil"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -11,7 +12,7 @@ import (
 func SetScript(ctx context.Context, doc *enigma.Doc, scriptFilePath string) {
 	loadScript, err := ioutil.ReadFile(scriptFilePath)
 	if err != nil {
-		FatalErrorf("could not find loadscript: %s", scriptFilePath)
+		log.Fatalf("could not find loadscript: %s\n", scriptFilePath)
 	}
 
 	err = doc.SetScript(ctx, string(loadScript))

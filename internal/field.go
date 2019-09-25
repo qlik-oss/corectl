@@ -2,15 +2,15 @@ package internal
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
 // PrintFieldValues prints the first few rows of a field to system out.
 func PrintFieldValues(ctx context.Context, doc *enigma.Doc, fieldName string) {
 	ensureModelExists(ctx, doc)
-	fmt.Print(getFieldContentAsTable(ctx, doc, fieldName, 100))
+	log.Quiet(getFieldContentAsTable(ctx, doc, fieldName, 100))
 }
 
 func getFieldContentAsString(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
@@ -78,7 +78,7 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 
 	layout, err := object.GetLayout(ctx)
 	if err != nil {
-		fmt.Println(err)
+		log.Errorln(err)
 		return []string{}
 	}
 
@@ -86,7 +86,7 @@ func getFieldContent(ctx context.Context, doc *enigma.Doc, fieldName string, cou
 
 	// If there are no datapages, it is (probably?) not a field.
 	if len(layout.ListObject.DataPages) == 0 {
-		FatalErrorf("no field by name '%s'", fieldName)
+		log.Fatalf("no field by name '%s'\n", fieldName)
 	}
 
 	// Get hypercube layout

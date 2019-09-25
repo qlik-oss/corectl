@@ -3,10 +3,10 @@ package internal
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"net/http"
 	neturl "net/url"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/internal/rest"
 	"github.com/qlik-oss/enigma-go"
 )
@@ -89,7 +89,7 @@ func createFieldModels(ctx context.Context, doc *enigma.Doc, fieldNames []string
 		go func(index int, fieldName string) {
 			fieldDescr, err := doc.GetFieldDescription(ctx, fieldName)
 			if err != nil {
-				FatalErrorf("could not retrieve field description for '%s': %s", fieldName, err)
+				log.Fatalf("could not retrieve field description for '%s': %s\n", fieldName, err)
 			}
 			item := GetFieldDescriptionResultEntry{index: index, result: fieldDescr}
 			waitChannel <- item
@@ -129,15 +129,15 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, certificates *tls.Config, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
-		FatalErrorf("could not retrieve tables and keys: %s", err)
+		log.Fatalf("could not retrieve tables and keys: %s\n", err)
 	}
 	if len(tables) == 0 {
-		FatalErrorf("the data model is empty")
+		log.Fatalf("the data model is empty\n")
 	}
 	restMetadata, err := rest.ReadRestMetadata(appID, engine, headers, certificates)
 
 	if len(tables) > 0 && restMetadata == nil {
-		fmt.Println("No REST metadata available.")
+		log.Infoln("No REST metadata available.")
 	}
 	fieldNames := getSortedFieldsNames(ctx, doc, err)
 
@@ -240,9 +240,9 @@ type FieldSourceTableInfo struct {
 func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
 	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
-		FatalErrorf("could not retrieve tables and keys: %s", err)
+		log.Fatalf("could not retrieve tables and keys: %s\n", err)
 	}
 	if len(tables) == 0 {
-		FatalErrorf("the data model is empty")
+		log.Fatalf("the data model is empty\n")
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
@@ -33,7 +34,7 @@ var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
 func SetContext(contextName, comment string) string {
 	if contextName == "" {
-		FatalError("context name not supplied")
+		log.Fatalln("context name not supplied")
 	}
 
 	createContextFileIfNotExist()
@@ -45,11 +46,11 @@ func SetContext(contextName, comment string) string {
 
 	if handler.Exists(contextName) {
 		context = handler.Get(contextName)
-		LogVerbose("Updating context: " + contextName)
+		log.Verboseln("Updating context: " + contextName)
 		update = true
 	} else {
 		context = &Context{}
-		LogVerbose("Creating context: " + contextName)
+		log.Verboseln("Creating context: " + contextName)
 	}
 
 	if certPath := viper.GetString("certificates"); certPath != "" {
@@ -64,11 +65,11 @@ func SetContext(contextName, comment string) string {
 	})
 
 	if update {
-		LogVerbose(fmt.Sprintf("Updated fields %v of context %s", updated, contextName))
+		log.Verbosef("Updated fields %v of context %s\n", updated, contextName)
 	}
 
 	if err := context.Validate(); err != nil {
-		FatalErrorf("context '%s' is not valid: %s", contextName, err.Error())
+		log.Fatalf("context '%s' is not valid: %s\n", contextName, err.Error())
 	}
 
 	if !update {
@@ -112,7 +113,7 @@ func NewContextHandler() *ContextHandler {
 	}
 	err = yaml.Unmarshal(yamlFile, &handler)
 	if err != nil {
-		FatalErrorf("could not parse content of contexts yaml '%s': %s", yamlFile, err)
+		log.Fatalf("could not parse content of contexts yaml '%s': %s\n", yamlFile, err)
 	}
 
 	if handler.Contexts == nil {
@@ -127,7 +128,7 @@ func NewContextHandler() *ContextHandler {
 
 func (ch *ContextHandler) Exists(contextName string) bool {
 	if _, ok := ch.Contexts[contextName]; ok {
-		LogVerbose("Found context: " + contextName)
+		log.Verboseln("Found context: " + contextName)
 		return ok
 	}
 	return false
@@ -150,34 +151,34 @@ func (ch *ContextHandler) GetCurrent() *Context {
 
 func (ch *ContextHandler) Use(contextName string) {
 	if !ch.Exists(contextName) {
-		FatalErrorf("context with name '%s' does not exist", contextName)
+		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	if ch.Current == contextName {
-		LogVerbose("Current context already set to " + contextName)
+		log.Verboseln("Current context already set to " + contextName)
 		return
 	}
-	LogVerbose("Set current context to: " + contextName)
+	log.Verboseln("Set current context to: " + contextName)
 
 	ch.Current = contextName
 }
 
 func (ch *ContextHandler) Clear() (previous string) {
 	if ch.Current == "" {
-		LogVerbose("No context is set")
+		log.Verboseln("No context is set")
 		return ""
 	}
 	previous = ch.Current
-	LogVerbose(fmt.Sprintf("Unset context '%s'", previous))
+	log.Verbosef("Unset current context '%s'\n", previous)
 	ch.Current = ""
 	return
 }
 
 func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 	if !ch.Exists(contextName) {
-		FatalErrorf("context with name '%s' does not exist", contextName)
+		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
 	delete(ch.Contexts, contextName)
-	LogVerbose("Removed context with name: " + contextName)
+	log.Verboseln("Removed context with name: " + contextName)
 	wasCurrent := false
 	if ch.Current == contextName {
 		ch.Current = ""
@@ -190,7 +191,7 @@ func (ch *ContextHandler) Save() {
 	out, _ := yaml.Marshal(*ch)
 
 	if err := ioutil.WriteFile(contextFilePath, out, 0644); err != nil {
-		FatalErrorf("could not write to '%s': %s", contextFilePath, err)
+		log.Fatalf("could not write to '%s': %s\n", contextFilePath, err)
 	}
 }
 
@@ -256,16 +257,16 @@ func createContextFileIfNotExist() {
 		if _, err := os.Stat(path.Join(userHomeDir(), ".corectl")); os.IsNotExist(err) {
 			err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
 			if err != nil {
-				FatalError("could not create .corectl folder in home directory: ", err)
+				log.Fatalln("could not create .corectl folder in home directory: ", err)
 			}
 		}
 
 		// Create contexts.yml in .corectl folder
 		_, err := os.Create(contextFilePath)
 		if err != nil {
-			FatalErrorf("could not create %s: %s", contextFilePath, err)
+			log.Fatalf("could not create %s: %s\n", contextFilePath, err)
 		}
 
-		LogVerbose("Created ~/.corectl/contexts.yml for storage of corectl contexts")
+		log.Verboseln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
 	}
 }

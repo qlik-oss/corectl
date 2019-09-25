@@ -7,25 +7,28 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qlik-oss/corectl/internal"
-
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
 // PrintApps prints a list of apps and some meta to system out.
 func PrintApps(docList []*enigma.DocListEntry, printAsBash bool) {
-	if internal.PrintJSON {
-		internal.PrintAsJSON(filterDocEntries(docList))
-	} else if printAsBash {
+	switch mode {
+	case jsonMode:
+		log.PrintAsJSON(filterDocEntries(docList))
+	case bashMode:
 		for _, app := range docList {
 			PrintToBashComp(app.DocName)
 		}
-	} else {
+	case quietMode:
+		for _, app := range docList {
+			PrintToBashComp(app.DocId)
+		}
+	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title"})
-
 		for _, doc := range docList {
 			writer.Append([]string{doc.DocId, doc.DocName, doc.LastReloadTime, strconv.FormatBool(doc.ReadOnly), doc.Title})
 		}

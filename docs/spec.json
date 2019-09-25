@@ -65,10 +65,24 @@
       "commands": {
         "import": {
           "description": "Import the specified app into the engine, returns the ID of the created app",
-          "x-qlik-stability": "experimental"
+          "x-qlik-stability": "experimental",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "ls": {
-          "description": "Print a list of all apps available in the current engine"
+          "description": "Print a list of all apps available in the current engine",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Remove the specified app",
@@ -184,7 +198,14 @@
           "description": "Show the properties for a specific connection"
         },
         "ls": {
-          "description": "Print a list of all connections in the current app"
+          "description": "Print a list of all connections in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Remove one or many connections from the app"
@@ -230,7 +251,14 @@
           "description": "Evaluate the layout of an generic dimension"
         },
         "ls": {
-          "description": "Print a list of all generic dimensions in the current app"
+          "description": "Print a list of all generic dimensions in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "properties": {
           "description": "Print the properties of the generic dimension",
@@ -293,7 +321,14 @@
           "description": "Evaluate the layout of an generic measure and prints in JSON format"
         },
         "ls": {
-          "description": "Print a list of all generic measures in the current app"
+          "description": "Print a list of all generic measures in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "properties": {
           "description": "Print the properties of the generic measure",
@@ -337,7 +372,14 @@
           "description": "Evaluate the hypercube layout of the generic object"
         },
         "ls": {
-          "description": "Print a list of all generic objects in the current app"
+          "description": "Print a list of all generic objects in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "properties": {
           "description": "Print the properties of the generic object in JSON format",
@@ -411,7 +453,14 @@
           "description": "Add an alternate states in the current app"
         },
         "ls": {
-          "description": "Print a list of all alternate states in the current app"
+          "description": "Print a list of all alternate states in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "rm": {
           "description": "Removes an alternate state in the current app"
@@ -445,7 +494,14 @@
           "description": "Evaluate the layout of an generic variable"
         },
         "ls": {
-          "description": "Print a list of all generic variables in the current app"
+          "description": "Print a list of all generic variables in the current app",
+          "flags": {
+            "quiet": {
+              "alias": "q",
+              "description": "Only print IDs. Useful for scripting",
+              "default": "false"
+            }
+          }
         },
         "properties": {
           "description": "Print the properties of the generic variable",

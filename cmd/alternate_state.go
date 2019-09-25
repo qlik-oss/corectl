@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var listAlternateStatesCmd = &cobra.Command{
+var listAlternateStatesCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print a list of all alternate states in the current app",
@@ -19,7 +20,7 @@ var listAlternateStatesCmd = &cobra.Command{
 		items := internal.ListAlternateStates(state.Ctx, state.Doc)
 		printer.PrintStates(items, viper.GetBool("bash"))
 	},
-}
+}, "quiet")
 
 var addAlternateStateCmd = &cobra.Command{
 	Use:     "add <alternate-state-name>",
@@ -31,7 +32,7 @@ var addAlternateStateCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		stateName := args[0]
 		if stateName == "" {
-			internal.FatalError("no state name specified")
+			log.Fatalln("no state name specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		internal.AddAlternateState(state.Ctx, state.Doc, stateName)
@@ -51,7 +52,7 @@ var removeAlternateStateCmd = &cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		stateName := args[0]
 		if stateName == "" {
-			internal.FatalError("no state name specified")
+			log.Fatalln("no state name specified")
 		}
 		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
 		internal.RemoveAlternateState(state.Ctx, state.Doc, stateName)

@@ -1,0 +1,12 @@
+connections:
+  data:
+    connectionstring: /data
+    type: folder
+objects:
+  - ./object*.json
+measures:
+  - ./measure*.json
+dimensions:
+  - ./dimension*.json
+variables:
+  - ./variable*.json

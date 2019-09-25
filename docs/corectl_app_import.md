@@ -19,7 +19,8 @@ corectl import <path-to-app.qvf>
 ### Options
 
 ```
-  -h, --help   help for import
+  -h, --help    help for import
+  -q, --quiet   Only print IDs. Useful for scripting
 ```
 
 ### Options inherited from parent commands
