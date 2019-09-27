@@ -45,17 +45,13 @@ func GetConnectionsConfig() *ConnectionsConfig {
 	conn := viper.Get("connections")
 	switch conn.(type) {
 	case string:
-		// Read connections from a separate yaml file
+		// Read connections from a separate yaml file.
 		connFile := RelativeToProject(conn.(string))
 		config = ReadConnectionsFile(connFile)
 	case map[string]interface{}:
-		connMap := conn.(map[string]interface{})
-		configEntries := &map[string]ConnectionConfigEntry{}
-		err := reMarshal(connMap, configEntries)
-		if err != nil {
-			log.Fatalf("could not parse connections configuration: %s\n", err)
-		}
-		config = &ConnectionsConfig{Connections: configEntries}
+		// Read connections from config file.
+		// Not using viper due to camel case insensitivity.
+		config = ReadConnectionsFile(configFile)
 	}
 	return config
 }
