@@ -88,10 +88,12 @@ func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern st
 				err := json.Unmarshal(raw, &measure)
 				if err != nil {
 					ch <- fmt.Errorf("could not parse data in file %s: %s", path, err)
+					return
 				}
 				err = measure.validate()
 				if err != nil {
 					ch <- fmt.Errorf("validation error in file %s: %s", path, err)
+					return
 				}
 				ch <- setMeasure(ctx, doc, measure.Info.Id, raw)
 			}(raw)

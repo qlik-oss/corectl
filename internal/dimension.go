@@ -86,10 +86,12 @@ func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern 
 				err := json.Unmarshal(raw, &dim)
 				if err != nil {
 					ch <- fmt.Errorf("could not parse data in file %s: %s", path, err)
+					return
 				}
 				err = dim.validate()
 				if err != nil {
 					ch <- fmt.Errorf("validation error in file %s: %s", path, err)
+					return
 				}
 				ch <- setDimension(ctx, doc, dim.Info.Id, raw)
 			}(raw)
