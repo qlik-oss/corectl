@@ -32,6 +32,16 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 		log.Infoln("No fields found.")
 		return
 	}
+
+	if mode == bashMode || mode == quietMode {
+		for _, field := range data.Fields {
+			if field != nil && !field.IsSystem {
+				PrintToBashComp(field.Name)
+			}
+		}
+		return
+	}
+
 	writer := tablewriter.NewWriter(os.Stdout)
 
 	headers := []string{"Field", "Uniq/Tot", "RAM", "Tags", "Tables"}

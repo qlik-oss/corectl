@@ -73,7 +73,7 @@ var getValuesCmd = &cobra.Command{
 	},
 }
 
-var getFieldsCmd = &cobra.Command{
+var getFieldsCmd = withLocalFlags(&cobra.Command{
 	Use:     "fields",
 	Args:    cobra.ExactArgs(0),
 	Short:   "Print field list",
@@ -86,7 +86,7 @@ var getFieldsCmd = &cobra.Command{
 		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, certificates, false)
 		printer.PrintFields(data, false)
 	},
-}
+}, "quiet")
 
 var getKeysCmd = &cobra.Command{
 	Use:     "keys",

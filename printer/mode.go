@@ -43,12 +43,4 @@ func Init() {
 	case viper.GetBool("quiet"):
 		mode = quietMode
 	}
-	// Example implementation if we would like to log precedence information
-	/*
-		for m := jsonMode; m > 0; m-- {
-			if mode > m {
-				fmt.Printf("flag '--%s' overriden by '--%s'\n", m.String(), mode.String())
-			}
-		}
-	*/
 }
