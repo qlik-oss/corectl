@@ -58,6 +58,7 @@ func Init() {
 		switch {
 		case viper.GetBool("quiet"):
 			level = quiet
+			Traffic = false
 		case viper.GetBool("verbose"):
 			level = verbose
 		default:
