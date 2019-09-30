@@ -19,7 +19,8 @@ corectl fields
 ### Options
 
 ```
-  -h, --help   help for fields
+  -h, --help    help for fields
+  -q, --quiet   Only print IDs. Useful for scripting
 ```
 
 ### Options inherited from parent commands
