@@ -20,22 +20,30 @@ if [[ $1 == "-?" || $1 == "-h" || $1 == "--help" ]]; then
   exit 0
 fi
 
-function pre_flight_checks() {
-  # Check if there are local uncommitted changes
+function sanity_check() {
   if [[ ! -z $(git status --porcelain) ]]; then
     echo "There are uncommitted changes. Please make sure branch is clean."
+    git status --porcelain
+    exit 1
+  fi
+  local_branch=$(git rev-parse --abbrev-ref HEAD)
+  if [[ $local_branch != "master" ]]; then
+    echo "This script can only be run from the master branch."
+    echo "You are on '$local_branch'. Aborting."
     exit 1
   fi
   # Check if local branch is up-to-date with remote master branch
   git fetch origin master
-  if [[ ! -z $(git diff origin/master) ]]; then
+  git diff origin/master --exit-code > /dev/null
+  if [[ $? -ne 0 ]]; then
     echo "Local branch is not up-to-date with remote master. Please pull the latest changes."
+    git diff origin/master --name-only
     exit 1
   fi
 }
 
 ## Verify that the local branch is pristine
-pre_flight_checks
+sanity_check
 
 ## Build corectl with the version number and generate an API specification
 echo "Generating new API specification for version ${RELEASE_VERSION}"
