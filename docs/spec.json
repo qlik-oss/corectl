@@ -293,7 +293,14 @@
       "description": "Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the \u003cmeasure\u003e by \u003cdimension\u003e notation. If dimensions are omitted then the eval will be evaluated over all dimensions."
     },
     "fields": {
-      "description": "Print all the fields in an app, and for each field also some sample content, tags and and number of values"
+      "description": "Print all the fields in an app, and for each field also some sample content, tags and and number of values",
+      "flags": {
+        "quiet": {
+          "alias": "q",
+          "description": "Only print IDs. Useful for scripting",
+          "default": "false"
+        }
+      }
     },
     "generate-docs": {
       "description": "Generate markdown docs based on cobra commands"
