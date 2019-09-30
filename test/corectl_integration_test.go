@@ -104,7 +104,13 @@ func TestQuietCommands(t *testing.T) {
 			}
 		}
 	}
-	p.ExpectIncludes(t.Name()).Run("app", "ls", "-q")
+	// As the quiet flag trumps the traffic flag these two commands
+	// should be equal.
+	out1 := p.ExpectIncludes(t.Name()).Run("app", "ls", "-q")
+	out2 := p.ExpectOK().Run("app", "ls", "-q", "-t")
+	if string(out1) != string(out2) {
+		t.Error("Expected 'corectl app ls -q -t' to be equal to 'corectl app ls -q'")
+	}
 }
 
 func TestConnectionManagementCommands(t *testing.T) {
