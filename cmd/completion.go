@@ -90,7 +90,7 @@ __corectl_custom_func()
 			__corectl_handle_filename_extension_flag "yaml|yml"
 			;;
 		corectl_values)
-			__corectl_get_fields
+			__corectl_fields
 			;;
     *)
 			COMPREPLY+=( $( compgen -W "" -- "$cur" ) )
@@ -209,7 +209,7 @@ __corectl_get_contexts()
 	__corectl_call_corectl "context ls --bash"
 }
 
-__corectl_get_fields()
+__corectl_fields()
 {
 	__corectl_call_corectl "fields --bash"
 }
