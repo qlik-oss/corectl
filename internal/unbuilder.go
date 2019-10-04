@@ -37,6 +37,11 @@ type (
 	}
 )
 
+// Regex translation:
+//   \pL - Unicode group for letters, meaning all letters.
+//   \d  - Digits
+// Summary, match anything that is not a unicode letter, number, hyphen or underscore.
+// This is to ensure that our path names are not "bonkers".
 var matchAllNonAlphaNumeric = regexp.MustCompile(`[^\pL\d_-]+`)
 
 // Unbuild exports measures, dimensions, variables, connections, objects and a config file from an app into the file system
