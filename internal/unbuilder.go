@@ -37,7 +37,7 @@ type (
 	}
 )
 
-var matchAllNonAlphaNumeric = regexp.MustCompile(`[^a-zA-Z0-9]+`)
+var matchAllNonAlphaNumeric = regexp.MustCompile(`[^\pL\d_-]+`)
 
 // Unbuild exports measures, dimensions, variables, connections, objects and a config file from an app into the file system
 func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFolder string) {
