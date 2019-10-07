@@ -29,7 +29,7 @@ changelog:
     exclude:
       - '^Update .+ commit hash to'
       - '^Update module .+ to'
-      - '^Automated: Bump Docker images$'
+      - '^Automated: Bump Docker images'
       - '^Release v\d\.\d\.\d(-\w+)?$'
 
 snapcrafts:
