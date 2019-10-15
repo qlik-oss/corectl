@@ -318,8 +318,6 @@ func getSuggestion(word string, validProps map[string]struct{}) string {
 }
 
 func mergeContext(config *map[interface{}]interface{}) {
-	// TODO: Create some sort of log buffer so verbose logs can be added
-	// before the config is complete.
 	contextHandler := NewContextHandler()
 	contextName := viper.GetString("context")
 

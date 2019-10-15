@@ -113,6 +113,22 @@ func TestQuietCommands(t *testing.T) {
 	}
 }
 
+func TestLogBuffer(t *testing.T) {
+	var out []byte
+	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p.ExpectOK().Run("context", "set", t.Name())
+	out = p.ExpectOK().Run("app", "ls", "-q")
+	if len(out) != 0 {
+		t.Errorf("Expected no output from 'corectl app ls -q' without apps, got:\n%s", string(out))
+	}
+	out = p.ExpectOK().Run("app", "ls")
+	t.Log(string(out))
+	if len(out) == 0 {
+		t.Error("Expected logged warning, but output was empty")
+	}
+	p.ExpectOK().Run("context", "rm", t.Name())
+}
+
 func TestConnectionManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
