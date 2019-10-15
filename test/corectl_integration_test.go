@@ -114,18 +114,12 @@ func TestQuietCommands(t *testing.T) {
 }
 
 func TestLogBuffer(t *testing.T) {
-	var out []byte
 	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectOK().Run("context", "set", t.Name())
-	out = p.ExpectOK().Run("app", "ls", "-q")
-	if len(out) != 0 {
-		t.Errorf("Expected no output from 'corectl app ls -q' without apps, got:\n%s", string(out))
-	}
-	out = p.ExpectOK().Run("app", "ls")
-	t.Log(string(out))
-	if len(out) == 0 {
-		t.Error("Expected logged warning, but output was empty")
-	}
+	// The quiest flag should mute the warnings
+	p.ExpectEmptyOK().Run("app", "ls", "-q")
+	// We should have a warning saying something about context here
+	p.ExpectIncludes("context").Run("app", "ls")
 	p.ExpectOK().Run("context", "rm", t.Name())
 }
 

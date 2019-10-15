@@ -14,32 +14,6 @@ import (
 
 type logLevel int
 
-type logBuffer struct {
-	levels []logLevel
-	messages []string
-}
-
-func newBuffer() *logBuffer {
-	buf := &logBuffer{
-		levels: []logLevel{},
-		messages: []string{},
-	}
-	return buf
-}
-
-func (b *logBuffer) add(lvl logLevel, a ...interface{}) {
-	b.levels = append(b.levels, lvl)
-	b.messages = append(b.messages, fmt.Sprint(a...))
-}
-
-func (b *logBuffer) flush() {
-	for i, lvl := range b.levels {
-		print(lvl, b.messages[i])
-	}
-	b.levels = []logLevel{}
-	b.messages = []string{}
-}
-
 func (l logLevel) String() string {
 	switch l {
 	case quiet:
@@ -66,6 +40,37 @@ const (
 	info
 	verbose
 )
+
+type logBuffer struct {
+	levels []logLevel
+	messages []string
+}
+
+func newBuffer() *logBuffer {
+	buf := &logBuffer{
+		levels: []logLevel{},
+		messages: []string{},
+	}
+	return buf
+}
+
+func (b *logBuffer) add(lvl logLevel, a ...interface{}) {
+	b.levels = append(b.levels, lvl)
+	b.messages = append(b.messages, fmt.Sprint(a...))
+	// If it's fatal, we just want to dump everything in the buffer
+	if lvl == fatal {
+		buffering = false
+		b.flush()
+	}
+}
+
+func (b *logBuffer) flush() {
+	for i, lvl := range b.levels {
+		print(lvl, b.messages[i])
+	}
+	b.levels = []logLevel{}
+	b.messages = []string{}
+}
 
 var level logLevel
 
