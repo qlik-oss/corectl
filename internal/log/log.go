@@ -42,13 +42,13 @@ const (
 )
 
 type logBuffer struct {
-	levels []logLevel
+	levels   []logLevel
 	messages []string
 }
 
 func newBuffer() *logBuffer {
 	buf := &logBuffer{
-		levels: []logLevel{},
+		levels:   []logLevel{},
 		messages: []string{},
 	}
 	return buf
