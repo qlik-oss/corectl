@@ -113,6 +113,16 @@ func TestQuietCommands(t *testing.T) {
 	}
 }
 
+func TestLogBuffer(t *testing.T) {
+	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p.ExpectOK().Run("context", "set", t.Name())
+	// The quiest flag should mute the warnings
+	p.ExpectEmptyOK().Run("app", "ls", "-q")
+	// We should have a warning saying something about context here
+	p.ExpectIncludes("context").Run("app", "ls")
+	p.ExpectOK().Run("context", "rm", t.Name())
+}
+
 func TestConnectionManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()

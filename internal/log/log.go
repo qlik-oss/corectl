@@ -41,6 +41,37 @@ const (
 	verbose
 )
 
+type logBuffer struct {
+	levels   []logLevel
+	messages []string
+}
+
+func newBuffer() *logBuffer {
+	buf := &logBuffer{
+		levels:   []logLevel{},
+		messages: []string{},
+	}
+	return buf
+}
+
+func (b *logBuffer) add(lvl logLevel, a ...interface{}) {
+	b.levels = append(b.levels, lvl)
+	b.messages = append(b.messages, fmt.Sprint(a...))
+	// If it's fatal, we just want to dump everything in the buffer
+	if lvl == fatal {
+		buffering = false
+		b.flush()
+	}
+}
+
+func (b *logBuffer) flush() {
+	for i, lvl := range b.levels {
+		print(lvl, b.messages[i])
+	}
+	b.levels = []logLevel{}
+	b.messages = []string{}
+}
+
 var level logLevel
 
 // printJSON represents whether all output should be in JSON format or not.
@@ -48,6 +79,9 @@ var printJSON bool
 
 // Traffic represents wether traffic should be printed or not.
 var Traffic bool
+
+var buffering bool
+var buffer *logBuffer
 
 // Init reads the log-related viper flags json, verbose, traffic and quiet and sets the
 // internal (log.) level, printJSON and traffic variables accordingly.
@@ -67,10 +101,14 @@ func Init() {
 	} else {
 		level = info
 	}
+	buffering = false
+	buffer.flush()
 }
 
 func init() {
 	level = info
+	buffer = newBuffer()
+	buffering = true
 }
 
 func Quietln(a ...interface{}) {
@@ -175,8 +213,12 @@ func print(lvl logLevel, a ...interface{}) {
 		if prefix != "" {
 			prefix += ": "
 		}
-		str := prefix + fmt.Sprint(a...)
-		fmt.Print(str)
+		if buffering {
+			buffer.add(lvl, a...)
+		} else {
+			str := prefix + fmt.Sprint(a...)
+			fmt.Print(str)
+		}
 	}
 }
 
