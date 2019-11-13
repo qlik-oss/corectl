@@ -16,4 +16,8 @@ func SetScript(ctx context.Context, doc *enigma.Doc, scriptFilePath string) {
 	}
 
 	err = doc.SetScript(ctx, string(loadScript))
+
+	if err != nil {
+		log.Fatalln("failed to set script: ", err)
+	}
 }
