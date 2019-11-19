@@ -64,7 +64,8 @@
         "qCalcCondition": {
           "qCond": {},
           "qMsg": {}
-        }
+        },
+        "qTrendLines": []
       }
     ],
     "qInterColumnSortOrder": [],

@@ -80,7 +80,8 @@
         "qMax": 3,
         "qIsAutoFormat": true,
         "qAttrExprInfo": [],
-        "qAttrDimInfo": []
+        "qAttrDimInfo": [],
+        "qTrendLines": []
       }
     ],
     "qEffectiveInterColumnSortOrder": [
