@@ -1,5 +1,5 @@
 +--------------------------------+--------------+-------+
-|               Id               |     Type     | Title |
+|               ID               |     Type     | Title |
 +--------------------------------+--------------+-------+
 | object-using-dims-and-measures | my-hypercube |       |
 | object-using-inline            | my-hypercube |       |
