@@ -33,6 +33,7 @@ func PrintContext(name string, handler *internal.ContextHandler) {
 	}
 }
 
+// PrintCurrentContext prints the current context
 func PrintCurrentContext(name string) {
 	if name == "" {
 		fmt.Println("Context: <NONE>")

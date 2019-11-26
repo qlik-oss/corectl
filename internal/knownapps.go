@@ -49,7 +49,7 @@ func getKnownApps() map[string]map[string]string {
 	return knownApps
 }
 
-// Add an app or remove an app from known apps
+// SetAppIDToKnownApps adds an app or removes an app from known apps
 func SetAppIDToKnownApps(appName string, appID string, remove bool) {
 
 	createKnownAppsFileIfNotExist()

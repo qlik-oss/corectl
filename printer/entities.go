@@ -26,15 +26,15 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitl
 			}
 		} else {
 			for _, item := range items {
-				log.Quietln(item.Id)
+				log.Quietln(item.ID)
 			}
 		}
 	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
-		writer.SetHeader([]string{"Id", "Title"})
+		writer.SetHeader([]string{"ID", "Title"})
 		for _, info := range items {
-			writer.Append([]string{info.Id, info.Title})
+			writer.Append([]string{info.ID, info.Title})
 		}
 		writer.Render()
 	}
@@ -49,14 +49,14 @@ func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash
 		fallthrough
 	case quietMode:
 		for _, item := range items {
-			log.Quietln(item.Id)
+			log.Quietln(item.ID)
 		}
 	default:
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
-		writer.SetHeader([]string{"Id", "Type", "Title"})
+		writer.SetHeader([]string{"ID", "Type", "Title"})
 		for _, info := range items {
-			writer.Append([]string{info.Id, info.Type, info.Title})
+			writer.Append([]string{info.ID, info.Type, info.Title})
 		}
 		writer.Render()
 	}

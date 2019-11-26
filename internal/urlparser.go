@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// GetEngineURL gets QIX engine URL from viper
 func GetEngineURL() *url.URL {
 	engine := viper.GetString("engine")
 	if engine == "" {

@@ -32,6 +32,7 @@ type Context struct {
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
+// SetContext sets up the context to be used while communitcating with the engine
 func SetContext(contextName, comment string) string {
 	if contextName == "" {
 		log.Fatalln("context name not supplied")
@@ -81,6 +82,7 @@ func SetContext(contextName, comment string) string {
 	return contextName
 }
 
+// RemoveContext from context file
 func RemoveContext(contextName string) (string, bool) {
 	handler := NewContextHandler()
 	contextName, wasCurrent := handler.Remove(contextName)
@@ -88,6 +90,7 @@ func RemoveContext(contextName string) (string, bool) {
 	return contextName, wasCurrent
 }
 
+// UseContext sets the current context based on name
 func UseContext(contextName string) string {
 	handler := NewContextHandler()
 	handler.Use(contextName)
@@ -95,6 +98,7 @@ func UseContext(contextName string) string {
 	return contextName
 }
 
+// ClearContext unsets the current context
 func ClearContext() string {
 	handler := NewContextHandler()
 	previous := handler.Clear()
@@ -102,6 +106,7 @@ func ClearContext() string {
 	return previous
 }
 
+// NewContextHandler helps with handeling contexts
 func NewContextHandler() *ContextHandler {
 	handler := &ContextHandler{}
 	if !fileExists(contextFilePath) {
@@ -126,6 +131,7 @@ func NewContextHandler() *ContextHandler {
 	return handler
 }
 
+// Exists checks if context exists
 func (ch *ContextHandler) Exists(contextName string) bool {
 	if _, ok := ch.Contexts[contextName]; ok {
 		log.Verboseln("Found context: " + contextName)
@@ -134,6 +140,7 @@ func (ch *ContextHandler) Exists(contextName string) bool {
 	return false
 }
 
+// Get returns context if present
 func (ch *ContextHandler) Get(contextName string) *Context {
 	if context, ok := ch.Contexts[contextName]; ok {
 		return context
@@ -141,6 +148,7 @@ func (ch *ContextHandler) Get(contextName string) *Context {
 	return nil
 }
 
+// GetCurrent returns the context marked as current
 func (ch *ContextHandler) GetCurrent() *Context {
 	cur := ch.Current
 	if cur == "" {
@@ -149,6 +157,7 @@ func (ch *ContextHandler) GetCurrent() *Context {
 	return ch.Get(cur)
 }
 
+// Use sets the current context
 func (ch *ContextHandler) Use(contextName string) {
 	if !ch.Exists(contextName) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
@@ -162,6 +171,7 @@ func (ch *ContextHandler) Use(contextName string) {
 	ch.Current = contextName
 }
 
+// Clear the context
 func (ch *ContextHandler) Clear() (previous string) {
 	if ch.Current == "" {
 		log.Verboseln("No context is set")
@@ -173,6 +183,7 @@ func (ch *ContextHandler) Clear() (previous string) {
 	return
 }
 
+// Remove the context
 func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 	if !ch.Exists(contextName) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
@@ -187,6 +198,7 @@ func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 	return contextName, wasCurrent
 }
 
+// Save the context file
 func (ch *ContextHandler) Save() {
 	out, _ := yaml.Marshal(*ch)
 
@@ -216,6 +228,7 @@ func (c *Context) Update(m *map[string]interface{}) []string {
 	return updated
 }
 
+// ToMap returns a map from the context
 func (c *Context) ToMap() map[interface{}]interface{} {
 	m := map[interface{}]interface{}{}
 	m["engine"] = c.Engine
@@ -225,6 +238,7 @@ func (c *Context) ToMap() map[interface{}]interface{} {
 	return m
 }
 
+// Validate that at least one property is set for the context
 func (c *Context) Validate() error {
 	if c.Engine == "" && c.Certificates == "" && (c.Headers == nil || len(c.Headers) == 0) {
 		return fmt.Errorf("empty context: no engine url, certificates path or headers specified, need at least one")
