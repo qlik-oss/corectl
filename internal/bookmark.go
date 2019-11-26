@@ -10,6 +10,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// Bookmark json list object
 type Bookmark struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 }
@@ -51,7 +52,7 @@ func ListBookmarks(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	for _, item := range layout.BookmarkList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
-		result = append(result, NamedItem{Title: parsedRawData.Title, Id: item.Info.Id})
+		result = append(result, NamedItem{Title: parsedRawData.Title, ID: item.Info.Id})
 	}
 	return result
 }

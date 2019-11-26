@@ -10,6 +10,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
+// Variable qix object struct
 type Variable struct {
 	Info *enigma.NxInfo `json:"qInfo,omitempty"`
 	Name string         `json:"qName,omitempty"`
@@ -54,7 +55,7 @@ func ListVariables(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	layout, _ := sessionObject.GetLayout(ctx)
 	result := []NamedItem{}
 	for _, item := range layout.VariableList.Items {
-		result = append(result, NamedItem{Title: item.Name, Id: item.Info.Id})
+		result = append(result, NamedItem{Title: item.Name, ID: item.Info.Id})
 	}
 	return result
 }

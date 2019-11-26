@@ -91,9 +91,9 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 	v := reflect.ValueOf(*u)
 	for f, expected := range fields {
 		fval := string(v.FieldByName(f).String())
-		s_exp := fmt.Sprintf("'%s'= %s", f, expected)
-		s_fval := fmt.Sprintf("'%s'= %s", f, fval)
-		assert.Equal(t, s_exp, s_fval)
+		sExp := fmt.Sprintf("'%s'= %s", f, expected)
+		sFval := fmt.Sprintf("'%s'= %s", f, fval)
+		assert.Equal(t, sExp, sFval)
 	}
 	return
 }

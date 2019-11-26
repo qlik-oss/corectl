@@ -57,7 +57,7 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 				rawProps, _ := object.GetPropertiesRaw(ctx)
 				propsWithTitle := &PropsWithTitle{}
 				json.Unmarshal(rawProps, propsWithTitle)
-				waitChannel <- &NamedItemWithType{Title: propsWithTitle.Title, Id: item.Id, Type: item.Type}
+				waitChannel <- &NamedItemWithType{Title: propsWithTitle.Title, ID: item.Id, Type: item.Type}
 			} else {
 				waitChannel <- nil
 			}
@@ -67,8 +67,8 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 	for range allInfos {
 		item := <-waitChannel
 		if item != nil {
-			keys = append(keys, item.Id)
-			unsortedResult[item.Id] = item
+			keys = append(keys, item.ID)
+			unsortedResult[item.ID] = item
 		}
 	}
 	//Loop over the keys that are sorted on qId and fetch the result for each object

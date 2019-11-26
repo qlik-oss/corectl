@@ -54,7 +54,7 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 	for _, item := range layout.DimensionList.Items {
 		parsedRawData := &ParsedEntityListData{}
 		json.Unmarshal(item.Data, parsedRawData)
-		unsortedResult[item.Info.Id] = &NamedItem{Title: parsedRawData.Title, Id: item.Info.Id}
+		unsortedResult[item.Info.Id] = &NamedItem{Title: parsedRawData.Title, ID: item.Info.Id}
 		keys = append(keys, item.Info.Id)
 	}
 

@@ -12,21 +12,25 @@ import (
 )
 
 type (
+	// ParsedEntityListData struct
 	ParsedEntityListData struct {
 		Title string `json:"title"`
 	}
 
+	// NamedItem struct
 	NamedItem struct {
-		Id    string `json:"qId"`
+		ID    string `json:"qId"`
 		Title string `json:"title"`
 	}
 
+	// NamedItemWithType struct
 	NamedItemWithType struct {
-		Id    string `json:"qId"`
+		ID    string `json:"qId"`
 		Type  string `json:"qType,omitempty"`
 		Title string `json:"title"`
 	}
 
+	// PropsWithTitle struct
 	PropsWithTitle struct {
 		*enigma.GenericObjectProperties
 		Title string `json:"title"`
