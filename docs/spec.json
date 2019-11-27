@@ -3,12 +3,17 @@
   "info": {
     "title": "Specification for corectl",
     "description": "corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information",
-    "version": "1.4.1",
+    "version": "development build",
     "license": "MIT"
   },
   "clispec": "0.1.0",
   "x-qlik-stability": "stable",
   "flags": {
+    "allow-insecure": {
+      "alias": "i",
+      "description": "Enabling allow-insecure will make it possible to connect using self signed certs",
+      "default": "false"
+    },
     "app": {
       "alias": "a",
       "description": "Name or identifier of the app"
