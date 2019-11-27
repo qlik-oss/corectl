@@ -105,7 +105,7 @@ var generateSpecCmd = &cobra.Command{
 		fmt.Println("Generating specification")
 		var jsonData []byte
 		spec := spec{
-			Clispec: "0.2.0",
+			Clispec: "0.1.0",
 			Name:    rootCmd.Use,
 			Info: info{
 				Title:       "Specification for corectl",
