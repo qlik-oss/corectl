@@ -19,7 +19,7 @@ var listAppsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, true)
+		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, true)
 		docList, err := state.Global.GetDocList(rootCtx)
 		if err != nil {
 			log.Fatalf("could not retrieve app list: %s\n", err)
@@ -38,13 +38,13 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := args[0]
 
-		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, certificates); !ok {
+		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, tlsClientConfig); !ok {
 			log.Fatalln(err)
 		}
 		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
 		if confirmed {
-			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, headers, certificates)
+			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, headers, tlsClientConfig)
 		}
 	},
 }, "suppress")
@@ -62,7 +62,7 @@ var importAppCmd = withLocalFlags(&cobra.Command{
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
 		engine := internal.GetEngineURL()
-		appID, appName, err := rest.ImportApp(appPath, engine, headers, certificates)
+		appID, appName, err := rest.ImportApp(appPath, engine, headers, tlsClientConfig)
 		if err != nil {
 			log.Fatalln(err)
 		}

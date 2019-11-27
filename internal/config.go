@@ -149,7 +149,7 @@ func ReadConfig(explicitConfigFile, certPath string, withContext bool) {
 }
 
 // ReadCertificates reads and loads the specified certificates
-func ReadCertificates(certificatesPath string) *tls.Config {
+func ReadCertificates(tlsClientConfig *tls.Config, certificatesPath string) *tls.Config {
 	// Read client and root certificates.
 	certPath := RelativeToProject(certificatesPath)
 	certFile := certPath + "/client.pem"
@@ -168,14 +168,11 @@ func ReadCertificates(certificatesPath string) *tls.Config {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 
-	// Setup TLS configuration.
-	tlsConfig := &tls.Config{
-		InsecureSkipVerify: true,
-		Certificates:       []tls.Certificate{cert},
-		RootCAs:            caCertPool,
-	}
+	// Setup TLS cert configuration.
+	tlsClientConfig.Certificates = []tls.Certificate{cert}
+	tlsClientConfig.RootCAs = caCertPool
 
-	return tlsConfig
+	return tlsClientConfig
 }
 
 // AddValidProp adds the given property to the set of valid properties.

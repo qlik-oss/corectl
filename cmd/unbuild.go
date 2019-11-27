@@ -28,7 +28,7 @@ corectl unbuild --app APP-ID`,
 		ctx := rootCtx
 		viper.Set("no-data", "true") // Force no-data since we only use metadata
 		outdir := ccmd.Flag("dir").Value.String()
-		state := internal.PrepareEngineState(ctx, headers, certificates, false, false)
+		state := internal.PrepareEngineState(ctx, headers, tlsClientConfig, false, false)
 		if outdir == DefaultUnbuildFolder {
 			outdir = getDefaultOutDir(ctx, state)
 		}

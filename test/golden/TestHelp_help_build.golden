@@ -22,6 +22,7 @@ Flags:
       --variables string     A list of generic variable json paths
 
 Global Flags:
+  -i, --allow-insecure           Enabling allow-insecure will make it possible to connect using self signed certs
   -a, --app string               Name or identifier of the app
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
