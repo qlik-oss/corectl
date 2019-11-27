@@ -33,6 +33,7 @@ corectl completion <shell> [flags]
 ### Options inherited from parent commands
 
 ```
+  -i, --allow-insecure           Enabling allow-insecure will make it possible to connect using self signed certs
   -a, --app string               Name or identifier of the app
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
