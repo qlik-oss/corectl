@@ -6,7 +6,7 @@
     "version": "development build",
     "license": "MIT"
   },
-  "clispec": "0.1.0",
+  "clispec": "0.2.0",
   "x-qlik-stability": "stable",
   "flags": {
     "allow-insecure": {
