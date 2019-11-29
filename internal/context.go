@@ -1,15 +1,23 @@
 package internal
 
 import (
+	"bufio"
+	"crypto/rand"
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"reflect"
+	"regexp"
 	"strings"
+	"syscall"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v2"
 )
 
@@ -104,6 +112,21 @@ func ClearContext() string {
 	previous := handler.Clear()
 	handler.Save()
 	return previous
+}
+
+// LoginContext login to a Qlik Sense Enterprise and sets the X-Qlik-Session as a cookie
+func LoginContext(tlsClientConfig *tls.Config, contextName string, userName string, password string) {
+	handler := NewContextHandler()
+	context := handler.Get(contextName)
+	qlikSession := getSessionCookie(tlsClientConfig, context.Engine, userName, password)
+
+	// cookie := context.Headers["cookie"]
+	re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
+	context.Headers["cookie"] = re.ReplaceAllString(context.Headers["cookie"], qlikSession)
+
+	// m := context.ToMap()
+	// context.Update(&m)
+	handler.Save()
 }
 
 // NewContextHandler helps with handeling contexts
@@ -283,4 +306,88 @@ func createContextFileIfNotExist() {
 
 		log.Verboseln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
 	}
+}
+
+func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName string, password string) string {
+	// Verify Qlik Sense URL
+	u, err := url.Parse(engineURL)
+
+	if err != nil {
+		log.Fatalln("The engineURL doesn't seem to be correct")
+	}
+
+	if u.Scheme != "https" {
+		log.Fatalln("We only support login through secure connections (HTTPS)")
+	}
+
+	// Get username
+	if len(userName) == 0 {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter Username (domain\\user): ")
+		userName, _ = reader.ReadString('\n')
+	}
+
+	if !strings.Contains(userName, "\\") {
+		log.Fatalln("username MUST be in format 'domain\\user'")
+	}
+
+	// Get password
+	if len(password) == 0 {
+		fmt.Print("Enter Password: ")
+		bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
+		password = string(bytePassword)
+	}
+
+	// Enable selfsigned certs
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = tlsClientConfig
+
+	// Get post URL via redirects
+	resp, err := http.Get(engineURL)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Generate xrfkey
+	xrfkey := generateXrfkey()
+
+	//
+	loginURL := resp.Request.URL
+	q, _ := url.ParseQuery(loginURL.RawQuery)
+	q.Add("xrfkey", xrfkey)
+	loginURL.RawQuery = q.Encode()
+
+	urlData := url.Values{}
+	urlData.Set("username", userName)
+	urlData.Set("pwd", password)
+
+	hc := http.Client{}
+	req, err := http.NewRequest("POST", loginURL.String(), strings.NewReader(urlData.Encode()))
+
+	req.PostForm = urlData
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("x-qlik-xrfkey", xrfkey)
+
+	postResp, postErr := hc.Do(req)
+
+	if postErr != nil {
+		log.Fatalln(postErr)
+	}
+
+	setCookie := postResp.Header.Get("Set-Cookie")
+
+	return strings.TrimRight(strings.Fields(setCookie)[0], ";")
+}
+
+func generateXrfkey() (xrfkey string) {
+
+	b := make([]byte, 8)
+	_, err := rand.Read(b)
+
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
+
+	xrfkey = fmt.Sprintf("%X", b)
+	return
 }

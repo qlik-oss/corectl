@@ -99,13 +99,35 @@ var clearContextCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Set the current context to none",
 	Long:    "Set the current context to none",
-	Example: "corectl clear",
+	Example: "corectl context clear",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		previous := internal.ClearContext()
 		if previous != "" {
 			printer.PrintCurrentContext("")
 		}
+	},
+}
+
+var loginContextCmd = &cobra.Command{
+	Use:     "login <context-name> <username> <password>",
+	Args:    cobra.RangeArgs(1, 3),
+	Short:   "Login and set cookie for the named context",
+	Long:    "Login and set cookie for the named context",
+	Example: "corectl context login",
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		var contextName, userName, password string
+		switch len(args) {
+		case 3:
+			contextName, userName, password = args[0], args[1], args[2]
+		case 2:
+			contextName, userName, password = args[0], args[1], ""
+		case 1:
+			contextName, userName, password = args[0], "", ""
+		}
+
+		internal.LoginContext(tlsClientConfig, contextName, userName, password)
 	},
 }
 
@@ -134,5 +156,5 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 }
 
 func init() {
-	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd)
+	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd, loginContextCmd)
 }
