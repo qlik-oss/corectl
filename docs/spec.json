@@ -9,11 +9,6 @@
   "clispec": "0.1.0",
   "x-qlik-stability": "stable",
   "flags": {
-    "allow-insecure": {
-      "alias": "i",
-      "description": "Enabling allow-insecure will make it possible to connect using self signed certs",
-      "default": "false"
-    },
     "app": {
       "alias": "a",
       "description": "Name or identifier of the app"
@@ -40,6 +35,10 @@
     "headers": {
       "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
+    },
+    "insecure": {
+      "description": "Enabling insecure will make it possible to connect using self signed certificates",
+      "default": "false"
     },
     "json": {
       "description": "Returns output in JSON format if possible, disables verbose and traffic output",
