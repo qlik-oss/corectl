@@ -118,14 +118,29 @@ func ClearContext() string {
 func LoginContext(tlsClientConfig *tls.Config, contextName string, userName string, password string) {
 	handler := NewContextHandler()
 	context := handler.Get(contextName)
+
+	if context == nil {
+		log.Fatalf("context '%s' wasn't found.\n", contextName)
+	}
+
 	qlikSession := getSessionCookie(tlsClientConfig, context.Engine, userName, password)
 
-	// cookie := context.Headers["cookie"]
-	re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
-	context.Headers["cookie"] = re.ReplaceAllString(context.Headers["cookie"], qlikSession)
+	if _, ok := context.Headers["cookie"]; ok {
+		// Cookie header present
+		re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
+		if re.MatchString(context.Headers["cookie"]) {
+			context.Headers["cookie"] = re.ReplaceAllString(context.Headers["cookie"], qlikSession)
+		} else {
+			context.Headers["cookie"] = fmt.Sprintf("%s; %s", context.Headers["cookie"], qlikSession)
+		}
+	} else {
+		// Cookie header has to be added
+		if len(context.Headers) == 0 {
+			context.Headers = make(map[string]string)
+		}
+		context.Headers["cookie"] = qlikSession
+	}
 
-	// m := context.ToMap()
-	// context.Update(&m)
 	handler.Save()
 }
 
@@ -338,7 +353,6 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 		password = string(bytePassword)
 	}
 
-	// Enable selfsigned certs
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = tlsClientConfig
 
 	// Get post URL via redirects
@@ -375,6 +389,10 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	}
 
 	setCookie := postResp.Header.Get("Set-Cookie")
+
+	if setCookie == "" {
+		log.Fatalln("We wasn't able to get the 'X-Qlik-Session' cookie, please check your password.")
+	}
 
 	return strings.TrimRight(strings.Fields(setCookie)[0], ";")
 }
