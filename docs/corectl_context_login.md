@@ -1,25 +1,25 @@
-## corectl state add
+## corectl context login
 
-Add an alternate states in the current app
+Login and set cookie for the named context
 
 ### Synopsis
 
-Add an alternate states in the current app
+Login and set cookie for the named context
 
 ```
-corectl state add <alternate-state-name> [flags]
+corectl context login <context-name> <username> <password> [flags]
 ```
 
 ### Examples
 
 ```
-corectl state add NAME-1
+corectl context login
 ```
 
 ### Options
 
 ```
-  -h, --help   help for add
+  -h, --help   help for login
 ```
 
 ### Options inherited from parent commands
@@ -41,5 +41,5 @@ corectl state add NAME-1
 
 ### SEE ALSO
 
-* [corectl state](corectl_state.md)	 - Explore and manage alternate states
+* [corectl context](corectl_context.md)	 - Create, update and use contexts
 

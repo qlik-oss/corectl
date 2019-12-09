@@ -29,7 +29,6 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.
 ### Options inherited from parent commands
 
 ```
-  -i, --allow-insecure           Enabling allow-insecure will make it possible to connect using self signed certs
   -a, --app string               Name or identifier of the app
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
@@ -49,6 +48,7 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.
 * [corectl](corectl.md)	 - 
 * [corectl context clear](corectl_context_clear.md)	 - Set the current context to none
 * [corectl context get](corectl_context_get.md)	 - Get context, current context by default
+* [corectl context login](corectl_context_login.md)	 - Login and set cookie for the named context
 * [corectl context ls](corectl_context_ls.md)	 - List all contexts
 * [corectl context rm](corectl_context_rm.md)	 - Remove one or more contexts
 * [corectl context set](corectl_context_set.md)	 - Set a context to the current configuration

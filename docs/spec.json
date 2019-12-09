@@ -9,11 +9,6 @@
   "clispec": "0.1.0",
   "x-qlik-stability": "stable",
   "flags": {
-    "allow-insecure": {
-      "alias": "i",
-      "description": "Enabling allow-insecure will make it possible to connect using self signed certs",
-      "default": "false"
-    },
     "app": {
       "alias": "a",
       "description": "Name or identifier of the app"
@@ -233,6 +228,9 @@
         },
         "get": {
           "description": "Get context, current context by default"
+        },
+        "login": {
+          "description": "Login and set cookie for the named context"
         },
         "ls": {
           "description": "List all contexts"
