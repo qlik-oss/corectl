@@ -51,7 +51,7 @@ var rootCmd = &cobra.Command{
 			tlsClientConfig = internal.ReadCertificates(tlsClientConfig, certPath)
 		}
 
-		if viper.GetBool("allow-insecure") {
+		if viper.GetBool("insecure") {
 			tlsClientConfig.InsecureSkipVerify = true
 		}
 

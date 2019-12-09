@@ -55,7 +55,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
 	globalFlags.String("context", "", "Name of the context used when connecting to Qlik Associative Engine")
-	globalFlags.BoolP("allow-insecure", "i", false, "Enabling allow-insecure will make it possible to connect using self signed certs")
+	globalFlags.Bool("insecure", false, "Enabling insecure will make it possible to connect using self signed certificates")
 
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)
