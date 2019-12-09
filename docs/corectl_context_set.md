@@ -38,6 +38,7 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
       --context string           Name of the context used when connecting to Qlik Associative Engine
   -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
+      --insecure                 Enabling insecure will make it possible to connect using self signed certificates
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
   -t, --traffic                  Log JSON websocket traffic to stdout

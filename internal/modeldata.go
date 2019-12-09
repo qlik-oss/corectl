@@ -126,7 +126,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 }
 
 // GetModelMetadata retrives all available metadata about the app
-func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, certificates *tls.Config, keyOnly bool) *ModelMetadata {
+func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, tlsClientConfig *tls.Config, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)
@@ -134,7 +134,7 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine
 	if len(tables) == 0 {
 		log.Fatalf("the data model is empty\n")
 	}
-	restMetadata, err := rest.ReadRestMetadata(appID, engine, headers, certificates)
+	restMetadata, err := rest.ReadRestMetadata(appID, engine, headers, tlsClientConfig)
 
 	if len(tables) > 0 && restMetadata == nil {
 		log.Infoln("No REST metadata available.")

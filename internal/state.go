@@ -40,7 +40,7 @@ func logConnectError(err error, engine string) {
 	log.Fatalln(msg)
 }
 
-func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header, certificates *tls.Config) *enigma.Global {
+func connectToEngine(ctx context.Context, appName, ttl string, headers http.Header, tlsClientConfig *tls.Config) *enigma.Global {
 	engineURL := buildWebSocketURL(ttl)
 	log.Verboseln("Engine: " + engineURL)
 
@@ -51,13 +51,10 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 	log.Verboseln("SessionId " + headers.Get("X-Qlik-Session"))
 
 	var dialer = enigma.Dialer{}
+	dialer.TLSClientConfig = tlsClientConfig
 
 	if log.Traffic {
 		dialer.TrafficLogger = log.TrafficLogger{}
-	}
-
-	if certificates != nil {
-		dialer.TLSClientConfig = certificates
 	}
 
 	global, err := dialer.Dial(ctx, engineURL, headers)
@@ -68,8 +65,8 @@ func connectToEngine(ctx context.Context, appName, ttl string, headers http.Head
 }
 
 //AppExists returns wether or not an app exists along with any eventual error from engine.
-func AppExists(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) (bool, error) {
-	global := PrepareEngineState(ctx, headers, certificates, false, true).Global
+func AppExists(ctx context.Context, engine string, appName string, headers http.Header, tlsClientConfig *tls.Config) (bool, error) {
+	global := PrepareEngineState(ctx, headers, tlsClientConfig, false, true).Global
 	appID, _ := applyNameToIDTransformation(appName)
 	_, err := global.GetAppEntry(ctx, appID)
 	if err != nil {
@@ -79,8 +76,8 @@ func AppExists(ctx context.Context, engine string, appName string, headers http.
 }
 
 //DeleteApp removes the specified app from the engine.
-func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header, certificates *tls.Config) {
-	global := PrepareEngineState(ctx, headers, certificates, false, true).Global
+func DeleteApp(ctx context.Context, engine string, appName string, headers http.Header, tlsClientConfig *tls.Config) {
+	global := PrepareEngineState(ctx, headers, tlsClientConfig, false, true).Global
 	appID, _ := applyNameToIDTransformation(appName)
 	succ, err := global.DeleteApp(ctx, appID)
 	if err != nil {
@@ -98,7 +95,7 @@ func DeleteApp(ctx context.Context, engine string, appName string, headers http.
 //
 // Any ttl supplied (through viper) specifies how long the engine should keep the session alive which affects
 // performance. (It is cheaper to reattach to a pre-existing session, performance-wise.)
-func PrepareEngineState(ctx context.Context, headers http.Header, certificates *tls.Config, createAppIfMissing, withoutApp bool) *State {
+func PrepareEngineState(ctx context.Context, headers http.Header, tlsClientConfig *tls.Config, createAppIfMissing, withoutApp bool) *State {
 	engine := viper.GetString("engine")
 	appName := viper.GetString("app")
 	ttl := viper.GetString("ttl")
@@ -117,7 +114,7 @@ func PrepareEngineState(ctx context.Context, headers http.Header, certificates *
 	}
 
 	log.Verboseln("---------- Connecting to engine ----------")
-	global := connectToEngine(ctx, appName, ttl, headers, certificates)
+	global := connectToEngine(ctx, appName, ttl, headers, tlsClientConfig)
 	sessionMessages := global.SessionMessageChannel()
 	err := waitForOnConnectedMessage(sessionMessages)
 	if err != nil {

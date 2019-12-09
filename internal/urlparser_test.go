@@ -118,16 +118,18 @@ func TestBuildEngineUrl(t *testing.T) {
 		viper.Set("engine", s)
 		return buildWebSocketURL(ttl)
 	}
-	assert.Equal(t, "ws://engine/app/corectl/ttl/30", f("engine", "30"))
-	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", f("engine:1234", "30"))
-	assert.Equal(t, "wss://engine/app/corectl/ttl/30", f("wss://engine", "30"))
-	assert.Equal(t, "ws://engine/app/corectl/ttl/30", f("ws://engine", "30"))
-	assert.Equal(t, "wss://engine:1234/app/corectl/ttl/30", f("wss://engine:1234", "30"))
-	assert.Equal(t, "ws://engine:1234/app/corectl/ttl/30", f("ws://engine:1234", "30"))
+	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("engine", "30"))
+	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("engine:1234", "30"))
+	assert.Equal(t, "wss://engine/app/engineData/ttl/30", f("wss://engine", "30"))
+	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("ws://engine", "30"))
+	assert.Equal(t, "wss://engine:1234/app/engineData/ttl/30", f("wss://engine:1234", "30"))
+	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234", "30"))
 	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("ws://engine:1234/sense/app/test.qvf", "30"))
 	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("engine:1234/sense/app/test.qvf", "30"))
-	assert.Equal(t, "ws://engine:1234/", f("ws://engine:1234/", "30"))
-	assert.Equal(t, "ws://engine:1234/", f("http://engine:1234/", "30"))
+	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234/", "30"))
+	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("http://engine:1234/", "30"))
+	assert.Equal(t, "ws://engine:1234/app", f("ws://engine:1234/app", "30"))
+	assert.Equal(t, "ws://engine:1234/app", f("http://engine:1234/app", "30"))
 }
 
 func TestParseAppFromUrl(t *testing.T) {

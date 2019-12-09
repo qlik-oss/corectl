@@ -16,7 +16,7 @@ var listAlternateStatesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl state ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
+		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
 		items := internal.ListAlternateStates(state.Ctx, state.Doc)
 		printer.PrintStates(items, viper.GetBool("bash"))
 	},
@@ -34,7 +34,7 @@ var addAlternateStateCmd = &cobra.Command{
 		if stateName == "" {
 			log.Fatalln("no state name specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
+		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
 		internal.AddAlternateState(state.Ctx, state.Doc, stateName)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)
@@ -54,7 +54,7 @@ var removeAlternateStateCmd = &cobra.Command{
 		if stateName == "" {
 			log.Fatalln("no state name specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, certificates, false, false)
+		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
 		internal.RemoveAlternateState(state.Ctx, state.Doc, stateName)
 		if !viper.GetBool("no-save") {
 			internal.Save(rootCtx, state.Doc)

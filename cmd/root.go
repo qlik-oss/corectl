@@ -3,8 +3,10 @@ package cmd
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -18,7 +20,7 @@ var explicitConfigFile = ""
 var explicitCertificatePath = ""
 var version = ""
 var headers http.Header
-var certificates *tls.Config
+var tlsClientConfig *tls.Config
 var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
@@ -43,8 +45,14 @@ var rootCmd = &cobra.Command{
 		withContext := shouldUseContext(ccmd)
 		internal.ReadConfig(explicitConfigFile, explicitCertificatePath, withContext)
 
+		tlsClientConfig = &tls.Config{}
+
 		if certPath := viper.GetString("certificates"); certPath != "" {
-			certificates = internal.ReadCertificates(certPath)
+			tlsClientConfig = internal.ReadCertificates(tlsClientConfig, certPath)
+		}
+
+		if viper.GetBool("insecure") {
+			tlsClientConfig.InsecureSkipVerify = true
 		}
 
 		if len(headersMap) == 0 {
@@ -54,6 +62,9 @@ var rootCmd = &cobra.Command{
 		for key, value := range headersMap {
 			headers.Set(key, value)
 		}
+
+		headers.Set("User-Agent", fmt.Sprintf("corectl/%s (%s)", version, runtime.GOOS))
+
 		// Initiate the printers mode
 		printer.Init()
 	},

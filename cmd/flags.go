@@ -13,7 +13,7 @@ import (
 var localFlags pflag.FlagSet
 var initialized bool
 
-// Default placeholder for unbuild folder location
+// DefaultUnbuildFolder is the placeholder for unbuild folder location
 var DefaultUnbuildFolder = "./<app name>-unbuild"
 
 // getPathFlagFromConfigFile returns a parameter from the config file.
@@ -55,6 +55,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 	globalFlags.Bool("bash", false, "Bash flag used to adapt output to bash completion format")
 	globalFlags.MarkHidden("bash")
 	globalFlags.String("context", "", "Name of the context used when connecting to Qlik Associative Engine")
+	globalFlags.Bool("insecure", false, "Enabling insecure will make it possible to connect using self signed certificates")
 
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

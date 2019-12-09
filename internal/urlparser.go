@@ -91,8 +91,8 @@ func parseEngineURL(engine string) (*url.URL, error) {
 func buildWebSocketURL(ttl string) string {
 	u := GetEngineURL()
 	// Only modify the URL path if there is no path set
-	if u.Path == "" {
-		u.Path = "/app/corectl/ttl/" + ttl
+	if u.Path == "" || u.Path == "/" {
+		u.Path = "/app/engineData/ttl/" + ttl
 	}
 	return u.String()
 }
