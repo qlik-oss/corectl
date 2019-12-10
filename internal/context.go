@@ -332,7 +332,7 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	}
 
 	if u.Scheme != "https" {
-		log.Fatalln("We only support login through secure connections (HTTPS)")
+		log.Fatalln("Only login through secure connections (HTTPS) is supported")
 	}
 
 	// Get username
@@ -382,22 +382,22 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("x-qlik-xrfkey", xrfkey)
 
-	postResp, postErr := hc.Do(req)
+	postResp, err := hc.Do(req)
 
-	if postErr != nil {
-		log.Fatalln(postErr)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
 	setCookie := postResp.Header.Get("Set-Cookie")
 
 	if setCookie == "" {
-		log.Fatalln("We wasn't able to get the 'X-Qlik-Session' cookie, please check your password.")
+		log.Fatalln("Not able to get the 'X-Qlik-Session' cookie, please check your password.")
 	}
 
 	return strings.TrimRight(strings.Fields(setCookie)[0], ";")
 }
 
-func generateXrfkey() (xrfkey string) {
+func generateXrfkey() string {
 
 	b := make([]byte, 8)
 	_, err := rand.Read(b)
@@ -406,6 +406,5 @@ func generateXrfkey() (xrfkey string) {
 		log.Fatalln("Error: ", err)
 	}
 
-	xrfkey = fmt.Sprintf("%X", b)
-	return
+	return fmt.Sprintf("%X", b)
 }
