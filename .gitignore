@@ -10,3 +10,4 @@ main
 *.qvf
 !test/projects/import/test.qvf
 dist/
+coverage.html
