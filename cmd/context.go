@@ -110,10 +110,10 @@ var clearContextCmd = &cobra.Command{
 }
 
 var loginContextCmd = withLocalFlags(&cobra.Command{
-	Use:     "login <context-name>",
-	Args:    cobra.RangeArgs(0, 1),
-	Short:   "Login and set cookie for the named context",
-	Long:    "Login and set cookie for the named context",
+	Use:   "login <context-name>",
+	Args:  cobra.RangeArgs(0, 1),
+	Short: "Login and set cookie for the named context",
+	Long:  "Login and set cookie for the named context",
 	Example: `corectl context login
 	corectl context login context-name`,
 
