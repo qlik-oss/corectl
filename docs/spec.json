@@ -230,7 +230,15 @@
           "description": "Get context, current context by default"
         },
         "login": {
-          "description": "Login and set cookie for the named context"
+          "description": "Login and set cookie for the named context",
+          "flags": {
+            "password": {
+              "description": "Password to be used when login in to Qlik Sense Enterprise (use with caution)"
+            },
+            "user": {
+              "description": "Username to be used when login in to Qlik Sense Enterprise"
+            }
+          }
         },
         "ls": {
           "description": "List all contexts"

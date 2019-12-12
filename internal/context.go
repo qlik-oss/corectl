@@ -115,9 +115,18 @@ func ClearContext() string {
 }
 
 // LoginContext login to a Qlik Sense Enterprise and sets the X-Qlik-Session as a cookie
-func LoginContext(tlsClientConfig *tls.Config, contextName string, userName string, password string) {
+func LoginContext(tlsClientConfig *tls.Config, contextName string) {
+	userName := viper.GetString("user")
+	password := viper.GetString("password")
+
 	handler := NewContextHandler()
-	context := handler.Get(contextName)
+	var context *Context
+
+	if contextName == "" {
+		context = handler.GetCurrent()
+	} else {
+		context = handler.Get(contextName)
+	}
 
 	if context == nil {
 		log.Fatalf("context '%s' wasn't found.\n", contextName)
@@ -135,8 +144,8 @@ func LoginContext(tlsClientConfig *tls.Config, contextName string, userName stri
 		}
 	} else {
 		// Cookie header has to be added
-		if len(context.Headers) == 0 {
-			context.Headers = make(map[string]string)
+		if context.Headers == nil {
+			context.Headers = map[string]string{}
 		}
 		context.Headers["cookie"] = qlikSession
 	}
@@ -336,7 +345,7 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	}
 
 	// Get username
-	if len(userName) == 0 {
+	if userName == "" {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter Username (domain\\user): ")
 		userName, _ = reader.ReadString('\n')
@@ -347,7 +356,7 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	}
 
 	// Get password
-	if len(password) == 0 {
+	if password == "" {
 		fmt.Print("Enter Password: ")
 		bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
 		password = string(bytePassword)
@@ -377,6 +386,10 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 
 	hc := http.Client{}
 	req, err := http.NewRequest("POST", loginURL.String(), strings.NewReader(urlData.Encode()))
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	req.PostForm = urlData
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")

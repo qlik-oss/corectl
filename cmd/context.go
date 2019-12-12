@@ -109,27 +109,26 @@ var clearContextCmd = &cobra.Command{
 	},
 }
 
-var loginContextCmd = &cobra.Command{
-	Use:     "login <context-name> <username> <password>",
-	Args:    cobra.RangeArgs(1, 3),
+var loginContextCmd = withLocalFlags(&cobra.Command{
+	Use:     "login <context-name>",
+	Args:    cobra.RangeArgs(0, 1),
 	Short:   "Login and set cookie for the named context",
 	Long:    "Login and set cookie for the named context",
-	Example: "corectl context login",
+	Example: `corectl context login
+	corectl context login context-name`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		var contextName, userName, password string
+		var contextName string
 		switch len(args) {
-		case 3:
-			contextName, userName, password = args[0], args[1], args[2]
-		case 2:
-			contextName, userName, password = args[0], args[1], ""
 		case 1:
-			contextName, userName, password = args[0], "", ""
+			contextName = args[0]
+		case 0:
+			contextName = ""
 		}
 
-		internal.LoginContext(tlsClientConfig, contextName, userName, password)
+		internal.LoginContext(tlsClientConfig, contextName)
 	},
-}
+}, "user", "password")
 
 var contextCmd = &cobra.Command{
 	Use:   "context",

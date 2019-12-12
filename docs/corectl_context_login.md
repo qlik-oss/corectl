@@ -7,19 +7,22 @@ Login and set cookie for the named context
 Login and set cookie for the named context
 
 ```
-corectl context login <context-name> <username> <password> [flags]
+corectl context login <context-name> [flags]
 ```
 
 ### Examples
 
 ```
 corectl context login
+	corectl context login context-name
 ```
 
 ### Options
 
 ```
-  -h, --help   help for login
+  -h, --help              help for login
+      --password string   Password to be used when login in to Qlik Sense Enterprise (use with caution)
+      --user string       Username to be used when login in to Qlik Sense Enterprise
 ```
 
 ### Options inherited from parent commands
