@@ -124,13 +124,18 @@ func LoginContext(tlsClientConfig *tls.Config, contextName string) {
 
 	if contextName == "" {
 		context = handler.GetCurrent()
+		if context == nil {
+			log.Fatalf(" no 'current-context' found in config.\n")
+		}
+		contextName = handler.Current
 	} else {
 		context = handler.Get(contextName)
+		if context == nil {
+			log.Fatalf("context '%s' wasn't found.\n", contextName)
+		}
 	}
 
-	if context == nil {
-		log.Fatalf("context '%s' wasn't found.\n", contextName)
-	}
+	log.Infof("Using context '%s', with URL '%s'\n", contextName, context.Engine)
 
 	qlikSession := getSessionCookie(tlsClientConfig, context.Engine, userName, password)
 
@@ -374,9 +379,8 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	// Generate xrfkey
 	xrfkey := generateXrfkey()
 
-	//
 	loginURL := resp.Request.URL
-	q, _ := url.ParseQuery(loginURL.RawQuery)
+	q := loginURL.Query()
 	q.Add("xrfkey", xrfkey)
 	loginURL.RawQuery = q.Encode()
 

@@ -113,17 +113,18 @@ var loginContextCmd = withLocalFlags(&cobra.Command{
 	Use:   "login <context-name>",
 	Args:  cobra.RangeArgs(0, 1),
 	Short: "Login and set cookie for the named context",
-	Long:  "Login and set cookie for the named context",
+	Long: `Login and set cookie for the named context
+	
+This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
+If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.`,
 	Example: `corectl context login
-	corectl context login context-name`,
+corectl context login context-name`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		var contextName string
-		switch len(args) {
-		case 1:
+		contextName := ""
+
+		if len(args) > 0 {
 			contextName = args[0]
-		case 0:
-			contextName = ""
 		}
 
 		internal.LoginContext(tlsClientConfig, contextName)
