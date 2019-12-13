@@ -93,7 +93,7 @@ func skipPreRun(ccmd *cobra.Command) bool {
 		return true
 	// For contexts we only want to do a prerun for context set.
 	case strings.Contains(path, "context"):
-		if strings.Contains(path, "context set") {
+		if strings.Contains(path, "context set") || strings.Contains(path, "context login") {
 			return false
 		}
 		return true
