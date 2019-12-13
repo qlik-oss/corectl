@@ -1,25 +1,31 @@
-## corectl context clear
+## corectl context login
 
-Set the current context to none
+Login and set cookie for the named context
 
 ### Synopsis
 
-Set the current context to none
+Login and set cookie for the named context
+	
+This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
+If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.
 
 ```
-corectl context clear [flags]
+corectl context login <context-name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context clear
+corectl context login
+corectl context login context-name
 ```
 
 ### Options
 
 ```
-  -h, --help   help for clear
+  -h, --help              help for login
+      --password string   Password to be used when logging in to Qlik Sense Enterprise (use with caution)
+      --user string       Username to be used when logging in to Qlik Sense Enterprise
 ```
 
 ### Options inherited from parent commands
