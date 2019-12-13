@@ -19,6 +19,8 @@ var headersMap = make(map[string]string)
 var explicitConfigFile = ""
 var explicitCertificatePath = ""
 var version = ""
+var commit = ""
+var branch = ""
 var headers http.Header
 var tlsClientConfig *tls.Config
 var rootCtx = context.Background()
@@ -114,8 +116,10 @@ func shouldUseContext(ccmd *cobra.Command) bool {
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(mainVersion string) {
+func Execute(mainVersion, branchName, commitSha string) {
 	version = mainVersion
+	branch = branchName
+	commit = commitSha
 	if err := rootCmd.Execute(); err != nil {
 		// Cobra already prints an error message so we just want to exit
 		os.Exit(1)

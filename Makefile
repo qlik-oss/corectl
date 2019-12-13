@@ -1,16 +1,22 @@
 SHELL := /bin/bash
 
-build:
-	go build -ldflags "-X main.version=dev-$(shell git rev-parse HEAD | cut -c1-12)"
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+COMMIT := $(shell git rev-parse HEAD | cut -c1-12)
 
-docs:
-	@go build -ldflags "-X main.version=$(shell git describe --tag --abbrev=0)" -o corectl_temp main.go
-	@./corectl_temp generate-docs
-	@./corectl_temp generate-spec
-	@rm ./corectl_temp
+build:
+	go build -ldflags "-X main.version=$(shell ./bump.sh)-dev -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)" -o corectl main.go
+
+install:
+	go install -ldflags "-X main.version=$(shell ./bump.sh)-dev -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)"
+
+docs: build
+	@./corectl generate-docs
+	@./corectl generate-spec
 
 lint:
 	go fmt ./...
+	@$(shell which golint || go get -u golang.org/x/lint/golint)
+	golint -set_exit_status
 
 start-deps:
 	AcceptEUAL=yes docker-compose -f test/docker-compose.yml up -d
