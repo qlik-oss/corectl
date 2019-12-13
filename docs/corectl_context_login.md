@@ -5,6 +5,9 @@ Login and set cookie for the named context
 ### Synopsis
 
 Login and set cookie for the named context
+	
+This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
+If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.
 
 ```
 corectl context login <context-name> [flags]
@@ -14,15 +17,15 @@ corectl context login <context-name> [flags]
 
 ```
 corectl context login
-	corectl context login context-name
+corectl context login context-name
 ```
 
 ### Options
 
 ```
   -h, --help              help for login
-      --password string   Password to be used when login in to Qlik Sense Enterprise (use with caution)
-      --user string       Username to be used when login in to Qlik Sense Enterprise
+      --password string   Password to be used when logging in to Qlik Sense Enterprise (use with caution)
+      --user string       Username to be used when logging in to Qlik Sense Enterprise
 ```
 
 ### Options inherited from parent commands
