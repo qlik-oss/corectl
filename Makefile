@@ -3,6 +3,8 @@ SHELL := /bin/bash
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git rev-parse HEAD | cut -c1-12)
 
+ACCEPT_EULA ?= no
+
 build:
 	go build -ldflags "-X main.version=$(shell ./bump.sh)-dev -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)" -o corectl main.go
 
@@ -19,7 +21,7 @@ lint:
 	golint -set_exit_status
 
 start-deps:
-	ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
+	ACCEPT_EULA=$(ACCEPT_EULA) docker-compose -f test/docker-compose.yml up -d
 
 test: start-deps
 	go test ./... -tags=integration -count=1 -race
@@ -34,7 +36,7 @@ coverage: c.out
 
 example:
 	@echo "Starting engine in docker"
-	ACCEPT_EULA=yes docker-compose -f examples/docker-compose.yml up -d
+	ACCEPT_EULA=$(ACCEPT_EULA) docker-compose -f examples/docker-compose.yml up -d
 	@echo "Building corectl"
 	go build
 	./corectl build --config examples/corectl.yml
