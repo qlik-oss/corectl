@@ -94,6 +94,8 @@ func initLocalFlags() {
 	localFlags.Bool("minimum", false, "Only print properties required by engine")
 	localFlags.String("comment", "", "Comment for the context")
 	localFlags.BoolP("quiet", "q", false, "Only print IDs. Useful for scripting")
+	localFlags.String("user", "", "Username to be used when logging in to Qlik Sense Enterprise")
+	localFlags.String("password", "", "Password to be used when logging in to Qlik Sense Enterprise (use with caution)")
 
 	localFlags.VisitAll(func(flag *pflag.Flag) {
 		viper.BindPFlag(flag.Name, flag)

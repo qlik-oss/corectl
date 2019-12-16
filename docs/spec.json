@@ -229,6 +229,17 @@
         "get": {
           "description": "Get context, current context by default"
         },
+        "login": {
+          "description": "Login and set cookie for the named context\n\t\nThis is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.\nIf no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.",
+          "flags": {
+            "password": {
+              "description": "Password to be used when logging in to Qlik Sense Enterprise (use with caution)"
+            },
+            "user": {
+              "description": "Username to be used when logging in to Qlik Sense Enterprise"
+            }
+          }
+        },
         "ls": {
           "description": "List all contexts"
         },

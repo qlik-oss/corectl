@@ -1,15 +1,23 @@
 package internal
 
 import (
+	"bufio"
+	"crypto/rand"
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"reflect"
+	"regexp"
 	"strings"
+	"syscall"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v2"
 )
 
@@ -104,6 +112,50 @@ func ClearContext() string {
 	previous := handler.Clear()
 	handler.Save()
 	return previous
+}
+
+// LoginContext login to a Qlik Sense Enterprise and sets the X-Qlik-Session as a cookie
+func LoginContext(tlsClientConfig *tls.Config, contextName string) {
+	userName := viper.GetString("user")
+	password := viper.GetString("password")
+
+	handler := NewContextHandler()
+	var context *Context
+
+	if contextName == "" {
+		context = handler.GetCurrent()
+		if context == nil {
+			log.Fatalf(" no 'current-context' found in config.\n")
+		}
+		contextName = handler.Current
+	} else {
+		context = handler.Get(contextName)
+		if context == nil {
+			log.Fatalf("context '%s' wasn't found.\n", contextName)
+		}
+	}
+
+	log.Infof("Using context '%s', with URL '%s'\n", contextName, context.Engine)
+
+	qlikSession := getSessionCookie(tlsClientConfig, context.Engine, userName, password)
+
+	if _, ok := context.Headers["cookie"]; ok {
+		// Cookie header present
+		re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
+		if re.MatchString(context.Headers["cookie"]) {
+			context.Headers["cookie"] = re.ReplaceAllString(context.Headers["cookie"], qlikSession)
+		} else {
+			context.Headers["cookie"] = fmt.Sprintf("%s; %s", context.Headers["cookie"], qlikSession)
+		}
+	} else {
+		// Cookie header has to be added
+		if context.Headers == nil {
+			context.Headers = map[string]string{}
+		}
+		context.Headers["cookie"] = qlikSession
+	}
+
+	handler.Save()
 }
 
 // NewContextHandler helps with handeling contexts
@@ -283,4 +335,93 @@ func createContextFileIfNotExist() {
 
 		log.Verboseln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
 	}
+}
+
+func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName string, password string) string {
+	// Verify Qlik Sense URL
+	u, err := url.Parse(engineURL)
+
+	if err != nil {
+		log.Fatalln("The engineURL doesn't seem to be correct")
+	}
+
+	if u.Scheme != "https" {
+		log.Fatalln("Only login through secure connections (HTTPS) is supported")
+	}
+
+	// Get username
+	if userName == "" {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter Username (domain\\user): ")
+		userName, _ = reader.ReadString('\n')
+	}
+
+	if !strings.Contains(userName, "\\") {
+		log.Fatalln("username MUST be in format 'domain\\user'")
+	}
+
+	// Get password
+	if password == "" {
+		fmt.Print("Enter Password: ")
+		bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
+		password = string(bytePassword)
+	}
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = tlsClientConfig
+
+	// Get post URL via redirects
+	resp, err := http.Get(engineURL)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Generate xrfkey
+	xrfkey := generateXrfkey()
+
+	loginURL := resp.Request.URL
+	q := loginURL.Query()
+	q.Add("xrfkey", xrfkey)
+	loginURL.RawQuery = q.Encode()
+
+	urlData := url.Values{}
+	urlData.Set("username", userName)
+	urlData.Set("pwd", password)
+
+	hc := http.Client{}
+	req, err := http.NewRequest("POST", loginURL.String(), strings.NewReader(urlData.Encode()))
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.PostForm = urlData
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("x-qlik-xrfkey", xrfkey)
+
+	postResp, err := hc.Do(req)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	setCookie := postResp.Header.Get("Set-Cookie")
+
+	if setCookie == "" {
+		log.Fatalln("Not able to get the 'X-Qlik-Session' cookie, please check your password.")
+	}
+
+	return strings.TrimRight(strings.Fields(setCookie)[0], ";")
+}
+
+func generateXrfkey() string {
+
+	b := make([]byte, 8)
+	_, err := rand.Read(b)
+
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
+
+	return fmt.Sprintf("%X", b)
 }

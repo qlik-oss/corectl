@@ -99,7 +99,7 @@ var clearContextCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(0),
 	Short:   "Set the current context to none",
 	Long:    "Set the current context to none",
-	Example: "corectl clear",
+	Example: "corectl context clear",
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		previous := internal.ClearContext()
@@ -108,6 +108,28 @@ var clearContextCmd = &cobra.Command{
 		}
 	},
 }
+
+var loginContextCmd = withLocalFlags(&cobra.Command{
+	Use:   "login <context-name>",
+	Args:  cobra.RangeArgs(0, 1),
+	Short: "Login and set cookie for the named context",
+	Long: `Login and set cookie for the named context
+	
+This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
+If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.`,
+	Example: `corectl context login
+corectl context login context-name`,
+
+	Run: func(ccmd *cobra.Command, args []string) {
+		contextName := ""
+
+		if len(args) > 0 {
+			contextName = args[0]
+		}
+
+		internal.LoginContext(tlsClientConfig, contextName)
+	},
+}, "user", "password")
 
 var contextCmd = &cobra.Command{
 	Use:   "context",
@@ -134,5 +156,5 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 }
 
 func init() {
-	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd)
+	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd, loginContextCmd)
 }
