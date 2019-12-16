@@ -29,10 +29,10 @@ var versionCmd = &cobra.Command{
 
 	Run: func(_ *cobra.Command, args []string) {
 
-		if version != "development build" {
+		if !strings.Contains(version, "dev") {
 			checkLatestVersion()
 		} else {
-			fmt.Printf("corectl version: %s\n", version)
+			fmt.Printf("version: %s\tbranch: %s\tcommit: %s\n", version, branch, commit)
 		}
 	},
 }

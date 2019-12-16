@@ -10,7 +10,7 @@ jobs:
           key: dependency-cache-{{ checksum "go.sum" }}
       - run:
           name: Build
-          command: go build -ldflags "-X main.version=$(git describe --tag --abbrev=0)"
+          command: make build
       - save_cache:
           key: dependency-cache-{{ checksum "go.sum" }}
           paths:
@@ -18,9 +18,7 @@ jobs:
       - run:
           name: Linting
           command: |
-            go fmt ./...
-            go get -u golang.org/x/lint/golint
-            golint -set_exit_status
+            make lint
             # go fmt and golint can alter go.mod and go.sum,
             # this will cause the git diff to give false negative
             # restore those files before proceeding
@@ -34,14 +32,15 @@ jobs:
             # the pristine state required for our tests to pass
             git checkout go.mod go.sum
       - run:
+          name: Generate docs and spec
+          command: make docs
+      - run:
           name: Check if documentation needs to be updated
           command: |
-            ./corectl generate-docs
             git diff --exit-code --name-only docs/*.md
       - run:
           name: Check if changes has been done to the CLI API
           command: |
-            ./corectl generate-spec
             git diff --exit-code --name-only docs/spec.json
       - store_artifacts:
           path: ./docs/spec.json
