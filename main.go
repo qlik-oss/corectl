@@ -5,7 +5,7 @@ import (
 )
 
 // version will be set with: go build -ldflags "-X main.version=X.Y.Z"
-var version = "development build"
+var version = ""
 var commit = ""
 var branch = ""
 

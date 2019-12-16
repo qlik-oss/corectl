@@ -19,7 +19,7 @@ lint:
 	golint -set_exit_status
 
 start-deps:
-	AcceptEUAL=yes docker-compose -f test/docker-compose.yml up -d
+	ACCEPT_EULA=yes docker-compose -f test/docker-compose.yml up -d
 
 test: start-deps
 	go test ./... -tags=integration -count=1 -race
@@ -34,7 +34,7 @@ coverage: c.out
 
 example:
 	@echo "Starting engine in docker"
-	AcceptEUAL=yes docker-compose -f examples/docker-compose.yml up -d
+	ACCEPT_EULA=yes docker-compose -f examples/docker-compose.yml up -d
 	@echo "Building corectl"
 	go build
 	./corectl build --config examples/corectl.yml
