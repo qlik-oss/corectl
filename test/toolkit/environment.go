@@ -49,7 +49,8 @@ func buildCorectl() {
 
 	binaryPath = abs
 
-	if err := exec.Command("go", "build", "-o", binaryName, "-v").Run(); err != nil {
+	args := []string{"build", "-ldflags", "-X main.version=dev", "-o", binaryName, "-v"}
+	if err := exec.Command("go", args...).Run(); err != nil {
 		fmt.Printf("could not make binary for %s: %v", binaryName, err)
 		os.Exit(1)
 	}

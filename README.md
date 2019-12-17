@@ -130,14 +130,20 @@ followed by adding the following to your PowerShell [profile](https://docs.micro
 
 Fast and easy - corectl will be built into the `$GOPATH/bin` and executable directly from bash using `corectl`
 ```bash
-go install
+make install
 ```
 
-If you want to keep the previous installed version you can use `go build` and get the binary to the current working directory
+If you want to keep the previous installed version you can use `make build` and get the binary to the current working directory
+```bash
+make build
+```
+
+You can also build/install using `go` as previously:
 ```bash
 go build
+go install
 ```
-
+but this will not include additional build information into `corectl` (version, branch and commit).
 ## Test
 
 The unit tests are run with the go test command:
@@ -167,6 +173,12 @@ If the reference output files need to be updated, run the test with --update fla
 go test corectl_integration_test.go --update
 ```
 
+The full test-suite can also easily be run with `make`.
+```sh
+ACCEPT_EULA=<yes/no> make test
+```
+For more granular control however the separate commands, mentioned above, should still be used.
+
 ## Release
 
 You create a release by pushing a commit and a tag with semantic versioning.
@@ -183,18 +195,12 @@ The script will update the API specification with the new version, create a comm
 ## Documentation
 
 The usage documentation is generated using [`cobra/doc`](https://github.com/spf13/cobra/blob/master/doc/md_docs.md).
-To regenerate the documentation:
+To regenerate the documentation and the API specification run:
 
 ```bash
-corectl generate-docs
+make docs
 ```
 
-To regenerate the api spec, first build and run with latest release
-tag as version and then generate the spec using:
-
-```bash
-go run -ldflags "-X main.version=$(git describe --tag --abbrev=0)" main.go generate-spec
-```
 ## Contributing
 
 We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source)
