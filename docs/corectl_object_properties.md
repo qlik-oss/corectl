@@ -19,7 +19,7 @@ corectl object properties OBJECT-ID
 ### Options
 
 ```
-      --full      GetFullPropertyTree is used for retriving properties
+      --full      Using 'GetFullPropertyTree' to retrive properties for children as well
   -h, --help      help for properties
       --minimum   Only print properties required by engine
 ```
