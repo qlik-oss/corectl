@@ -77,7 +77,7 @@ var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
 		printer.PrintGenericEntityProperties(state, args[0], "object", viper.GetBool("minimum"))
 	},
-}, "minimum")
+}, "minimum", "full")
 
 var getObjectLayoutCmd = &cobra.Command{
 	Use:     "layout <object-id>",

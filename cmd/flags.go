@@ -92,6 +92,7 @@ func initLocalFlags() {
 	localFlags.Bool("suppress", false, "Suppress confirmation dialogue")
 	localFlags.String("catwalk-url", "https://catwalk.core.qlik.com", "Url to an instance of catwalk, if not provided the qlik one will be used")
 	localFlags.Bool("minimum", false, "Only print properties required by engine")
+	localFlags.Bool("full", false, "Using 'GetFullPropertyTree' to retrive properties for children as well")
 	localFlags.String("comment", "", "Comment for the context")
 	localFlags.BoolP("quiet", "q", false, "Only print IDs. Useful for scripting")
 	localFlags.String("user", "", "Username to be used when logging in to Qlik Sense Enterprise")
