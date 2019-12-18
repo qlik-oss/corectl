@@ -407,7 +407,7 @@
           "description": "Print the properties of the generic object in JSON format",
           "flags": {
             "full": {
-              "description": "Using 'GetFullPropertyTree' to retrive properties for children as well",
+              "description": "Using 'GetFullPropertyTree' to retrieve properties for children as well",
               "default": "false"
             },
             "minimum": {
