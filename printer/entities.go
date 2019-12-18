@@ -75,8 +75,14 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericObject.GetProperties(state.Ctx)
-			properties, _ = json.Marshal(qProps)
+			full := viper.GetBool("full")
+			if full {
+				qPropsFull, _ := genericObject.GetFullPropertyTree(state.Ctx)
+				properties, _ = json.Marshal(qPropsFull)
+			} else {
+				qProps, _ := genericObject.GetProperties(state.Ctx)
+				properties, _ = json.Marshal(qProps)
+			}
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 			if err != nil {

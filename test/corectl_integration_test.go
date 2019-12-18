@@ -426,6 +426,28 @@ func TestChildObjectsAndFullPropertyTree(t *testing.T) {
 
 }
 
+func TestGetFullPropertyTree(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
+	defer p.Reset()
+
+	// Build the app with an object with two children
+	p.ExpectOK().Run("build", "--objects=test/projects/nested-objects/sheet.json")
+
+	// List the objects and verify
+	p.ExpectGolden().Run("object", "properties", "a699ee97-152d-4470-9655-ae7c82d71491", "--full")
+}
+
+func TestGetFullPropertyTreeMinimum(t *testing.T) {
+	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
+	defer p.Reset()
+
+	// Build the app with an object with two children
+	p.ExpectOK().Run("build", "--objects=test/projects/nested-objects/sheet.json")
+
+	// List the objects and verify
+	p.ExpectGolden().Run("object", "properties", "a699ee97-152d-4470-9655-ae7c82d71491", "--full", "--minimum")
+}
+
 func TestConnectionDefinitionVariations(t *testing.T) {
 
 	os.Setenv("CONN_TYPE", "folder")
