@@ -10,6 +10,7 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
+	"github.com/spf13/viper"
 )
 
 // PrintNamedItemsList prints a list of the id and type and title of the supplied items
@@ -74,8 +75,14 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericObject.GetProperties(state.Ctx)
-			properties, _ = json.Marshal(qProps)
+			full := viper.GetBool("full")
+			if full {
+				qPropsFull, _ := genericObject.GetFullPropertyTree(state.Ctx)
+				properties, _ = json.Marshal(qPropsFull)
+			} else {
+				qProps, _ := genericObject.GetProperties(state.Ctx)
+				properties, _ = json.Marshal(qProps)
+			}
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 			if err != nil {
@@ -113,7 +120,13 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+
+			full := viper.GetBool("full")
+			if full {
+				properties, err = genericObject.GetFullPropertyTreeRaw(state.Ctx)
+			} else {
+				properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+			}
 		case "measure":
 			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
 			if err != nil {
