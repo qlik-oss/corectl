@@ -37,6 +37,14 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 			internal.SetScript(ctx, state.Doc, scriptFile)
 		}
 
+		appProperties := ccmd.Flag("app-properties").Value.String()
+		if appProperties == "" {
+			appProperties = getPathFlagFromConfigFile("app-properties")
+		}
+		if appProperties != "" {
+			internal.SetAppProperties(ctx, state.Doc, appProperties)
+		}
+
 		if !viper.GetBool("no-reload") {
 			silent := viper.GetBool("silent")
 			limit := viper.GetInt("limit")
@@ -47,7 +55,7 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 			internal.Save(ctx, state.Doc)
 		}
 	},
-}, "script", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save", "limit")
+}, "script", "app-properties", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save", "limit")
 
 var reloadCmd = withLocalFlags(&cobra.Command{
 	Use:     "reload",

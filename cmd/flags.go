@@ -111,6 +111,7 @@ func initLocalFlags() {
 	localFlags.String("measures", "", "A list of generic measures json paths")
 	localFlags.String("objects", "", "A list of generic object json paths")
 	localFlags.String("script", "", "Path to a qvs file containing the app data reload script")
+	localFlags.String("app-properties", "", "Path to a json file containing the app properties")
 	localFlags.String("dir", DefaultUnbuildFolder, "Path to a the folder where the unbuilt app is exported")
 
 	if runtime.GOOS != "windows" {
