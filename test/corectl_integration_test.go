@@ -525,6 +525,7 @@ func TestUnbuild(t *testing.T) {
 	p2.ExpectGolden().Run("measure", "ls")
 	p2.ExpectGolden().Run("dimension", "ls")
 	p2.ExpectGolden().Run("meta")
+	p2.ExpectIncludes("\"qTitle\":\"Test Unbuild App\",\"qThumbnail\":{\"qUrl\":\"/appcontent/qUrl.jpeg\"}").Run("app", "ls", "--traffic")
 	os.RemoveAll("test/golden/unbuild")
 }
 
