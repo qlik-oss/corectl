@@ -1,5 +1,6 @@
 engine: ${ENGINE_STD_URL}
 script: ./script.qvs
+app-properties: app-properties.json
 connections:
   myconnection:
     type: testconnector

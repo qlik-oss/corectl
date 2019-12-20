@@ -51,6 +51,7 @@ func Unbuild(ctx context.Context, doc *enigma.Doc, global *enigma.Global, rootFo
 	exportEntities(ctx, doc, rootFolder)
 	exportVariables(ctx, doc, rootFolder)
 	exportScript(ctx, doc, rootFolder)
+	exportAppProperties(ctx, doc, rootFolder)
 	exportConnections(ctx, doc, rootFolder)
 	exportMainConfigFile(rootFolder)
 }
@@ -140,6 +141,12 @@ func exportScript(ctx context.Context, doc *enigma.Doc, folder string) {
 	log.Verboseln("Exported script to " + folder + "/script.qvs")
 }
 
+func exportAppProperties(ctx context.Context, doc *enigma.Doc, folder string) {
+	appProperties, _ := doc.GetAppProperties(ctx)
+	ioutil.WriteFile(folder+"/app-properties.json", marshalOrFail(appProperties), os.ModePerm)
+	log.Verboseln("Exported app properties to " + folder + "/app-properties.json")
+}
+
 func exportConnections(ctx context.Context, doc *enigma.Doc, folder string) {
 	connections, _ := doc.GetConnections(ctx)
 	connectionsStr := "connections:\n"
@@ -163,7 +170,8 @@ func exportMainConfigFile(rootFolder string) {
 		"dimensions: dimensions.json\n" +
 		"measures: measures.json\n" +
 		"objects: objects/*.json\n" +
-		"variables: variables.json\n"
+		"variables: variables.json\n" +
+		"app-properties: app-properties.json\n"
 	ioutil.WriteFile(rootFolder+"/corectl.yml", []byte(config), os.ModePerm)
 }
 
