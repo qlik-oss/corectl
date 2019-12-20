@@ -144,6 +144,9 @@
     },
     "build": {
       "flags": {
+        "app-properties": {
+          "description": "Path to a json file containing the app properties"
+        },
         "bookmarks": {
           "description": "A list of generic bookmark json paths"
         },

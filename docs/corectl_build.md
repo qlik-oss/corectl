@@ -20,18 +20,19 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 ### Options
 
 ```
-      --bookmarks string     A list of generic bookmark json paths
-      --connections string   Path to a yml file containing the data connection definitions
-      --dimensions string    A list of generic dimension json paths
-  -h, --help                 help for build
-      --limit int            Limit the number of rows to load
-      --measures string      A list of generic measures json paths
-      --no-reload            Do not run the reload script
-      --no-save              Do not save the app
-      --objects string       A list of generic object json paths
-      --script string        Path to a qvs file containing the app data reload script
-      --silent               Do not log reload output
-      --variables string     A list of generic variable json paths
+      --app-properties string   Path to a json file containing the app properties
+      --bookmarks string        A list of generic bookmark json paths
+      --connections string      Path to a yml file containing the data connection definitions
+      --dimensions string       A list of generic dimension json paths
+  -h, --help                    help for build
+      --limit int               Limit the number of rows to load
+      --measures string         A list of generic measures json paths
+      --no-reload               Do not run the reload script
+      --no-save                 Do not save the app
+      --objects string          A list of generic object json paths
+      --script string           Path to a qvs file containing the app data reload script
+      --silent                  Do not log reload output
+      --variables string        A list of generic variable json paths
 ```
 
 ### Options inherited from parent commands
