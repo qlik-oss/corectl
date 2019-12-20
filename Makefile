@@ -6,10 +6,10 @@ COMMIT := $(shell git rev-parse HEAD | cut -c1-12)
 ACCEPT_EULA ?= no
 
 build:
-	go build -ldflags "-X main.version=$(shell ./bump.sh)-dev -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)" -o corectl main.go
+	go build -ldflags "-X main.version=$(shell ./bump.sh) -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)" -o corectl main.go
 
 install:
-	go install -ldflags "-X main.version=$(shell ./bump.sh)-dev -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)"
+	go install -ldflags "-X main.version=$(shell ./bump.sh) -X main.branch=$(BRANCH) -X main.commit=$(COMMIT)"
 
 docs: build
 	@./corectl generate-docs

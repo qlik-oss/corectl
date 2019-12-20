@@ -41,7 +41,7 @@ jobs:
       - run:
           name: Check if changes has been done to the CLI API
           command: |
-            git diff --exit-code --name-only docs/spec.json
+            git diff --exit-code docs/spec.json
       - store_artifacts:
           path: ./docs/spec.json
       - setup_remote_docker
