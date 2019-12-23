@@ -72,7 +72,7 @@ jobs:
   validate:
     working_directory: ~/corectl
     docker:
-      - image: circleci/node:8.16.2
+      - image: circleci/node:8.17.0
     steps:
       - checkout
       - run:
