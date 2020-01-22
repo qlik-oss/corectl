@@ -33,6 +33,8 @@ func logConnectError(err error, engine string) {
 	if strings.Contains(err.Error(), "401") {
 		msg += fmt.Sprintln("This probably means that you have provided either incorrect or no authorization credentials.")
 		msg += fmt.Sprintln("Check that the headers specified are correct.")
+	} else if strings.Contains(err.Error(), "x509") {
+		msg += fmt.Sprintln("This probably means that you have certificate that are not signed properly")
 	} else {
 		msg += fmt.Sprintln("This probably means that there is no engine running on the specified url.")
 		msg += fmt.Sprintln("Check that the engine is up and that the url specified is correct.")
