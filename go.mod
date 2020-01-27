@@ -3,7 +3,6 @@ module github.com/qlik-oss/corectl
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
 	github.com/google/go-github/v27 v27.0.6
-	github.com/google/go-github/v29 v29.0.2
 	github.com/hashicorp/go-version v1.2.0
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
@@ -16,7 +15,7 @@ require (
 	github.com/texttheater/golang-levenshtein v0.0.0-20191208221605-eb6844b05fc6
 	golang.org/x/crypto v0.0.0-20200117160349-530e935923ad
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect
-	gopkg.in/yaml.v2 v2.2.7
+	gopkg.in/yaml.v2 v2.2.8
 )
 
 go 1.13
