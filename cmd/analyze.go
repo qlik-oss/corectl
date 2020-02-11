@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -8,7 +9,6 @@ import (
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var getAssociationsCmd = &cobra.Command{
@@ -21,9 +21,9 @@ var getAssociationsCmd = &cobra.Command{
 corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, tlsClientConfig, false)
+		comm := urtag.NewCommunicator(ccmd)
+		ctx, _, doc, _ := comm.OpenAppSocket(false)
+		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintAssociations(data)
 	},
 }
@@ -37,9 +37,9 @@ var getTablesCmd = &cobra.Command{
 corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, tlsClientConfig, false)
+		comm := urtag.NewCommunicator(ccmd)
+		ctx, _, doc, _ := comm.OpenAppSocket(false)
+		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintTables(data)
 	},
 }
@@ -53,10 +53,10 @@ var getMetaCmd = &cobra.Command{
 corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, tlsClientConfig, false)
-		printer.PrintMetadata(data)
+		comm := urtag.NewCommunicator(ccmd)
+		ctx, _, doc, params := comm.OpenAppSocket(false)
+		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
+		printer.PrintMetadata(data, params.PrintMode())
 	},
 }
 
@@ -68,8 +68,8 @@ var getValuesCmd = &cobra.Command{
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		internal.PrintFieldValues(rootCtx, state.Doc, args[0])
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		internal.PrintFieldValues(ctx, doc, args[0])
 	},
 }
 
@@ -81,10 +81,10 @@ var getFieldsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl fields",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, tlsClientConfig, false)
-		printer.PrintFields(data, false)
+		comm := urtag.NewCommunicator(ccmd)
+		ctx, _, doc, params := comm.OpenAppSocket(false)
+		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
+		printer.PrintFields(data, false, params.PrintMode())
 	},
 }, "quiet")
 
@@ -96,10 +96,10 @@ var getKeysCmd = &cobra.Command{
 	Example: "corectl keys",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		engine := internal.GetEngineURL()
-		data := internal.GetModelMetadata(rootCtx, state.Doc, state.AppID, engine, headers, tlsClientConfig, false)
-		printer.PrintFields(data, true)
+		comm := urtag.NewCommunicator(ccmd)
+		ctx, _, doc, params := comm.OpenAppSocket(false)
+		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
+		printer.PrintFields(data, true, params.PrintMode())
 	},
 }
 
@@ -114,8 +114,8 @@ corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" 
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		internal.Eval(rootCtx, state.Doc, args)
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		internal.Eval(ctx, doc, args)
 	},
 }
 
@@ -128,23 +128,14 @@ var catwalkCmd = withLocalFlags(&cobra.Command{
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
+		comm := urtag.NewCommunicator(ccmd)
+
 		var appSpecified bool
-		engine := viper.GetString("engine")
-		appID := viper.GetString("app")
-		catwalkURL := viper.GetString("catwalk-url")
-		engineURL := internal.GetEngineURL()
-		if appID != "" {
-			engineURL.Path += "/app/" + appID
-			catwalkURL += "?engine_url=" + engineURL.String()
-			appSpecified = true
-		} else {
-			if internal.TryParseAppFromURL(engine) != "" {
-				appSpecified = true
-			}
-			catwalkURL += "?engine_url=" + engineURL.String()
-		}
+		catwalkURL := comm.GetString("catwalk-url")
+		engineURL := comm.EngineURL()
+		catwalkURL += "?engine_url=" + engineURL.String()
 		if appSpecified {
-			if ok, err := internal.AppExists(rootCtx, engine, appID, headers, tlsClientConfig); !ok {
+			if ok, err := urtag.NewCommunicator(ccmd).AppExists(); !ok {
 				log.Fatalln(err)
 			}
 		}

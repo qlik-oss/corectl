@@ -61,11 +61,7 @@ func ListVariables(ctx context.Context, doc *enigma.Doc) []NamedItem {
 }
 
 // SetVariables adds all variables that match the specified glob pattern
-func SetVariables(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "variables")
-	if err != nil {
-		log.Fatalln("could not interpret glob pattern: ", err)
-	}
+func SetVariables(ctx context.Context, doc *enigma.Doc, paths []string) {
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {

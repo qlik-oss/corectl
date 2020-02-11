@@ -28,6 +28,7 @@ services:
       -S EnableABAC=1
       -S SystemAllowRulePath=/rules/rules.txt
     volumes:
+      - ./apps:/apps
       - ./data:/data
       - ./rules:/rules
   qix-engine-bad-license-server:

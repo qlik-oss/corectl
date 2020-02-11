@@ -1,4 +1,4 @@
-package internal
+package urtag
 
 import (
 	"fmt"
@@ -97,40 +97,40 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 	return
 }
 
-/*
-func TestGetEngineUrl(t *testing.T) {
-	// Wrapper function
-	f := func(s string) string {
-		settings.Engine = s
-		return GetEngineURL().String()
-	}
-	assert.Equal(t, "ws://engine", f("engine"))
-	assert.Equal(t, "ws://engine:1234", f("engine:1234"))
-	assert.Equal(t, "ws://engine:1234/app/foo", f("engine:1234/app/foo"))
-	assert.Equal(t, "ws://engine:1234/app/foo.qvf", f("engine:1234/app/foo.qvf"))
-	assert.Equal(t, "ws://127.0.0.1:1234/app/foo.qvf", f("127.0.0.1:1234/app/foo.qvf"))
-	assert.Equal(t, "ws://engine", f("http://engine"))
-}
-
-func TestBuildEngineUrl(t *testing.T) {
-	// Wrapper function
-	f := func(s, ttl string) string {
-		settings.Engine = s
-		return buildWebSocketURL(ttl)
-	}
-	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("engine", "30"))
-	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("engine:1234", "30"))
-	assert.Equal(t, "wss://engine/app/engineData/ttl/30", f("wss://engine", "30"))
-	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("ws://engine", "30"))
-	assert.Equal(t, "wss://engine:1234/app/engineData/ttl/30", f("wss://engine:1234", "30"))
-	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234", "30"))
-	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("ws://engine:1234/sense/app/test.qvf", "30"))
-	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("engine:1234/sense/app/test.qvf", "30"))
-	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234/", "30"))
-	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("http://engine:1234/", "30"))
-	assert.Equal(t, "ws://engine:1234/app", f("ws://engine:1234/app", "30"))
-	assert.Equal(t, "ws://engine:1234/app", f("http://engine:1234/app", "30"))
-}*/
+//
+//func TestGetEngineUrl(t *testing.T) {
+//	// Wrapper function
+//	f := func(s string) string {
+//		settings.Engine = s
+//		return GetEngineURL().String()
+//	}
+//	assert.Equal(t, "ws://engine", f("engine"))
+//	assert.Equal(t, "ws://engine:1234", f("engine:1234"))
+//	assert.Equal(t, "ws://engine:1234/app/foo", f("engine:1234/app/foo"))
+//	assert.Equal(t, "ws://engine:1234/app/foo.qvf", f("engine:1234/app/foo.qvf"))
+//	assert.Equal(t, "ws://127.0.0.1:1234/app/foo.qvf", f("127.0.0.1:1234/app/foo.qvf"))
+//	assert.Equal(t, "ws://engine", f("http://engine"))
+//}
+//
+//func TestBuildEngineUrl(t *testing.T) {
+//	// Wrapper function
+//	f := func(s, ttl string) string {
+//		settings.Engine = s
+//		return buildWebSocketURL(ttl)
+//	}
+//	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("engine", "30"))
+//	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("engine:1234", "30"))
+//	assert.Equal(t, "wss://engine/app/engineData/ttl/30", f("wss://engine", "30"))
+//	assert.Equal(t, "ws://engine/app/engineData/ttl/30", f("ws://engine", "30"))
+//	assert.Equal(t, "wss://engine:1234/app/engineData/ttl/30", f("wss://engine:1234", "30"))
+//	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234", "30"))
+//	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("ws://engine:1234/sense/app/test.qvf", "30"))
+//	assert.Equal(t, "ws://engine:1234/sense/app/test.qvf", f("engine:1234/sense/app/test.qvf", "30"))
+//	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("ws://engine:1234/", "30"))
+//	assert.Equal(t, "ws://engine:1234/app/engineData/ttl/30", f("http://engine:1234/", "30"))
+//	assert.Equal(t, "ws://engine:1234/app", f("ws://engine:1234/app", "30"))
+//	assert.Equal(t, "ws://engine:1234/app", f("http://engine:1234/app", "30"))
+//}
 
 func TestParseAppFromUrl(t *testing.T) {
 	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/app/test.qvf"))

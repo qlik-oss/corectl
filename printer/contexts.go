@@ -2,15 +2,15 @@ package printer
 
 import (
 	"fmt"
+	"github.com/qlik-oss/corectl/pkg/huggorm"
 	"os"
 	"sort"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/qlik-oss/corectl/internal"
 )
 
 // PrintContext prints all information in a context
-func PrintContext(name string, handler *internal.ContextHandler) {
+func PrintContext(name string, handler *huggorm.ContextHandler) {
 	if name == "" {
 		name = handler.Current
 		if name == "" {
@@ -43,7 +43,7 @@ func PrintCurrentContext(name string) {
 }
 
 // PrintContexts prints a list of contexts to standard out
-func PrintContexts(handler *internal.ContextHandler, printAsBash bool) {
+func PrintContexts(handler *huggorm.ContextHandler, mode PrintMode) {
 	var sortedContextKeys []string
 	for k := range handler.Contexts {
 		sortedContextKeys = append(sortedContextKeys, k)
@@ -51,7 +51,7 @@ func PrintContexts(handler *internal.ContextHandler, printAsBash bool) {
 
 	sort.Strings(sortedContextKeys)
 
-	if printAsBash {
+	if mode.BashMode() {
 		for _, v := range sortedContextKeys {
 			PrintToBashComp(v)
 		}

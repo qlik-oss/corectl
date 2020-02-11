@@ -10,17 +10,14 @@ import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
-	"github.com/spf13/viper"
 )
 
 // PrintNamedItemsList prints a list of the id and type and title of the supplied items
-func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitle bool) {
-	switch mode {
-	case jsonMode:
+func PrintNamedItemsList(items []internal.NamedItem, mode PrintMode, printTitle bool) {
+
+	if mode.JsonMode() {
 		log.PrintAsJSON(items)
-	case bashMode:
-		fallthrough
-	case quietMode:
+	} else if mode.BashMode() || mode.QuietMode() {
 		if printTitle {
 			for _, item := range items {
 				log.Quietln(item.Title)
@@ -30,7 +27,7 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitl
 				log.Quietln(item.ID)
 			}
 		}
-	default:
+	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"ID", "Title"})
@@ -42,17 +39,14 @@ func PrintNamedItemsList(items []internal.NamedItem, printAsBash bool, printTitl
 }
 
 // PrintNamedItemsListWithType prints a list of the id and type and title of the supplied items
-func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash bool) {
-	switch mode {
-	case jsonMode:
+func PrintNamedItemsListWithType(items []internal.NamedItemWithType, mode PrintMode) {
+	if mode.JsonMode() {
 		log.PrintAsJSON(items)
-	case bashMode:
-		fallthrough
-	case quietMode:
+	} else if mode.BashMode() || mode.QuietMode() {
 		for _, item := range items {
 			log.Quietln(item.ID)
 		}
-	default:
+	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"ID", "Type", "Title"})
@@ -64,94 +58,92 @@ func PrintNamedItemsListWithType(items []internal.NamedItemWithType, printAsBash
 }
 
 // PrintGenericEntityProperties prints the properties of the generic entity defined by entityID
-func PrintGenericEntityProperties(state *internal.State, entityID string, entityType string, minimum bool) {
+func PrintGenericEntityProperties(ctx context.Context, doc *enigma.Doc, entityID string, entityType string, minimum bool, full bool) {
 	var err error
 	var properties json.RawMessage
 
 	if minimum {
 		switch entityType {
 		case "object":
-			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+			genericObject, err := doc.GetObject(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			full := viper.GetBool("full")
 			if full {
-				qPropsFull, _ := genericObject.GetFullPropertyTree(state.Ctx)
+				qPropsFull, _ := genericObject.GetFullPropertyTree(ctx)
 				properties, _ = json.Marshal(qPropsFull)
 			} else {
-				qProps, _ := genericObject.GetProperties(state.Ctx)
+				qProps, _ := genericObject.GetProperties(ctx)
 				properties, _ = json.Marshal(qProps)
 			}
 		case "measure":
-			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+			genericMeasure, err := doc.GetMeasure(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericMeasure.GetProperties(state.Ctx)
+			qProps, _ := genericMeasure.GetProperties(ctx)
 			properties, _ = json.Marshal(qProps)
 		case "dimension":
-			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+			genericDimension, err := doc.GetDimension(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericDimension.GetProperties(state.Ctx)
+			qProps, _ := genericDimension.GetProperties(ctx)
 			properties, _ = json.Marshal(qProps)
 		case "variable":
 			//In this case we need name not ID
-			genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+			genericVariable, err := doc.GetVariableByName(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericVariable.GetProperties(state.Ctx)
+			qProps, _ := genericVariable.GetProperties(ctx)
 			properties, _ = json.Marshal(qProps)
 		case "bookmark":
-			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+			genericBookmark, err := doc.GetBookmark(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			qProps, _ := genericBookmark.GetProperties(state.Ctx)
+			qProps, _ := genericBookmark.GetProperties(ctx)
 			properties, _ = json.Marshal(qProps)
 		}
 	} else {
 		switch entityType {
 		case "object":
-			genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+			genericObject, err := doc.GetObject(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
 
-			full := viper.GetBool("full")
 			if full {
-				properties, err = genericObject.GetFullPropertyTreeRaw(state.Ctx)
+				properties, err = genericObject.GetFullPropertyTreeRaw(ctx)
 			} else {
-				properties, err = genericObject.GetPropertiesRaw(state.Ctx)
+				properties, err = genericObject.GetPropertiesRaw(ctx)
 			}
 		case "measure":
-			genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+			genericMeasure, err := doc.GetMeasure(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			properties, err = genericMeasure.GetPropertiesRaw(state.Ctx)
+			properties, err = genericMeasure.GetPropertiesRaw(ctx)
 		case "dimension":
-			genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+			genericDimension, err := doc.GetDimension(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			properties, err = genericDimension.GetPropertiesRaw(state.Ctx)
+			properties, err = genericDimension.GetPropertiesRaw(ctx)
 		case "variable":
 			//In this case we need name not ID
-			genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+			genericVariable, err := doc.GetVariableByName(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			properties, err = genericVariable.GetPropertiesRaw(state.Ctx)
+			properties, err = genericVariable.GetPropertiesRaw(ctx)
 		case "bookmark":
-			genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+			genericBookmark, err := doc.GetBookmark(ctx, entityID)
 			if err != nil {
 				log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 			}
-			properties, err = genericBookmark.GetPropertiesRaw(state.Ctx)
+			properties, err = genericBookmark.GetPropertiesRaw(ctx)
 		}
 	}
 	if err != nil {
@@ -165,41 +157,41 @@ func PrintGenericEntityProperties(state *internal.State, entityID string, entity
 }
 
 // PrintGenericEntityLayout prints the layout of the object defined by objectID
-func PrintGenericEntityLayout(state *internal.State, entityID string, entityType string) {
+func PrintGenericEntityLayout(ctx context.Context, doc *enigma.Doc, entityID string, entityType string) {
 	var err error
 	var layout json.RawMessage
 	switch entityType {
 	case "object":
-		genericObject, err := state.Doc.GetObject(state.Ctx, entityID)
+		genericObject, err := doc.GetObject(ctx, entityID)
 		if err != nil {
 			log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 		}
-		layout, err = genericObject.GetLayoutRaw(state.Ctx)
+		layout, err = genericObject.GetLayoutRaw(ctx)
 	case "measure":
-		genericMeasure, err := state.Doc.GetMeasure(state.Ctx, entityID)
+		genericMeasure, err := doc.GetMeasure(ctx, entityID)
 		if err != nil {
 			log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 		}
-		layout, err = genericMeasure.GetLayoutRaw(state.Ctx)
+		layout, err = genericMeasure.GetLayoutRaw(ctx)
 	case "dimension":
-		genericDimension, err := state.Doc.GetDimension(state.Ctx, entityID)
+		genericDimension, err := doc.GetDimension(ctx, entityID)
 		if err != nil {
 			log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 		}
-		layout, err = genericDimension.GetLayoutRaw(state.Ctx)
+		layout, err = genericDimension.GetLayoutRaw(ctx)
 	case "variable":
 		// In this case we need name not ID
-		genericVariable, err := state.Doc.GetVariableByName(state.Ctx, entityID)
+		genericVariable, err := doc.GetVariableByName(ctx, entityID)
 		if err != nil {
 			log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 		}
-		layout, err = genericVariable.GetLayoutRaw(state.Ctx)
+		layout, err = genericVariable.GetLayoutRaw(ctx)
 	case "bookmark":
-		genericBookmark, err := state.Doc.GetBookmark(state.Ctx, entityID)
+		genericBookmark, err := doc.GetBookmark(ctx, entityID)
 		if err != nil {
 			log.Fatalf("could not retrieve %s by ID '%s': %s\n", entityType, entityID, err)
 		}
-		layout, err = genericBookmark.GetLayoutRaw(state.Ctx)
+		layout, err = genericBookmark.GetLayoutRaw(ctx)
 	}
 	if err != nil {
 		log.Fatalf("could not get layout of %s by ID '%s': %s\n", entityType, entityID, err)

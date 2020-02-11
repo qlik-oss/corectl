@@ -81,11 +81,7 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 }
 
 // SetObjects creates or updates all objects on given glob patterns
-func SetObjects(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "objects")
-	if err != nil {
-		log.Fatalln("could not interpret glob pattern: ", err)
-	}
+func SetObjects(ctx context.Context, doc *enigma.Doc, paths []string) {
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {

@@ -1,4 +1,4 @@
-package internal
+package urtag
 
 import (
 	"net/url"
@@ -7,20 +7,6 @@ import (
 
 	"github.com/qlik-oss/corectl/internal/log"
 )
-
-//
-//// GetEngineURL gets QIX engine URL from viper
-//func GetEngineURL() *url.URL {
-//	engine := settings.Engine
-//	if engine == "" {
-//		log.Fatalln("engine URL not specified")
-//	}
-//	u, err := parseEngineURL(engine)
-//	if err != nil {
-//		log.Fatalf("could not parse engine url '%s' got error: '%s'\n", engine, err)
-//	}
-//	return u
-//}
 
 // parseEngineURL parses the engine parameter and returns an websocket URL if at all possible
 // The following quirks/behavior of net/url.Parse might be nice to know
@@ -87,15 +73,6 @@ func parseEngineURL(engine string) (*url.URL, error) {
 	}
 	return u, nil
 }
-
-//func buildWebSocketURL(ttl string) string {
-//	u := GetEngineURL()
-//	// Only modify the URL path if there is no path set
-//	if u.Path == "" || u.Path == "/" {
-//		u.Path = "/app/engineData/ttl/" + ttl
-//	}
-//	return u.String()
-//}
 
 // TryParseAppFromURL parses an url for an app identifier
 func TryParseAppFromURL(engineURL string) string {

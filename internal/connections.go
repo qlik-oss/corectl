@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
-
 	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -17,15 +17,7 @@ func flattenSettings(settings map[string]string) string {
 
 // SetupConnections reads all connections from both the project file path and the config file path and updates
 // the list of connections in the app.
-func SetupConnections(ctx context.Context, doc *enigma.Doc, separateConnectionsFile string) error {
-
-	var config *ConnectionsConfig
-
-	if separateConnectionsFile != "" {
-		config = ReadConnectionsFile(separateConnectionsFile)
-	} else if ConfigDir != "" {
-		config = GetConnectionsConfig()
-	}
+func SetupConnections(ctx context.Context, doc *enigma.Doc, config *urtag.ConnectionsConfig) error {
 
 	connections, err := doc.GetConnections(ctx)
 

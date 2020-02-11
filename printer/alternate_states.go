@@ -9,17 +9,15 @@ import (
 )
 
 // PrintStates prints a list of states to system out.
-func PrintStates(statesList []string, printAsBash bool) {
-	switch mode {
-	case jsonMode:
+func PrintStates(statesList []string, mode PrintMode) {
+
+	if mode.JsonMode() {
 		log.PrintAsJSON(statesList)
-	case bashMode:
-		fallthrough
-	case quietMode:
+	} else if mode.BashMode() || mode.QuietMode() {
 		for _, state := range statesList {
 			PrintToBashComp(state)
 		}
-	default:
+	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Name"})

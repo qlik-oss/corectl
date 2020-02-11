@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var setScriptCmd = withLocalFlags(&cobra.Command{
@@ -18,15 +18,15 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, true, false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
 		scriptFile := args[0]
 		if scriptFile != "" {
-			internal.SetScript(rootCtx, state.Doc, scriptFile)
+			internal.SetScript(ctx, doc, scriptFile)
 		} else {
 			log.Fatalln("no loadscript (.qvs) file specified.")
 		}
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "no-save")
@@ -39,8 +39,8 @@ var getScriptCmd = &cobra.Command{
 	Example: "corectl script get",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		script, err := state.Doc.GetScript(rootCtx)
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		script, err := doc.GetScript(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve script: %s\n", err)
 		}

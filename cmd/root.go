@@ -3,27 +3,20 @@ package cmd
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"net/http"
 	"os"
-	"runtime"
 	"strings"
 
-	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-var headersMap = make(map[string]string)
-var explicitConfigFile = ""
-var explicitCertificatePath = ""
 var version = ""
 var commit = ""
 var branch = ""
+var rootCtx = context.Background()
+
 var headers http.Header
 var tlsClientConfig *tls.Config
-var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,36 +32,7 @@ var rootCmd = &cobra.Command{
 	},
 
 	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-		// For some commands we don't want to do a prerun.
-		if skipPreRun(ccmd) {
-			return
-		}
-		// Depending on the command, we might not want to use context when loading config.
-		withContext := shouldUseContext(ccmd)
-		internal.ReadConfig(explicitConfigFile, explicitCertificatePath, withContext)
 
-		tlsClientConfig = &tls.Config{}
-
-		if certPath := viper.GetString("certificates"); certPath != "" {
-			tlsClientConfig = internal.ReadCertificates(tlsClientConfig, certPath)
-		}
-
-		if viper.GetBool("insecure") {
-			tlsClientConfig.InsecureSkipVerify = true
-		}
-
-		if len(headersMap) == 0 {
-			headersMap = viper.GetStringMapString("headers")
-		}
-		headers = make(http.Header, 1)
-		for key, value := range headersMap {
-			headers.Set(key, value)
-		}
-
-		headers.Set("User-Agent", fmt.Sprintf("corectl/%s (%s)", version, runtime.GOOS))
-
-		// Initiate the printers mode
-		printer.Init()
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {

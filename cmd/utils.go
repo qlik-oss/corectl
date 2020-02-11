@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"os"
 	"path"
 	"runtime"
@@ -11,11 +12,9 @@ import (
 
 	"github.com/google/go-github/v27/github"
 	ver "github.com/hashicorp/go-version"
-	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var versionCmd = &cobra.Command{
@@ -49,14 +48,14 @@ corectl status --app=my-app.qvf`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		appName := viper.GetString("app")
-		var state *internal.State
-		if appName != "" {
-			state = internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
+		comm := urtag.NewCommunicator(ccmd)
+		if comm.GetString("app") != "" {
+			ctx, _, doc, params := comm.OpenAppSocket(false)
+			printer.PrintStatus(ctx, doc, params.Engine(), params.App())
 		} else {
-			state = internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, true)
+			ctx, _, params := comm.OpenGlobal()
+			printer.PrintStatus(ctx, nil, params.Engine(), "")
 		}
-		printer.PrintStatus(state, viper.GetString("engine"))
 	},
 }
 
@@ -126,9 +125,6 @@ func isLatestVersion(currentTag string, latestTag string) (string, bool) {
 }
 
 func askForConfirmation(s string) bool {
-	if viper.GetString("suppress") == "true" {
-		return true
-	}
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Printf("%s [y/n]: ", s)

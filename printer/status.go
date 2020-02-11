@@ -4,16 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/enigma-go"
 )
 
 //PrintStatus prints the name of the app and the engine corectl is connected to.
 // It also prints if the data model is empty or not
-func PrintStatus(state *internal.State, engine string) {
-	if state.Doc != nil {
-		fmt.Println("Connected to " + state.AppName + " @ " + engine)
-		tableCount := dataModelTableCount(state.Ctx, state.Doc)
+func PrintStatus(ctx context.Context, doc *enigma.Doc, engine string, appName string) {
+	if doc != nil {
+		fmt.Println("Connected to " + appName + " @ " + engine)
+		tableCount := dataModelTableCount(ctx, doc)
 		if tableCount == 0 {
 			fmt.Println("The data model is empty.")
 		} else if tableCount == 1 {

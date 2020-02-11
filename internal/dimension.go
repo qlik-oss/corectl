@@ -68,11 +68,7 @@ func ListDimensions(ctx context.Context, doc *enigma.Doc) []NamedItem {
 }
 
 // SetDimensions adds all dimensions that match the specified glob pattern
-func SetDimensions(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "dimensions")
-	if err != nil {
-		log.Fatalln("could not interpret glob pattern: ", err)
-	}
+func SetDimensions(ctx context.Context, doc *enigma.Doc, paths []string) {
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {

@@ -9,26 +9,32 @@ import (
 	"strings"
 )
 
+type RestCallerSettings interface {
+	TlsConfig() *tls.Config
+	Insecure() bool
+	Headers() http.Header
+	RestBaseUrl() *neturl.URL
+	Engine() string
+	EngineURL() *neturl.URL
+	App() string
+	AppId() string
+}
+
+type Caller struct {
+	RestCallerSettings
+}
+
 // parseFunction is any function that reads bytes into a pointer and returns an error,
 // json.Unmarshal is an example.
 type parseFunction func([]byte, interface{}) error
-
-// CreateBaseURL returns the base URL for Rest API calls based on the value of 'engine'
-func CreateBaseURL(u neturl.URL) *neturl.URL {
-	if u.Scheme == "ws" {
-		u.Scheme = "http"
-	} else if u.Scheme == "wss" {
-		u.Scheme = "https"
-	}
-	return &u
-}
 
 // Call performs the specified the request and uses the passed parsing function 'read'
 // to parse the response into the supplied result.
 // If the response status code is not explicitly added to the map of accepted status codes
 // an error will be returned.
-func Call(req *http.Request, certs *tls.Config, result interface{}, statusCodes *map[int]bool, read parseFunction) error {
+func (c *Caller) Call(req *http.Request, result interface{}, statusCodes *map[int]bool, read parseFunction) error {
 	client := http.DefaultClient
+	certs := c.TlsConfig()
 	if certs != nil {
 		client = &http.Client{
 			Transport: &http.Transport{

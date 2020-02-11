@@ -58,11 +58,7 @@ func ListBookmarks(ctx context.Context, doc *enigma.Doc) []NamedItem {
 }
 
 // SetBookmarks adds all bookmarks that match the specified glob pattern
-func SetBookmarks(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "bookmarks")
-	if err != nil {
-		log.Fatalln("could not interpret glob pattern: ", err)
-	}
+func SetBookmarks(ctx context.Context, doc *enigma.Doc, paths []string) {
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var buildCmd = withLocalFlags(&cobra.Command{
@@ -17,42 +17,42 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx := rootCtx
-		state := internal.PrepareEngineState(ctx, headers, tlsClientConfig, true, false)
+		ctx, global, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
 
-		separateConnectionsFile := ccmd.Flag("connections").Value.String()
-		if separateConnectionsFile == "" {
-			separateConnectionsFile = getPathFlagFromConfigFile("connections")
-		}
-		internal.SetupConnections(ctx, state.Doc, separateConnectionsFile)
-		internal.SetDimensions(ctx, state.Doc, ccmd.Flag("dimensions").Value.String())
-		internal.SetVariables(ctx, state.Doc, ccmd.Flag("variables").Value.String())
-		internal.SetMeasures(ctx, state.Doc, ccmd.Flag("measures").Value.String())
-		internal.SetObjects(ctx, state.Doc, ccmd.Flag("objects").Value.String())
-		scriptFile := ccmd.Flag("script").Value.String()
-		if scriptFile == "" {
-			scriptFile = getPathFlagFromConfigFile("script")
-		}
-		if scriptFile != "" {
-			internal.SetScript(ctx, state.Doc, scriptFile)
-		}
+		var config *urtag.ConnectionsConfig
 
-		appProperties := ccmd.Flag("app-properties").Value.String()
-		if appProperties == "" {
-			appProperties = getPathFlagFromConfigFile("app-properties")
+		if params.IsString("connections") {
+			connectionsPath := params.GetPath("connections")
+			if connectionsPath != "" {
+				config = urtag.ReadConnectionsFile(connectionsPath)
+			} else {
+				config = nil
+			}
+		} else {
+			config = urtag.ReadConnectionsFile(params.ConfigFilePath())
 		}
-		if appProperties != "" {
-			internal.SetAppProperties(ctx, state.Doc, appProperties)
+		internal.SetupConnections(ctx, doc, config)
+		internal.SetDimensions(ctx, doc, params.GetGlobFiles("dimensions"))
+		internal.SetVariables(ctx, doc, params.GetGlobFiles("variables"))
+		internal.SetMeasures(ctx, doc, params.GetGlobFiles("measures"))
+		internal.SetObjects(ctx, doc, params.GetGlobFiles("objects"))
+
+		if params.GetPath("script") != "" {
+			internal.SetScript(ctx, doc, params.GetPath("script"))
 		}
 
-		if !viper.GetBool("no-reload") {
-			silent := viper.GetBool("silent")
-			limit := viper.GetInt("limit")
-			internal.Reload(ctx, state.Doc, state.Global, silent, limit)
+		if params.GetPath("app-properties") != "" {
+			internal.SetAppProperties(ctx, doc, params.GetPath("app-properties"))
 		}
 
-		if !viper.GetBool("no-save") {
-			internal.Save(ctx, state.Doc)
+		if !params.GetBool("no-reload") {
+			silent := params.GetBool("silent")
+			limit := params.GetInt("limit")
+			internal.Reload(ctx, doc, global, silent, limit)
+		}
+
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "script", "app-properties", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save", "limit")
@@ -68,14 +68,12 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		silent := viper.GetBool("silent")
-		limit := viper.GetInt("limit")
+		ctx, global, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
 
-		internal.Reload(rootCtx, state.Doc, state.Global, silent, limit)
+		internal.Reload(ctx, doc, global, params.GetBool("silent"), params.GetInt("limit"))
 
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "silent", "no-save", "limit")

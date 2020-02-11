@@ -3,9 +3,10 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var setObjectsCmd = withLocalFlags(&cobra.Command{
@@ -21,10 +22,10 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		if commandLineObjects == "" {
 			log.Fatalln("no objects specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, true, false)
-		internal.SetObjects(rootCtx, state.Doc, commandLineObjects)
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		internal.SetObjects(ctx, doc, huggorm.Glob(commandLineObjects))
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "no-save")
@@ -37,17 +38,17 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
-			destroyed, err := state.Doc.DestroyObject(rootCtx, entity)
+			destroyed, err := doc.DestroyObject(ctx, entity)
 			if err != nil {
 				log.Fatalf("could not remove generic object '%s': %s\n", entity, err)
 			} else if !destroyed {
 				log.Fatalf("could not remove generic object '%s'\n", entity)
 			}
 		}
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "no-save")
@@ -60,9 +61,9 @@ var listObjectsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		items := internal.ListObjects(state.Ctx, state.Doc)
-		printer.PrintNamedItemsListWithType(items, viper.GetBool("bash"))
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		items := internal.ListObjects(ctx, doc)
+		printer.PrintNamedItemsListWithType(items, params.PrintMode())
 	},
 }, "quiet")
 
@@ -74,8 +75,8 @@ var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		printer.PrintGenericEntityProperties(state, args[0], "object", viper.GetBool("minimum"))
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		printer.PrintGenericEntityProperties(ctx, doc, args[0], "object", params.GetBool("minimum"), params.GetBool("full"))
 	},
 }, "minimum", "full")
 
@@ -87,8 +88,8 @@ var getObjectLayoutCmd = &cobra.Command{
 	Example: "corectl object layout OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		printer.PrintGenericEntityLayout(state, args[0], "object")
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		printer.PrintGenericEntityLayout(ctx, doc, args[0], "object")
 	},
 }
 
@@ -100,8 +101,8 @@ var getObjectDataCmd = &cobra.Command{
 	Example: "corectl object data OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		printer.EvalObject(rootCtx, state.Doc, args[0])
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		printer.EvalObject(ctx, doc, args[0])
 	},
 }
 

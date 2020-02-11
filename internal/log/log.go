@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/spf13/viper"
 )
 
 // QUIET, VERBOSE, TRAFFIC, JSON
@@ -82,28 +80,6 @@ var Traffic bool
 
 var buffering bool
 var buffer *logBuffer
-
-// Init reads the log-related viper flags json, verbose, traffic and quiet and sets the
-// internal (log.) level, printJSON and traffic variables accordingly.
-func Init() {
-	printJSON = viper.GetBool("json")
-	if !printJSON {
-		Traffic = viper.GetBool("traffic")
-		switch {
-		case viper.GetBool("quiet"):
-			level = quiet
-			Traffic = false
-		case viper.GetBool("verbose"):
-			level = verbose
-		default:
-			level = info
-		}
-	} else {
-		level = info
-	}
-	buffering = false
-	buffer.flush()
-}
 
 func init() {
 	level = info

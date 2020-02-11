@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/qlik-oss/corectl/internal"
+	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var setContextCmd = withLocalFlags(&cobra.Command{
@@ -22,7 +22,17 @@ along with comment and the context-name.`,
 corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		name := internal.SetContext(args[0], viper.GetString("comment"))
+
+		//Check the validity of the certificates folder
+		cfg := huggorm.ReadSettings(ccmd)
+		newSettings := map[string]interface{}{
+			"engine":       cfg.GetString("engine"),
+			"headers":      cfg.GetStringMap("headers"),
+			"certificates": cfg.GetAbsolutePath("certificates"),
+			"comment":      cfg.GetString("comment"),
+		}
+		cfg.GetTLSConfigFromPath("certificates")
+		name := huggorm.SetContext(args[0], newSettings)
 		printer.PrintCurrentContext(name)
 	},
 }, "comment")
@@ -38,7 +48,7 @@ corectl context rm ctx1 ctx2`,
 	Run: func(ccmd *cobra.Command, args []string) {
 		var removedCurrent bool
 		for _, arg := range args {
-			_, wasCurrent := internal.RemoveContext(arg)
+			_, wasCurrent := huggorm.RemoveContext(arg)
 			if wasCurrent {
 				removedCurrent = true
 			}
@@ -58,7 +68,7 @@ var getContextCmd = &cobra.Command{
 corectl context get local-engine`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		handler := internal.NewContextHandler()
+		handler := huggorm.NewContextHandler()
 		var name string
 
 		if len(args) == 1 {
@@ -76,8 +86,9 @@ var listContextsCmd = &cobra.Command{
 	Example: "corectl context ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		handler := internal.NewContextHandler()
-		printer.PrintContexts(handler, viper.GetBool("bash"))
+		handler := huggorm.NewContextHandler()
+		comm := urtag.NewCommunicator(ccmd)
+		printer.PrintContexts(handler, comm.PrintMode())
 	},
 }
 
@@ -89,7 +100,7 @@ var useContextCmd = &cobra.Command{
 	Example: "corectl context use local-engine",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		name := internal.UseContext(args[0])
+		name := huggorm.UseContext(args[0])
 		printer.PrintCurrentContext(name)
 	},
 }
@@ -102,7 +113,7 @@ var clearContextCmd = &cobra.Command{
 	Example: "corectl context clear",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		previous := internal.ClearContext()
+		previous := huggorm.ClearContext()
 		if previous != "" {
 			printer.PrintCurrentContext("")
 		}
@@ -127,7 +138,9 @@ corectl context login context-name`,
 			contextName = args[0]
 		}
 
-		internal.LoginContext(tlsClientConfig, contextName)
+		comm := urtag.NewCommunicator(ccmd)
+
+		huggorm.LoginContext(comm.TlsConfig(), contextName, comm.GetString("user"), comm.GetString("password"))
 	},
 }, "user", "password")
 

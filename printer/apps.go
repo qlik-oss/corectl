@@ -13,19 +13,18 @@ import (
 )
 
 // PrintApps prints a list of apps and some meta to system out.
-func PrintApps(docList []*enigma.DocListEntry, printAsBash bool) {
-	switch mode {
-	case jsonMode:
+func PrintApps(docList []*enigma.DocListEntry, mode PrintMode) {
+	if mode.JsonMode() {
 		log.PrintAsJSON(filterDocEntries(docList))
-	case bashMode:
+	} else if mode.BashMode() {
 		for _, app := range docList {
 			PrintToBashComp(app.DocName)
 		}
-	case quietMode:
+	} else if mode.QuietMode() {
 		for _, app := range docList {
 			PrintToBashComp(app.DocId)
 		}
-	default:
+	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetHeader([]string{"Id", "Name", "Last-Reloaded", "ReadOnly", "Title"})

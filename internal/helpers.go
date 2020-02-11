@@ -3,17 +3,7 @@ package internal
 import (
 	"fmt"
 	"math"
-	"path/filepath"
 )
-
-// RelativeToProject transforms a path to be relative to a base path of the project file
-func RelativeToProject(path string) string {
-	if ConfigDir != "" && !filepath.IsAbs(path) {
-		fullpath := filepath.Join(ConfigDir, path)
-		return fullpath
-	}
-	return path
-}
 
 // FormatBytes takes a byte size integer and returns a string formatted with kilo, mega, giga prefixes.
 func FormatBytes(bytes int) string {

@@ -1,4 +1,4 @@
-package internal
+package urtag
 
 import (
 	"io/ioutil"
@@ -14,16 +14,13 @@ var knownAppsFilePath = path.Join(userHomeDir(), ".corectl", "knownApps.yml")
 
 // Fetch a matching app id from known apps for a specified app name
 // If not found return the appName and found bool set to false
-func applyNameToIDTransformation(appName string) (appID string, found bool) {
-	apps := getKnownApps()
+func ApplyNameToIDTransformation(host string, appName string) (appID string, found bool) {
+	apps := GetKnownApps()
 
 	if apps == nil {
 		log.Verboseln("knownApps yaml file not found")
 		return appName, false
 	}
-
-	engineURL := GetEngineURL()
-	host := engineURL.Host
 
 	if id, exists := apps[host][appName]; exists {
 		log.Verboseln("Found id: " + id + " for app with name: " + appName + " @" + host)
@@ -35,7 +32,7 @@ func applyNameToIDTransformation(appName string) (appID string, found bool) {
 }
 
 // Get map of known apps
-func getKnownApps() map[string]map[string]string {
+func GetKnownApps() map[string]map[string]string {
 	var knownApps = map[string]map[string]string{}
 	yamlFile, err := ioutil.ReadFile(knownAppsFilePath)
 	if err != nil {
@@ -50,13 +47,10 @@ func getKnownApps() map[string]map[string]string {
 }
 
 // SetAppIDToKnownApps adds an app or removes an app from known apps
-func SetAppIDToKnownApps(appName string, appID string, remove bool) {
+func SetAppIDToKnownApps(host string, appName string, appID string, remove bool) {
 
 	createKnownAppsFileIfNotExist()
-	apps := getKnownApps()
-
-	engineURL := GetEngineURL()
-	host := engineURL.Host
+	apps := GetKnownApps()
 
 	// Either remove or add an entry
 	if remove {

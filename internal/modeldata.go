@@ -2,12 +2,8 @@ package internal
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
-	neturl "net/url"
-
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/internal/rest"
+	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -126,7 +122,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 }
 
 // GetModelMetadata retrives all available metadata about the app
-func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, tlsClientConfig *tls.Config, keyOnly bool) *ModelMetadata {
+func GetModelMetadata(ctx context.Context, doc *enigma.Doc, restCaller *rest.Caller, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)
@@ -134,7 +130,7 @@ func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine
 	if len(tables) == 0 {
 		log.Fatalf("the data model is empty\n")
 	}
-	restMetadata, err := rest.ReadRestMetadata(appID, engine, headers, tlsClientConfig)
+	restMetadata, err := restCaller.ReadRestMetadata()
 
 	if len(tables) > 0 && restMetadata == nil {
 		log.Infoln("No REST metadata available.")

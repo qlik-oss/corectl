@@ -23,7 +23,7 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 }
 
 // PrintFields prints a tables of fields along with various metadata to system out.
-func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
+func PrintFields(data *internal.ModelMetadata, keyOnly bool, mode PrintMode) {
 	if len(data.Fields) == 0 {
 		if keyOnly {
 			log.Infoln("No key fields found.")
@@ -33,7 +33,7 @@ func PrintFields(data *internal.ModelMetadata, keyOnly bool) {
 		return
 	}
 
-	if mode == bashMode || mode == quietMode {
+	if mode.BashMode() || mode.QuietMode() {
 		for _, field := range data.Fields {
 			if field != nil && !field.IsSystem {
 				PrintToBashComp(field.Name)

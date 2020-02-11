@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"context"
+	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/enigma-go"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var unbuildCmd = withLocalFlags(&cobra.Command{
@@ -26,25 +27,27 @@ corectl unbuild --app APP-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		ctx := rootCtx
-		viper.Set("no-data", "true") // Force no-data since we only use metadata
-		outdir := ccmd.Flag("dir").Value.String()
-		state := internal.PrepareEngineState(ctx, headers, tlsClientConfig, false, false)
+		comm := urtag.NewCommunicator(ccmd)
+		comm.OverrideSetting("no-data", true)
+		ctx, global, doc, params := comm.OpenAppSocket(false)
+		outdir := params.GetString("dir")
+
 		if outdir == DefaultUnbuildFolder {
-			outdir = getDefaultOutDir(ctx, state)
+			outdir = getDefaultOutDir(ctx, doc, params.App(), params.AppId())
 		}
-		internal.Unbuild(ctx, state.Doc, state.Global, outdir)
+		internal.Unbuild(ctx, doc, global, outdir)
 	},
 }, "dir")
 
-func getDefaultOutDir(ctx context.Context, state *internal.State) string {
-	appLayout, _ := state.Doc.GetAppLayout(ctx)
+func getDefaultOutDir(ctx context.Context, doc *enigma.Doc, appName, appId string) string {
+	appLayout, _ := doc.GetAppLayout(ctx)
 	var defaultFolder string
 	if appLayout.Title != "" {
 		defaultFolder = appLayout.Title
-	} else if state.AppName != "" {
-		defaultFolder = state.AppName
+	} else if appName != "" {
+		defaultFolder = appName
 	} else {
-		defaultFolder = state.AppID
+		defaultFolder = appId
 	}
 	return internal.BuildRootFolderFromTitle(defaultFolder)
 }

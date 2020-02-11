@@ -9,7 +9,6 @@ import (
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
-	"github.com/spf13/viper"
 )
 
 var transientLogged bool
@@ -106,8 +105,7 @@ func logProgress(ctx context.Context, global *enigma.Global, reservedRequestID i
 }
 
 // Save calls DoSave on the app and prints "Done" if it succeeded or "Save failed" to system out.
-func Save(ctx context.Context, doc *enigma.Doc) {
-	noData := viper.GetBool("no-data")
+func Save(ctx context.Context, doc *enigma.Doc, noData bool) {
 	var err error
 
 	// If app is opened without data we should only save the objects

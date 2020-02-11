@@ -11,6 +11,7 @@ objects:
   - ./object*.json
 measures:
   - ./measure*.json
+  - ./measure2*.json
 dimensions:
   - ./dimension*.json
 variables:

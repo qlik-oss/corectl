@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var setConnectionsCmd = &cobra.Command{
@@ -16,14 +16,14 @@ var setConnectionsCmd = &cobra.Command{
 	Example: "corectl connection set ./my-connections.yml",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, true, false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
 		separateConnectionsFile := args[0]
 		if separateConnectionsFile == "" {
 			log.Fatalln("no connections config file specified")
 		}
-		internal.SetupConnections(rootCtx, state.Doc, separateConnectionsFile)
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		internal.SetupConnections(ctx, doc, urtag.ReadConnectionsFile(separateConnectionsFile))
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }
@@ -38,15 +38,15 @@ corectl connection rm ID-1
 corectl connection rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, connection := range args {
-			err := state.Doc.DeleteConnection(rootCtx, connection)
+			err := doc.DeleteConnection(ctx, connection)
 			if err != nil {
 				log.Fatalf("could not remove connection '%s': %s\n", connection, err)
 			}
 		}
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }
@@ -59,12 +59,12 @@ var listConnectionsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl connection ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		connections, err := state.Doc.GetConnections(rootCtx)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		connections, err := doc.GetConnections(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve list of connections: %s\n", err)
 		}
-		printer.PrintConnections(connections, viper.GetBool("bash"))
+		printer.PrintConnections(connections, params.PrintMode())
 	},
 }, "quiet")
 
@@ -76,8 +76,8 @@ var getConnectionCmd = &cobra.Command{
 	Example: "corectl connection get CONNECTION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		connection, err := state.Doc.GetConnection(rootCtx, args[0])
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		connection, err := doc.GetConnection(ctx, args[0])
 		if err != nil {
 			log.Fatalf("could not retrieve connection '%s': %s\n", args[0], err)
 		}

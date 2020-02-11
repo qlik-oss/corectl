@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 
-	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/internal/rest"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var listAppsCmd = withLocalFlags(&cobra.Command{
@@ -19,12 +17,12 @@ var listAppsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, true)
-		docList, err := state.Global.GetDocList(rootCtx)
+		ctx, global, params := urtag.NewCommunicator(ccmd).OpenGlobal()
+		docList, err := global.GetDocList(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve app list: %s\n", err)
 		}
-		printer.PrintApps(docList, viper.GetBool("bash"))
+		printer.PrintApps(docList, params.PrintMode())
 	},
 }, "quiet")
 
@@ -37,14 +35,16 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := args[0]
-
-		if ok, err := internal.AppExists(rootCtx, viper.GetString("engine"), app, headers, tlsClientConfig); !ok {
+		comm := urtag.NewCommunicator(ccmd)
+		comm.OverrideSetting("app", app)
+		if ok, err := comm.AppExists(); !ok {
 			log.Fatalln(err)
 		}
-		confirmed := askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
+
+		confirmed := comm.GetBool("suppress") || askForConfirmation(fmt.Sprintf("Do you really want to delete the app: %s?", app))
 
 		if confirmed {
-			internal.DeleteApp(rootCtx, viper.GetString("engine"), app, headers, tlsClientConfig)
+			comm.DeleteApp(app)
 		}
 	},
 }, "suppress")
@@ -61,12 +61,14 @@ var importAppCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
-		engine := internal.GetEngineURL()
-		appID, appName, err := rest.ImportApp(appPath, engine, headers, tlsClientConfig)
+		comm := urtag.NewCommunicator(ccmd)
+		rest := comm.RestCaller()
+
+		appID, appName, err := rest.ImportApp(appPath)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		internal.SetAppIDToKnownApps(appName, appID, false)
+		urtag.SetAppIDToKnownApps(comm.EngineHost(), appName, appID, false)
 		log.Info("Imported app with new ID: ")
 		log.Quiet(appID)
 	},

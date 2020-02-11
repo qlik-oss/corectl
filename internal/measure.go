@@ -69,12 +69,7 @@ func ListMeasures(ctx context.Context, doc *enigma.Doc) []NamedItem {
 }
 
 // SetMeasures creates or updates all measures on given glob patterns
-func SetMeasures(ctx context.Context, doc *enigma.Doc, commandLineGlobPattern string) {
-	paths, err := getEntityPaths(commandLineGlobPattern, "measures")
-	if err != nil {
-		log.Fatalln("could not interpret glob pattern: ", err)
-	}
-
+func SetMeasures(ctx context.Context, doc *enigma.Doc, paths []string) {
 	for _, path := range paths {
 		rawEntities, err := parseEntityFile(path)
 		if err != nil {

@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/urtag"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var setBookmarksCmd = withLocalFlags(&cobra.Command{
@@ -21,10 +21,10 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 		if commandLineBookmarks == "" {
 			log.Fatalln("no bookmarks specified")
 		}
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, true, false)
-		internal.SetBookmarks(rootCtx, state.Doc, commandLineBookmarks)
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		internal.SetBookmarks(ctx, doc, params.GetGlobFiles("bookmarks"))
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "no-save")
@@ -37,17 +37,17 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
-			destroyed, err := state.Doc.DestroyBookmark(rootCtx, entity)
+			destroyed, err := doc.DestroyBookmark(ctx, entity)
 			if err != nil {
 				log.Fatalf("could not remove generic bookmark '%s': %s\n", entity, err)
 			} else if !destroyed {
 				log.Fatalf("could not remove generic bookmark '%s'\n", entity)
 			}
 		}
-		if !viper.GetBool("no-save") {
-			internal.Save(rootCtx, state.Doc)
+		if !params.NoSave() {
+			internal.Save(ctx, doc, params.NoData())
 		}
 	},
 }, "no-save")
@@ -60,9 +60,9 @@ var listBookmarksCmd = &cobra.Command{
 	Example: "corectl bookmark ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		items := internal.ListBookmarks(state.Ctx, state.Doc)
-		printer.PrintNamedItemsList(items, viper.GetBool("bash"), false)
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		items := internal.ListBookmarks(ctx, doc)
+		printer.PrintNamedItemsList(items, params.PrintMode(), false)
 	},
 }
 
@@ -74,8 +74,8 @@ var getBookmarkPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl bookmark properties BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		printer.PrintGenericEntityProperties(state, args[0], "bookmark", viper.GetBool("minimum"))
+		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		printer.PrintGenericEntityProperties(ctx, doc, args[0], "bookmark", params.GetBool("minimum"), false)
 	},
 }, "minimum")
 
@@ -87,8 +87,8 @@ var getBookmarkLayoutCmd = &cobra.Command{
 	Example: "corectl bBookmark layout BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		state := internal.PrepareEngineState(rootCtx, headers, tlsClientConfig, false, false)
-		printer.PrintGenericEntityLayout(state, args[0], "bookmark")
+		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		printer.PrintGenericEntityLayout(ctx, doc, args[0], "bookmark")
 	},
 }
 
