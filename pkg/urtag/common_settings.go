@@ -13,7 +13,7 @@ type PrintMode struct {
 }
 
 func (o *PrintMode) QuietMode() bool {
-	return o.cfg.GetBool("quiet")
+	return o.cfg.GetBoolAllowNoFlag("quiet")
 }
 func (o *PrintMode) BashMode() bool {
 	return o.cfg.GetBool("bash")

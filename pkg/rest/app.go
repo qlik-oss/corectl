@@ -11,7 +11,7 @@ import (
 // ImportApp imports a local app into the engine using the rest api
 // To not have any dependency on internal, both appID and appName are returned.
 func (c *Caller) ImportApp(appPath string) (appID, appName string, err error) {
-	url := c.EngineURL()
+	url := c.RestBaseUrl()
 	url.Path = "/v1/apps/import"
 	headers := c.Headers()
 	headers.Add("Content-Type", "binary/octet-stream")

@@ -177,7 +177,6 @@ func logConnectError(err error, engine string) {
 
 func GetGlobal(ctx context.Context, settings EngineWebSocketSettings) *enigma.Global {
 	engineURL := settings.WebSocketEngineURL()
-	fmt.Println("ENGINEURL.:..", engineURL)
 	log.Verboseln("Engine: " + engineURL)
 
 	headers := settings.Headers()

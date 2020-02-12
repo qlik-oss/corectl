@@ -25,7 +25,7 @@ func (n *SocketSettings) NoData() bool {
 	return n.GetBool("no-data")
 }
 func (n *SocketSettings) NoSave() bool {
-	return n.GetBool("no-save")
+	return n.GetBoolAllowNoFlag("no-save")
 }
 func (n *SocketSettings) WithoutApp() bool {
 	return n.withoutApp

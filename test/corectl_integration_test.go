@@ -47,45 +47,46 @@ func TestReload(t *testing.T) {
 	p.ExpectGolden().Run("reload", "--silent", "--no-save")
 }
 
-//func TestContextManagement(t *testing.T) {
-//	jwt := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
-//	abac := toolkit.Params{T: t, Config: "test/projects/abac/corectl.yml", Engine: *toolkit.EngineAbacIP}
-//	params := []toolkit.Params{jwt, abac}
-//	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
-//	for i, p := range params {
-//		// Create a context using the config and engine url
-//		p.ExpectOK().Run("context", "set", contexts[i])
-//		// Remove config and engine from p to see if context stored them
-//		p.Config, p.Engine = "", ""
-//		p.ExpectOK().Run("status")
-//	}
-//
-//	// Empty params, should default to localhost:9076 when there is no context
-//	p := toolkit.Params{T: t}
-//	// Contexts stored locally
-//	p.ExpectOK().Run("context", "ls")
-//	// Current context should be abac, connecting to jwt shouldn't work
-//	p.ExpectIncludes(contexts[1]).Run("context", "get")
-//	p.ExpectError().Run("status", "--engine", *toolkit.EngineJwtIP)
-//	// Check if we can update contexts
-//	p.ExpectOK().Run("context", "set", contexts[1], "--engine", *toolkit.EngineStdIP)
-//	p.ExpectIncludes(*toolkit.EngineStdIP).Run("status")
-//	abac.ExpectOK().Run("context", "set", contexts[1])
-//	p.ExpectIncludes(*toolkit.EngineAbacIP).Run("context", "get")
-//	// See if all context commands work
-//	for i, ctx := range contexts {
-//		p.ExpectOK().Run("context", "get", ctx)
-//		// With context status should work
-//		p.ExpectOK().Run("context", "use", ctx)
-//		p.ExpectIncludes(params[i].Engine).Run("status")
-//		// Without context status should default to localhost:9076
-//		p.ExpectOK().Run("context", "clear")
-//		p.ExpectIncludes("No current context").Run("context", "get")
-//		p.ExpectOK().Run("context", "rm", ctx)
-//	}
-//	// No context here, expecting default
-//	p.ExpectIncludes("localhost:9076").Run("status")
-//}
+func TestContextManagement(t *testing.T) {
+	jwt := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
+	abac := toolkit.Params{T: t, Config: "test/projects/abac/corectl.yml", Engine: *toolkit.EngineAbacIP}
+	params := []toolkit.Params{jwt, abac}
+	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
+	for i, p := range params {
+		// Create a context using the config and engine url
+		p.ExpectOK().Run("context", "set", contexts[i])
+		// Remove config and engine from p to see if context stored them
+		p.Config, p.Engine = "", ""
+		p.ExpectOK().Run("status")
+	}
+
+	// Empty params, should default to localhost:9076 when there is no context
+	p := toolkit.Params{T: t}
+	// Contexts stored locally
+	p.ExpectOK().Run("context", "ls")
+	// Current context should be abac, connecting to jwt shouldn't work
+	p.ExpectIncludes(contexts[1]).Run("context", "get")
+
+	p.ExpectError().Run("status", "--engine", *toolkit.EngineJwtIP)
+	// Check if we can update contexts
+	p.ExpectOK().Run("context", "set", contexts[1], "--engine", *toolkit.EngineStdIP)
+	p.ExpectIncludes(*toolkit.EngineStdIP).Run("status")
+	abac.ExpectOK().Run("context", "set", contexts[1])
+	p.ExpectIncludes(*toolkit.EngineAbacIP).Run("context", "get")
+	// See if all context commands work
+	for i, ctx := range contexts {
+		p.ExpectOK().Run("context", "get", ctx)
+		// With context status should work
+		p.ExpectOK().Run("context", "use", ctx)
+		p.ExpectIncludes(params[i].Engine).Run("status")
+		// Without context status should default to localhost:9076
+		p.ExpectOK().Run("context", "clear")
+		p.ExpectIncludes("No current context").Run("context", "get")
+		p.ExpectOK().Run("context", "rm", ctx)
+	}
+	// No context here, expecting default
+	p.ExpectIncludes("localhost:9076").Run("status")
+}
 
 func TestQuietCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}

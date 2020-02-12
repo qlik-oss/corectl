@@ -208,6 +208,20 @@ func (ds *DynSettings) GetInt(name string) int {
 	}
 }
 
+func (ds *DynSettings) GetBoolAllowNoFlag(name string) bool {
+	switch value := ds.allParams[name].(type) {
+	case string:
+		res, err := strconv.ParseBool(value)
+		if err != nil {
+			log.Fatalf("Failed to parse boolean in parameter %s, %s", name, err)
+		}
+		return res
+	case bool:
+		return value
+	default:
+		return false
+	}
+}
 func (ds *DynSettings) GetBool(name string) bool {
 	switch value := ds.allParams[name].(type) {
 	case string:
@@ -219,7 +233,17 @@ func (ds *DynSettings) GetBool(name string) bool {
 	case bool:
 		return value
 	default:
+
+		if name == "quiet" {
+			return false
+		}
 		//TODO Should we allow defaults for non-present flags? log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
+
+		if value == nil {
+			log.Fatalf("No such flag", name)
+		}
+
+		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
 		return false
 	}
 }
@@ -308,9 +332,6 @@ func (ds *DynSettings) GetGlobFiles(name string) []string {
 		if err != nil {
 			log.Fatalf("could not interpret glob pattern '%s': %s\n", commandLineGlobPattern, err)
 		}
-		if len(paths) == 0 {
-			log.Warnf("Nothing found for pattern %s\n", commandLineGlobPattern)
-		}
 		return paths
 	} else {
 		var paths []string
@@ -326,8 +347,6 @@ func (ds *DynSettings) GetGlobFiles(name string) []string {
 			pathMatches, err := filepath.Glob(pattern)
 			if err != nil {
 				log.Fatalf("could not interpret glob pattern '%s': %s\n", pattern, err)
-			} else if len(pathMatches) == 0 {
-				log.Warnf("Nothing found for pattern %s\n", pattern)
 			} else {
 				paths = append(paths, pathMatches...)
 			}

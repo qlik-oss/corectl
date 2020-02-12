@@ -24,7 +24,7 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 	Run: func(ccmd *cobra.Command, args []string) {
 
 		//Check the validity of the certificates folder
-		cfg := huggorm.ReadSettings(ccmd)
+		cfg := huggorm.ReadSettingsWithoutContext(ccmd)
 		newSettings := map[string]interface{}{
 			"engine":       cfg.GetString("engine"),
 			"headers":      cfg.GetStringMap("headers"),
