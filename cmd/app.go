@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
@@ -17,7 +17,7 @@ var listAppsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, global, params := urtag.NewCommunicator(ccmd).OpenGlobal()
+		ctx, global, params := boot.NewCommunicator(ccmd).OpenGlobalSocket()
 		docList, err := global.GetDocList(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve app list: %s\n", err)
@@ -35,7 +35,7 @@ var removeAppCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		app := args[0]
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		comm.OverrideSetting("app", app)
 		if ok, err := comm.AppExists(); !ok {
 			log.Fatalln(err)
@@ -61,14 +61,14 @@ var importAppCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		appPath := args[0]
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		rest := comm.RestCaller()
 
 		appID, appName, err := rest.ImportApp(appPath)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		urtag.SetAppIDToKnownApps(comm.EngineHost(), appName, appID, false)
+		boot.SetAppIDToKnownApps(comm.EngineHost(), appName, appID, false)
 		log.Info("Imported app with new ID: ")
 		log.Quiet(appID)
 	},

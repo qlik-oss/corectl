@@ -1,10 +1,11 @@
-package huggorm
+package dynconf
 
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/internal/log"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,13 +13,46 @@ import (
 
 var validProps = make(map[string]struct{})
 
+func Glob(pattern string) []string {
+	paths, err := filepath.Glob(pattern)
+	if err != nil {
+		log.Warnf("Invalid glob pattern: %s", err)
+	}
+	if len(paths) == 0 {
+		log.Warnf("No matches found for pattern %s", pattern)
+	}
+	return paths
+}
+
 func AddValidProp(name string) {
 	validProps[name] = struct{}{}
 }
 
+// ReadYamlFile reads the connections config file from the supplied path.
+func ReadYamlFile(path string, nameInLogs string, config interface{}) {
+	source, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatalf("could not find %s '%s'\n", nameInLogs, path)
+	}
+	tempConfig := map[interface{}]interface{}{}
+	err = yaml.Unmarshal(source, &tempConfig)
+	if err != nil {
+		log.Fatalf("invalid syntax in %s '%s': %s\n", nameInLogs, path, err)
+	}
+	err = subEnvVars(&tempConfig)
+	if err != nil {
+		log.Fatalf("bad substitution in '%s': %s\n", path, err)
+	}
+	if strConfig, err := convertMap(tempConfig); err == nil {
+		reMarshal(strConfig, config)
+	} else {
+		log.Fatalf("could not parse %s '%s': %s\n", nameInLogs, path, err)
+	}
+}
+
 // subEnvVars substitutes all the environment variables with their actual values in
 // a map[string]interface{}, typically the unmarshallad yaml. (recursively)
-func SubEnvVars(m *map[interface{}]interface{}) error {
+func subEnvVars(m *map[interface{}]interface{}) error {
 	for k, v := range *m {
 		switch v.(type) {
 		case string:
@@ -33,7 +67,7 @@ func SubEnvVars(m *map[interface{}]interface{}) error {
 			}
 		case map[interface{}]interface{}:
 			m2 := v.(map[interface{}]interface{})
-			if err := SubEnvVars(&m2); err != nil {
+			if err := subEnvVars(&m2); err != nil {
 				return err
 			}
 		}
@@ -42,7 +76,7 @@ func SubEnvVars(m *map[interface{}]interface{}) error {
 }
 
 // getSuggestion finds the best matching property within the specified Levenshtein distance limit
-func GetSuggestion(word string, validProps map[string]struct{}) string {
+func getSuggestion(word string, validProps map[string]struct{}) string {
 	op := leven.DefaultOptions // Default is cost 1 for del & ins, and 2 for substitution
 	limit := 4
 	min, suggestion := limit, ""
@@ -58,7 +92,7 @@ func GetSuggestion(word string, validProps map[string]struct{}) string {
 
 // convertMap turns {} -> {} map into string -> {} map
 // returns error if non-string was present in input map
-func ConvertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
+func convertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 	strMap := map[string]interface{}{}
 	for k, v := range m {
 		if s, ok := k.(string); ok {
@@ -70,7 +104,7 @@ func ConvertMap(m map[interface{}]interface{}) (map[string]interface{}, error) {
 	return strMap, nil
 }
 
-func ReMarshal(m map[string]interface{}, ref interface{}) error {
+func reMarshal(m map[string]interface{}, ref interface{}) error {
 	bytes, err := yaml.Marshal(m)
 	if err != nil {
 		return err
@@ -113,7 +147,7 @@ func validateProps(config map[interface{}]interface{}, configPath string) {
 			keyString = fmt.Sprint(key)
 		}
 		if _, ok := validProps[keyString]; !ok {
-			if suggestion := GetSuggestion(keyString, validProps); suggestion != "" {
+			if suggestion := getSuggestion(keyString, validProps); suggestion != "" {
 				suggestions[keyString] = suggestion
 			} else {
 				invalidProps = append(invalidProps, fmt.Sprintf("'%s'", keyString)) // For pretty printing
@@ -161,22 +195,4 @@ func mergeContext(config *map[interface{}]interface{}, contextName string) {
 			(*config)[k] = v
 		}
 	}
-}
-
-func toAbsPath(path string) (string, error) {
-	if !filepath.IsAbs(path) {
-		return filepath.Abs(path)
-	}
-	return path, nil
-}
-
-func Glob(pattern string) []string {
-	paths, err := filepath.Glob(pattern)
-	if err != nil {
-		log.Warnf("Invalid glob pattern: %s", err)
-	}
-	if len(paths) == 0 {
-		log.Warnf("No matches found for pattern %s", pattern)
-	}
-	return paths
 }

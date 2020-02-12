@@ -3,21 +3,13 @@ package internal
 import (
 	"context"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/enigma-go"
 )
 
-func flattenSettings(settings map[string]string) string {
-	result := ""
-	for name, value := range settings {
-		result += name + "=" + value + ";"
-	}
-	return result
-}
-
 // SetupConnections reads all connections from both the project file path and the config file path and updates
 // the list of connections in the app.
-func SetupConnections(ctx context.Context, doc *enigma.Doc, config *urtag.ConnectionsConfig) error {
+func SetupConnections(ctx context.Context, doc *enigma.Doc, config *boot.ConnectionsConfig) error {
 
 	connections, err := doc.GetConnections(ctx)
 
@@ -58,6 +50,14 @@ func SetupConnections(ctx context.Context, doc *enigma.Doc, config *urtag.Connec
 		}
 	}
 	return err
+}
+
+func flattenSettings(settings map[string]string) string {
+	result := ""
+	for name, value := range settings {
+		result += name + "=" + value + ";"
+	}
+	return result
 }
 
 func findExistingConnection(connections []*enigma.Connection, name string) string {

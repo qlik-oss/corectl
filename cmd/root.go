@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"context"
-	"crypto/tls"
-	"net/http"
 	"os"
 	"strings"
 
@@ -14,9 +12,6 @@ var version = ""
 var commit = ""
 var branch = ""
 var rootCtx = context.Background()
-
-var headers http.Header
-var tlsClientConfig *tls.Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -31,51 +26,9 @@ var rootCmd = &cobra.Command{
 		"x-qlik-stability": "stable",
 	},
 
-	PersistentPreRun: func(ccmd *cobra.Command, args []string) {
-
-	},
-
 	Run: func(ccmd *cobra.Command, args []string) {
 		ccmd.HelpFunc()(ccmd, args)
 	},
-}
-
-func skipPreRun(ccmd *cobra.Command) bool {
-	// Depending on what command we are using, we might not want to do the prerun,
-	// i.e. reading config and such.
-	// Note: 'path' is the complete path for the command for example: 'corectl app build'.
-	// Using path instead of 'ccmd.Use' since it only gives you the last word of the command.
-	path := ccmd.CommandPath()
-	switch {
-	case strings.Contains(path, "help"):
-		return true
-	case strings.Contains(path, "generate-docs"):
-		return true
-	case strings.Contains(path, "generate-spec"):
-		return true
-	case strings.Contains(path, "version"):
-		return true
-	// For contexts we only want to do a prerun for context set.
-	case strings.Contains(path, "context"):
-		if strings.Contains(path, "context set") || strings.Contains(path, "context login") {
-			return false
-		}
-		return true
-	}
-	return false
-}
-
-func shouldUseContext(ccmd *cobra.Command) bool {
-	path := ccmd.CommandPath()
-	// Switch so cases can be easily added.
-	// Note that this is only import for commands that
-	// actually do the complete prerun. That is: not the
-	// ones included in the skipPreRun function.
-	switch {
-	case strings.Contains(path, "context set"):
-		return false
-	}
-	return true
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

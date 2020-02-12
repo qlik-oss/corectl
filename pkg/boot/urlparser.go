@@ -1,4 +1,4 @@
-package urtag
+package boot
 
 import (
 	"net/url"
@@ -74,8 +74,8 @@ func parseEngineURL(engine string) (*url.URL, error) {
 	return u, nil
 }
 
-// TryParseAppFromURL parses an url for an app identifier
-func TryParseAppFromURL(engineURL string) string {
+// tryParseAppFromURL parses an url for an app identifier
+func tryParseAppFromURL(engineURL string) string {
 	// Find any string in the path succeeding "/app/", and excluding anything after "/"
 	re, _ := regexp.Compile("/app/([^/]+)")
 	values := re.FindStringSubmatch(engineURL)

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"runtime"
 
 	"github.com/spf13/cobra"
@@ -64,7 +64,7 @@ func initGlobalFlags(globalFlags *pflag.FlagSet) {
 
 	// Add all global flags to the set of valid config properties.
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
-		huggorm.AddValidProp(flag.Name)
+		dynconf.AddValidProp(flag.Name)
 	})
 }
 
@@ -110,7 +110,7 @@ func initLocalFlags() {
 
 	// Add all local flags to the set of valid config properties.
 	localFlags.VisitAll(func(flag *pflag.Flag) {
-		huggorm.AddValidProp(flag.Name)
+		dynconf.AddValidProp(flag.Name)
 	})
 }
 

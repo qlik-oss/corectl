@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -16,12 +16,12 @@ var setConnectionsCmd = &cobra.Command{
 	Example: "corectl connection set ./my-connections.yml",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
 		separateConnectionsFile := args[0]
 		if separateConnectionsFile == "" {
 			log.Fatalln("no connections config file specified")
 		}
-		internal.SetupConnections(ctx, doc, urtag.ReadConnectionsFile(separateConnectionsFile))
+		internal.SetupConnections(ctx, doc, boot.ReadConnectionsFile(separateConnectionsFile))
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
 		}
@@ -38,7 +38,7 @@ corectl connection rm ID-1
 corectl connection rm ID-1 ID-2`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, connection := range args {
 			err := doc.DeleteConnection(ctx, connection)
 			if err != nil {
@@ -59,7 +59,7 @@ var listConnectionsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl connection ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		connections, err := doc.GetConnections(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve list of connections: %s\n", err)
@@ -76,7 +76,7 @@ var getConnectionCmd = &cobra.Command{
 	Example: "corectl connection get CONNECTION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		connection, err := doc.GetConnection(ctx, args[0])
 		if err != nil {
 			log.Fatalf("could not retrieve connection '%s': %s\n", args[0], err)

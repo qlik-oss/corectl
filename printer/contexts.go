@@ -2,7 +2,7 @@ package printer
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"os"
 	"sort"
 
@@ -10,7 +10,7 @@ import (
 )
 
 // PrintContext prints all information in a context
-func PrintContext(name string, handler *huggorm.ContextHandler) {
+func PrintContext(name string, handler *dynconf.ContextHandler) {
 	if name == "" {
 		name = handler.Current
 		if name == "" {
@@ -43,7 +43,7 @@ func PrintCurrentContext(name string) {
 }
 
 // PrintContexts prints a list of contexts to standard out
-func PrintContexts(handler *huggorm.ContextHandler, mode PrintMode) {
+func PrintContexts(handler *dynconf.ContextHandler, mode PrintMode) {
 	var sortedContextKeys []string
 	for k := range handler.Contexts {
 		sortedContextKeys = append(sortedContextKeys, k)

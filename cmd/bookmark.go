@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +21,7 @@ var setBookmarksCmd = withLocalFlags(&cobra.Command{
 		if commandLineBookmarks == "" {
 			log.Fatalln("no bookmarks specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
 		internal.SetBookmarks(ctx, doc, params.GetGlobFiles("bookmarks"))
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
@@ -37,7 +37,7 @@ var removeBookmarkCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
 			destroyed, err := doc.DestroyBookmark(ctx, entity)
 			if err != nil {
@@ -60,7 +60,7 @@ var listBookmarksCmd = &cobra.Command{
 	Example: "corectl bookmark ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		items := internal.ListBookmarks(ctx, doc)
 		printer.PrintNamedItemsList(items, params.PrintMode(), false)
 	},
@@ -74,7 +74,7 @@ var getBookmarkPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl bookmark properties BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityProperties(ctx, doc, args[0], "bookmark", params.GetBool("minimum"), false)
 	},
 }, "minimum")
@@ -87,7 +87,7 @@ var getBookmarkLayoutCmd = &cobra.Command{
 	Example: "corectl bBookmark layout BOOKMARK-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityLayout(ctx, doc, args[0], "bookmark")
 	},
 }

@@ -1,8 +1,8 @@
 package log
 
-var settings LogPrintMode
+var settings PrintMode
 
-type LogPrintMode interface {
+type PrintMode interface {
 	QuietMode() bool
 	BashMode() bool
 	JsonMode() bool
@@ -10,7 +10,7 @@ type LogPrintMode interface {
 	VerboseMode() bool
 }
 
-func Init(mode LogPrintMode) {
+func Init(mode PrintMode) {
 	settings := mode
 	printJSON = settings.JsonMode()
 	if !printJSON {

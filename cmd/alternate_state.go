@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +16,7 @@ var listAlternateStatesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl state ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		items := internal.ListAlternateStates(ctx, doc)
 		printer.PrintStates(items, params.PrintMode())
 	},
@@ -34,7 +34,7 @@ var addAlternateStateCmd = &cobra.Command{
 		if stateName == "" {
 			log.Fatalln("no state name specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		internal.AddAlternateState(ctx, doc, stateName)
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
@@ -54,7 +54,7 @@ var removeAlternateStateCmd = &cobra.Command{
 		if stateName == "" {
 			log.Fatalln("no state name specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		internal.RemoveAlternateState(ctx, doc, stateName)
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())

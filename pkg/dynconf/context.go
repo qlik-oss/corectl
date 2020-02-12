@@ -1,4 +1,4 @@
-package huggorm
+package dynconf
 
 import (
 	"bufio"

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/enigma-go"
 
 	"github.com/qlik-oss/corectl/internal"
@@ -27,7 +27,7 @@ corectl unbuild --app APP-ID`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		ctx := rootCtx
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		comm.OverrideSetting("no-data", true)
 		ctx, global, doc, params := comm.OpenAppSocket(false)
 		outdir := params.GetString("dir")

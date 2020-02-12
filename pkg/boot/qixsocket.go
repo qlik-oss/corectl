@@ -1,4 +1,4 @@
-package urtag
+package boot
 
 import (
 	"context"
@@ -7,15 +7,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/spf13/cobra"
-
-	//"github.com/qlik-oss/corectl/printer"
 	"net/http"
 	"os"
 	"os/user"
-	//"runtime"
 	"strconv"
 	"strings"
 
@@ -40,7 +37,7 @@ type EngineWebSocketSettings interface {
 }
 
 func NewCommunicator(ccmd *cobra.Command) *Communicator {
-	cfg := huggorm.ReadSettings(ccmd)
+	cfg := dynconf.ReadSettings(ccmd)
 	commonSettings := &CommonSettings{DynSettings: cfg}
 	log.Init(commonSettings.PrintMode())
 	return &Communicator{CommonSettings: commonSettings}
@@ -61,7 +58,7 @@ func (c *Communicator) OpenAppSocket(createAppIfMissing bool) (context.Context, 
 	app := GetApp(context.Background(), global, socketSettings)
 	return context.Background(), global, app, socketSettings
 }
-func (c *Communicator) OpenGlobal() (context.Context, *enigma.Global, *SocketSettings) {
+func (c *Communicator) OpenGlobalSocket() (context.Context, *enigma.Global, *SocketSettings) {
 	socketSettings := &SocketSettings{CommonSettings: c.CommonSettings, withoutApp: false, createAppifMissing: true}
 	global := GetGlobal(context.Background(), socketSettings)
 	return context.Background(), global, socketSettings
@@ -91,20 +88,6 @@ func (c *Communicator) DeleteApp(appName string) {
 		log.Fatalf("could not delete app with name '%s' and ID '%s'\n", appName, appID)
 	}
 	SetAppIDToKnownApps(socketSettings.EngineHost(), appName, appID, true)
-}
-
-func (c *Communicator) RestClient() {
-
-}
-
-// State contains all needed info about the current app including a go context to use when communicating with the engine.
-type State struct {
-	doc     *enigma.Doc
-	Ctx     context.Context
-	Global  *enigma.Global
-	AppName string
-	AppID   string
-	Verbose bool
 }
 
 func GetApp(ctx context.Context, global *enigma.Global, settings EngineWebSocketSettings) *enigma.Doc {

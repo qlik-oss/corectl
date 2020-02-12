@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -21,8 +21,8 @@ var setMeasuresCmd = withLocalFlags(&cobra.Command{
 		if commandLineMeasures == "" {
 			log.Fatalln("no measures specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
-		internal.SetMeasures(ctx, doc, huggorm.Glob(commandLineMeasures))
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
+		internal.SetMeasures(ctx, doc, dynconf.Glob(commandLineMeasures))
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
 		}
@@ -37,7 +37,7 @@ var removeMeasureCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
 			destroyed, err := doc.DestroyMeasure(ctx, entity)
 			if err != nil {
@@ -60,7 +60,7 @@ var listMeasuresCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		items := internal.ListMeasures(ctx, doc)
 		printer.PrintNamedItemsList(items, params.PrintMode(), false)
 	},
@@ -74,7 +74,7 @@ var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl measure properties MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityProperties(ctx, doc, args[0], "measure", params.GetBool("minimum"), false)
 	},
 }, "minimum")
@@ -87,7 +87,7 @@ var getMeasureLayoutCmd = &cobra.Command{
 	Example: "corectl measure layout MEASURE-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityLayout(ctx, doc, args[0], "measure")
 	},
 }

@@ -29,7 +29,7 @@ func (c *Caller) ImportApp(appPath string) (appID, appName string, err error) {
 		Header: headers,
 		Body:   file,
 	}
-	appInfo := &RestNxApp{}
+	appInfo := &NxApp{}
 	statusCodes := &map[int]bool{
 		200: true,
 	}
@@ -43,11 +43,11 @@ func (c *Caller) ImportApp(appPath string) (appID, appName string, err error) {
 	return
 }
 
-type RestNxApp struct {
+type NxApp struct {
 	Attributes map[string]interface{} `json:"attributes"`
 }
 
-func (a RestNxApp) Get(attr string) string {
+func (a NxApp) Get(attr string) string {
 	attrVal := a.Attributes[attr]
 	return fmt.Sprintf("%v", attrVal)
 }

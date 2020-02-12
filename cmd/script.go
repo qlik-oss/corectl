@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
@@ -18,7 +18,7 @@ var setScriptCmd = withLocalFlags(&cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
 		scriptFile := args[0]
 		if scriptFile != "" {
 			internal.SetScript(ctx, doc, scriptFile)
@@ -39,7 +39,7 @@ var getScriptCmd = &cobra.Command{
 	Example: "corectl script get",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		script, err := doc.GetScript(ctx)
 		if err != nil {
 			log.Fatalf("could not retrieve script: %s\n", err)

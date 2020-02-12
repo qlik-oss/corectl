@@ -215,17 +215,6 @@ func tableRecordsToMap(tables []*enigma.TableRecord) map[string]string {
 	return fieldsInTable
 }
 
-func tableRecordsToMapMap(tables []*enigma.TableRecord) map[string]map[string]*enigma.FieldInTableData {
-	fieldsInTable := make(map[string]map[string]*enigma.FieldInTableData)
-	for _, table := range tables {
-		fieldsInTable[table.Name] = make(map[string]*enigma.FieldInTableData)
-		for _, field := range table.Fields {
-			fieldsInTable[table.Name][field.Name] = field
-		}
-	}
-	return fieldsInTable
-}
-
 // FieldSourceTableInfo defines row count and key type for a field
 type FieldSourceTableInfo struct {
 	CellContent string

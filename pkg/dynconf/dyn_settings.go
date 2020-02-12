@@ -1,4 +1,4 @@
-package huggorm
+package dynconf
 
 import (
 	"crypto/tls"
@@ -15,62 +15,6 @@ import (
 	"strconv"
 )
 
-//type Settings struct {
-//	Context        string
-//	Config         string
-//	ScriptFilePath string
-//
-//	Connections         interface{}
-//	ConnectionsFilePath string
-//	ConnectionsMap      map[string]interface{}
-//
-//	Certificates string
-//
-//	Headers map[string]string
-//
-//	//Global
-//	NoSave   bool
-//	Bash     bool
-//	Silent   bool
-//	Engine   string
-//	Verbose  bool
-//	Traffic  bool
-//	App      string
-//	Ttl      string
-//	Json     bool
-//	NoData   bool
-//	Insecure bool
-//
-//	//Local
-//	Limit      int
-//	NoReload   bool
-//	Suppress   string
-//	CatwalkUrl string
-//	Minimum    bool
-//	Full       bool
-//	Comment    string
-//	Quiet      bool
-//	User       string
-//	Password   string
-//
-//	Bookmarks  []string
-//	Objects    []string
-//	Measures   []string
-//	Dimensions []string
-//	Variables  []string
-//
-//	AppPropertiesPath string
-//}
-
-// RelativeToProject transforms a path to be relative to a base path of the project file
-func relativeToProject(baseDir string, path string) string {
-	if baseDir != "" && !filepath.IsAbs(path) {
-		fullpath := filepath.Join(baseDir, path)
-		return fullpath
-	}
-	return path
-}
-
 func ReadSettings(ccmd *cobra.Command) *DynSettings {
 	result := readSettings(ccmd, true)
 	return result
@@ -78,6 +22,7 @@ func ReadSettings(ccmd *cobra.Command) *DynSettings {
 func ReadSettingsWithoutContext(ccmd *cobra.Command) *DynSettings {
 	return readSettings(ccmd, false)
 }
+
 func readSettings(ccmd *cobra.Command, withContext bool) *DynSettings {
 	commandFlagSet := ccmd.Flags()
 	contextName, err := commandFlagSet.GetString("context")
@@ -117,7 +62,7 @@ func readSettings(ccmd *cobra.Command, withContext bool) *DynSettings {
 	}
 
 	validateProps(*allParams, configFileName)
-	err = SubEnvVars(allParams)
+	err = subEnvVars(allParams)
 	if err != nil {
 		log.Fatalf("bad substitution in '%s': %s\n", configFileName, err)
 	}
@@ -143,6 +88,15 @@ func readSettings(ccmd *cobra.Command, withContext bool) *DynSettings {
 		commandLineParams: *commandLineParams,
 		flags:             ccmd.Flags(),
 	}
+}
+
+// relativeToProject transforms a path to be relative to a base path of the project file
+func relativeToProject(baseDir string, path string) string {
+	if baseDir != "" && !filepath.IsAbs(path) {
+		fullpath := filepath.Join(baseDir, path)
+		return fullpath
+	}
+	return path
 }
 
 func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {

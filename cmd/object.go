@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -22,8 +22,8 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		if commandLineObjects == "" {
 			log.Fatalln("no objects specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
-		internal.SetObjects(ctx, doc, huggorm.Glob(commandLineObjects))
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
+		internal.SetObjects(ctx, doc, dynconf.Glob(commandLineObjects))
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
 		}
@@ -38,7 +38,7 @@ var removeObjectCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object rm ID-1 ID-2",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
 			destroyed, err := doc.DestroyObject(ctx, entity)
 			if err != nil {
@@ -61,7 +61,7 @@ var listObjectsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		items := internal.ListObjects(ctx, doc)
 		printer.PrintNamedItemsListWithType(items, params.PrintMode())
 	},
@@ -75,7 +75,7 @@ var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl object properties OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityProperties(ctx, doc, args[0], "object", params.GetBool("minimum"), params.GetBool("full"))
 	},
 }, "minimum", "full")
@@ -88,7 +88,7 @@ var getObjectLayoutCmd = &cobra.Command{
 	Example: "corectl object layout OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityLayout(ctx, doc, args[0], "object")
 	},
 }
@@ -101,7 +101,7 @@ var getObjectDataCmd = &cobra.Command{
 	Example: "corectl object data OBJECT-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.EvalObject(ctx, doc, args[0])
 	},
 }

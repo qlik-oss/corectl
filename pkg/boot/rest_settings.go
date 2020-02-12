@@ -1,4 +1,4 @@
-package urtag
+package boot
 
 import (
 	neturl "net/url"

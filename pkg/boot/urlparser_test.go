@@ -1,4 +1,4 @@
-package urtag
+package boot
 
 import (
 	"fmt"
@@ -133,15 +133,15 @@ func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *ur
 //}
 
 func TestParseAppFromUrl(t *testing.T) {
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/app/test.qvf"))
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/app/test.qvf/"))
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/app/test.qvf/ttl/30"))
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/vp/app/test.qvf"))
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("ws://engine/sense/vp/app/test.qvf/"))
-	assert.Equal(t, "test.qvf", TryParseAppFromURL("engine/sense/vp/app/test.qvf/"))
-	assert.Equal(t, "d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf", TryParseAppFromURL("ws://engine/sense/vp/app/d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf/ttl/30"))
-	assert.Equal(t, "d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf", TryParseAppFromURL("ws://engine/sense/vp/app/d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf/ttl/30"))
-	assert.Equal(t, "", TryParseAppFromURL("ws://engine/"))
-	assert.Equal(t, "", TryParseAppFromURL("ws://engine"))
-	assert.Equal(t, "", TryParseAppFromURL("ws://engine/sense"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("ws://engine/sense/app/test.qvf"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("ws://engine/sense/app/test.qvf/"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("ws://engine/sense/app/test.qvf/ttl/30"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("ws://engine/sense/vp/app/test.qvf"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("ws://engine/sense/vp/app/test.qvf/"))
+	assert.Equal(t, "test.qvf", tryParseAppFromURL("engine/sense/vp/app/test.qvf/"))
+	assert.Equal(t, "d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf", tryParseAppFromURL("ws://engine/sense/vp/app/d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf/ttl/30"))
+	assert.Equal(t, "d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf", tryParseAppFromURL("ws://engine/sense/vp/app/d6c281c1-3463-4b0a-8251-ed747e9e426e.qvf/ttl/30"))
+	assert.Equal(t, "", tryParseAppFromURL("ws://engine/"))
+	assert.Equal(t, "", tryParseAppFromURL("ws://engine"))
+	assert.Equal(t, "", tryParseAppFromURL("ws://engine/sense"))
 }

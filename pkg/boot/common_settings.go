@@ -1,9 +1,9 @@
-package urtag
+package boot
 
 import (
 	"crypto/tls"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"net/http"
 	neturl "net/url"
 )
@@ -30,7 +30,7 @@ func (o *PrintMode) VerboseMode() bool {
 }
 
 type CommonSettings struct {
-	*huggorm.DynSettings
+	*dynconf.DynSettings
 }
 
 func (n *CommonSettings) PrintMode() *PrintMode {
@@ -88,13 +88,13 @@ func (n *CommonSettings) App() string {
 	if specifiedApp != "" {
 		return specifiedApp
 	}
-	return TryParseAppFromURL(n.EngineURL().Path)
+	return tryParseAppFromURL(n.EngineURL().Path)
 }
 
 func (n *CommonSettings) AppId() string {
 	appName := n.App()
 	if appName == "" {
-		appName = TryParseAppFromURL(n.Engine())
+		appName = tryParseAppFromURL(n.Engine())
 	}
 	appId, _ := ApplyNameToIDTransformation(n.EngineHost(), appName)
 	return appId

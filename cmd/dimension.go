@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/pkg/huggorm"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
@@ -21,8 +21,8 @@ var setDimensionsCmd = withLocalFlags(&cobra.Command{
 		if commandLineDimensions == "" {
 			log.Fatalln("no dimensions specified")
 		}
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
-		internal.SetDimensions(ctx, doc, huggorm.Glob(commandLineDimensions))
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
+		internal.SetDimensions(ctx, doc, dynconf.Glob(commandLineDimensions))
 		if !params.NoSave() {
 			internal.Save(ctx, doc, params.NoData())
 		}
@@ -37,7 +37,7 @@ var removeDimensionCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension rm ID-1",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		for _, entity := range args {
 			destroyed, err := doc.DestroyDimension(ctx, entity)
 			if err != nil {
@@ -60,7 +60,7 @@ var listDimensionsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		items := internal.ListDimensions(ctx, doc)
 		printer.PrintNamedItemsList(items, params.PrintMode(), false)
 	},
@@ -74,7 +74,7 @@ var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl dimension properties DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityProperties(ctx, doc, args[0], "dimension", params.GetBool("minimum"), false)
 	},
 }, "minimum")
@@ -87,7 +87,7 @@ var getDimensionLayoutCmd = &cobra.Command{
 	Example: "corectl dimension layout DIMENSION-ID",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		printer.PrintGenericEntityLayout(ctx, doc, args[0], "dimension")
 	},
 }

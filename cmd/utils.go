@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"os"
 	"path"
 	"runtime"
@@ -48,12 +48,12 @@ corectl status --app=my-app.qvf`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		if comm.GetString("app") != "" {
 			ctx, _, doc, params := comm.OpenAppSocket(false)
 			printer.PrintStatus(ctx, doc, params.Engine(), params.App())
 		} else {
-			ctx, _, params := comm.OpenGlobal()
+			ctx, _, params := comm.OpenGlobalSocket()
 			printer.PrintStatus(ctx, nil, params.Engine(), "")
 		}
 	},

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -21,7 +21,7 @@ var getAssociationsCmd = &cobra.Command{
 corectl associations`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		ctx, _, doc, _ := comm.OpenAppSocket(false)
 		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintAssociations(data)
@@ -37,7 +37,7 @@ var getTablesCmd = &cobra.Command{
 corectl tables --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		ctx, _, doc, _ := comm.OpenAppSocket(false)
 		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintTables(data)
@@ -53,7 +53,7 @@ var getMetaCmd = &cobra.Command{
 corectl meta --app my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		ctx, _, doc, params := comm.OpenAppSocket(false)
 		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintMetadata(data, params.PrintMode())
@@ -68,7 +68,7 @@ var getValuesCmd = &cobra.Command{
 	Example: "corectl values FIELD",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		internal.PrintFieldValues(ctx, doc, args[0])
 	},
 }
@@ -81,7 +81,7 @@ var getFieldsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl fields",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		ctx, _, doc, params := comm.OpenAppSocket(false)
 		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintFields(data, false, params.PrintMode())
@@ -96,7 +96,7 @@ var getKeysCmd = &cobra.Command{
 	Example: "corectl keys",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 		ctx, _, doc, params := comm.OpenAppSocket(false)
 		data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 		printer.PrintFields(data, true, params.PrintMode())
@@ -114,7 +114,7 @@ corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" 
 corectl eval by "Region" // Returns the values for dimension "Region"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, _, doc, _ := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 		internal.Eval(ctx, doc, args)
 	},
 }
@@ -128,14 +128,14 @@ var catwalkCmd = withLocalFlags(&cobra.Command{
 corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		comm := urtag.NewCommunicator(ccmd)
+		comm := boot.NewCommunicator(ccmd)
 
 		var appSpecified bool
 		catwalkURL := comm.GetString("catwalk-url")
 		engineURL := comm.EngineURL()
 		catwalkURL += "?engine_url=" + engineURL.String()
 		if appSpecified {
-			if ok, err := urtag.NewCommunicator(ccmd).AppExists(); !ok {
+			if ok, err := boot.NewCommunicator(ccmd).AppExists(); !ok {
 				log.Fatalln(err)
 			}
 		}

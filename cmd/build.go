@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/pkg/urtag"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/spf13/cobra"
 )
 
@@ -17,19 +17,19 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, global, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(true)
+		ctx, global, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(true)
 
-		var config *urtag.ConnectionsConfig
+		var config *boot.ConnectionsConfig
 
 		if params.IsString("connections") {
 			connectionsPath := params.GetPath("connections")
 			if connectionsPath != "" {
-				config = urtag.ReadConnectionsFile(connectionsPath)
+				config = boot.ReadConnectionsFile(connectionsPath)
 			} else {
 				config = nil
 			}
 		} else {
-			config = urtag.ReadConnectionsFile(params.ConfigFilePath())
+			config = boot.ReadConnectionsFile(params.ConfigFilePath())
 		}
 		internal.SetupConnections(ctx, doc, config)
 		internal.SetDimensions(ctx, doc, params.GetGlobFiles("dimensions"))
@@ -68,7 +68,7 @@ var reloadCmd = withLocalFlags(&cobra.Command{
 	},
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, global, doc, params := urtag.NewCommunicator(ccmd).OpenAppSocket(false)
+		ctx, global, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 
 		internal.Reload(ctx, doc, global, params.GetBool("silent"), params.GetInt("limit"))
 
