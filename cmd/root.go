@@ -8,9 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = ""
-var commit = ""
-var branch = ""
 var rootCtx = context.Background()
 
 // rootCmd represents the base command when called without any subcommands
@@ -33,10 +30,7 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute(mainVersion, branchName, commitSha string) {
-	version = mainVersion
-	branch = branchName
-	commit = commitSha
+func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		// Cobra already prints an error message so we just want to exit
 		os.Exit(1)
@@ -66,36 +60,40 @@ Other Commands:{{range .Commands}}{{if (and (or .IsAvailableCommand (eq .Name "h
 }
 
 func init() {
+	//App Building Commands
 
-	// Common commands
-	rootCmd.AddCommand(getTablesCmd)
-	rootCmd.AddCommand(getFieldsCmd)
-	rootCmd.AddCommand(getAssociationsCmd)
-	rootCmd.AddCommand(getKeysCmd)
 	rootCmd.AddCommand(buildCmd)
-	rootCmd.AddCommand(evalCmd)
 	rootCmd.AddCommand(reloadCmd)
-	rootCmd.AddCommand(getValuesCmd)
-	rootCmd.AddCommand(getMetaCmd)
-	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(unbuildCmd)
 
+	// Common commands
+	rootCmd.AddCommand(getAssociationsCmd)
+	rootCmd.AddCommand(catwalkCmd)
+	rootCmd.AddCommand(evalCmd)
+	rootCmd.AddCommand(getFieldsCmd)
+	rootCmd.AddCommand(getValuesCmd)
+	rootCmd.AddCommand(getMetaCmd)
+	rootCmd.AddCommand(getKeysCmd)
+	rootCmd.AddCommand(getTablesCmd)
+
 	// Subcommands
-	rootCmd.AddCommand(alternateStateCmd)
-	rootCmd.AddCommand(measureCmd)
-	rootCmd.AddCommand(dimensionCmd)
-	rootCmd.AddCommand(objectCmd)
-	rootCmd.AddCommand(variableCmd)
+	rootCmd.AddCommand(appCmd)
 	rootCmd.AddCommand(bookmarkCmd)
 	rootCmd.AddCommand(connectionCmd)
+	rootCmd.AddCommand(dimensionCmd)
+	rootCmd.AddCommand(measureCmd)
+	rootCmd.AddCommand(objectCmd)
 	rootCmd.AddCommand(scriptCmd)
-	rootCmd.AddCommand(appCmd)
+	rootCmd.AddCommand(alternateStateCmd)
+	rootCmd.AddCommand(variableCmd)
 
 	// Other
-	rootCmd.AddCommand(catwalkCmd)
-	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(versionCmd)
+
+	// Hidden administrative commands
 	rootCmd.AddCommand(generateDocsCmd)
 	rootCmd.AddCommand(generateSpecCmd)
 

@@ -28,17 +28,14 @@ Note that bash-completion is required and needs to be installed on your system.`
 	Annotations: map[string]string{
 		"command_category": "other",
 	},
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		//Prevent root command
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case args[0] == "bash":
-			rootCmd.GenBashCompletion(os.Stdout)
+			cmd.Root().GenBashCompletion(os.Stdout)
 		case args[0] == "zsh":
-			genZshCompletion()
+			genZshCompletion(cmd.Root())
 		case args[0] == "ps":
-			rootCmd.GenPowerShellCompletion(os.Stdout)
+			cmd.Root().GenPowerShellCompletion(os.Stdout)
 		default:
 			log.Fatalf("'%s' is not a supported shell\n", args[0])
 		}
@@ -356,10 +353,10 @@ _complete corectl 2>/dev/null
 `
 
 // Function for generating zsh completion for corectl
-func genZshCompletion() {
+func genZshCompletion(root *cobra.Command) {
 	fmt.Fprint(os.Stdout, zshHead)
 	buf := new(bytes.Buffer)
-	rootCmd.GenBashCompletion(buf)
+	root.GenBashCompletion(buf)
 	fmt.Fprint(os.Stdout, buf.String())
 	fmt.Fprint(os.Stdout, zshTail)
 }

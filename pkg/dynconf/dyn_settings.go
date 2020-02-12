@@ -194,7 +194,7 @@ func (ds *DynSettings) GetBool(name string) bool {
 		//TODO Should we allow defaults for non-present flags? log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
 
 		if value == nil {
-			log.Fatalf("No such flag", name)
+			log.Fatalf("No such flag: %s", name)
 		}
 
 		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
@@ -247,7 +247,7 @@ func (ds *DynSettings) GetStringMap(name string) map[string]string {
 		}
 		return result
 	default:
-		log.Fatalf("Unexpected format of map", reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected format of map: %s", reflect.TypeOf(value).Name())
 		return nil
 	}
 }

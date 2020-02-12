@@ -17,6 +17,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var version = ""
+var commit = ""
+var branch = ""
+
+func SetVersionInfo(mainVersion, branchName, commitSha string) {
+	version = mainVersion
+	branch = branchName
+	commit = commitSha
+}
+
 var versionCmd = &cobra.Command{
 	Use:     "version",
 	Args:    cobra.ExactArgs(0),

@@ -106,16 +106,16 @@ var generateSpecCmd = &cobra.Command{
 		var jsonData []byte
 		spec := spec{
 			Clispec: "0.1.0",
-			Name:    rootCmd.Use,
+			Name:    ccmd.Root().Use,
 			Info: info{
 				Title:       "Specification for corectl",
-				Description: rootCmd.Long,
+				Description: ccmd.Root().Long,
 				Version:     strings.TrimPrefix(version, "v"),
 				License:     "MIT",
 			},
-			SubCommands: returnCommands(rootCmd.Commands()),
-			Flags:       returnFlags(rootCmd.LocalFlags()),
-			Stability:   returnStability(rootCmd.Annotations),
+			SubCommands: returnCommands(ccmd.Root().Commands()),
+			Flags:       returnFlags(ccmd.Root().LocalFlags()),
+			Stability:   returnStability(ccmd.Root().Annotations),
 		}
 		jsonData, err := json.MarshalIndent(spec, "", "  ")
 		if err != nil {
@@ -133,6 +133,6 @@ var generateDocsCmd = &cobra.Command{
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		fmt.Println("Generating documentation")
-		doc.GenMarkdownTree(rootCmd, "./docs")
+		doc.GenMarkdownTree(ccmd.Root(), "./docs")
 	},
 }
