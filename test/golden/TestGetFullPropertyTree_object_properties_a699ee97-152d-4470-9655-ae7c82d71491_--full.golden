@@ -112,7 +112,8 @@
             "qCond": {},
             "qMsg": {}
           },
-          "qColumnOrder": []
+          "qColumnOrder": [],
+          "qExpansionState": []
         },
         "showTitles": true,
         "title": "",
@@ -205,6 +206,7 @@
               "qColumnOrder": [
                 0
               ],
+              "qExpansionState": [],
               "columnOrder": [
                 0
               ],
@@ -300,7 +302,8 @@
             "qCond": {},
             "qMsg": {}
           },
-          "qColumnOrder": []
+          "qColumnOrder": [],
+          "qExpansionState": []
         },
         "showTitles": false,
         "title": "",
@@ -390,6 +393,7 @@
               "qColumnOrder": [
                 0
               ],
+              "qExpansionState": [],
               "columnOrder": [
                 0
               ],
