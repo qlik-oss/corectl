@@ -7,9 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/dynconf"
-	"github.com/qlik-oss/corectl/pkg/rest"
-	"github.com/spf13/cobra"
 	"net/http"
 	"os"
 	"os/user"
@@ -30,68 +27,11 @@ type EngineWebSocketSettings interface {
 	AppId() string
 	Ttl() string
 	NoData() bool
-	EngineHost() string
 	WebSocketEngineURL() string
-	WithoutApp() bool
-	CreateAppIfMissing() bool
+	AppIdMappingNamespace() string
 }
 
-func NewCommunicator(ccmd *cobra.Command) *Communicator {
-	cfg := dynconf.ReadSettings(ccmd)
-	commonSettings := &CommonSettings{DynSettings: cfg}
-	log.Init(commonSettings.PrintMode())
-	return &Communicator{CommonSettings: commonSettings}
-}
-
-type Communicator struct {
-	*CommonSettings
-}
-
-func (c *Communicator) RestCaller() *rest.Caller {
-	restSettings := &RestSettings{CommonSettings: c.CommonSettings}
-	return &rest.Caller{RestCallerSettings: restSettings}
-}
-
-func (c *Communicator) OpenAppSocket(createAppIfMissing bool) (context.Context, *enigma.Global, *enigma.Doc, *SocketSettings) {
-	socketSettings := &SocketSettings{CommonSettings: c.CommonSettings, withoutApp: false, createAppifMissing: createAppIfMissing}
-	global := GetGlobal(context.Background(), socketSettings)
-	app := GetApp(context.Background(), global, socketSettings)
-	return context.Background(), global, app, socketSettings
-}
-func (c *Communicator) OpenGlobalSocket() (context.Context, *enigma.Global, *SocketSettings) {
-	socketSettings := &SocketSettings{CommonSettings: c.CommonSettings, withoutApp: false, createAppifMissing: true}
-	global := GetGlobal(context.Background(), socketSettings)
-	return context.Background(), global, socketSettings
-}
-
-//AppExists returns wether or not an app exists along with any eventual error from engine.
-func (c *Communicator) AppExists() (bool, error) {
-	socketSettings := &SocketSettings{CommonSettings: c.CommonSettings, withoutApp: false, createAppifMissing: false}
-	global := GetGlobal(context.Background(), socketSettings)
-	_, err := global.GetAppEntry(context.Background(), socketSettings.AppId())
-	if err != nil {
-		return false, fmt.Errorf("could not find any app by ID '%s': %s", socketSettings.AppId(), err)
-	}
-	return true, nil
-}
-
-//DeleteApp removes the specified app from the engine.
-func (c *Communicator) DeleteApp(appName string) {
-	socketSettings := &SocketSettings{CommonSettings: c.CommonSettings, withoutApp: false, createAppifMissing: false}
-	socketSettings.OverrideSetting("app", appName)
-	global := GetGlobal(context.Background(), socketSettings)
-	appID := socketSettings.AppId()
-	succ, err := global.DeleteApp(context.Background(), socketSettings.AppId())
-	if err != nil {
-		log.Fatalf("could not delete app with name '%s' and ID '%s': %s\n", appName, appID, err)
-	} else if !succ {
-		log.Fatalf("could not delete app with name '%s' and ID '%s'\n", appName, appID)
-	}
-	SetAppIDToKnownApps(socketSettings.EngineHost(), appName, appID, true)
-}
-
-func GetApp(ctx context.Context, global *enigma.Global, settings EngineWebSocketSettings) *enigma.Doc {
-	engineHost := settings.EngineHost()
+func GetApp(ctx context.Context, global *enigma.Global, settings EngineWebSocketSettings, createAppIfMissing bool) *enigma.Doc {
 	appName := settings.App()
 
 	if appName == "" {
@@ -100,7 +40,6 @@ func GetApp(ctx context.Context, global *enigma.Global, settings EngineWebSocket
 
 	appID := settings.AppId()
 	noData := settings.NoData()
-	createAppIfMissing := settings.CreateAppIfMissing()
 
 	var doc *enigma.Doc
 	var err error
@@ -127,7 +66,7 @@ func GetApp(ctx context.Context, global *enigma.Global, settings EngineWebSocket
 				log.Fatalf("could not create app with name '%s'\n", appName)
 			}
 			// Write app id to config
-			SetAppIDToKnownApps(engineHost, appName, appID, false)
+			SetAppIDToKnownApps(settings.AppIdMappingNamespace(), appName, appID, false)
 			doc, err = global.OpenDoc(ctx, appID, "", "", "", noData)
 			if err != nil {
 				log.Fatalf("could not do open app with ID '%s': %s\n", appID, err)

@@ -7,20 +7,13 @@ import (
 )
 
 // ReadRestMetadata fetches the metadata for the specified app
-func (c *Caller) ReadRestMetadata() (*RestMetadata, error) {
-	url := c.RestBaseUrl()
-	url.Path = fmt.Sprintf("/v1/apps/%s/data/metadata", adaptAppID(c.AppId()))
-
+func (c *RestCaller) ReadRestMetadata() (*RestMetadata, error) {
 	req := &http.Request{
 		Method: "GET",
-		URL:    url,
-		Header: c.Headers(),
+		URL:    c.CreateUrl(fmt.Sprintf("v1/apps/%s/data/metadata", c.RestAdaptedAppId()), nil),
 	}
 	result := &RestMetadata{}
-	statusCodes := &map[int]bool{
-		200: true,
-	}
-	err := c.Call(req, result, statusCodes, json.Unmarshal)
+	err := c.Call(req, result, json.Unmarshal)
 	if err != nil {
 		return nil, fmt.Errorf("could not get rest metadata: %s", err.Error())
 	}

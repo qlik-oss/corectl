@@ -122,7 +122,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 }
 
 // GetModelMetadata retrives all available metadata about the app
-func GetModelMetadata(ctx context.Context, doc *enigma.Doc, restCaller *rest.Caller, keyOnly bool) *ModelMetadata {
+func GetModelMetadata(ctx context.Context, doc *enigma.Doc, restCaller *rest.RestCaller, keyOnly bool) *ModelMetadata {
 	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)

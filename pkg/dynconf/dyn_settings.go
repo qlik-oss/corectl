@@ -16,15 +16,14 @@ import (
 )
 
 func ReadSettings(ccmd *cobra.Command) *DynSettings {
-	result := readSettings(ccmd, true)
+	result := readSettings(ccmd.Flags(), true)
 	return result
 }
 func ReadSettingsWithoutContext(ccmd *cobra.Command) *DynSettings {
-	return readSettings(ccmd, false)
+	return readSettings(ccmd.Flags(), false)
 }
 
-func readSettings(ccmd *cobra.Command, withContext bool) *DynSettings {
-	commandFlagSet := ccmd.Flags()
+func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings {
 	contextName, err := commandFlagSet.GetString("context")
 	if err != nil {
 		panic(err)
@@ -86,7 +85,6 @@ func readSettings(ccmd *cobra.Command, withContext bool) *DynSettings {
 		configFilePath:    configFileName,
 		allParams:         *allParams,
 		commandLineParams: *commandLineParams,
-		flags:             ccmd.Flags(),
 	}
 }
 
@@ -122,7 +120,6 @@ type DynSettings struct {
 	configFilePath    string
 	allParams         map[interface{}]interface{}
 	commandLineParams map[interface{}]interface{}
-	flags             *pflag.FlagSet
 }
 
 func (ds *DynSettings) OverrideSetting(name string, value interface{}) {
@@ -247,6 +244,9 @@ func (ds *DynSettings) GetStringMap(name string) map[string]string {
 		}
 		return result
 	default:
+		if value == nil {
+			return nil
+		}
 		log.Fatalf("Unexpected format of map: %s", reflect.TypeOf(value).Name())
 		return nil
 	}

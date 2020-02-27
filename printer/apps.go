@@ -13,7 +13,7 @@ import (
 )
 
 // PrintApps prints a list of apps and some meta to system out.
-func PrintApps(docList []*enigma.DocListEntry, mode PrintMode) {
+func PrintApps(docList []*enigma.DocListEntry, mode log.PrintMode) {
 	if mode.JsonMode() {
 		log.PrintAsJSON(filterDocEntries(docList))
 	} else if mode.BashMode() {

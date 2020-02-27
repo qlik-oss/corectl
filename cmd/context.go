@@ -26,10 +26,11 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 		//Check the validity of the certificates folder
 		cfg := dynconf.ReadSettingsWithoutContext(ccmd)
 		newSettings := map[string]interface{}{
-			"engine":       cfg.GetString("engine"),
-			"headers":      cfg.GetStringMap("headers"),
-			"certificates": cfg.GetAbsolutePath("certificates"),
-			"comment":      cfg.GetString("comment"),
+			"engine":                     cfg.GetString("engine"),
+			"headers":                    cfg.GetStringMap("headers"),
+			"certificates":               cfg.GetAbsolutePath("certificates"),
+			"comment":                    cfg.GetString("comment"),
+			"catwalk-web-integration-id": cfg.GetString("catwalk-web-integration-id"),
 		}
 		cfg.GetTLSConfigFromPath("certificates")
 		name := dynconf.SetContext(args[0], newSettings)

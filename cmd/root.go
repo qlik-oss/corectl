@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"os"
 	"strings"
 
@@ -97,7 +98,26 @@ func init() {
 	rootCmd.AddCommand(generateDocsCmd)
 	rootCmd.AddCommand(generateSpecCmd)
 
-	initGlobalFlags(rootCmd.PersistentFlags())
+	boot.InjectGlobalFlags(rootCmd)
+
+	//initGlobalFlags(rootCmd.PersistentFlags())
 	patchRootCommandUsageTemplate()
 
+}
+
+func ContextCommand() *cobra.Command {
+	return contextCmd
+}
+func CompletionCommand() *cobra.Command {
+	return completionCmd
+}
+func StatusCommand() *cobra.Command {
+	return statusCmd
+}
+
+func GenerateDocsCommand() *cobra.Command {
+	return generateDocsCmd
+}
+func GenerateSpecCommand() *cobra.Command {
+	return generateDocsCmd
 }

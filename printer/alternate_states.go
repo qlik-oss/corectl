@@ -9,7 +9,7 @@ import (
 )
 
 // PrintStates prints a list of states to system out.
-func PrintStates(statesList []string, mode PrintMode) {
+func PrintStates(statesList []string, mode log.PrintMode) {
 
 	if mode.JsonMode() {
 		log.PrintAsJSON(statesList)

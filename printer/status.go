@@ -24,6 +24,9 @@ func PrintStatus(ctx context.Context, doc *enigma.Doc, engine string, appName st
 		fmt.Println("Connected without app to " + engine)
 	}
 }
+func PrintStatusRest(url string) {
+	fmt.Println("Connected without app to ", url)
+}
 
 // Returns the number of tables in the data model
 func dataModelTableCount(ctx context.Context, doc *enigma.Doc) int {

@@ -9,7 +9,7 @@ import (
 )
 
 // PrintConnections prints a list of connections to standard out
-func PrintConnections(connections []*enigma.Connection, mode PrintMode) {
+func PrintConnections(connections []*enigma.Connection, mode log.PrintMode) {
 	if mode.JsonMode() {
 		log.PrintAsJSON(connections)
 	} else if mode.QuietMode() || mode.BashMode() {

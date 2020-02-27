@@ -9,94 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseEngineURL(t *testing.T) {
-	testURL(t, "engine", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine",
-		"Path":   "",
-	}, true)
-	testURL(t, "engine:1234", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine:1234",
-		"Path":   "",
-	}, true)
-	testURL(t, "localhost:1234", map[string]string{
-		"Scheme": "ws",
-		"Host":   "localhost:1234",
-		"Path":   "",
-	}, true)
-	testURL(t, "localhost:1234/app/apa", map[string]string{
-		"Scheme": "ws",
-		"Host":   "localhost:1234",
-		"Path":   "/app/apa",
-	}, true)
-	testURL(t, "engine/path", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine",
-		"Path":   "/path",
-	}, true)
-	testURL(t, "engine.com", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine.com",
-		"Path":   "",
-	}, true)
-	testURL(t, "http://engine.com", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine.com",
-		"Path":   "",
-	}, true)
-	testURL(t, "http://engine/path", map[string]string{
-		"Scheme": "ws",
-		"Host":   "engine",
-		"Path":   "/path",
-	}, true)
-	testURL(t, "http://127.0.0.1:1234", map[string]string{
-		"Scheme": "ws",
-		"Host":   "127.0.0.1:1234",
-		"Path":   "",
-	}, true)
-	testURL(t, "127.0.0.1:1234", map[string]string{
-		"Scheme": "ws",
-		"Host":   "127.0.0.1:1234",
-		"Path":   "",
-	}, true)
-	testURL(t, "127.0.0.1", map[string]string{
-		"Scheme": "ws",
-		"Host":   "127.0.0.1",
-		"Path":   "",
-	}, true)
-	testURL(t, "127.0.0.1/app/foo", map[string]string{
-		"Scheme": "ws",
-		"Host":   "127.0.0.1",
-		"Path":   "/app/foo",
-	}, true)
-	testURL(t, "ws://localhost:1234/app/foo", map[string]string{
-		"Scheme": "ws",
-		"Host":   "localhost:1234",
-		"Path":   "/app/foo",
-	}, true)
-}
-
-func testURL(t *testing.T, s string, fields map[string]string, pass bool) (u *url.URL) {
-	u, err := parseEngineURL(s)
-	if pass {
-		if !assert.Nil(t, err) {
-			return
-		}
-	} else {
-		assert.Error(t, err)
-		return
-	}
-	v := reflect.ValueOf(*u)
-	for f, expected := range fields {
-		fval := string(v.FieldByName(f).String())
-		sExp := fmt.Sprintf("'%s'= %s", f, expected)
-		sFval := fmt.Sprintf("'%s'= %s", f, fval)
-		assert.Equal(t, sExp, sFval)
-	}
-	return
-}
-
 //
 //func TestGetEngineUrl(t *testing.T) {
 //	// Wrapper function
@@ -144,4 +56,94 @@ func TestParseAppFromUrl(t *testing.T) {
 	assert.Equal(t, "", tryParseAppFromURL("ws://engine/"))
 	assert.Equal(t, "", tryParseAppFromURL("ws://engine"))
 	assert.Equal(t, "", tryParseAppFromURL("ws://engine/sense"))
+	assert.Equal(t, "123456789", tryParseAppFromURL("https://tenant.eu.qlikcloud.com/sense/app/123456789/overview"))
+	assert.Equal(t, "123456789", tryParseAppFromURL("tenant.eu.qlikcloud.com/sense/app/123456789/overview"))
+}
+
+func TestParseURL(t *testing.T) {
+	testParseURL(t, "engine", map[string]string{
+		"Scheme": "ws",
+		"Host":   "engine",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "engine:1234", map[string]string{
+		"Scheme": "ws",
+		"Host":   "engine:1234",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "localhost:1234", map[string]string{
+		"Scheme": "ws",
+		"Host":   "localhost:1234",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "localhost:1234/app/apa", map[string]string{
+		"Scheme": "ws",
+		"Host":   "localhost:1234",
+		"Path":   "/app/apa",
+	}, true)
+	testParseURL(t, "engine/path", map[string]string{
+		"Scheme": "ws",
+		"Host":   "engine",
+		"Path":   "/path",
+	}, true)
+	testParseURL(t, "engine.com", map[string]string{
+		"Scheme": "ws",
+		"Host":   "engine.com",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "http://engine.com", map[string]string{
+		"Scheme": "http",
+		"Host":   "engine.com",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "http://engine/path", map[string]string{
+		"Scheme": "http",
+		"Host":   "engine",
+		"Path":   "/path",
+	}, true)
+	testParseURL(t, "http://127.0.0.1:1234", map[string]string{
+		"Scheme": "http",
+		"Host":   "127.0.0.1:1234",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "127.0.0.1:1234", map[string]string{
+		"Scheme": "ws",
+		"Host":   "127.0.0.1:1234",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "127.0.0.1", map[string]string{
+		"Scheme": "ws",
+		"Host":   "127.0.0.1",
+		"Path":   "",
+	}, true)
+	testParseURL(t, "127.0.0.1/app/foo", map[string]string{
+		"Scheme": "ws",
+		"Host":   "127.0.0.1",
+		"Path":   "/app/foo",
+	}, true)
+	testParseURL(t, "ws://localhost:1234/app/foo", map[string]string{
+		"Scheme": "ws",
+		"Host":   "localhost:1234",
+		"Path":   "/app/foo",
+	}, true)
+}
+
+func testParseURL(t *testing.T, s string, fields map[string]string, pass bool) (u *url.URL) {
+	u, err := parseURL(s, "ws")
+	if pass {
+		if !assert.Nil(t, err) {
+			return
+		}
+	} else {
+		assert.Error(t, err)
+		return
+	}
+	v := reflect.ValueOf(*u)
+	for f, expected := range fields {
+		fval := string(v.FieldByName(f).String())
+		sExp := fmt.Sprintf("'%s'= %s", f, expected)
+		sFval := fmt.Sprintf("'%s'= %s", f, fval)
+		assert.Equal(t, sExp, sFval)
+	}
+	return
 }

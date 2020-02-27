@@ -23,7 +23,7 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 }
 
 // PrintFields prints a tables of fields along with various metadata to system out.
-func PrintFields(data *internal.ModelMetadata, keyOnly bool, mode PrintMode) {
+func PrintFields(data *internal.ModelMetadata, keyOnly bool, mode log.PrintMode) {
 	if len(data.Fields) == 0 {
 		if keyOnly {
 			log.Infoln("No key fields found.")

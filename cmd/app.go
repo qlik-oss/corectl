@@ -3,11 +3,21 @@ package cmd
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/rest"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
+
+type ListAppResponse struct {
+	Data []ListItem `json:"data"`
+}
+
+type ListItem struct {
+	Name string `json:"name"`
+	Id   string `json:"resourceID"`
+}
 
 var listAppsCmd = withLocalFlags(&cobra.Command{
 	Use:     "ls",
@@ -17,12 +27,22 @@ var listAppsCmd = withLocalFlags(&cobra.Command{
 	Example: "corectl app ls",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		ctx, global, params := boot.NewCommunicator(ccmd).OpenGlobalSocket()
-		docList, err := global.GetDocList(ctx)
-		if err != nil {
-			log.Fatalf("could not retrieve app list: %s\n", err)
+
+		comm := boot.NewCommunicator(ccmd)
+		if comm.IsSenseForKubernetes() {
+			docList, err := comm.RestCaller().ListApps()
+			if err != nil {
+				log.Fatalf("could not retrieve app list: %s\n", err)
+			}
+			rest.PrintApps(docList, comm.PrintMode())
+		} else {
+			ctx, global, params := comm.OpenGlobalSocket()
+			docList, err := global.GetDocList(ctx)
+			if err != nil {
+				log.Fatalf("could not retrieve app list: %s\n", err)
+			}
+			printer.PrintApps(docList, params.PrintMode())
 		}
-		printer.PrintApps(docList, params.PrintMode())
 	},
 }, "quiet")
 
@@ -68,7 +88,7 @@ var importAppCmd = withLocalFlags(&cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		boot.SetAppIDToKnownApps(comm.EngineHost(), appName, appID, false)
+		boot.SetAppIDToKnownApps(comm.AppIdMappingNamespace(), appName, appID, false)
 		log.Info("Imported app with new ID: ")
 		log.Quiet(appID)
 	},

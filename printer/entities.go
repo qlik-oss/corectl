@@ -13,7 +13,7 @@ import (
 )
 
 // PrintNamedItemsList prints a list of the id and type and title of the supplied items
-func PrintNamedItemsList(items []internal.NamedItem, mode PrintMode, printTitle bool) {
+func PrintNamedItemsList(items []internal.NamedItem, mode log.PrintMode, printTitle bool) {
 
 	if mode.JsonMode() {
 		log.PrintAsJSON(items)
@@ -39,7 +39,7 @@ func PrintNamedItemsList(items []internal.NamedItem, mode PrintMode, printTitle 
 }
 
 // PrintNamedItemsListWithType prints a list of the id and type and title of the supplied items
-func PrintNamedItemsListWithType(items []internal.NamedItemWithType, mode PrintMode) {
+func PrintNamedItemsListWithType(items []internal.NamedItemWithType, mode log.PrintMode) {
 	if mode.JsonMode() {
 		log.PrintAsJSON(items)
 	} else if mode.BashMode() || mode.QuietMode() {

@@ -24,11 +24,12 @@ func Glob(pattern string) []string {
 	return paths
 }
 
-func AddValidProp(name string) {
+//AddValidConfigFilePropertyName adds the supplied name to the list of valid properties that are allowed to appear in the main config file
+func AddValidConfigFilePropertyName(name string) {
 	validProps[name] = struct{}{}
 }
 
-// ReadYamlFile reads the connections config file from the supplied path.
+// ReadYamlFile reads a yaml file from the supplied path and performs environment variable substitution.
 func ReadYamlFile(path string, nameInLogs string, config interface{}) {
 	source, err := ioutil.ReadFile(path)
 	if err != nil {

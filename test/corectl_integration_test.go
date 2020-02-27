@@ -376,7 +376,7 @@ func TestEvalOnUnknownAppEngine(t *testing.T) {
 	p.ExpectErrorIncludes("engine", "url").Run("eval", "count(numbers)", "by", "xyz")
 }
 
-func TestLicenseServiceDown(t *testing.T) {
+func DISABLED_TestLicenseServiceDown(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineBadLicenseServerIP, App: t.Name()}
 	p.ExpectIncludes("SESSION_ERROR_NO_LICENSE").Run("app", "ls")
 }

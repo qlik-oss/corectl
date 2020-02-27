@@ -33,21 +33,19 @@ corectl unbuild --app APP-ID`,
 		outdir := params.GetString("dir")
 
 		if outdir == DefaultUnbuildFolder {
-			outdir = getDefaultOutDir(ctx, doc, params.App(), params.AppId())
+			outdir = getDefaultOutDir(ctx, doc, params.App())
 		}
 		internal.Unbuild(ctx, doc, global, outdir)
 	},
 }, "dir")
 
-func getDefaultOutDir(ctx context.Context, doc *enigma.Doc, appName, appId string) string {
+func getDefaultOutDir(ctx context.Context, doc *enigma.Doc, appName string) string {
 	appLayout, _ := doc.GetAppLayout(ctx)
 	var defaultFolder string
 	if appLayout.Title != "" {
 		defaultFolder = appLayout.Title
 	} else if appName != "" {
 		defaultFolder = appName
-	} else {
-		defaultFolder = appId
 	}
 	return internal.BuildRootFolderFromTitle(defaultFolder)
 }

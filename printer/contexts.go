@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"os"
 	"sort"
@@ -43,7 +44,7 @@ func PrintCurrentContext(name string) {
 }
 
 // PrintContexts prints a list of contexts to standard out
-func PrintContexts(handler *dynconf.ContextHandler, mode PrintMode) {
+func PrintContexts(handler *dynconf.ContextHandler, mode log.PrintMode) {
 	var sortedContextKeys []string
 	for k := range handler.Contexts {
 		sortedContextKeys = append(sortedContextKeys, k)

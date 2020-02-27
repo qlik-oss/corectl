@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/printer"
 	"os"
 	"path"
 	"runtime"
@@ -13,7 +14,6 @@ import (
 	"github.com/google/go-github/v27/github"
 	ver "github.com/hashicorp/go-version"
 	"github.com/qlik-oss/corectl/internal/log"
-	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -59,12 +59,26 @@ corectl status --app=my-app.qvf`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 		comm := boot.NewCommunicator(ccmd)
-		if comm.GetString("app") != "" {
-			ctx, _, doc, params := comm.OpenAppSocket(false)
-			printer.PrintStatus(ctx, doc, params.Engine(), params.App())
+
+		if comm.IsSenseForKubernetes() {
+			_, err := comm.RestCaller().CallGet("v1/tenants/me", nil)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if comm.AppId() != "" {
+				ctx, _, doc, params := comm.OpenAppSocket(false)
+				printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
+			} else {
+				printer.PrintStatusRest(comm.RestBaseUrl().String())
+			}
 		} else {
-			ctx, _, params := comm.OpenGlobalSocket()
-			printer.PrintStatus(ctx, nil, params.Engine(), "")
+			if comm.AppId() != "" {
+				ctx, _, doc, params := comm.OpenAppSocket(false)
+				printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
+			} else {
+				ctx, _, params := comm.OpenGlobalSocket()
+				printer.PrintStatus(ctx, nil, params.WebSocketEngineURL(), "")
+			}
 		}
 	},
 }

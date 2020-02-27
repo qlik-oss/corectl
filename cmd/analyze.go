@@ -132,8 +132,8 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 
 		var appSpecified bool
 		catwalkURL := comm.GetString("catwalk-url")
-		engineURL := comm.EngineURL()
-		catwalkURL += "?engine_url=" + engineURL.String()
+		engineURL := comm.WebSocketEngineURL()
+		catwalkURL += "?engine_url=" + engineURL
 		if appSpecified {
 			if ok, err := boot.NewCommunicator(ccmd).AppExists(); !ok {
 				log.Fatalln(err)
