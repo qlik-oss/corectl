@@ -121,3 +121,38 @@ func GenerateDocsCommand() *cobra.Command {
 func GenerateSpecCommand() *cobra.Command {
 	return generateDocsCmd
 }
+
+func EditAppSubCommand() *cobra.Command {
+	var wsSommand = &cobra.Command{
+		Use:   "ws",
+		Short: "web socket things",
+		Long:  `ws contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+	}
+
+	wsSommand.AddCommand(buildCmd)
+	wsSommand.AddCommand(reloadCmd)
+	wsSommand.AddCommand(unbuildCmd)
+
+	// Common commands
+	wsSommand.AddCommand(getAssociationsCmd)
+	wsSommand.AddCommand(catwalkCmd)
+	wsSommand.AddCommand(evalCmd)
+	wsSommand.AddCommand(getFieldsCmd)
+	wsSommand.AddCommand(getValuesCmd)
+	wsSommand.AddCommand(getMetaCmd)
+	wsSommand.AddCommand(getKeysCmd)
+	wsSommand.AddCommand(getTablesCmd)
+
+	// Subcommands
+	wsSommand.AddCommand(appCmd)
+	wsSommand.AddCommand(bookmarkCmd)
+	wsSommand.AddCommand(connectionCmd)
+	wsSommand.AddCommand(dimensionCmd)
+	wsSommand.AddCommand(measureCmd)
+	wsSommand.AddCommand(objectCmd)
+	wsSommand.AddCommand(scriptCmd)
+	wsSommand.AddCommand(alternateStateCmd)
+	wsSommand.AddCommand(variableCmd)
+
+	return wsSommand
+}

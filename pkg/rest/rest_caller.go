@@ -16,6 +16,26 @@ import (
 	"time"
 )
 
+type Loggable interface {
+	String()
+}
+type loggableBody struct {
+	io.ReadCloser
+	content []byte
+}
+
+func (*loggableBody) String() {
+	return
+}
+func (c *RestCaller) CreateLoggableJsonBody(data []byte) io.ReadCloser {
+	buffer := ioutil.NopCloser(bytes.NewBuffer(data))
+	res := loggableBody{
+		ReadCloser: buffer,
+		content:    data,
+	}
+	return res
+}
+
 type RestCallerSettings interface {
 	TlsConfig() *tls.Config
 	Insecure() bool
@@ -49,7 +69,7 @@ func (c *RestCaller) Call(method, path string, query map[string]string, body []b
 	}
 
 	var result []byte
-	err = c.CallReq(req, result)
+	err = c.CallReq(req, &result)
 	return result
 }
 
@@ -89,17 +109,19 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	switch x := result.(type) {
-	case *[]byte:
-		*x = data
-	case *json.RawMessage:
-		*x = data
-	case *string:
-		*x = string(data)
-	default:
-		err = json.Unmarshal(data, result)
-	}
 
+	if result != nil {
+		switch x := result.(type) {
+		case *[]byte:
+			*x = data
+		case *json.RawMessage:
+			*x = data
+		case *string:
+			*x = string(data)
+		default:
+			err = json.Unmarshal(data, result)
+		}
+	}
 	return err
 }
 
@@ -136,6 +158,11 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	var t0 time.Time
 	if log.Traffic {
 		fmt.Fprintln(os.Stderr, req.Method+": "+req.URL.String())
+		loggableBody, ok := req.Body.(loggableBody)
+		if ok {
+			log.PrintAsJSON(loggableBody)
+		}
+
 		t0 = time.Now()
 	}
 
