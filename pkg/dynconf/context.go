@@ -275,7 +275,7 @@ func (c *Context) ToMap() map[string]interface{} {
 	m["engine"] = c.Engine
 	m["headers"] = c.Headers
 	m["certificates"] = c.Certificates
-	//m["comment"] = c.Comment
+	m["comment"] = c.Comment
 	return m
 }
 

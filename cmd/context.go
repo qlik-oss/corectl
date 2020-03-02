@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/commands/login"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -25,13 +26,27 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 
 		//Check the validity of the certificates folder
 		cfg := dynconf.ReadSettingsWithoutContext(ccmd)
+
+		headers := cfg.GetStringMap("headers")
+		if len(headers) == 0 {
+			headers = nil
+		}
+
+		var engine string
+		if cfg.IsUsingDefaultValue("engine") {
+			engine = ""
+		} else {
+			engine = cfg.GetString("engine")
+		}
+
 		newSettings := map[string]interface{}{
-			"engine":                     cfg.GetString("engine"),
-			"headers":                    cfg.GetStringMap("headers"),
+			"engine":                     engine,
+			"headers":                    headers,
 			"certificates":               cfg.GetAbsolutePath("certificates"),
 			"comment":                    cfg.GetString("comment"),
 			"catwalk-web-integration-id": cfg.GetString("catwalk-web-integration-id"),
 		}
+
 		cfg.GetTLSConfigFromPath("certificates")
 		name := dynconf.SetContext(args[0], newSettings)
 		printer.PrintCurrentContext(name)
@@ -170,5 +185,5 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 }
 
 func init() {
-	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd, loginContextCmd)
+	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd, loginContextCmd, login.CreateInitCommand())
 }

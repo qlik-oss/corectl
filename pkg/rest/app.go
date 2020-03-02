@@ -29,7 +29,7 @@ func (c *RestCaller) ImportApp(appPath string) (appID, appName string, err error
 		Body:   file,
 	}
 	appInfo := &NxApp{}
-	err = c.Call(req, appInfo, json.Unmarshal)
+	err = c.CallReq(req, appInfo)
 	if err != nil {
 		err = fmt.Errorf("could not import app: %s", err.Error())
 		return
@@ -57,20 +57,20 @@ func (a NxApp) Get(attr string) string {
 }
 
 func (c *RestCaller) ListApps() ([]byte, error) {
-	data, err := c.CallGet("v1/items", map[string]string{"sort": "-updatedAt", "limit": "30"})
+	var result []byte
+	err := c.CallStd("GET", "v1/items", map[string]string{"sort": "-updatedAt", "limit": "30"}, nil, &result)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
+	return result, nil
 }
 
 func (c *RestCaller) TranslateAppNameToId(name string) string {
-	data, err := c.CallGet("v1/items", map[string]string{"sort": "-updatedAt", "limit": "30", "query": name})
+	var result ListAppResponse
+	err := c.CallStd("GET", "v1/items", map[string]string{"sort": "-updatedAt", "limit": "30", "query": name}, nil, &result)
 	if err != nil {
 		return ""
 	}
-	var result ListAppResponse
-	json.Unmarshal(data, &result)
 	docList := result.Data
 	for _, x := range docList {
 		if x.DocName == name {

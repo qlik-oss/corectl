@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -13,7 +12,7 @@ func (c *RestCaller) ReadRestMetadata() (*RestMetadata, error) {
 		URL:    c.CreateUrl(fmt.Sprintf("v1/apps/%s/data/metadata", c.RestAdaptedAppId()), nil),
 	}
 	result := &RestMetadata{}
-	err := c.Call(req, result, json.Unmarshal)
+	err := c.CallReq(req, result)
 	if err != nil {
 		return nil, fmt.Errorf("could not get rest metadata: %s", err.Error())
 	}

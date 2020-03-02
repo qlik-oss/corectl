@@ -38,6 +38,7 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 	// However, this make validateProps a tiny bit more complex
 	var allParams = &map[interface{}]interface{}{}
 	var commandLineParams = &map[interface{}]interface{}{}
+	var defaultValueIsUsed = &map[interface{}]bool{}
 
 	if configFileName == "" {
 		configFileName = findConfigFile("corectl")
@@ -76,15 +77,19 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 		if (*allParams)[flag.Name] == nil {
 			value := getFlagValue(commandFlagSet, flag)
 			(*allParams)[flag.Name] = value
+			(*defaultValueIsUsed)[flag.Name] = true
+		} else {
+			(*defaultValueIsUsed)[flag.Name] = false
 		}
 	})
 
 	return &DynSettings{
-		contextName:       contextName,
-		configPath:        configPath,
-		configFilePath:    configFileName,
-		allParams:         *allParams,
-		commandLineParams: *commandLineParams,
+		contextName:        contextName,
+		configPath:         configPath,
+		configFilePath:     configFileName,
+		allParams:          *allParams,
+		commandLineParams:  *commandLineParams,
+		defaultValueIsUsed: *defaultValueIsUsed,
 	}
 }
 
@@ -115,11 +120,12 @@ func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {
 }
 
 type DynSettings struct {
-	contextName       string
-	configPath        string
-	configFilePath    string
-	allParams         map[interface{}]interface{}
-	commandLineParams map[interface{}]interface{}
+	contextName        string
+	configPath         string
+	configFilePath     string
+	allParams          map[interface{}]interface{}
+	commandLineParams  map[interface{}]interface{}
+	defaultValueIsUsed map[interface{}]bool
 }
 
 func (ds *DynSettings) OverrideSetting(name string, value interface{}) {
@@ -341,4 +347,9 @@ func (ds *DynSettings) GetTLSConfigFromPath(certificatesPath string) *tls.Config
 	}
 	return tlsClientConfig
 
+}
+
+// Returns true if no value has been set in either the context, config file or command line for the supplied flag name
+func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
+	return ds.defaultValueIsUsed[name]
 }

@@ -13,27 +13,22 @@ func createCommandTree() *cobra.Command {
 
 	var subCommand = &cobra.Command{
 		Use:   "raw",
-		Short: "raw",
-		Long:  "raw test",
+		Short: "command used to invoke Qlik Sense for kubernetes using rest",
+		Long:  "command used to invoke Qlik Sense for kubernetes using rest",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			comm := boot.NewCommunicator(ccmd)
 			rest := comm.RestCaller()
-
-			fmt.Println("BASE URL", rest.RestBaseUrl())
-			appId := rest.RestAdaptedAppId()
-			if appId == "" {
-				log.Fatal("No app specified")
-			}
-
-			body, err := rest.CallGet("v1/tenants/me", nil)
+			var result []byte
+			err := rest.CallStd("GET", comm.GetString("url"), comm.GetStringMap("query"), nil, &result)
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Println(body)
+			log.PrintAsJSON(result)
 		},
 	}
-	subCommand.Flags().StringP("url", "u", "", "")
+	subCommand.Flags().StringP("url", "u", "", "v1/tenants/me")
+	subCommand.Flags().StringToStringP("query", "q", nil, "\"x=firstvalue,y=secondvalue\"")
 
 	var rootCommand = &cobra.Command{
 		Use:   "clientcommand",

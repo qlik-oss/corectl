@@ -61,7 +61,7 @@ corectl status --app=my-app.qvf`,
 		comm := boot.NewCommunicator(ccmd)
 
 		if comm.IsSenseForKubernetes() {
-			_, err := comm.RestCaller().CallGet("v1/tenants/me", nil)
+			err := comm.RestCaller().CallStd("GET", "v1/tenants/me", nil, nil, nil)
 			if err != nil {
 				log.Fatal(err)
 			}
