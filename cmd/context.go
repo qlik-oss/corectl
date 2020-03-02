@@ -40,11 +40,10 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 		}
 
 		newSettings := map[string]interface{}{
-			"engine":                     engine,
-			"headers":                    headers,
-			"certificates":               cfg.GetAbsolutePath("certificates"),
-			"comment":                    cfg.GetString("comment"),
-			"catwalk-web-integration-id": cfg.GetString("catwalk-web-integration-id"),
+			"engine":       engine,
+			"headers":      headers,
+			"certificates": cfg.GetAbsolutePath("certificates"),
+			"comment":      cfg.GetString("comment"),
 		}
 
 		cfg.GetTLSConfigFromPath("certificates")

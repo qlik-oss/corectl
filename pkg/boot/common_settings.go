@@ -174,9 +174,3 @@ func (c *CommonSettings) NoData() bool {
 func (c *CommonSettings) NoSave() bool {
 	return c.GetBoolAllowNoFlag("no-save")
 }
-
-// Settings for catwalk
-
-func (c *CommonSettings) CatwalkWebIntegrationId() string {
-	return c.GetString("catwalk-web-integration-id")
-}

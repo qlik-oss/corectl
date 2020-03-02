@@ -232,6 +232,17 @@
         "get": {
           "description": "Get context, current context by default"
         },
+        "init": {
+          "description": "Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
+          "flags": {
+            "api-key": {
+              "description": "API key of the tenant"
+            },
+            "domain": {
+              "description": "URL to the QCS tenant"
+            }
+          }
+        },
         "login": {
           "description": "Login and set cookie for the named context\n\t\nThis is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.\nIf no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.",
           "flags": {

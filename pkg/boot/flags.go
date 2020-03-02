@@ -31,13 +31,6 @@ func InjectGlobalFlags(command *cobra.Command) {
 	globalFlags.SetAnnotation("engine", cobra.BashCompCustom, []string{"__corectl_get_local_engines"})
 	globalFlags.SetAnnotation("context", cobra.BashCompCustom, []string{"__corectl_get_contexts"})
 
-	//globalFlags.StringP("sense", "", "", "URL to Qlik Sense")
-	//globalFlags.StringP("key", "", "", "API Key to Qlik Sense")
-
-	//TODO sort out how to handle this
-	globalFlags.StringP("catwalk-web-integration-id", "", "", "Web integration id for catwalk")
-	globalFlags.Lookup("catwalk-web-integration-id").Hidden = true
-
 	if runtime.GOOS != "windows" {
 		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
 		// we instead rely on the default bash behavior
