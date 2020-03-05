@@ -60,12 +60,19 @@ Other Commands:{{range .Commands}}{{if (and (or .IsAvailableCommand (eq .Name "h
 	rootCmd.SetUsageTemplate(patchedUsageTemplate)
 }
 
+// COMMENT: init() will always be run if this package is imported.
+// Maybe this logic, and the building of the root command,
+// should incorporated in the execute method or some other method.
 func init() {
-	//App Building Commands
+	// COMMENT: Maybe it would be easier to follow if the command
+	// grouping was done here as well. That is, the annotations set here
+	// and not in the command declaration.
 
+	//App Building Commands
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(reloadCmd)
 	rootCmd.AddCommand(unbuildCmd)
+	Annotate("command_category", "build", buildCmd, reloadCmd, unbuildCmd)
 
 	// Common commands
 	rootCmd.AddCommand(getAssociationsCmd)
@@ -76,6 +83,8 @@ func init() {
 	rootCmd.AddCommand(getMetaCmd)
 	rootCmd.AddCommand(getKeysCmd)
 	rootCmd.AddCommand(getTablesCmd)
+	//Annotate("command_category", "common", getAssociationsCmd, catwalkCmd, evalCmd,
+//		getFieldsCmd, getValuesCmd, getMetaCmd, getKeysCmd, getTablesCmd)
 
 	// Subcommands
 	rootCmd.AddCommand(appCmd)
@@ -87,12 +96,15 @@ func init() {
 	rootCmd.AddCommand(scriptCmd)
 	rootCmd.AddCommand(alternateStateCmd)
 	rootCmd.AddCommand(variableCmd)
+	Annotate("command_category", "sub", appCmd, bookmarkCmd, connectionCmd,
+		dimensionCmd, measureCmd, objectCmd, scriptCmd, alternateStateCmd, variableCmd)
 
 	// Other
 	rootCmd.AddCommand(completionCmd)
 	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(versionCmd)
+	Annotate("command_category", "other", completionCmd, contextCmd, statusCmd, versionCmd)
 
 	// Hidden administrative commands
 	rootCmd.AddCommand(generateDocsCmd)

@@ -164,3 +164,12 @@ func askForConfirmation(s string) bool {
 		}
 	}
 }
+
+func Annotate(key, value string, cmds ...*cobra.Command) {
+	for _, cmd := range cmds {
+		if cmd.Annotations == nil {
+			cmd.Annotations = map[string]string{}
+		}
+		cmd.Annotations[key] = value
+	}
+}
