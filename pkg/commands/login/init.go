@@ -82,7 +82,7 @@ func setupContext(tenant, apikey, explicitContextName string) {
 		tenant = strings.TrimSpace(tenant)
 	}
 	var err error
-	tenantUrl, err := ParseTenantURL(tenant)
+	tenantUrl, err := parseTenantURL(tenant)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -110,7 +110,7 @@ func setupContext(tenant, apikey, explicitContextName string) {
 	contextHandler.Save()
 }
 
-func ParseTenantURL(rawURL string) (string, error) {
+func parseTenantURL(rawURL string) (string, error) {
 	if !strings.Contains(rawURL, "://") {
 		rawURL = "https://" + rawURL
 	}
