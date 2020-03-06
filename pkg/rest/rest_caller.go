@@ -6,7 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -158,11 +158,13 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	var t0 time.Time
 	if log.Traffic {
 		fmt.Fprintln(os.Stderr, req.Method+": "+req.URL.String())
-		loggableBody, ok := req.Body.(loggableBody)
-		if ok {
-			log.PrintAsJSON(loggableBody)
-		}
 
+		if req.Body != nil {
+			loggableBody, ok := req.Body.(loggableBody)
+			if ok {
+				log.PrintAsJSON(loggableBody.String)
+			}
+		}
 		t0 = time.Now()
 	}
 

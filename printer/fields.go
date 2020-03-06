@@ -9,7 +9,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 
 	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 func uniqueAndTotal(field *internal.FieldModel) string {

@@ -2,8 +2,8 @@ package printer
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"os"
 	"sort"
 

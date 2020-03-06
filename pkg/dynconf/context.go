@@ -16,7 +16,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v2"
 )

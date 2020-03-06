@@ -2,7 +2,7 @@ package dynconf
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 	leven "github.com/texttheater/golang-levenshtein/levenshtein"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"

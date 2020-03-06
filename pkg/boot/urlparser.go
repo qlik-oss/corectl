@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 // tryParseAppFromURL parses an url for an app identifier

@@ -3,8 +3,8 @@ package boot
 import (
 	"context"
 	"fmt"
-	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/qlik-oss/enigma-go"
 	"github.com/spf13/cobra"

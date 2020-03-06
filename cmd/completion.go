@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/spf13/cobra"
 )
 

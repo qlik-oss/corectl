@@ -3,7 +3,7 @@ package printer
 import (
 	"os"
 
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 
 	"github.com/olekukonko/tablewriter"
 )

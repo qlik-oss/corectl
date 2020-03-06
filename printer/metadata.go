@@ -3,7 +3,7 @@ package printer
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/internal"
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 // PrintMetadata prints fields tables and associations to system out.

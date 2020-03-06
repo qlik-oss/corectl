@@ -182,7 +182,7 @@ func print(lvl logLevel, a ...interface{}) {
 			msg := map[string]string{
 				strings.ToLower(lvl.String()): fmt.Sprint(a...),
 			}
-			PrintAsJSON(msg)
+			fmt.Println(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
 		prefix := lvl.String()
@@ -193,13 +193,18 @@ func print(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Print(str)
+			fmt.Fprintln(os.Stderr, str)
 		}
 	}
 }
 
-// PrintAsJSON prints data as JSON. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
+// PrintAsJSON prints data as JSON to standard out. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
 func PrintAsJSON(data interface{}) {
+	fmt.Fprintln(os.Stdout, FormatAsJSON(data))
+}
+
+// FormatAsJSON is a utility method that formats the supplied data in a readable way without printing anything. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
+func FormatAsJSON(data interface{}) string {
 	var jsonBytes json.RawMessage
 	var err error
 	switch v := data.(type) {
@@ -215,5 +220,5 @@ func PrintAsJSON(data interface{}) {
 	}
 	var buffer bytes.Buffer
 	json.Indent(&buffer, jsonBytes, "", "  ")
-	fmt.Println(buffer.String())
+	return buffer.String()
 }

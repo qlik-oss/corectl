@@ -2,8 +2,8 @@ package boot
 
 import (
 	"crypto/tls"
-	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"net/http"
 	neturl "net/url"
 	"strings"

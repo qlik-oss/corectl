@@ -5,7 +5,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/rest"
 
-	"github.com/qlik-oss/corectl/internal/log"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 )

@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
-	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/enigma-go"
 )
 
