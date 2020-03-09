@@ -64,7 +64,7 @@ func (b *logBuffer) add(lvl logLevel, a ...interface{}) {
 
 func (b *logBuffer) flush() {
 	for i, lvl := range b.levels {
-		print(lvl, b.messages[i])
+		log(lvl, b.messages[i])
 	}
 	b.levels = []logLevel{}
 	b.messages = []string{}
@@ -88,92 +88,92 @@ func init() {
 }
 
 func Quietln(a ...interface{}) {
-	println(quiet, a...)
+	logln(quiet, a...)
 }
 
 func Quietf(format string, a ...interface{}) {
-	printf(quiet, format, a...)
+	logf(quiet, format, a...)
 }
 
 func Quiet(a ...interface{}) {
-	print(quiet, a...)
+	log(quiet, a...)
 }
 
 func Fatalf(format string, a ...interface{}) {
-	printf(fatal, format, a...)
+	logf(fatal, format, a...)
 	os.Exit(1)
 }
 
 func Fatalln(a ...interface{}) {
-	println(fatal, a...)
+	logln(fatal, a...)
 	os.Exit(1)
 }
 
 func Fatal(a ...interface{}) {
-	print(fatal, a...)
+	log(fatal, a...)
 	os.Exit(1)
 }
 
 func Errorln(a ...interface{}) {
-	println(err, a...)
+	logln(err, a...)
 }
 
 func Errorf(format string, a ...interface{}) {
-	printf(err, format, a...)
+	logf(err, format, a...)
 }
 
 func Error(a ...interface{}) {
-	print(err, a...)
+	log(err, a...)
 }
 
 func Warnln(a ...interface{}) {
-	println(warn, a...)
+	logln(warn, a...)
 }
 
 func Warnf(format string, a ...interface{}) {
-	printf(warn, format, a...)
+	logf(warn, format, a...)
 }
 
 func Warn(a ...interface{}) {
-	print(warn, a...)
+	log(warn, a...)
 }
 
 func Infoln(a ...interface{}) {
-	println(info, a...)
+	logln(info, a...)
 }
 
 func Infof(format string, a ...interface{}) {
-	printf(info, format, a...)
+	logf(info, format, a...)
 }
 
 func Info(a ...interface{}) {
-	print(info, a...)
+	log(info, a...)
 }
 
 func Verboseln(a ...interface{}) {
-	println(verbose, a...)
+	logln(verbose, a...)
 }
 
 func Verbosef(format string, a ...interface{}) {
-	printf(verbose, format, a...)
+	logf(verbose, format, a...)
 }
 
 func Verbose(a ...interface{}) {
-	print(verbose, a...)
+	log(verbose, a...)
 }
 
-func printf(lvl logLevel, format string, a ...interface{}) {
-	print(lvl, fmt.Sprintf(format, a...))
+func logf(lvl logLevel, format string, a ...interface{}) {
+	log(lvl, fmt.Sprintf(format, a...))
 }
 
-func println(lvl logLevel, a ...interface{}) {
-	print(lvl, fmt.Sprintln(a...))
+func logln(lvl logLevel, a ...interface{}) {
+	log(lvl, fmt.Sprintln(a...))
 }
 
 // print handles all the printing.
 // If it is called for a higher log level than what is set, it will not print.
 // If printJSON is set it will print as json instead, using the log level as the key.
-func print(lvl logLevel, a ...interface{}) {
+func log(lvl logLevel, a ...interface{}) {
 	if lvl > level { //If level supplied is larger than the current log level, don't print.
 		return
 	}
@@ -193,14 +193,14 @@ func print(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Fprintln(os.Stderr, str)
+			fmt.Fprint(os.Stderr, appendNewline(str))
 		}
 	}
 }
 
 // PrintAsJSON prints data as JSON to standard out. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
 func PrintAsJSON(data interface{}) {
-	fmt.Fprintln(os.Stdout, FormatAsJSON(data))
+	fmt.Fprint(os.Stdout, FormatAsJSON(data))
 }
 
 // FormatAsJSON is a utility method that formats the supplied data in a readable way without printing anything. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
@@ -221,4 +221,11 @@ func FormatAsJSON(data interface{}) string {
 	var buffer bytes.Buffer
 	json.Indent(&buffer, jsonBytes, "", "  ")
 	return buffer.String()
+}
+
+func appendNewline(s string) string {
+	if l := len(s); l > 0 && s[l-1:l] != "\n" {
+		s += "\n"
+	}
+	return s
 }
