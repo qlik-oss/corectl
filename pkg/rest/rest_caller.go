@@ -1,6 +1,5 @@
 package rest
 
-import "C"
 import (
 	"bytes"
 	"crypto/tls"
@@ -24,8 +23,8 @@ type loggableBody struct {
 	content []byte
 }
 
-func (*loggableBody) String() {
-	return
+func (lb *loggableBody) String() string {
+	return string(lb.content)
 }
 func (c *RestCaller) CreateLoggableJsonBody(data []byte) io.ReadCloser {
 	buffer := ioutil.NopCloser(bytes.NewBuffer(data))
@@ -162,7 +161,7 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 		if req.Body != nil {
 			loggableBody, ok := req.Body.(loggableBody)
 			if ok {
-				log.PrintAsJSON(loggableBody.String)
+				log.PrintAsJSON(loggableBody.content)
 			}
 		}
 		t0 = time.Now()
