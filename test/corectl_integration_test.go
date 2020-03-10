@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/qlik-oss/corectl/test/toolkit"
@@ -511,9 +512,9 @@ func TestImportApp(t *testing.T) {
 	for _, p := range params {
 		// See if we can import the app test.qvf
 		output := p.ExpectOK().Run("app", "import", "test/projects/import/test.qvf", "-q")
+		appId := strings.Trim(string(output), " \n")
 		// If it was created, we can remove it
-		p.ExpectOK().Run("app", "rm", string(output), "--suppress")
-		p.Reset()
+		p.ExpectOK().Run("app", "rm", appId, "--suppress")
 	}
 }
 

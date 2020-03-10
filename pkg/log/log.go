@@ -185,6 +185,10 @@ func log(lvl logLevel, a ...interface{}) {
 			fmt.Fprintln(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
+		out := os.Stderr
+		if lvl == quiet {
+			out = os.Stdout
+		}
 		prefix := lvl.String()
 		if prefix != "" {
 			prefix += ": "
@@ -193,7 +197,7 @@ func log(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Fprint(os.Stderr, appendln(str))
+			fmt.Fprint(out, appendln(str))
 		}
 	}
 }
