@@ -53,6 +53,6 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.
 * [corectl context login](corectl_context_login.md)	 - Login and set cookie for the named context
 * [corectl context ls](corectl_context_ls.md)	 - List all contexts
 * [corectl context rm](corectl_context_rm.md)	 - Remove one or more contexts
-* [corectl context set](corectl_context_set.md)	 - Set the current context
 * [corectl context update](corectl_context_update.md)	 - Update a context with the specified configuration
+* [corectl context use](corectl_context_use.md)	 - Specify what context to use
 

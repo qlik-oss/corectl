@@ -1,25 +1,25 @@
-## corectl context set
+## corectl context use
 
-Set the current context
+Specify what context to use
 
 ### Synopsis
 
-Set the current context
+Specify what context to use
 
 ```
-corectl context set <context-name> [flags]
+corectl context use <context-name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context set local-engine
+corectl context use local-engine
 ```
 
 ### Options
 
 ```
-  -h, --help   help for set
+  -h, --help   help for use
 ```
 
 ### Options inherited from parent commands

@@ -268,9 +268,6 @@
         "rm": {
           "description": "Remove one or more contexts"
         },
-        "set": {
-          "description": "Set the current context"
-        },
         "update": {
           "description": "Update a context with the specified configuration",
           "flags": {
@@ -278,6 +275,9 @@
               "description": "Comment for the context"
             }
           }
+        },
+        "use": {
+          "description": "Specify what context to use"
         }
       }
     },
