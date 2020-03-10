@@ -1,25 +1,27 @@
-## corectl context use
+## corectl context update
 
-Specify what context to use
+Update a context with the specified configuration
 
 ### Synopsis
 
-Specify what context to use
+Update a context with the specified configuration
 
 ```
-corectl context use <context-name> [flags]
+corectl context update <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context use local-engine
+corectl context update local-engine
+corectl context update rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
-  -h, --help   help for use
+      --comment string   Comment for the context
+  -h, --help             help for update
 ```
 
 ### Options inherited from parent commands

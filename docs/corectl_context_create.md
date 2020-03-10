@@ -1,25 +1,31 @@
-## corectl context set
+## corectl context create
 
-Set the current context
+Create a context with the specified configuration
 
 ### Synopsis
 
-Set the current context
+Create a context with the specified configuration
+
+This command creates a context by using the supplied flags.
+The information stored will be engine url, headers and certificates
+(if present) along with comment and the context-name.
 
 ```
-corectl context set <context-name> [flags]
+corectl context create <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context set local-engine
+corectl context create local-engine
+corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
-  -h, --help   help for set
+      --comment string   Comment for the context
+  -h, --help             help for create
 ```
 
 ### Options inherited from parent commands

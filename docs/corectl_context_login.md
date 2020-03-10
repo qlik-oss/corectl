@@ -5,7 +5,7 @@ Login and set cookie for the named context
 ### Synopsis
 
 Login and set cookie for the named context
-	
+
 This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
 If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.
 
