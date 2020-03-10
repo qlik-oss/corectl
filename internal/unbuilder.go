@@ -92,12 +92,10 @@ func exportEntities(ctx context.Context, doc *enigma.Doc, folder string) {
 						propsWithTitle = propsWithTitle.QProperty
 					}
 					title := propsWithTitle.QMetaDef.Title
-					if title == "" {
-						title = propsWithTitle.QInfo.QId
-					}
+					id := propsWithTitle.QInfo.QId
 					qType := propsWithTitle.QInfo.QType
 					viz := propsWithTitle.Visualization
-					filename := buildEntityFilename(folder+"/objects", qType, viz, title)
+					filename := buildEntityFilename(folder+"/objects", qType, viz, title, id)
 					os.MkdirAll(filepath.Dir(filename), os.ModePerm)
 					ioutil.WriteFile(filename, marshalOrFail(rawProps), os.ModePerm)
 				}
@@ -204,11 +202,11 @@ func marshalOrFail(v interface{}) json.RawMessage {
 	return json.RawMessage(result)
 }
 
-func buildEntityFilename(folder, qType, viz, title string) string {
+func buildEntityFilename(folder, qType, viz, title, id string) string {
 	qType = strings.Replace(qType, "/", "-", -1)
 	viz = strings.Replace(viz, "/", "-", -1)
 	title = strings.Replace(title, "/", "-", -1)
-	filename := qType + "-" + viz + "-" + title
+	filename := qType + "-" + viz + "-" + title + "-" + id
 	filename = strings.ToLower(filename)
 	filename = matchAllNonAlphaNumeric.ReplaceAllString(filename, `-`)
 	return folder + "/" + filename + ".json"
