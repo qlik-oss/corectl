@@ -96,10 +96,10 @@ func RemoveContext(contextName string) (string, bool) {
 	return contextName, wasCurrent
 }
 
-// SetContext sets the current context based on name
-func SetContext(contextName string) string {
+// UseContext sets the current context based on name
+func UseContext(contextName string) string {
 	handler := NewContextHandler()
-	handler.Set(contextName)
+	handler.Use(contextName)
 	handler.Save()
 	return contextName
 }
@@ -208,8 +208,8 @@ func (ch *ContextHandler) GetCurrent() Context {
 	return ch.Get(cur)
 }
 
-// Set sets the current context
-func (ch *ContextHandler) Set(contextName string) {
+// Use sets the current context
+func (ch *ContextHandler) Use(contextName string) {
 	if !ch.Exists(contextName) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}

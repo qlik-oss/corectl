@@ -60,7 +60,7 @@ func TestContextManagement(t *testing.T) {
 		// Create a context using the config and engine url
 		args := append([]string{"context", "create", contexts[i]}, f...)
 		p.ExpectOK().Run(args...)
-		p.ExpectOK().Run("context", "set", contexts[i])
+		p.ExpectOK().Run("context", "use", contexts[i])
 		// Remove config and engine from p to see if context stored them
 		p.ExpectOK().Run("status")
 	}
@@ -80,7 +80,7 @@ func TestContextManagement(t *testing.T) {
 	for i, ctx := range contexts {
 		p.ExpectOK().Run("context", "get", ctx)
 		// With context status should work
-		p.ExpectOK().Run("context", "set", ctx)
+		p.ExpectOK().Run("context", "use", ctx)
 		p.ExpectIncludes(flags[i][1]).Run("status")
 		// Without context status should default to localhost:9076
 		p.ExpectOK().Run("context", "clear")
@@ -120,7 +120,7 @@ func TestQuietCommands(t *testing.T) {
 func TestLogBuffer(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectOK().Run("context", "create", t.Name())
-	p.ExpectOK().Run("context", "set", t.Name())
+	p.ExpectOK().Run("context", "use", t.Name())
 	// The quiest flag should mute the warnings
 	p.ExpectEmptyOK().Run("app", "ls", "-q")
 	// We should have a warning saying something about context here
@@ -556,7 +556,7 @@ func TestCertificatesPath(t *testing.T) {
 	for _, p := range params {
 		defer p.Reset()
 		p.ExpectOK().Run("context", "create", contextName)
-		p.ExpectOK().Run("context", "set", contextName)
+		p.ExpectOK().Run("context", "use", contextName)
 		p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
 		p.ExpectOK().Run("context", "rm", contextName)
 		params := []toolkit.Params{pFlag, pConfig}

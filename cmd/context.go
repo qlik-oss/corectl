@@ -143,15 +143,15 @@ var listContextsCmd = &cobra.Command{
 	},
 }
 
-var setContextCmd = &cobra.Command{
-	Use:     "set <context-name>",
+var useContextCmd = &cobra.Command{
+	Use:     "use <context-name>",
 	Args:    cobra.ExactArgs(1),
-	Short:   "Set the current context",
-	Long:    "Set the current context",
-	Example: "corectl context set local-engine",
+	Short:   "Specify what context to use",
+	Long:    "Specify what context to use",
+	Example: "corectl context use local-engine",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		name := dynconf.SetContext(args[0])
+		name := dynconf.UseContext(args[0])
 		printer.PrintCurrentContext(name)
 	},
 }
@@ -221,6 +221,6 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 
 func init() {
 	contextCmd.AddCommand(createContextCmd, updateContextCmd, removeContextCmd,
-		listContextsCmd, setContextCmd, getContextCmd,
+		listContextsCmd, useContextCmd, getContextCmd,
 		clearContextCmd, loginContextCmd, login.CreateInitCommand())
 }
