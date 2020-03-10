@@ -6,7 +6,7 @@ import (
 )
 
 func TestBuildName(t *testing.T) {
-	fmt.Println(buildEntityFilename("wefwef", "mastesrobject", "table", "'='Halleluljah moment'"))
+	fmt.Println(buildEntityFilename("wefwef", "mastesrobject", "table", "'='Halleluljah moment'", "myUniqueQId"))
 }
 
 func TestUnbuildRegex(t *testing.T) {

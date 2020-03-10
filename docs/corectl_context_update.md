@@ -1,32 +1,27 @@
-## corectl context set
+## corectl context update
 
-Set a context to the current configuration
+Update a context with the specified configuration
 
 ### Synopsis
 
-Set a context to the current configuration
-
-This command creates or updates a context by using the supplied flags and any
-relevant config information found in the config file (if any).
-The information stored will be engine url, headers and certificates (if present)
-along with comment and the context-name.
+Update a context with the specified configuration
 
 ```
-corectl context set <context name> [flags]
+corectl context update <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context set local-engine
-corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
+corectl context update local-engine
+corectl context update rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
       --comment string   Comment for the context
-  -h, --help             help for set
+  -h, --help             help for update
 ```
 
 ### Options inherited from parent commands

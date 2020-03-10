@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/corectl
     docker:
-      - image: circleci/golang:1.13
+      - image: circleci/golang:1.14
     steps:
       - checkout
       - restore_cache:

@@ -25,11 +25,11 @@ func PrintContext(name string, handler *dynconf.ContextHandler) {
 		return
 	}
 	fmt.Printf("Name: %s\n", name)
-	fmt.Printf("Comment: %s\n", context.Comment)
-	fmt.Printf("Engine: %s\n", context.Engine)
-	fmt.Printf("Certificates: %s\n", context.Certificates)
+	fmt.Printf("Comment: %s\n", context.GetString("comment"))
+	fmt.Printf("Engine: %s\n", context.GetString("engine"))
+	fmt.Printf("Certificates: %s\n", context.GetString("certificates"))
 	fmt.Println("Headers:")
-	for k, v := range context.Headers {
+	for k, v := range context.Headers() {
 		fmt.Printf("    %s: %s\n", k, v)
 	}
 }
@@ -65,7 +65,7 @@ func PrintContexts(handler *dynconf.ContextHandler, mode log.PrintMode) {
 
 		for _, k := range sortedContextKeys {
 			context := handler.Get(k)
-			row := []string{k, context.Engine, "", context.Comment}
+			row := []string{k, context.GetString("engine"), "", context.GetString("comment")}
 			if k == handler.Current {
 				// In case we change header order
 				for i, h := range header {

@@ -182,9 +182,13 @@ func log(lvl logLevel, a ...interface{}) {
 			msg := map[string]string{
 				strings.ToLower(lvl.String()): fmt.Sprint(a...),
 			}
-			fmt.Println(os.Stderr, FormatAsJSON(msg))
+			fmt.Fprintln(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
+		out := os.Stderr
+		if lvl == quiet {
+			out = os.Stdout
+		}
 		prefix := lvl.String()
 		if prefix != "" {
 			prefix += ": "
@@ -193,14 +197,16 @@ func log(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Fprint(os.Stderr, appendNewline(str))
+			fmt.Fprint(out, appendln(str))
 		}
 	}
 }
 
 // PrintAsJSON prints data as JSON to standard out. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
 func PrintAsJSON(data interface{}) {
-	fmt.Fprint(os.Stdout, FormatAsJSON(data))
+	msg := FormatAsJSON(data)
+	msg = appendln(msg)
+	fmt.Fprint(os.Stdout, msg)
 }
 
 // FormatAsJSON is a utility method that formats the supplied data in a readable way without printing anything. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
@@ -223,7 +229,7 @@ func FormatAsJSON(data interface{}) string {
 	return buffer.String()
 }
 
-func appendNewline(s string) string {
+func appendln(s string) string {
 	if l := len(s); l > 0 && s[l-1:l] != "\n" {
 		s += "\n"
 	}
