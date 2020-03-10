@@ -182,7 +182,7 @@ func log(lvl logLevel, a ...interface{}) {
 			msg := map[string]string{
 				strings.ToLower(lvl.String()): fmt.Sprint(a...),
 			}
-			fmt.Println(os.Stderr, FormatAsJSON(msg))
+			fmt.Fprintln(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
 		prefix := lvl.String()

@@ -8,19 +8,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var setContextCmd = withLocalFlags(&cobra.Command{
-	Use:   "set <context name>",
+var createContextCmd = withLocalFlags(&cobra.Command{
+	Use:   "create <context name>",
 	Args:  cobra.ExactArgs(1),
-	Short: "Set a context to the current configuration",
-	Long: `Set a context to the current configuration
+	Short: "Create a context with the specified configuration",
+	Long: `Create a context with the specified configuration
 
-This command creates or updates a context by using the supplied flags and any
-relevant config information found in the config file (if any).
-The information stored will be engine url, headers and certificates (if present)
-along with comment and the context-name.`,
+This command creates a context by using the supplied flags.
+The information stored will be engine url, headers and certificates
+(if present) along with comment and the context-name.`,
 
-	Example: `corectl context set local-engine
-corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
+	Example: `corectl context create local-engine
+corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
 
 	Run: func(ccmd *cobra.Command, args []string) {
 
@@ -32,23 +31,60 @@ corectl context set rd-sense --engine localhost:9076 --comment "R&D Qlik Sense d
 			headers = nil
 		}
 
-		var engine string
-		if cfg.IsUsingDefaultValue("engine") {
-			engine = ""
-		} else {
-			engine = cfg.GetString("engine")
+		newSettings := map[string]interface{}{
+			"headers": headers,
+			"comment": cfg.GetString("comment"),
+		}
+
+		certPath := cfg.GetAbsolutePath("certificates")
+		if certPath != "" {
+			newSettings["certificates"] = certPath
+			cfg.GetTLSConfigFromPath("certificates")
+		}
+
+		if !cfg.IsUsingDefaultValue("engine") {
+			newSettings["engine"] = cfg.GetString("engine")
+		}
+
+		dynconf.CreateContext(args[0], newSettings)
+	},
+}, "comment")
+
+var updateContextCmd = withLocalFlags(&cobra.Command{
+	Use:   "update <context name>",
+	Args:  cobra.ExactArgs(1),
+	Short: "Update a context with the specified configuration",
+	Long:  "Update a context with the specified configuration",
+
+	Example: `corectl context update local-engine
+corectl context update rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
+
+	Run: func(ccmd *cobra.Command, args []string) {
+
+		//Check the validity of the certificates folder
+		cfg := dynconf.ReadSettingsWithoutContext(ccmd)
+
+		headers := cfg.GetStringMap("headers")
+		if len(headers) == 0 {
+			headers = nil
 		}
 
 		newSettings := map[string]interface{}{
-			"engine":       engine,
-			"headers":      headers,
-			"certificates": cfg.GetAbsolutePath("certificates"),
-			"comment":      cfg.GetString("comment"),
+			"headers": headers,
+			"comment": cfg.GetString("comment"),
 		}
 
-		cfg.GetTLSConfigFromPath("certificates")
-		name := dynconf.SetContext(args[0], newSettings)
-		printer.PrintCurrentContext(name)
+		certPath := cfg.GetAbsolutePath("certificates")
+		if certPath != "" {
+			newSettings["certificates"] = certPath
+			cfg.GetTLSConfigFromPath("certificates")
+		}
+
+		if !cfg.IsUsingDefaultValue("engine") {
+			newSettings["engine"] = cfg.GetString("engine")
+		}
+
+		dynconf.UpdateContext(args[0], newSettings)
 	},
 }, "comment")
 
@@ -107,15 +143,15 @@ var listContextsCmd = &cobra.Command{
 	},
 }
 
-var useContextCmd = &cobra.Command{
-	Use:     "use <context-name>",
+var setContextCmd = &cobra.Command{
+	Use:     "set <context-name>",
 	Args:    cobra.ExactArgs(1),
-	Short:   "Specify what context to use",
-	Long:    "Specify what context to use",
-	Example: "corectl context use local-engine",
+	Short:   "Set the current context",
+	Long:    "Set the current context",
+	Example: "corectl context set local-engine",
 
 	Run: func(ccmd *cobra.Command, args []string) {
-		name := dynconf.UseContext(args[0])
+		name := dynconf.SetContext(args[0])
 		printer.PrintCurrentContext(name)
 	},
 }
@@ -140,7 +176,7 @@ var loginContextCmd = withLocalFlags(&cobra.Command{
 	Args:  cobra.RangeArgs(0, 1),
 	Short: "Login and set cookie for the named context",
 	Long: `Login and set cookie for the named context
-	
+
 This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
 If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.`,
 	Example: `corectl context login
@@ -184,5 +220,7 @@ Contexts are stored locally in your ~/.corectl/contexts.yml file.`,
 }
 
 func init() {
-	contextCmd.AddCommand(setContextCmd, removeContextCmd, listContextsCmd, useContextCmd, getContextCmd, clearContextCmd, loginContextCmd, login.CreateInitCommand())
+	contextCmd.AddCommand(createContextCmd, updateContextCmd, removeContextCmd,
+		listContextsCmd, setContextCmd, getContextCmd,
+		clearContextCmd, loginContextCmd, login.CreateInitCommand())
 }

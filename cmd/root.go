@@ -84,7 +84,7 @@ func init() {
 	rootCmd.AddCommand(getKeysCmd)
 	rootCmd.AddCommand(getTablesCmd)
 	//Annotate("command_category", "common", getAssociationsCmd, catwalkCmd, evalCmd,
-//		getFieldsCmd, getValuesCmd, getMetaCmd, getKeysCmd, getTablesCmd)
+	//		getFieldsCmd, getValuesCmd, getMetaCmd, getKeysCmd, getTablesCmd)
 
 	// Subcommands
 	rootCmd.AddCommand(appCmd)

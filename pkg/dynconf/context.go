@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"reflect"
 	"regexp"
 	"runtime"
 	"strings"
@@ -25,23 +24,18 @@ import (
 // It has various methods for manipulating and accessing Contexts.
 type ContextHandler struct {
 	Current  string `yaml:"current-context"`
-	Contexts map[string]*Context
+	Contexts map[string]Context
 }
 
 // Context represents a context. As of now it only contains information regarding connections.
 // Meaning: engine url, certificates path and any headers.
 // It also keeps a user's comments regarding the context.
-type Context struct {
-	Engine       string
-	Headers      map[string]string
-	Certificates string
-	Comment      string
-}
+type Context map[string]interface{}
 
 var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
 
-// SetContext sets up the context to be used while communitcating with the engine
-func SetContext(contextName string, updated_ map[string]interface{}) string {
+// CreateContext creates a new context with the specified name and data.
+func CreateContext(contextName string, data map[string]interface{}) {
 
 	if contextName == "" {
 		log.Fatalln("context name not supplied")
@@ -50,35 +44,48 @@ func SetContext(contextName string, updated_ map[string]interface{}) string {
 	createContextFileIfNotExist()
 	handler := NewContextHandler()
 
-	var context *Context
-	var update bool
-
 	if handler.Exists(contextName) {
-		context = handler.Get(contextName)
-		log.Verboseln("Updating context: " + contextName)
-		update = true
-	} else {
-		context = &Context{}
-		log.Verboseln("Creating context: " + contextName)
+		log.Fatalf("Context '%s' already exists", contextName)
 	}
 
-	updated := context.Update(&updated_)
-
-	if update {
-		log.Verbosef("Updated fields %v of context %s\n", updated, contextName)
-	}
+	context := Context{}
+	log.Verboseln("Creating context: " + contextName)
+	updated := context.Update(&data)
+	log.Verbosef("Set fields %v for context %s", updated, contextName)
 
 	if err := context.Validate(); err != nil {
 		log.Fatalf("context '%s' is not valid: %s\n", contextName, err.Error())
 	}
 
-	if !update {
-		handler.Contexts[contextName] = context
+	handler.Contexts[contextName] = context
+	handler.Save()
+}
+
+// UpdateContext updates the specified context with the provided data.
+func UpdateContext(contextName string, data map[string]interface{}) {
+	if contextName == "" {
+		log.Fatalln("context name not supplied")
 	}
 
-	handler.Current = contextName
+	createContextFileIfNotExist()
+	handler := NewContextHandler()
+
+	if !handler.Exists(contextName) {
+		log.Fatalf("No context by the name '%s'", contextName)
+	}
+
+	context := handler.Get(contextName)
+	log.Verboseln("Updating context: " + contextName)
+
+	updated := context.Update(&data)
+
+	log.Verbosef("Updated fields %v of context %s\n", updated, contextName)
+
+	if err := context.Validate(); err != nil {
+		log.Fatalf("context '%s' is not valid: %s\n", contextName, err.Error())
+	}
+
 	handler.Save()
-	return contextName
 }
 
 // RemoveContext from context file
@@ -89,10 +96,10 @@ func RemoveContext(contextName string) (string, bool) {
 	return contextName, wasCurrent
 }
 
-// UseContext sets the current context based on name
-func UseContext(contextName string) string {
+// SetContext sets the current context based on name
+func SetContext(contextName string) string {
 	handler := NewContextHandler()
-	handler.Use(contextName)
+	handler.Set(contextName)
 	handler.Save()
 	return contextName
 }
@@ -109,7 +116,7 @@ func ClearContext() string {
 func LoginContext(tlsClientConfig *tls.Config, contextName string, userName string, password string) {
 
 	handler := NewContextHandler()
-	var context *Context
+	var context Context
 
 	if contextName == "" {
 		context = handler.GetCurrent()
@@ -124,26 +131,29 @@ func LoginContext(tlsClientConfig *tls.Config, contextName string, userName stri
 		}
 	}
 
-	log.Infof("Using context '%s', with URL '%s'\n", contextName, context.Engine)
-
-	qlikSession := getSessionCookie(tlsClientConfig, context.Engine, userName, password)
-
-	if _, ok := context.Headers["cookie"]; ok {
-		// Cookie header present
-		re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
-		if re.MatchString(context.Headers["cookie"]) {
-			context.Headers["cookie"] = re.ReplaceAllString(context.Headers["cookie"], qlikSession)
-		} else {
-			context.Headers["cookie"] = fmt.Sprintf("%s; %s", context.Headers["cookie"], qlikSession)
-		}
-	} else {
-		// Cookie header has to be added
-		if context.Headers == nil {
-			context.Headers = map[string]string{}
-		}
-		context.Headers["cookie"] = qlikSession
+	engine := context.GetString("engine")
+	if engine == "" {
+		log.Fatalf("Context '%s' does not have any URL specified", contextName)
 	}
 
+	log.Infof("Using context '%s', with URL '%s'\n", contextName, engine)
+	qlikSession := getSessionCookie(tlsClientConfig, engine, userName, password)
+	headers := context.Headers()
+	if headers == nil {
+		headers = map[string]string{}
+		context["headers"] = headers
+	}
+	if cookie, ok := headers["cookie"]; ok {
+		// Cookie header present
+		re := regexp.MustCompile(`X-Qlik-Session=[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}`)
+		if re.MatchString(cookie) {
+			headers["cookie"] = re.ReplaceAllString(cookie, qlikSession)
+		} else {
+			headers["cookie"] = fmt.Sprintf("%s; %s", cookie, qlikSession)
+		}
+	} else { // Cookie header has to be added
+		headers["cookie"] = qlikSession
+	}
 	handler.Save()
 }
 
@@ -163,7 +173,7 @@ func NewContextHandler() *ContextHandler {
 	}
 
 	if handler.Contexts == nil {
-		handler.Contexts = map[string]*Context{}
+		handler.Contexts = map[string]Context{}
 	}
 
 	if len(handler.Contexts) == 0 {
@@ -182,7 +192,7 @@ func (ch *ContextHandler) Exists(contextName string) bool {
 }
 
 // Get returns context if present
-func (ch *ContextHandler) Get(contextName string) *Context {
+func (ch *ContextHandler) Get(contextName string) Context {
 	if context, ok := ch.Contexts[contextName]; ok {
 		return context
 	}
@@ -190,7 +200,7 @@ func (ch *ContextHandler) Get(contextName string) *Context {
 }
 
 // GetCurrent returns the context marked as current
-func (ch *ContextHandler) GetCurrent() *Context {
+func (ch *ContextHandler) GetCurrent() Context {
 	cur := ch.Current
 	if cur == "" {
 		return nil
@@ -198,8 +208,8 @@ func (ch *ContextHandler) GetCurrent() *Context {
 	return ch.Get(cur)
 }
 
-// Use sets the current context
-func (ch *ContextHandler) Use(contextName string) {
+// Set sets the current context
+func (ch *ContextHandler) Set(contextName string) {
 	if !ch.Exists(contextName) {
 		log.Fatalf("context with name '%s' does not exist\n", contextName)
 	}
@@ -208,7 +218,6 @@ func (ch *ContextHandler) Use(contextName string) {
 		return
 	}
 	log.Verboseln("Set current context to: " + contextName)
-
 	ch.Current = contextName
 }
 
@@ -248,53 +257,60 @@ func (ch *ContextHandler) Save() {
 	}
 }
 
-// Update uses reflection to update a Context's fields.
+// Update updates a Context's fields.
 // This method ignores empty strings and nil values so it will
 // only update the context with new information provided.
 // It returns the names of the updated fields.
-func (c *Context) Update(m *map[string]interface{}) []string {
-	ptr := reflect.ValueOf(c)
-	val := reflect.Indirect(ptr)
+func (c Context) Update(m *map[string]interface{}) []string {
 	updated := []string{}
 	for k, v := range *m {
-		f := val.FieldByName(strings.Title(k))
-		if f.IsValid() {
-			vval := reflect.ValueOf(v)
-			if hasValue(vval) && f.Type() == vval.Type() {
-				f.Set(vval)
-				updated = append(updated, k)
-			}
+		if k != "" && v != nil { // Might need reflection for the interface{}
+			c[k] = v
+			updated = append(updated, k)
 		}
 	}
 	return updated
 }
 
-// ToMap returns a map from the context
-func (c *Context) ToMap() map[string]interface{} {
-	m := map[string]interface{}{}
-	m["engine"] = c.Engine
-	m["headers"] = c.Headers
-	m["certificates"] = c.Certificates
-	m["comment"] = c.Comment
-	return m
-}
-
 // Validate that at least one property is set for the context
-func (c *Context) Validate() error {
-	if c.Engine == "" && c.Certificates == "" && (c.Headers == nil || len(c.Headers) == 0) {
-		return fmt.Errorf("empty context: no engine url, certificates path or headers specified, need at least one")
+func (c Context) Validate() error {
+	if h, ok := c["headers"]; ok {
+		if x, ok := h.(map[string]string); !ok {
+			log.Fatalf("%T: %v", x, x)
+			return fmt.Errorf(`headers must be a map, e.g. "Authorization": "Bearer MyJWT"`)
+		}
 	}
 	return nil
 }
 
-func hasValue(v reflect.Value) bool {
-	switch k := v.Kind(); k {
-	case reflect.String:
-		return v.String() != ""
-	case reflect.Map, reflect.Struct, reflect.Slice:
-		return !v.IsNil()
+// Headers retrieves the headers as a type that is easier to handle than
+// an interface{} => interface{} map.
+func (c Context) Headers() map[string]string {
+	if h, ok := c["headers"]; ok {
+		if x, ok := h.(map[interface{}]interface{}); !ok {
+			log.Fatalln("context field 'headers' was not a map")
+		} else {
+			// Have to convert interface{} => interface{} to string => string somehow.
+			// ¯\_(ツ)_/¯
+			headers := map[string]string{}
+			for k, v := range x {
+				headers[k.(string)] = v.(string)
+			}
+			return headers
+		}
 	}
-	return false
+	return nil
+}
+
+func (c Context) GetString(key string) string {
+	if v, ok := c[key]; ok {
+		if val, ok := v.(string); !ok {
+			log.Fatalf("context field '%s' was not a string", key)
+		} else {
+			return val
+		}
+	}
+	return ""
 }
 
 func fileExists(path string) bool {

@@ -102,9 +102,9 @@ func setupContext(tenant, apikey, explicitContextName string) {
 	}
 	contextName := contextName(explicitContextName, tenantUrl)
 
-	contextHandler.Contexts[contextName] = &dynconf.Context{
-		Engine:  tenantUrl,
-		Headers: map[string]string{"Authorization": "Bearer " + apikey},
+	contextHandler.Contexts[contextName] = dynconf.Context{
+		"engine":  tenantUrl,
+		"headers": map[string]string{"Authorization": "Bearer " + apikey},
 	}
 	contextHandler.Current = contextName
 	contextHandler.Save()
