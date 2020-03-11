@@ -25,8 +25,8 @@ func uniqueAndTotal(field *internal.FieldModel) string {
 
 // PrintFieldValues prints the first few rows of a field to system out.
 func PrintFieldValues(ctx context.Context, doc *enigma.Doc, fieldName string) {
-  internal.EnsureModelExists(ctx, doc)
-  Quiet(internal.GetFieldContentAsTable(ctx, doc, fieldName, 100))
+	internal.EnsureModelExists(ctx, doc)
+	Quiet(internal.GetFieldContentAsTable(ctx, doc, fieldName, 100))
 }
 
 // PrintFields prints a tables of fields along with various metadata to system out.

@@ -77,10 +77,10 @@ func (c *RestCaller) TranslateAppNameToId(name string) string {
 }
 
 type ListAppResponse struct {
-  Data []RestDocListItem `json:"data"`
+	Data []RestDocListItem `json:"data"`
 }
 
 type RestDocListItem struct {
-  DocName string `json:"name"`
-  DocId   string `json:"resourceID"`
+	DocName string `json:"name"`
+	DocId   string `json:"resourceID"`
 }

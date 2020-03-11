@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/qlik-oss/corectl/pkg/log"
+	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/qlik-oss/enigma-go"
 )
 
@@ -37,30 +37,30 @@ func PrintApps(docList []*enigma.DocListEntry, mode log.PrintMode) {
 
 // PrintAppsRest prints a list of apps (from a REST call) and some meta to system out.
 func PrintAppsRest(data []byte, mode log.PrintMode) {
-  if mode.JsonMode() {
-    PrintAsJSON(data)
-  } else {
-    var result rest.ListAppResponse
-    json.Unmarshal(data, &result)
-    docList := result.Data
-    if mode.BashMode() {
-      for _, app := range docList {
-        PrintToBashComp(app.DocId)
-      }
-    } else if mode.QuietMode() {
-      for _, app := range docList {
-        PrintToBashComp(app.DocId)
-      }
-    } else {
-      writer := tablewriter.NewWriter(os.Stdout)
-      writer.SetAutoFormatHeaders(false)
-      writer.SetHeader([]string{"Id", "Name"})
-      for _, doc := range docList {
-        writer.Append([]string{doc.DocId, doc.DocName})
-      }
-      writer.Render()
-    }
-  }
+	if mode.JsonMode() {
+		PrintAsJSON(data)
+	} else {
+		var result rest.ListAppResponse
+		json.Unmarshal(data, &result)
+		docList := result.Data
+		if mode.BashMode() {
+			for _, app := range docList {
+				PrintToBashComp(app.DocId)
+			}
+		} else if mode.QuietMode() {
+			for _, app := range docList {
+				PrintToBashComp(app.DocId)
+			}
+		} else {
+			writer := tablewriter.NewWriter(os.Stdout)
+			writer.SetAutoFormatHeaders(false)
+			writer.SetHeader([]string{"Id", "Name"})
+			for _, doc := range docList {
+				writer.Append([]string{doc.DocId, doc.DocName})
+			}
+			writer.Render()
+		}
+	}
 }
 
 type filteredDocEntry struct {
@@ -101,4 +101,3 @@ func serialTimeToString(filetime enigma.Float64) time.Time {
 	timestamp := time.Unix(int64(unix), 0).UTC()
 	return timestamp
 }
-

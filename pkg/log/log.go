@@ -191,31 +191,30 @@ func log(lvl logLevel, a ...interface{}) {
 // as []byte or json.RawMessage it will be reformated with readable
 // indentation.
 func FormatAsJSON(data interface{}) string {
-  var jsonBytes json.RawMessage
-  var err error
-  switch v := data.(type) {
-  case json.RawMessage:
-    jsonBytes = v
-  case []byte:
-    jsonBytes = json.RawMessage(v)
-  default:
-    jsonBytes, err = json.Marshal(data)
-  }
-  if err != nil {
-    Fatal(err)
-  }
-  var buffer bytes.Buffer
-  json.Indent(&buffer, jsonBytes, "", "  ")
-  return Appendln(buffer.String())
+	var jsonBytes json.RawMessage
+	var err error
+	switch v := data.(type) {
+	case json.RawMessage:
+		jsonBytes = v
+	case []byte:
+		jsonBytes = json.RawMessage(v)
+	default:
+		jsonBytes, err = json.Marshal(data)
+	}
+	if err != nil {
+		Fatal(err)
+	}
+	var buffer bytes.Buffer
+	json.Indent(&buffer, jsonBytes, "", "  ")
+	return Appendln(buffer.String())
 }
-
 
 // Appendln appends a newline character to the end of
 // the string if not present, it is a simple convenience
 // function.
 func Appendln(s string) string {
-  if l := len(s); l > 0 && s[l-1:l] != "\n" {
-    s += "\n"
-  }
-  return s
+	if l := len(s); l > 0 && s[l-1:l] != "\n" {
+		s += "\n"
+	}
+	return s
 }
