@@ -34,7 +34,7 @@ func CreateInitCommand() *cobra.Command {
 			comm := boot.NewCommunicator(cmd)
 
 			m := map[string]interface{}{}
-			err := comm.RestCaller().CallStd("GET", "v1/users/me", nil, nil, &m)
+			err := comm.RestCaller().CallStd("GET", "v1/users/me", "", nil, nil, &m)
 			if err != nil {
 				// TODO better error handling
 				fmt.Println(err)

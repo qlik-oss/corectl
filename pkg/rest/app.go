@@ -54,7 +54,7 @@ func (a NxApp) Get(attr string) string {
 
 func (c *RestCaller) ListApps() ([]byte, error) {
 	var result []byte
-	err := c.CallStd("GET", "v1/items", map[string]string{"sort": "-updatedAt", "limit": "30"}, nil, &result)
+	err := c.CallStd("GET", "v1/items", "", map[string]string{"sort": "-updatedAt", "limit": "30"}, nil, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *RestCaller) ListApps() ([]byte, error) {
 
 func (c *RestCaller) TranslateAppNameToId(name string) string {
 	var result ListAppResponse
-	err := c.CallStd("GET", "v1/items", map[string]string{"sort": "-updatedAt", "limit": "30", "query": name}, nil, &result)
+	err := c.CallStd("GET", "v1/items", "", map[string]string{"sort": "-updatedAt", "limit": "30", "query": name}, nil, &result)
 	if err != nil {
 		return ""
 	}
