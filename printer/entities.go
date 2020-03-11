@@ -16,15 +16,15 @@ import (
 func PrintNamedItemsList(items []internal.NamedItem, mode log.PrintMode, printTitle bool) {
 
 	if mode.JsonMode() {
-		log.PrintAsJSON(items)
+		PrintAsJSON(items)
 	} else if mode.BashMode() || mode.QuietMode() {
 		if printTitle {
 			for _, item := range items {
-				log.Quietln(item.Title)
+				Quiet(item.Title)
 			}
 		} else {
 			for _, item := range items {
-				log.Quietln(item.ID)
+				Quiet(item.ID)
 			}
 		}
 	} else {
@@ -41,10 +41,10 @@ func PrintNamedItemsList(items []internal.NamedItem, mode log.PrintMode, printTi
 // PrintNamedItemsListWithType prints a list of the id and type and title of the supplied items
 func PrintNamedItemsListWithType(items []internal.NamedItemWithType, mode log.PrintMode) {
 	if mode.JsonMode() {
-		log.PrintAsJSON(items)
+		PrintAsJSON(items)
 	} else if mode.BashMode() || mode.QuietMode() {
 		for _, item := range items {
-			log.Quietln(item.ID)
+			Quiet(item.ID)
 		}
 	} else {
 		writer := tablewriter.NewWriter(os.Stdout)
@@ -152,7 +152,7 @@ func PrintGenericEntityProperties(ctx context.Context, doc *enigma.Doc, entityID
 	if len(properties) == 0 {
 		log.Fatalf("no %s by ID '%s'\n", entityType, entityID)
 	} else {
-		log.PrintAsJSON(properties)
+		PrintAsJSON(properties)
 	}
 }
 
@@ -199,7 +199,7 @@ func PrintGenericEntityLayout(ctx context.Context, doc *enigma.Doc, entityID str
 	if len(layout) == 0 {
 		log.Fatalf("no %s by ID '%s'\n", entityType, entityID)
 	} else {
-		log.PrintAsJSON(layout)
+		PrintAsJSON(layout)
 	}
 }
 

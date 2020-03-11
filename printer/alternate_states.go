@@ -12,7 +12,7 @@ import (
 func PrintStates(statesList []string, mode log.PrintMode) {
 
 	if mode.JsonMode() {
-		log.PrintAsJSON(statesList)
+		PrintAsJSON(statesList)
 	} else if mode.BashMode() || mode.QuietMode() {
 		for _, state := range statesList {
 			PrintToBashComp(state)

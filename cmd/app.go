@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/qlik-oss/corectl/pkg/boot"
-	"github.com/qlik-oss/corectl/pkg/rest"
 
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
@@ -34,7 +33,7 @@ var listAppsCmd = withLocalFlags(&cobra.Command{
 			if err != nil {
 				log.Fatalf("could not retrieve app list: %s\n", err)
 			}
-			rest.PrintApps(docList, comm.PrintMode())
+			printer.PrintAppsRest(docList, comm.PrintMode())
 		} else {
 			ctx, global, params := comm.OpenGlobalSocket()
 			docList, err := global.GetDocList(ctx)
@@ -90,7 +89,7 @@ var importAppCmd = withLocalFlags(&cobra.Command{
 		}
 		boot.SetAppIDToKnownApps(comm.AppIdMappingNamespace(), appName, appID, false)
 		log.Info("Imported app with new ID: ")
-		log.Quiet(appID)
+		printer.Quiet(appID)
 	},
 }, "quiet")
 

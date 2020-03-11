@@ -12,7 +12,7 @@ import (
 // Eval builds a straight table  hypercube based on the supplied argument, evaluates it and prints the result to system out.
 func Eval(ctx context.Context, doc *enigma.Doc, args []string) {
 
-	ensureModelExists(ctx, doc)
+	EnsureModelExists(ctx, doc)
 
 	measures, dims := argumentsToMeasuresAndDims(args)
 	object, _ := doc.CreateSessionObject(ctx, &enigma.GenericObjectProperties{

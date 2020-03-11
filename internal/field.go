@@ -7,13 +7,7 @@ import (
 	"github.com/qlik-oss/enigma-go"
 )
 
-// PrintFieldValues prints the first few rows of a field to system out.
-func PrintFieldValues(ctx context.Context, doc *enigma.Doc, fieldName string) {
-	ensureModelExists(ctx, doc)
-	log.Quiet(getFieldContentAsTable(ctx, doc, fieldName, 100))
-}
-
-func getFieldContentAsString(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
+func GetFieldContentAsString(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
 	content := getFieldContent(ctx, doc, fieldName, length/2)
 	if len(content) > 0 {
 		firstItem := content[0]
@@ -36,7 +30,7 @@ func getFieldContentAsString(ctx context.Context, doc *enigma.Doc, fieldName str
 	return ""
 }
 
-func getFieldContentAsTable(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
+func GetFieldContentAsTable(ctx context.Context, doc *enigma.Doc, fieldName string, length int) string {
 	content := getFieldContent(ctx, doc, fieldName, length)
 	if len(content) > 0 {
 		firstItem := content[0]
