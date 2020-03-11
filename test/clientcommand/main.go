@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/commands/standard"
-	"github.com/qlik-oss/corectl/pkg/log"
+	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -24,7 +24,7 @@ func createCommandTree() *cobra.Command {
 			if err != nil {
 				fmt.Println(err)
 			}
-			log.PrintAsJSON(result)
+			printer.PrintAsJSON(result)
 		},
 	}
 	subCommand.Flags().StringP("url", "u", "", "v1/tenants/me")

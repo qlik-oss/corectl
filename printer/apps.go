@@ -1,13 +1,13 @@
 package printer
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/enigma-go"
 )
@@ -15,7 +15,7 @@ import (
 // PrintApps prints a list of apps and some meta to system out.
 func PrintApps(docList []*enigma.DocListEntry, mode log.PrintMode) {
 	if mode.JsonMode() {
-		log.PrintAsJSON(filterDocEntries(docList))
+		PrintAsJSON(filterDocEntries(docList))
 	} else if mode.BashMode() {
 		for _, app := range docList {
 			PrintToBashComp(app.DocName)
@@ -33,6 +33,34 @@ func PrintApps(docList []*enigma.DocListEntry, mode log.PrintMode) {
 		}
 		writer.Render()
 	}
+}
+
+// PrintAppsRest prints a list of apps (from a REST call) and some meta to system out.
+func PrintAppsRest(data []byte, mode log.PrintMode) {
+  if mode.JsonMode() {
+    PrintAsJSON(data)
+  } else {
+    var result rest.ListAppResponse
+    json.Unmarshal(data, &result)
+    docList := result.Data
+    if mode.BashMode() {
+      for _, app := range docList {
+        PrintToBashComp(app.DocId)
+      }
+    } else if mode.QuietMode() {
+      for _, app := range docList {
+        PrintToBashComp(app.DocId)
+      }
+    } else {
+      writer := tablewriter.NewWriter(os.Stdout)
+      writer.SetAutoFormatHeaders(false)
+      writer.SetHeader([]string{"Id", "Name"})
+      for _, doc := range docList {
+        writer.Append([]string{doc.DocId, doc.DocName})
+      }
+      writer.Render()
+    }
+  }
 }
 
 type filteredDocEntry struct {
@@ -74,12 +102,3 @@ func serialTimeToString(filetime enigma.Float64) time.Time {
 	return timestamp
 }
 
-// PrintToBashComp handles strings that should be included as options when using auto completion
-func PrintToBashComp(str string) {
-	if strings.Contains(str, " ") {
-		// If string includes whitespaces we need to add quotes
-		fmt.Printf("%q\n", str)
-	} else {
-		fmt.Println(str)
-	}
-}

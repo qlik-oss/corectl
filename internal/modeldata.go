@@ -186,7 +186,7 @@ func buildSampleContent(ctx context.Context, doc *enigma.Doc, fieldNames []strin
 
 	for _, fieldName := range fieldNames {
 		go func(fieldName string) {
-			sampleContent := getFieldContentAsString(ctx, doc, fieldName, 40)
+			sampleContent := GetFieldContentAsString(ctx, doc, fieldName, 40)
 			waitChannel <- GetFieldContentAsStringResultEntry{fieldName: fieldName, sampleContent: sampleContent}
 		}(fieldName)
 	}
@@ -222,7 +222,7 @@ type FieldSourceTableInfo struct {
 }
 
 // Exits if there is no data model
-func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
+func EnsureModelExists(ctx context.Context, doc *enigma.Doc) {
 	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)

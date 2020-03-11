@@ -87,18 +87,6 @@ func init() {
 	buffering = true
 }
 
-func Quietln(a ...interface{}) {
-	logln(quiet, a...)
-}
-
-func Quietf(format string, a ...interface{}) {
-	logf(quiet, format, a...)
-}
-
-func Quiet(a ...interface{}) {
-	log(quiet, a...)
-}
-
 func Fatalf(format string, a ...interface{}) {
 	logf(fatal, format, a...)
 	os.Exit(1)
@@ -170,7 +158,7 @@ func logln(lvl logLevel, a ...interface{}) {
 	log(lvl, fmt.Sprintln(a...))
 }
 
-// print handles all the printing.
+// log handles all the logging.
 // If it is called for a higher log level than what is set, it will not print.
 // If printJSON is set it will print as json instead, using the log level as the key.
 func log(lvl logLevel, a ...interface{}) {
@@ -185,10 +173,6 @@ func log(lvl logLevel, a ...interface{}) {
 			fmt.Fprintln(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
-		out := os.Stderr
-		if lvl == quiet {
-			out = os.Stdout
-		}
 		prefix := lvl.String()
 		if prefix != "" {
 			prefix += ": "
@@ -197,41 +181,41 @@ func log(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Fprint(out, appendln(str))
+			fmt.Fprint(os.Stderr, Appendln(str))
 		}
 	}
 }
 
-// PrintAsJSON prints data as JSON to standard out. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
-func PrintAsJSON(data interface{}) {
-	msg := FormatAsJSON(data)
-	msg = appendln(msg)
-	fmt.Fprint(os.Stdout, msg)
-}
-
-// FormatAsJSON is a utility method that formats the supplied data in a readable way without printing anything. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
+// FormatAsJSON is a utility method that formats the supplied data
+// in a readable way without printing anything. If already encoded
+// as []byte or json.RawMessage it will be reformated with readable
+// indentation.
 func FormatAsJSON(data interface{}) string {
-	var jsonBytes json.RawMessage
-	var err error
-	switch v := data.(type) {
-	case json.RawMessage:
-		jsonBytes = v
-	case []byte:
-		jsonBytes = json.RawMessage(v)
-	default:
-		jsonBytes, err = json.Marshal(data)
-	}
-	if err != nil {
-		Fatal(err)
-	}
-	var buffer bytes.Buffer
-	json.Indent(&buffer, jsonBytes, "", "  ")
-	return buffer.String()
+  var jsonBytes json.RawMessage
+  var err error
+  switch v := data.(type) {
+  case json.RawMessage:
+    jsonBytes = v
+  case []byte:
+    jsonBytes = json.RawMessage(v)
+  default:
+    jsonBytes, err = json.Marshal(data)
+  }
+  if err != nil {
+    Fatal(err)
+  }
+  var buffer bytes.Buffer
+  json.Indent(&buffer, jsonBytes, "", "  ")
+  return Appendln(buffer.String())
 }
 
-func appendln(s string) string {
-	if l := len(s); l > 0 && s[l-1:l] != "\n" {
-		s += "\n"
-	}
-	return s
+
+// Appendln appends a newline character to the end of
+// the string if not present, it is a simple convenience
+// function.
+func Appendln(s string) string {
+  if l := len(s); l > 0 && s[l-1:l] != "\n" {
+    s += "\n"
+  }
+  return s
 }

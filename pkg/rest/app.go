@@ -1,13 +1,9 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
-	"github.com/qlik-oss/corectl/pkg/log"
 	"net/http"
 	"os"
-	"strings"
 )
 
 // ImportApp imports a local app into the engine using the rest api
@@ -80,49 +76,11 @@ func (c *RestCaller) TranslateAppNameToId(name string) string {
 	return ""
 }
 
-// PrintApps prints a list of apps and some meta to system out.
-func PrintApps(data []byte, mode log.PrintMode) {
-	if mode.JsonMode() {
-		log.PrintAsJSON(data)
-	} else {
-		var result ListAppResponse
-		json.Unmarshal(data, &result)
-		docList := result.Data
-		if mode.BashMode() {
-			for _, app := range docList {
-				PrintToBashComp(app.DocId)
-			}
-		} else if mode.QuietMode() {
-			for _, app := range docList {
-				PrintToBashComp(app.DocId)
-			}
-		} else {
-			writer := tablewriter.NewWriter(os.Stdout)
-			writer.SetAutoFormatHeaders(false)
-			writer.SetHeader([]string{"Id", "Name"})
-			for _, doc := range docList {
-				writer.Append([]string{doc.DocId, doc.DocName})
-			}
-			writer.Render()
-		}
-	}
-}
-
-// PrintToBashComp handles strings that should be included as options when using auto completion
-func PrintToBashComp(str string) {
-	if strings.Contains(str, " ") {
-		// If string includes whitespaces we need to add quotes
-		fmt.Printf("%q\n", str)
-	} else {
-		fmt.Println(str)
-	}
-}
-
 type ListAppResponse struct {
-	Data []RestDocListItem `json:"data"`
+  Data []RestDocListItem `json:"data"`
 }
 
 type RestDocListItem struct {
-	DocName string `json:"name"`
-	DocId   string `json:"resourceID"`
+  DocName string `json:"name"`
+  DocId   string `json:"resourceID"`
 }
