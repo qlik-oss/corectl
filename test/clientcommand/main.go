@@ -20,7 +20,7 @@ func createCommandTree() *cobra.Command {
 			comm := boot.NewCommunicator(ccmd)
 			rest := comm.RestCaller()
 			var result []byte
-			err := rest.CallStd("GET", comm.GetString("url"), comm.GetStringMap("query"), nil, &result)
+			err := rest.CallStd("GET", comm.GetString("url"), "", comm.GetStringMap("query"), nil, &result)
 			if err != nil {
 				fmt.Println(err)
 			}
