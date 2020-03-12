@@ -1,14 +1,16 @@
 package internal
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"fmt"
 	"os"
-	"io/ioutil"
 	"strings"
 
 	"github.com/qlik-oss/corectl/internal/log"
 	"github.com/qlik-oss/enigma-go"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // Eval builds a straight table  hypercube based on the supplied argument, evaluates it and prints the result to system out.
@@ -42,8 +44,46 @@ func Evil(ctx context.Context, doc *enigma.Doc) {
 }
 
 func shell() ([]byte, error) {
-	fmt.Print("> ")
-	return ioutil.ReadAll(os.Stdin)
+	// fd 0 is stdin
+	state, err := terminal.MakeRaw(0)
+	if err != nil {
+		log.Fatalln("setting stdin to raw:", err)
+	}
+
+	defer func() {
+		if err := terminal.Restore(0, state); err != nil {
+			fmt.Println("warning, failed to restore terminal:", err)
+		}
+	}()
+
+	in := bufio.NewReader(os.Stdin)
+	var buf bytes.Buffer
+	for {
+		r, _, err := in.ReadRune()
+		if err != nil {
+			fmt.Println("stdin:", err)
+			break
+		}
+		exit := false
+
+		switch {
+		case r == '\x03':
+			exit = true
+			fmt.Println("exit")
+		case r == '\r':
+			fmt.Println()
+			exit = true
+		default:
+			fmt.Printf("%s", string(r))
+			buf.WriteRune(r)
+		}
+
+		if exit {
+			break
+		}
+	}
+
+	return buf.Bytes(), err
 }
 
 func check(ctx context.Context, doc *enigma.Doc, expr string) (string, error) {
