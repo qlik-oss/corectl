@@ -15,23 +15,14 @@ import (
 
 // Eval builds a straight table  hypercube based on the supplied argument, evaluates it and prints the result to system out.
 func Evil(ctx context.Context, doc *enigma.Doc) {
-
 	ensureModelExists(ctx, doc)
+	shell(ctx, doc)
+}
 
-	expr, err := shell()
+func evil(ctx context.Context, doc *enigma.Doc, expr string) {
+	val, err := doc.EvaluateEx(ctx, expr)
 	if err != nil {
-		log.Fatal("EVIL COULD NOT SHELL!")
-	}
-	cexpr, err := check(ctx, doc, string(expr))
-	if err != nil {
-		if cexpr != "" {
-			fmt.Print(cexpr)
-		}
-		log.Fatalln(err)
-	}
-	val, err := doc.EvaluateEx(ctx, cexpr)
-	if err != nil {
-		log.Fatalln(err)
+		return
 	}
 	switch {
 	case val.IsNumeric:
@@ -43,7 +34,7 @@ func Evil(ctx context.Context, doc *enigma.Doc) {
 	}
 }
 
-func shell() ([]byte, error) {
+func shell(ctx context.Context, doc *enigma.Doc) {
 	// fd 0 is stdin
 	state, err := terminal.MakeRaw(0)
 	if err != nil {
@@ -66,13 +57,17 @@ func shell() ([]byte, error) {
 		}
 		exit := false
 
-		switch {
-		case r == '\x03':
+		switch r {
+		case '\x03':
 			exit = true
 			fmt.Println("exit")
-		case r == '\r':
-			fmt.Println()
-			exit = true
+		case '\r':
+			expr, err := check(ctx, doc, buf.String())
+			if err == errBadField {
+				fmt.Print("\x1b[2K", expr)
+			}
+			break
+			evil(ctx, doc, expr)
 		default:
 			fmt.Printf("%s", string(r))
 			buf.WriteRune(r)
@@ -82,8 +77,6 @@ func shell() ([]byte, error) {
 			break
 		}
 	}
-
-	return buf.Bytes(), err
 }
 
 func check(ctx context.Context, doc *enigma.Doc, expr string) (string, error) {
@@ -100,7 +93,7 @@ func check(ctx context.Context, doc *enigma.Doc, expr string) (string, error) {
 	for _, bad := range bads {
 		i, j := bad.From, bad.From + bad.Count
 		feedback += expr[:i]
-		feedback += "\x1b[48;5;1m\x1b[5m" + expr[i:j] + "\x1b[0m"
+		feedback += "\x1b[4;38;5;1m" + expr[i:j] + "\x1b[0m"
 		last = j
 	}
 	if last != 0 {
