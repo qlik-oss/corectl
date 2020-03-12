@@ -157,6 +157,7 @@ func init() {
 	rootCmd.AddCommand(getKeysCmd)
 	rootCmd.AddCommand(buildCmd)
 	rootCmd.AddCommand(evalCmd)
+	rootCmd.AddCommand(evilCmd)
 	rootCmd.AddCommand(reloadCmd)
 	rootCmd.AddCommand(getValuesCmd)
 	rootCmd.AddCommand(getMetaCmd)
