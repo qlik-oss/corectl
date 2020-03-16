@@ -32,7 +32,9 @@ type ContextHandler struct {
 // It also keeps a user's comments regarding the context.
 type Context map[string]interface{}
 
-var contextFilePath = path.Join(userHomeDir(), ".corectl", "contexts.yml")
+const ContextDir = ".qlik"
+
+var contextFilePath = path.Join(userHomeDir(), ContextDir, "contexts.yml")
 
 // CreateContext creates a new context with the specified name and data.
 func CreateContext(contextName string, data map[string]interface{}) {
@@ -324,21 +326,21 @@ func fileExists(path string) bool {
 func createContextFileIfNotExist() {
 	if !fileExists(contextFilePath) {
 
-		// Create .corectl folder in home directory
-		if _, err := os.Stat(path.Join(userHomeDir(), ".corectl")); os.IsNotExist(err) {
-			err = os.Mkdir(path.Join(userHomeDir(), ".corectl"), os.ModePerm)
+		// Create context folder in home directory
+		if _, err := os.Stat(path.Join(userHomeDir(), ContextDir)); os.IsNotExist(err) {
+			err = os.Mkdir(path.Join(userHomeDir(), ContextDir), os.ModePerm)
 			if err != nil {
-				log.Fatalln("could not create .corectl folder in home directory: ", err)
+				log.Fatalf("could not create %s folder in home directory: %s", ContextDir, err.Error())
 			}
 		}
 
-		// Create contexts.yml in .corectl folder
+		// Create contexts.yml in context folder
 		_, err := os.Create(contextFilePath)
 		if err != nil {
 			log.Fatalf("could not create %s: %s\n", contextFilePath, err)
 		}
 
-		log.Verboseln("Created ~/.corectl/contexts.yml for storage of corectl contexts")
+		log.Verbosef("Created ~/%s/contexts.yml for storage of corectl contexts", ContextDir)
 	}
 }
 

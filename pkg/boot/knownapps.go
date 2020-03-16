@@ -6,11 +6,12 @@ import (
 	"path"
 	"runtime"
 
+	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/pkg/log"
 	"gopkg.in/yaml.v2"
 )
 
-var knownAppsFilePath = path.Join(userHomeDir(), ".corectl", "knownApps.yml")
+var knownAppsFilePath = path.Join(userHomeDir(), dynconf.ContextDir, "knownApps.yml")
 
 // Fetch a matching app id from known apps for a specified app name
 // If not found return the appName and found bool set to false
@@ -78,22 +79,22 @@ func SetAppIDToKnownApps(host string, appName string, appID string, remove bool)
 func createKnownAppsFileIfNotExist() {
 	if _, err := os.Stat(knownAppsFilePath); os.IsNotExist(err) {
 
-		// Create .corectl folder in home directory
-		corectlDir := path.Join(userHomeDir(), ".corectl")
+		// Create context folder in home directory
+		corectlDir := path.Join(userHomeDir(), dynconf.ContextDir)
 		if _, err := os.Stat(corectlDir); os.IsNotExist(err) {
 			err = os.Mkdir(corectlDir, os.ModePerm)
 			if err != nil {
-				log.Fatalln("could not create .corectl folder in home directory: ", err)
+				log.Fatalf("could not create %s folder in home directory: %s", dynconf.ContextDir, err)
 			}
 		}
 
-		// Create knownApps.yml in .corectl folder
+		// Create knownApps.yml in context folder
 		_, err := os.Create(knownAppsFilePath)
 		if err != nil {
 			log.Fatalf("could not create %s: %s\n", knownAppsFilePath, err)
 		}
 
-		log.Verboseln("Created ~/.corectl/knownApps.yml for storage of app ids")
+		log.Verbosef("Created ~/%s/knownApps.yml for storage of app ids", dynconf.ContextDir)
 	}
 }
 

@@ -18,7 +18,7 @@ or unset the current context with "context unset".
 Note that contexts have the lowest precedence. This means that e.g. an --engine flag
 (or an engine field in a config) will override the engine url in the current context.
 
-Contexts are stored locally in your ~/.corectl/contexts.yml file.
+Contexts are stored locally in your ~/.qlik/contexts.yml file.
 
 ### Options
 
