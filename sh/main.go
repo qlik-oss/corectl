@@ -4,14 +4,20 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"os"
-	"unicode"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 func main() {
+	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
 	state, err := terminal.MakeRaw(0)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -25,14 +31,14 @@ func main() {
 type shell struct {
 	cur int
 	buf *bytes.Buffer
-	in *bufio.Reader
+	in  *bufio.Reader
 }
 
 func newShell() *shell {
 	return &shell{
 		cur: 0,
 		buf: &bytes.Buffer{},
-		in: bufio.NewReader(os.Stdin),
+		in:  bufio.NewReader(os.Stdin),
 	}
 }
 
@@ -43,54 +49,69 @@ func (s *shell) next() (rune, error) {
 
 func (s *shell) run() {
 	var err error
-	for ;err == nil; {
+	w := newWriter("> ")
+	for err == nil {
 		var r rune
 		r, err = s.next()
-		switch r {
-		case '\x03', '\x04':
-			tprint("exit")
-			return
-		case '\r', '\n':
-			b, _ := ioutil.ReadAll(s.buf)
-			line := string(b)
-			clear()
-			cb(len(line))
-			tprint("\x1b[4m" + line + "\x1b[0m")
-		case '\u007f', '\b':
-			if s.cur > 0 {
-				s.cur--
+		k := Key(r)
+		switch {
+		case k.IsCtrlChar():
+			switch k {
+			case Esc:
+				seq, err := s.readCtrlSeq()
+				if err != nil {
+					fmt.Println("ERROR: ", err)
+					os.Exit(1)
+				}
+				switch {
+				case IsUpArrow(seq):
+					w.move(up, seq)
+				case IsDownArrow(seq):
+					w.move(down, seq)
+				case IsLeftArrow(seq):
+					w.move(left, seq)
+				case IsRightArrow(seq):
+					w.move(right, seq)
+				case IsDelete(seq):
+					fmt.Printf(string(seq))
+				case IsBkspc(seq):
+					w.writeCtrl(seq)
+					// case IsHome(seq):
+					// case IsEnd(seq):
+					// case IsPageUp(seq):
+					// case IsPageDown(seq):
+				}
+			case Enter:
+				w.println()
+				// evaluate expression on enter?
+				// expr := w.getText()
+				// evaluate(expr)
+			default:
+				fmt.Printf("%s", string(r))
+			case CtrlC:
+				return
 			}
-			fmt.Print(string(r))
-			s.buf.WriteRune(r)
 		default:
-			switch {
-			case unicode.IsGraphic(r):
-				s.cur++
-				fmt.Print(string(r))
-				s.buf.WriteRune(r)
-			case unicode.IsControl(r):
-				s.readCtrl()
-			}
+			w.write(string(r))
 		}
 	}
 }
 
-func (s *shell) readCtrl() {
-	runes := make([]rune, 2)
-	r, _ := s.next()
-	runes[0] = r
-	r, _ = s.next()
-	runes[1] = r
-	switch s := string(runes); s {
-	case "[A":
-	case "[B":
-	case "[C":
-		fmt.Print("\x1b" + s)
-	case "[D":
-		fmt.Print("\x1b" + s)
-	default:
-		fmt.Printf("%q", s)
+func (s *shell) readCtrlSeq() ([]rune, error) {
+	runes := make([]rune, 0, 2)
+	runes = append(runes, rune(Esc))
+
+	for {
+		if s.in.Buffered() == 0 {
+			break
+		}
+		r, _, err := s.in.ReadRune()
+		if err != nil {
+			return []rune{}, err
+		}
+		runes = append(runes, r)
 	}
+	return runes, nil
 }
 
 func tprint(a ...interface{}) {
