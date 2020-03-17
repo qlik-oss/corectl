@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 // ImportApp imports a local app into the engine using the rest api

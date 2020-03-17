@@ -1,4 +1,4 @@
-package cmd
+package standard
 
 import (
 	"github.com/qlik-oss/corectl/pkg/boot"
@@ -223,4 +223,6 @@ Contexts are stored locally in your ~/` + dynconf.ContextDir + `/contexts.yml fi
 	contextCmd.AddCommand(createContextCmd, updateContextCmd, removeContextCmd,
 		listContextsCmd, useContextCmd, getContextCmd,
 		clearContextCmd, loginContextCmd, login.CreateInitCommand())
+
+	return contextCmd
 }
