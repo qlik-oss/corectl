@@ -1,4 +1,4 @@
-engine: ${ENGINE_STD_URL}
+server: ${ENGINE_STD_URL}
 connections:
   testdata-inline:
     connectionstring: /data

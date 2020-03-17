@@ -22,7 +22,7 @@ type EngineWebSocketSettings interface {
 	Insecure() bool
 	Headers() http.Header
 
-	Engine() string
+	Server() string
 	App() string
 	AppId() string
 	Ttl() string

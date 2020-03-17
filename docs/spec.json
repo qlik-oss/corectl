@@ -27,11 +27,6 @@
     "context": {
       "description": "Name of the context used when connecting to Qlik Associative Engine"
     },
-    "engine": {
-      "alias": "e",
-      "description": "URL to the Qlik Associative Engine",
-      "default": "localhost:9076"
-    },
     "headers": {
       "description": "Http headers to use when connecting to Qlik Associative Engine",
       "default": "[]"
@@ -47,6 +42,10 @@
     "no-data": {
       "description": "Open app without data",
       "default": "false"
+    },
+    "server": {
+      "alias": "s",
+      "description": "URL to a Qlik Product, a local engine, cluster or sense-enterprise"
     },
     "traffic": {
       "alias": "t",
@@ -223,14 +222,14 @@
       }
     },
     "context": {
-      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that e.g. an --engine flag\n(or an engine field in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.qlik/contexts.yml file.",
+      "description": "Create, update and use contexts\n\nContexts store connection information such as server url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that e.g. an --server flag\n(or a server field in a config) will override the server url in the current context.\n\nContexts are stored locally in your ~/.qlik/contexts.yml file.",
       "x-qlik-stability": "experimental",
       "commands": {
         "clear": {
           "description": "Set the current context to none"
         },
         "create": {
-          "description": "Create a context with the specified configuration\n\nThis command creates a context by using the supplied flags.\nThe information stored will be engine url, headers and certificates\n(if present) along with comment and the context-name.",
+          "description": "Create a context with the specified configuration\n\nThis command creates a context by using the supplied flags.\nThe information stored will be server url, headers and certificates\n(if present) along with comment and the context-name.",
           "flags": {
             "comment": {
               "description": "Comment for the context"

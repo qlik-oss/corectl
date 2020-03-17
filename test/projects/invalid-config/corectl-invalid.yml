@@ -1,4 +1,4 @@
-engin: localhost:9076
+serve: localhost:9076
 scrip: ./script.qvs
 apps: corectl_test_app.qvf
 connection: 

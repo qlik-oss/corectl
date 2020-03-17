@@ -17,11 +17,11 @@ func CreateContextCommand() *cobra.Command {
 		Long: `Create a context with the specified configuration
 
 This command creates a context by using the supplied flags.
-The information stored will be engine url, headers and certificates
+The information stored will be server url, headers and certificates
 (if present) along with comment and the context-name.`,
 
 		Example: `corectl context create local-engine
-corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
+corectl context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
@@ -44,8 +44,8 @@ corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sens
 				cfg.GetTLSConfigFromPath("certificates")
 			}
 
-			if !cfg.IsUsingDefaultValue("engine") {
-				newSettings["engine"] = cfg.GetString("engine")
+			if !cfg.IsUsingDefaultValue("server") {
+				newSettings["server"] = cfg.GetString("server")
 			}
 
 			dynconf.CreateContext(args[0], newSettings)
@@ -59,7 +59,7 @@ corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sens
 		Long:  "Update a context with the specified configuration",
 
 		Example: `corectl context update local-engine
-corectl context update rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"`,
+corectl context update rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
@@ -82,8 +82,8 @@ corectl context update rd-sense --engine localhost:9076 --comment "R&D Qlik Sens
 				cfg.GetTLSConfigFromPath("certificates")
 			}
 
-			if !cfg.IsUsingDefaultValue("engine") {
-				newSettings["engine"] = cfg.GetString("engine")
+			if !cfg.IsUsingDefaultValue("server") {
+				newSettings["server"] = cfg.GetString("server")
 			}
 
 			dynconf.UpdateContext(args[0], newSettings)
@@ -202,7 +202,7 @@ corectl context login context-name`,
 		Short: "Create, update and use contexts",
 		Long: `Create, update and use contexts
 
-Contexts store connection information such as engine url, certificates and headers,
+Contexts store connection information such as server url, certificates and headers,
 similar to a config. The main difference between contexts and configs is that they
 can be used globally. Use the context subcommands to configure contexts which
 facilitate app development in environments where certificates and headers are needed.
@@ -211,8 +211,8 @@ The current context is the one that is being used. You can use "context get" to
 display the contents of the current context and switch context with "context set"
 or unset the current context with "context unset".
 
-Note that contexts have the lowest precedence. This means that e.g. an --engine flag
-(or an engine field in a config) will override the engine url in the current context.
+Note that contexts have the lowest precedence. This means that e.g. an --server flag
+(or a server field in a config) will override the server url in the current context.
 
 Contexts are stored locally in your ~/` + dynconf.ContextDir + `/contexts.yml file.`,
 		Annotations: map[string]string{
