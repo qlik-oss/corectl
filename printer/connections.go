@@ -11,7 +11,7 @@ import (
 // PrintConnections prints a list of connections to standard out
 func PrintConnections(connections []*enigma.Connection, mode log.PrintMode) {
 	if mode.JsonMode() {
-		log.PrintAsJSON(connections)
+		PrintAsJSON(connections)
 	} else if mode.QuietMode() || mode.BashMode() {
 		for _, connection := range connections {
 			PrintToBashComp(connection.Id)
@@ -30,5 +30,5 @@ func PrintConnections(connections []*enigma.Connection, mode log.PrintMode) {
 
 // PrintConnection prints a connection to standard out
 func PrintConnection(connection *enigma.Connection) {
-	log.PrintAsJSON(connection)
+	PrintAsJSON(connection)
 }

@@ -223,11 +223,19 @@
       }
     },
     "context": {
-      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that e.g. an --engine flag\n(or an engine field in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.corectl/contexts.yml file.",
+      "description": "Create, update and use contexts\n\nContexts store connection information such as engine url, certificates and headers,\nsimilar to a config. The main difference between contexts and configs is that they\ncan be used globally. Use the context subcommands to configure contexts which\nfacilitate app development in environments where certificates and headers are needed.\n\nThe current context is the one that is being used. You can use \"context get\" to\ndisplay the contents of the current context and switch context with \"context set\"\nor unset the current context with \"context unset\".\n\nNote that contexts have the lowest precedence. This means that e.g. an --engine flag\n(or an engine field in a config) will override the engine url in the current context.\n\nContexts are stored locally in your ~/.qlik/contexts.yml file.",
       "x-qlik-stability": "experimental",
       "commands": {
         "clear": {
           "description": "Set the current context to none"
+        },
+        "create": {
+          "description": "Create a context with the specified configuration\n\nThis command creates a context by using the supplied flags.\nThe information stored will be engine url, headers and certificates\n(if present) along with comment and the context-name.",
+          "flags": {
+            "comment": {
+              "description": "Comment for the context"
+            }
+          }
         },
         "get": {
           "description": "Get context, current context by default"
@@ -244,7 +252,7 @@
           }
         },
         "login": {
-          "description": "Login and set cookie for the named context\n\t\nThis is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.\nIf no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.",
+          "description": "Login and set cookie for the named context\n\nThis is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.\nIf no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.",
           "flags": {
             "password": {
               "description": "Password to be used when logging in to Qlik Sense Enterprise (use with caution)"
@@ -260,8 +268,8 @@
         "rm": {
           "description": "Remove one or more contexts"
         },
-        "set": {
-          "description": "Set a context to the current configuration\n\nThis command creates or updates a context by using the supplied flags and any\nrelevant config information found in the config file (if any).\nThe information stored will be engine url, headers and certificates (if present)\nalong with comment and the context-name.",
+        "update": {
+          "description": "Update a context with the specified configuration",
           "flags": {
             "comment": {
               "description": "Comment for the context"

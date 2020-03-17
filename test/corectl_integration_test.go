@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/qlik-oss/corectl/test/toolkit"
@@ -48,20 +49,22 @@ func TestReload(t *testing.T) {
 }
 
 func TestContextManagement(t *testing.T) {
-	jwt := toolkit.Params{T: t, Config: "test/projects/using-jwts/corectl.yml", Engine: *toolkit.EngineJwtIP}
-	abac := toolkit.Params{T: t, Config: "test/projects/abac/corectl.yml", Engine: *toolkit.EngineAbacIP}
-	params := []toolkit.Params{jwt, abac}
+	flags := [][]string{
+		{"--engine", *toolkit.EngineJwtIP, "--config", "test/projects/using-jwts/corectl.yml"},
+		{"--engine", *toolkit.EngineAbacIP, "--config", "test/projects/abac/corectl.yml"},
+	}
 	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
-	for i, p := range params {
+	// Empty params, should default to localhost:9076 when there is no context
+	p := toolkit.Params{T: t}
+	for i, f := range flags {
 		// Create a context using the config and engine url
-		p.ExpectOK().Run("context", "set", contexts[i])
+		args := append([]string{"context", "create", contexts[i]}, f...)
+		p.ExpectOK().Run(args...)
+		p.ExpectOK().Run("context", "use", contexts[i])
 		// Remove config and engine from p to see if context stored them
-		p.Config, p.Engine = "", ""
 		p.ExpectOK().Run("status")
 	}
 
-	// Empty params, should default to localhost:9076 when there is no context
-	p := toolkit.Params{T: t}
 	// Contexts stored locally
 	p.ExpectOK().Run("context", "ls")
 	// Current context should be abac, connecting to jwt shouldn't work
@@ -69,16 +72,16 @@ func TestContextManagement(t *testing.T) {
 
 	p.ExpectError().Run("status", "--engine", *toolkit.EngineJwtIP)
 	// Check if we can update contexts
-	p.ExpectOK().Run("context", "set", contexts[1], "--engine", *toolkit.EngineStdIP)
+	p.ExpectOK().Run("context", "update", contexts[1], "--engine", *toolkit.EngineStdIP)
 	p.ExpectIncludes(*toolkit.EngineStdIP).Run("status")
-	abac.ExpectOK().Run("context", "set", contexts[1])
+	p.ExpectOK().Run("context", "update", contexts[1], "--engine", *toolkit.EngineAbacIP)
 	p.ExpectIncludes(*toolkit.EngineAbacIP).Run("context", "get")
 	// See if all context commands work
 	for i, ctx := range contexts {
 		p.ExpectOK().Run("context", "get", ctx)
 		// With context status should work
 		p.ExpectOK().Run("context", "use", ctx)
-		p.ExpectIncludes(params[i].Engine).Run("status")
+		p.ExpectIncludes(flags[i][1]).Run("status")
 		// Without context status should default to localhost:9076
 		p.ExpectOK().Run("context", "clear")
 		p.ExpectIncludes("No current context").Run("context", "get")
@@ -116,7 +119,8 @@ func TestQuietCommands(t *testing.T) {
 
 func TestLogBuffer(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
-	p.ExpectOK().Run("context", "set", t.Name())
+	p.ExpectOK().Run("context", "create", t.Name())
+	p.ExpectOK().Run("context", "use", t.Name())
 	// The quiest flag should mute the warnings
 	p.ExpectEmptyOK().Run("app", "ls", "-q")
 	// We should have a warning saying something about context here
@@ -378,7 +382,8 @@ func TestEvalOnUnknownAppEngine(t *testing.T) {
 	p.ExpectErrorIncludes("engine", "url").Run("eval", "count(numbers)", "by", "xyz")
 }
 
-func DISABLED_TestLicenseServiceDown(t *testing.T) {
+// Disabled due to change in behaviour when configuring incorrect license
+func DisabledTestLicenseServiceDown(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineBadLicenseServerIP, App: t.Name()}
 	p.ExpectIncludes("SESSION_ERROR_NO_LICENSE").Run("app", "ls")
 }
@@ -509,9 +514,9 @@ func TestImportApp(t *testing.T) {
 	for _, p := range params {
 		// See if we can import the app test.qvf
 		output := p.ExpectOK().Run("app", "import", "test/projects/import/test.qvf", "-q")
+		appId := strings.Trim(string(output), " \n")
 		// If it was created, we can remove it
-		p.ExpectOK().Run("app", "rm", string(output), "--suppress")
-		p.Reset()
+		p.ExpectOK().Run("app", "rm", appId, "--suppress")
 	}
 }
 
@@ -552,13 +557,14 @@ func TestCertificatesPath(t *testing.T) {
 	params := []toolkit.Params{pFlag, pConfig}
 	for _, p := range params {
 		defer p.Reset()
-		p.ExpectOK().Run("context", "set", contextName)
+		p.ExpectOK().Run("context", "create", contextName)
+		p.ExpectOK().Run("context", "use", contextName)
 		p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
 		p.ExpectOK().Run("context", "rm", contextName)
 		params := []toolkit.Params{pFlag, pConfig}
 		for _, p := range params {
 			defer p.Reset()
-			p.ExpectOK().Run("context", "set", contextName)
+			p.ExpectOK().Run("context", "create", contextName)
 			p.ExpectIncludes(absolutePath).Run("context", "get", contextName)
 			p.ExpectOK().Run("context", "rm", contextName)
 		}
@@ -573,6 +579,6 @@ func TestCertificatesPathNegative(t *testing.T) {
 	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
 	for _, p := range params {
 		defer p.Reset()
-		p.ExpectErrorIncludes("could not load client certificate").Run("context", "set", "cert-test")
+		p.ExpectErrorIncludes("could not load client certificate").Run("context", "create", "cert-test")
 	}
 }

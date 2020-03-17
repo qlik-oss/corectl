@@ -3,11 +3,10 @@ package engine
 import (
 	"bufio"
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/boot"
-	"github.com/qlik-oss/corectl/pkg/rest"
 	"os"
 	"strings"
 
+	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
@@ -38,7 +37,7 @@ func CreateListAppsCommand() *cobra.Command {
 				if err != nil {
 					log.Fatalf("could not retrieve app list: %s\n", err)
 				}
-				rest.PrintApps(docList, comm.PrintMode())
+				printer.PrintAppsRest(docList, comm.PrintMode())
 			} else {
 				ctx, global, params := comm.OpenGlobalSocket()
 				docList, err := global.GetDocList(ctx)
@@ -96,7 +95,7 @@ func CreateImportAppCommand() *cobra.Command {
 			}
 			boot.SetAppIDToKnownApps(comm.AppIdMappingNamespace(), appName, appID, false)
 			log.Info("Imported app with new ID: ")
-			log.Quiet(appID)
+			printer.Quiet(appID)
 		},
 	}, "quiet")
 }

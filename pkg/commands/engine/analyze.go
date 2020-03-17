@@ -76,7 +76,7 @@ func CreateGetValuesCommand() *cobra.Command {
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
-			internal.PrintFieldValues(ctx, doc, args[0])
+			printer.PrintFieldValues(ctx, doc, args[0])
 		},
 	}
 }

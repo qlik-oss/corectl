@@ -34,7 +34,7 @@ func CreateInitCommand() *cobra.Command {
 			comm := boot.NewCommunicator(cmd)
 
 			m := map[string]interface{}{}
-			err := comm.RestCaller().CallStd("GET", "v1/users/me", nil, nil, &m)
+			err := comm.RestCaller().CallStd("GET", "v1/users/me", "", nil, nil, &m)
 			if err != nil {
 				// TODO better error handling
 				fmt.Println(err)
@@ -102,9 +102,9 @@ func setupContext(tenant, apikey, explicitContextName string) {
 	}
 	contextName := contextName(explicitContextName, tenantUrl)
 
-	contextHandler.Contexts[contextName] = &dynconf.Context{
-		Engine:  tenantUrl,
-		Headers: map[string]string{"Authorization": "Bearer " + apikey},
+	contextHandler.Contexts[contextName] = dynconf.Context{
+		"engine":  tenantUrl,
+		"headers": map[string]string{"Authorization": "Bearer " + apikey},
 	}
 	contextHandler.Current = contextName
 	contextHandler.Save()

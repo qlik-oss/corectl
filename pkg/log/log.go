@@ -87,18 +87,6 @@ func init() {
 	buffering = true
 }
 
-func Quietln(a ...interface{}) {
-	logln(quiet, a...)
-}
-
-func Quietf(format string, a ...interface{}) {
-	logf(quiet, format, a...)
-}
-
-func Quiet(a ...interface{}) {
-	log(quiet, a...)
-}
-
 func Fatalf(format string, a ...interface{}) {
 	logf(fatal, format, a...)
 	os.Exit(1)
@@ -170,7 +158,7 @@ func logln(lvl logLevel, a ...interface{}) {
 	log(lvl, fmt.Sprintln(a...))
 }
 
-// print handles all the printing.
+// log handles all the logging.
 // If it is called for a higher log level than what is set, it will not print.
 // If printJSON is set it will print as json instead, using the log level as the key.
 func log(lvl logLevel, a ...interface{}) {
@@ -182,7 +170,7 @@ func log(lvl logLevel, a ...interface{}) {
 			msg := map[string]string{
 				strings.ToLower(lvl.String()): fmt.Sprint(a...),
 			}
-			fmt.Println(os.Stderr, FormatAsJSON(msg))
+			fmt.Fprintln(os.Stderr, FormatAsJSON(msg))
 		}
 	} else {
 		prefix := lvl.String()
@@ -193,17 +181,15 @@ func log(lvl logLevel, a ...interface{}) {
 			buffer.add(lvl, a...)
 		} else {
 			str := prefix + fmt.Sprint(a...)
-			fmt.Fprint(os.Stderr, appendNewline(str))
+			fmt.Fprint(os.Stderr, Appendln(str))
 		}
 	}
 }
 
-// PrintAsJSON prints data as JSON to standard out. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
-func PrintAsJSON(data interface{}) {
-	fmt.Fprint(os.Stdout, FormatAsJSON(data))
-}
-
-// FormatAsJSON is a utility method that formats the supplied data in a readable way without printing anything. If already encoded as []byte or json.RawMessage it will be reformated with readable indentation
+// FormatAsJSON is a utility method that formats the supplied data
+// in a readable way without printing anything. If already encoded
+// as []byte or json.RawMessage it will be reformated with readable
+// indentation.
 func FormatAsJSON(data interface{}) string {
 	var jsonBytes json.RawMessage
 	var err error
@@ -220,10 +206,13 @@ func FormatAsJSON(data interface{}) string {
 	}
 	var buffer bytes.Buffer
 	json.Indent(&buffer, jsonBytes, "", "  ")
-	return buffer.String()
+	return Appendln(buffer.String())
 }
 
-func appendNewline(s string) string {
+// Appendln appends a newline character to the end of
+// the string if not present, it is a simple convenience
+// function.
+func Appendln(s string) string {
 	if l := len(s); l > 0 && s[l-1:l] != "\n" {
 		s += "\n"
 	}

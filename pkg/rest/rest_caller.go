@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/log"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,11 +12,10 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
-type Loggable interface {
-	String()
-}
 type loggableBody struct {
 	io.ReadCloser
 	content []byte
@@ -128,9 +126,12 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 // Call builds and peforms the request defined by the parameters and parses the end result into the supplied result interface.
 // If the response status code is not 200 series an error will be returned.
 // The supplied http request may be modified and should not be reused.
-func (c *RestCaller) CallStd(method, path string, queryParams map[string]string, body io.ReadCloser, result interface{}) error {
+func (c *RestCaller) CallStd(method, path, contentType string, queryParams map[string]string, body io.ReadCloser, result interface{}) error {
 	url := c.CreateUrl(path, queryParams)
 	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
 	err = c.CallReq(req, result)
 	return err
 }
@@ -162,7 +163,8 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 		if req.Body != nil {
 			loggableBody, ok := req.Body.(loggableBody)
 			if ok {
-				log.PrintAsJSON(loggableBody.content)
+				log.Info(log.FormatAsJSON(loggableBody.content))
+
 			}
 		}
 		t0 = time.Now()
@@ -172,7 +174,7 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	if log.Traffic {
 		t1 := time.Now()
 		interval := t1.Sub(t0)
-		fmt.Fprintln(os.Stderr, "Time", interval)
+		log.Info("Time", interval)
 	}
 	if err != nil {
 		return response, err

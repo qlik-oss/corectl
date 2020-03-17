@@ -1,31 +1,31 @@
-## corectl context login
+## corectl context create
 
-Login and set cookie for the named context
+Create a context with the specified configuration
 
 ### Synopsis
 
-Login and set cookie for the named context
+Create a context with the specified configuration
 
-This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
-If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.
+This command creates a context by using the supplied flags.
+The information stored will be engine url, headers and certificates
+(if present) along with comment and the context-name.
 
 ```
-corectl context login <context-name> [flags]
+corectl context create <context name> [flags]
 ```
 
 ### Examples
 
 ```
-corectl context login
-corectl context login context-name
+corectl context create local-engine
+corectl context create rd-sense --engine localhost:9076 --comment "R&D Qlik Sense deployment"
 ```
 
 ### Options
 
 ```
-  -h, --help              help for login
-      --password string   Password to be used when logging in to Qlik Sense Enterprise (use with caution)
-      --user string       Username to be used when logging in to Qlik Sense Enterprise
+      --comment string   Comment for the context
+  -h, --help             help for create
 ```
 
 ### Options inherited from parent commands
