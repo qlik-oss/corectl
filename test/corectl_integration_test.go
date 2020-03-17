@@ -15,7 +15,7 @@ import (
 func TestBasicAnalyzing(t *testing.T) {
 
 	os.Setenv("CONN_TYPE", "folder")
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")
@@ -39,7 +39,7 @@ func TestBasicAnalyzing(t *testing.T) {
 }
 
 func TestReload(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 	p.ExpectIncludes("<<  5 Lines fetched").Run("build")
 	p.ExpectIncludes("<<  3 Lines fetched").Run("build", "--limit", "3")
@@ -50,8 +50,8 @@ func TestReload(t *testing.T) {
 
 func TestContextManagement(t *testing.T) {
 	flags := [][]string{
-		{"--engine", *toolkit.EngineJwtIP, "--config", "test/projects/using-jwts/corectl.yml"},
-		{"--engine", *toolkit.EngineAbacIP, "--config", "test/projects/abac/corectl.yml"},
+		{"--server", *toolkit.EngineJwtIP, "--config", "test/projects/using-jwts/corectl.yml"},
+		{"--server", *toolkit.EngineAbacIP, "--config", "test/projects/abac/corectl.yml"},
 	}
 	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
 	// Empty params, should default to localhost:9076 when there is no context
@@ -70,11 +70,11 @@ func TestContextManagement(t *testing.T) {
 	// Current context should be abac, connecting to jwt shouldn't work
 	p.ExpectIncludes(contexts[1]).Run("context", "get")
 
-	p.ExpectError().Run("status", "--engine", *toolkit.EngineJwtIP)
+	p.ExpectError().Run("status", "--server", *toolkit.EngineJwtIP)
 	// Check if we can update contexts
-	p.ExpectOK().Run("context", "update", contexts[1], "--engine", *toolkit.EngineStdIP)
+	p.ExpectOK().Run("context", "update", contexts[1], "--server", *toolkit.EngineStdIP)
 	p.ExpectIncludes(*toolkit.EngineStdIP).Run("status")
-	p.ExpectOK().Run("context", "update", contexts[1], "--engine", *toolkit.EngineAbacIP)
+	p.ExpectOK().Run("context", "update", contexts[1], "--server", *toolkit.EngineAbacIP)
 	p.ExpectIncludes(*toolkit.EngineAbacIP).Run("context", "get")
 	// See if all context commands work
 	for i, ctx := range contexts {
@@ -88,11 +88,11 @@ func TestContextManagement(t *testing.T) {
 		p.ExpectOK().Run("context", "rm", ctx)
 	}
 	// No context here, expecting default
-	p.ExpectIncludes("localhost:9076").Run("status")
+	p.ExpectIncludes("URL not specified").Run("status")
 }
 
 func TestQuietCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	cmds := []string{
 		"connection", "dimension", "measure",
 		"object", "state", "variable",
@@ -118,7 +118,7 @@ func TestQuietCommands(t *testing.T) {
 }
 
 func TestLogBuffer(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectOK().Run("context", "create", t.Name())
 	p.ExpectOK().Run("context", "use", t.Name())
 	// The quiest flag should mute the warnings
@@ -129,7 +129,7 @@ func TestLogBuffer(t *testing.T) {
 }
 
 func TestConnectionManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 	p.Run("build")
 	p.ExpectIncludes(`myconnection | testconnector`).Run("connection", "ls")
@@ -137,7 +137,7 @@ func TestConnectionManagementCommands(t *testing.T) {
 }
 
 func TestObjectManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	// Build with both objects and check
@@ -165,7 +165,7 @@ func TestObjectManagementCommands(t *testing.T) {
 }
 
 func TestDimensionManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	// Build with both dimensions and check
@@ -187,7 +187,7 @@ func TestDimensionManagementCommands(t *testing.T) {
 }
 
 func TestMeasureManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	// Build with both measures and check
@@ -209,7 +209,7 @@ func TestMeasureManagementCommands(t *testing.T) {
 }
 
 func TestVariableManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	// Build with both variables and check
@@ -231,7 +231,7 @@ func TestVariableManagementCommands(t *testing.T) {
 }
 
 func TestBookmarkManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 
 	// Build with two bookmarks
@@ -254,7 +254,7 @@ func TestBookmarkManagementCommands(t *testing.T) {
 }
 
 func TestOpeningWithoutData(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")
@@ -267,7 +267,7 @@ func TestOpeningWithoutData(t *testing.T) {
 }
 
 func TestScriptManagementCommands(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build", "--script", "test/projects/using-script/script1.qvs")
@@ -282,7 +282,7 @@ func TestScriptManagementCommands(t *testing.T) {
 }
 
 func TestScriptVariables(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 	// Build with script that creates two variables and check
 	p.ExpectOK().Run("build", "--script", "test/projects/using-script/script3.qvs")
@@ -290,7 +290,7 @@ func TestScriptVariables(t *testing.T) {
 }
 
 func TestTrafficFlag(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Ttl: "0"}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")
@@ -300,10 +300,10 @@ func TestTrafficFlag(t *testing.T) {
 
 func TestUsingJwt(t *testing.T) {
 	p := toolkit.Params{T: t, Ttl: "0"}
-	p1 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineStdIP})
-	p2 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineJwtIP})
-	p3 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineJwtIP, Headers: `authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0`})
-	p4 := p.WithParams(toolkit.Params{Engine: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"})
+	p1 := p.WithParams(toolkit.Params{Server: *toolkit.EngineStdIP})
+	p2 := p.WithParams(toolkit.Params{Server: *toolkit.EngineJwtIP})
+	p3 := p.WithParams(toolkit.Params{Server: *toolkit.EngineJwtIP, Headers: `authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmb2xrZSJ9.MD_revuZ8lCEa6bb-qtfYaHdxBiRMUkuH86c4kd1yC0`})
+	p4 := p.WithParams(toolkit.Params{Server: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"})
 
 	p1.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 	p2.ExpectErrorIncludes("headers", "authorization").Run("status")
@@ -312,24 +312,24 @@ func TestUsingJwt(t *testing.T) {
 }
 
 func TestHelp(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
 	p.ExpectGolden().Run("")
 	p.ExpectGolden().Run("help")
 	p.ExpectGolden().Run("help", "build")
 }
 
 func TestAppMissing(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
 	p.ExpectErrorIncludes("no app specified").Run("connection", "ls")
 }
 
 func TestCatwalkUrl(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
 	p.ExpectIncludes("Please provide a valid URL starting with 'https://', 'http://' or 'www'").Run("catwalk", "--catwalk-url=not-a-valid-url")
 }
 
 func TestWithoutApp(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
 
 	p.ExpectOK().Run("status")
 	p.ExpectOK().Run("version")
@@ -354,7 +354,7 @@ func TestWithoutApp(t *testing.T) {
 }
 
 func TestWithUnknownApp(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectError().Run("reload")
 
 	p.ExpectErrorIncludes("Could not find app").Run("assoc")
@@ -373,23 +373,23 @@ func TestWithUnknownApp(t *testing.T) {
 }
 
 func TestEvalOnUnknownAppl(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectIncludes("Could not find app: App not found (1003").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 func TestEvalOnUnknownAppEngine(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: "localhost:9999", App: t.Name()}
+	p := toolkit.Params{T: t, Server: "localhost:9999", App: t.Name()}
 	p.ExpectErrorIncludes("engine", "url").Run("eval", "count(numbers)", "by", "xyz")
 }
 
 // Disabled due to change in behaviour when configuring incorrect license
 func DisabledTestLicenseServiceDown(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineBadLicenseServerIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineBadLicenseServerIP, App: t.Name()}
 	p.ExpectIncludes("SESSION_ERROR_NO_LICENSE").Run("app", "ls")
 }
 
 func TestAppsInABAC(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineAbacIP, Config: "test/projects/abac/corectl.yml", App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineAbacIP, Config: "test/projects/abac/corectl.yml", App: t.Name()}
 	defer p.Reset()
 	p.ExpectGolden().Run("build")
 	p.ExpectIncludes("Connected to", "The data model has 1 table.").Run("status")
@@ -399,10 +399,10 @@ func TestAppsInABAC(t *testing.T) {
 }
 
 func TestInvalidConfigs(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name()}
 	pi1 := p.WithParams(toolkit.Params{Config: "test/projects/invalid-config/corectl-invalid.yml"})
 	pi2 := p.WithParams(toolkit.Params{Config: "test/projects/invalid-config/corectl-invalid2.yml"})
-	pi1.ExpectIncludes("'engin': did you mean 'engine'?",
+	pi1.ExpectIncludes("'serve': did you mean 'server'?",
 		"'dimension': did you mean 'dimensions'?",
 		"'verbos': did you mean 'verbose'?",
 		"'apps': did you mean 'app'?",
@@ -417,7 +417,7 @@ func TestInvalidConfigs(t *testing.T) {
 }
 
 func TestChildObjectsAndFullPropertyTree(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
 	defer p.Reset()
 
 	// Build the app with an object with two children
@@ -435,7 +435,7 @@ func TestChildObjectsAndFullPropertyTree(t *testing.T) {
 }
 
 func TestGetFullPropertyTree(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
 	defer p.Reset()
 
 	// Build the app with an object with two children
@@ -446,7 +446,7 @@ func TestGetFullPropertyTree(t *testing.T) {
 }
 
 func TestGetFullPropertyTreeMinimum(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, Ttl: "0", App: t.Name()}
 	defer p.Reset()
 
 	// Build the app with an object with two children
@@ -459,11 +459,11 @@ func TestGetFullPropertyTreeMinimum(t *testing.T) {
 func TestConnectionDefinitionVariations(t *testing.T) {
 
 	os.Setenv("CONN_TYPE", "folder")
-	pNoConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-1"}
-	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-2"}
-	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-3"}
-	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-4"}
-	pConnectionsFileEmpty := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref-empty.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-5"}
+	pNoConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-1"}
+	pCommandLine := toolkit.Params{T: t, Config: "test/projects/connections/corectl-no-connections.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-2"}
+	pWithConnections := toolkit.Params{T: t, Config: "test/projects/connections/corectl-with-connections.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-3"}
+	pConnectionsFile := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-4"}
+	pConnectionsFileEmpty := toolkit.Params{T: t, Config: "test/projects/connections/corectl-connectionsref-empty.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-5"}
 	defer pNoConnections.Reset() //This resets all apps since last reset
 
 	//Build the apps
@@ -481,7 +481,7 @@ func TestConnectionDefinitionVariations(t *testing.T) {
 
 // TestPrecedence checks that command line flags overrides config props
 func TestCommandLineOverridingConfigFile(t *testing.T) {
-	p := toolkit.Params{T: t, Config: "test/projects/presedence/corectl.yml", Engine: *toolkit.EngineStdIP}
+	p := toolkit.Params{T: t, Config: "test/projects/presedence/corectl.yml", Server: *toolkit.EngineStdIP}
 	defer p.Reset()
 	p1 := p.WithParams(toolkit.Params{App: t.Name() + "-1"})
 	p2 := p.WithParams(toolkit.Params{App: t.Name() + "-2"})
@@ -507,9 +507,9 @@ func TestCommandLineOverridingConfigFile(t *testing.T) {
 
 func TestImportApp(t *testing.T) {
 	// Create tests for the standard, abac and jwt case.
-	pStd := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP}
-	pAbac := toolkit.Params{T: t, Engine: *toolkit.EngineAbacIP}
-	pJwt := toolkit.Params{T: t, Engine: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"}
+	pStd := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
+	pAbac := toolkit.Params{T: t, Server: *toolkit.EngineAbacIP}
+	pJwt := toolkit.Params{T: t, Server: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"}
 	params := []toolkit.Params{pStd, pAbac, pJwt}
 	for _, p := range params {
 		// See if we can import the app test.qvf
@@ -522,8 +522,8 @@ func TestImportApp(t *testing.T) {
 
 func TestUnbuild(t *testing.T) {
 	os.Setenv("CONN_TYPE", "folder")
-	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
-	p2 := toolkit.Params{T: t, Config: "test/golden/unbuild/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name() + "-rebuild"}
+	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
+	p2 := toolkit.Params{T: t, Config: "test/golden/unbuild/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-rebuild"}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")
@@ -538,7 +538,7 @@ func TestUnbuild(t *testing.T) {
 }
 
 func TestAddState(t *testing.T) {
-	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name()}
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name()}
 	defer p.Reset()
 	p.ExpectOK().Run("build")
 	p.ExpectIncludes("Saving app...", "success").Run("state", "add", "MyTestState")
@@ -549,8 +549,8 @@ func TestAddState(t *testing.T) {
 
 func TestCertificatesPath(t *testing.T) {
 	relativePath := "test/projects/certificates/"
-	pFlag := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
-	pConfig := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
+	pFlag := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Certificates: relativePath}
+	pConfig := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Config: relativePath + "corectl-certificates.yml"}
 	absolutePath, _ := filepath.Abs(relativePath)
 	contextName := "cert-test"
 
@@ -572,9 +572,9 @@ func TestCertificatesPath(t *testing.T) {
 }
 
 func TestCertificatesPathNegative(t *testing.T) {
-	pFlagNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/"}
-	pConfigNoCerts := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates-invalid-path.yml"}
-	pInvalidPath := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/non-existing-folder"}
+	pFlagNoCerts := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/"}
+	pConfigNoCerts := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Config: "test/projects/certificates/corectl-certificates-invalid-path.yml"}
+	pInvalidPath := toolkit.Params{T: t, Server: *toolkit.EngineStdIP, App: t.Name(), Certificates: "test/projects/non-existing-folder"}
 
 	params := []toolkit.Params{pFlagNoCerts, pConfigNoCerts, pInvalidPath}
 	for _, p := range params {

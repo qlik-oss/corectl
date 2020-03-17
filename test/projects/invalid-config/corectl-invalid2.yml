@@ -1,4 +1,4 @@
-engine: localhost:9076
+server: localhost:9076
 script: ./script.qvs
 connections:
   testdata:

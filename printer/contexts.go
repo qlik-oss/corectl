@@ -26,7 +26,7 @@ func PrintContext(name string, handler *dynconf.ContextHandler) {
 	}
 	fmt.Printf("Name: %s\n", name)
 	fmt.Printf("Comment: %s\n", context.GetString("comment"))
-	fmt.Printf("Engine: %s\n", context.GetString("engine"))
+	fmt.Printf("Server: %s\n", context.GetString("server"))
 	fmt.Printf("Certificates: %s\n", context.GetString("certificates"))
 	fmt.Println("Headers:")
 	for k, v := range context.Headers() {
@@ -60,12 +60,12 @@ func PrintContexts(handler *dynconf.ContextHandler, mode log.PrintMode) {
 		writer := tablewriter.NewWriter(os.Stdout)
 		writer.SetAutoFormatHeaders(false)
 		writer.SetRowLine(true)
-		header := []string{"Name", "Engine", "Current", "Comment"}
+		header := []string{"Name", "Server", "Current", "Comment"}
 		writer.SetHeader(header)
 
 		for _, k := range sortedContextKeys {
 			context := handler.Get(k)
-			row := []string{k, context.GetString("engine"), "", context.GetString("comment")}
+			row := []string{k, context.GetString("server"), "", context.GetString("comment")}
 			if k == handler.Current {
 				// In case we change header order
 				for i, h := range header {

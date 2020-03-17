@@ -6,7 +6,7 @@ Create, update and use contexts
 
 Create, update and use contexts
 
-Contexts store connection information such as engine url, certificates and headers,
+Contexts store connection information such as server url, certificates and headers,
 similar to a config. The main difference between contexts and configs is that they
 can be used globally. Use the context subcommands to configure contexts which
 facilitate app development in environments where certificates and headers are needed.
@@ -15,8 +15,8 @@ The current context is the one that is being used. You can use "context get" to
 display the contents of the current context and switch context with "context set"
 or unset the current context with "context unset".
 
-Note that contexts have the lowest precedence. This means that e.g. an --engine flag
-(or an engine field in a config) will override the engine url in the current context.
+Note that contexts have the lowest precedence. This means that e.g. an --server flag
+(or a server field in a config) will override the server url in the current context.
 
 Contexts are stored locally in your ~/.qlik/contexts.yml file.
 
@@ -33,11 +33,11 @@ Contexts are stored locally in your ~/.qlik/contexts.yml file.
       --certificates string      path/to/folder containing client.pem, client_key.pem and root.pem certificates
   -c, --config string            path/to/config.yml where parameters can be set instead of on the command line
       --context string           Name of the context used when connecting to Qlik Associative Engine
-  -e, --engine string            URL to the Qlik Associative Engine (default "localhost:9076")
       --headers stringToString   Http headers to use when connecting to Qlik Associative Engine (default [])
       --insecure                 Enabling insecure will make it possible to connect using self signed certificates
       --json                     Returns output in JSON format if possible, disables verbose and traffic output
       --no-data                  Open app without data
+  -s, --server string            URL to a Qlik Product, a local engine, cluster or sense-enterprise
   -t, --traffic                  Log JSON websocket traffic to stdout
       --ttl string               Qlik Associative Engine session time to live in seconds (default "0")
   -v, --verbose                  Log extra information

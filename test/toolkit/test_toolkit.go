@@ -20,7 +20,7 @@ type Params struct {
 	T            *testing.T
 	App          string
 	Config       string
-	Engine       string
+	Server       string
 	Headers      string
 	NoData       string
 	Traffic      string
@@ -145,8 +145,8 @@ func (p *Params) WithParams(newP Params) Params {
 	if newP.Config != "" {
 		pc.Config = newP.Config
 	}
-	if newP.Engine != "" {
-		pc.Engine = newP.Engine
+	if newP.Server != "" {
+		pc.Server = newP.Server
 	}
 	if newP.App != "" {
 		pc.App = newP.App
@@ -177,8 +177,8 @@ func (p *Params) Run(command ...string) []byte {
 		if p.App != "" {
 			args = append(args, "--app", p.App)
 		}
-		if p.Engine != "" {
-			args = append(args, "--engine", p.Engine)
+		if p.Server != "" {
+			args = append(args, "--server", p.Server)
 		}
 		if p.Config != "" {
 			args = append(args, "--config", p.Config)

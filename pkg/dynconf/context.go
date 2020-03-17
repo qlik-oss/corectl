@@ -27,9 +27,10 @@ type ContextHandler struct {
 	Contexts map[string]Context
 }
 
-// Context represents a context. As of now it only contains information regarding connections.
-// Meaning: engine url, certificates path and any headers.
-// It also keeps a user's comments regarding the context.
+// Context is a map[string]interface{} to allow us to put any information in it we
+// deem useful. This will in most cases consist of connection information such as
+// server URL, headers for authentication and some info such as name/description/comment
+// for the user.
 type Context map[string]interface{}
 
 const ContextDir = ".qlik"
@@ -133,13 +134,13 @@ func LoginContext(tlsClientConfig *tls.Config, contextName string, userName stri
 		}
 	}
 
-	engine := context.GetString("engine")
-	if engine == "" {
+	server := context.GetString("server")
+	if server == "" {
 		log.Fatalf("Context '%s' does not have any URL specified", contextName)
 	}
 
-	log.Infof("Using context '%s', with URL '%s'\n", contextName, engine)
-	qlikSession := getSessionCookie(tlsClientConfig, engine, userName, password)
+	log.Infof("Using context '%s', with URL '%s'\n", contextName, server)
+	qlikSession := getSessionCookie(tlsClientConfig, server, userName, password)
 	headers := context.Headers()
 	if headers == nil {
 		headers = map[string]string{}
@@ -344,12 +345,12 @@ func createContextFileIfNotExist() {
 	}
 }
 
-func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName string, password string) string {
+func getSessionCookie(tlsClientConfig *tls.Config, serverURL string, userName string, password string) string {
 	// Verify Qlik Sense URL
-	u, err := url.Parse(engineURL)
+	u, err := url.Parse(serverURL)
 
 	if err != nil {
-		log.Fatalln("The engineURL doesn't seem to be correct")
+		log.Fatalln("The serverURL doesn't seem to be correct: ", err)
 	}
 
 	if u.Scheme != "https" {
@@ -377,7 +378,7 @@ func getSessionCookie(tlsClientConfig *tls.Config, engineURL string, userName st
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = tlsClientConfig
 
 	// Get post URL via redirects
-	resp, err := http.Get(engineURL)
+	resp, err := http.Get(serverURL)
 
 	if err != nil {
 		log.Fatalln(err)

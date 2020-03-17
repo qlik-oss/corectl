@@ -1,2 +1,2 @@
-engine: ${ENGINE_STD_URL}
+server: ${ENGINE_STD_URL}
 connections: ./connections.yml

@@ -70,19 +70,19 @@ func (c *CommonSettings) Headers() http.Header {
 	return headers
 }
 
-func (c *CommonSettings) Engine() string {
-	return c.GetString("engine")
+func (c *CommonSettings) Server() string {
+	return c.GetString("server")
 }
 
-// engineURL returns the parsed engine url
-func (c *CommonSettings) engineURL() *neturl.URL {
-	engine := c.Engine()
-	if engine == "" {
-		log.Fatalln("engine URL not specified")
+// serverURL returns the parsed engine url
+func (c *CommonSettings) serverURL() *neturl.URL {
+	server := c.Server()
+	if server == "" {
+		log.Fatalln("server URL not specified")
 	}
-	u, err := parseURL(engine, "ws")
+	u, err := parseURL(server, "ws")
 	if err != nil {
-		log.Fatalf("could not parse engine url '%s' got error: '%s'\n", engine, err)
+		log.Fatalf("could not parse server url '%s' got error: '%s'\n", server, err)
 	}
 	return u
 }
@@ -92,7 +92,7 @@ func (c *CommonSettings) engineURL() *neturl.URL {
 ////////////////////////////////////////
 
 func (c *CommonSettings) IsSenseForKubernetes() bool {
-	if c.engineURL().Scheme == "http" || c.engineURL().Scheme == "https" {
+	if c.serverURL().Scheme == "http" || c.serverURL().Scheme == "https" {
 		return true
 	} else {
 		return false
@@ -100,7 +100,7 @@ func (c *CommonSettings) IsSenseForKubernetes() bool {
 }
 
 func (c *CommonSettings) RestBaseUrl() *neturl.URL {
-	u, _ := neturl.Parse(c.engineURL().String()) //Clone it since we are going to modify it
+	u, _ := neturl.Parse(c.serverURL().String()) //Clone it since we are going to modify it
 	// CreateBaseURL returns the base URL for Rest API calls based on the value of 'engine'
 	if u.Scheme == "ws" {
 		u.Scheme = "http"
@@ -125,7 +125,7 @@ func (c *CommonSettings) RestAdaptedAppId() string {
 /////////////////////////////////////////////
 
 func (c *CommonSettings) WebSocketEngineURL() string {
-	engineUrl := c.engineURL()
+	engineUrl := c.serverURL()
 	if c.IsSenseForKubernetes() {
 		if engineUrl.Scheme == "https" {
 			return "wss://" + engineUrl.Host + "/app/" + c.AppId()
@@ -143,14 +143,14 @@ func (c *CommonSettings) WebSocketEngineURL() string {
 }
 
 func (c *CommonSettings) AppIdMappingNamespace() string {
-	engineURL := c.engineURL()
-	return engineURL.Host
+	serverURL := c.serverURL()
+	return serverURL.Host
 }
 
 func (c *CommonSettings) App() string {
 	appName := c.GetString("app")
 	if appName == "" {
-		appName = tryParseAppFromURL(c.GetString("engine"))
+		appName = tryParseAppFromURL(c.GetString("server"))
 	}
 	return appName
 }

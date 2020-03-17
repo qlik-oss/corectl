@@ -191,7 +191,7 @@ __extract_flags_to_forward()
 {
 	local forward_flags
 	local result
-	forward_flags=( "--engine" "-e" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
+	forward_flags=( "--server" "-s" "--app" "-a" "--config" "-c" "--headers" "--ttl" );
 	while [[ $# -gt 0 ]]; do
 	  for i in "${forward_flags[@]}"
 	  do
