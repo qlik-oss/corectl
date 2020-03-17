@@ -43,6 +43,7 @@ type RestCallerSettings interface {
 	AppId() string
 	RestAdaptedAppId() string
 	PrintMode() log.PrintMode
+	IsSenseForKubernetes() bool
 }
 
 type RestCaller struct {

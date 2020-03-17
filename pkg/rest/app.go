@@ -13,6 +13,10 @@ import (
 // ImportApp imports a local app into the engine using the rest api
 // To not have any dependency on internal, both appID and appName are returned.
 func (c *RestCaller) ImportApp(appPath string) (appID, appName string, err error) {
+	if c.IsSenseForKubernetes() {
+		log.Fatalln("Not implemented for Sense yet")
+	}
+
 	file, err := os.Open(appPath)
 	if err != nil {
 		err = fmt.Errorf("could not open file: %s", appPath)
