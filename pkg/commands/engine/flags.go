@@ -15,7 +15,7 @@ var initialized bool
 // DefaultUnbuildFolder is the placeholder for unbuild folder location
 var DefaultUnbuildFolder = "./<app name>-unbuild"
 
-func withLocalFlags(ccmd *cobra.Command, localFlagNames ...string) *cobra.Command {
+func WithLocalFlags(ccmd *cobra.Command, localFlagNames ...string) *cobra.Command {
 	if !initialized {
 		initLocalFlags()
 		initialized = true

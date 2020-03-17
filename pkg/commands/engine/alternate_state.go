@@ -9,7 +9,7 @@ import (
 )
 
 func CreateAlternateStateCommand() *cobra.Command {
-	var listAlternateStatesCmd = withLocalFlags(&cobra.Command{
+	var listAlternateStatesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all alternate states in the current app",

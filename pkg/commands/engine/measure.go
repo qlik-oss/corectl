@@ -10,7 +10,7 @@ import (
 )
 
 func CreateMeasureCommand() *cobra.Command {
-	var setMeasuresCmd = withLocalFlags(&cobra.Command{
+	var setMeasuresCmd = WithLocalFlags(&cobra.Command{
 		Use:     "set <glob-pattern-path-to-measures-files.json>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Set or update the measures in the current app",
@@ -30,7 +30,7 @@ func CreateMeasureCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var removeMeasureCmd = withLocalFlags(&cobra.Command{
+	var removeMeasureCmd = WithLocalFlags(&cobra.Command{
 		Use:     "rm <measure-id>...",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Remove one or many generic measures in the current app",
@@ -53,7 +53,7 @@ func CreateMeasureCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var listMeasuresCmd = withLocalFlags(&cobra.Command{
+	var listMeasuresCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all generic measures in the current app",
@@ -67,7 +67,7 @@ func CreateMeasureCommand() *cobra.Command {
 		},
 	}, "quiet")
 
-	var getMeasurePropertiesCmd = withLocalFlags(&cobra.Command{
+	var getMeasurePropertiesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "properties <measure-id>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Print the properties of the generic measure",

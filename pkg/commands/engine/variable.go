@@ -10,7 +10,7 @@ import (
 )
 
 func CreateVariableCommand() *cobra.Command {
-	var setVariablesCmd = withLocalFlags(&cobra.Command{
+	var setVariablesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "set <glob-pattern-path-to-variables-files.json>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Set or update the variables in the current app",
@@ -30,7 +30,7 @@ func CreateVariableCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var removeVariableCmd = withLocalFlags(&cobra.Command{
+	var removeVariableCmd = WithLocalFlags(&cobra.Command{
 		Use:     "rm <variable-name>...",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Remove one or many variables in the current app",
@@ -53,7 +53,7 @@ func CreateVariableCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var listVariablesCmd = withLocalFlags(&cobra.Command{
+	var listVariablesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all generic variables in the current app",
@@ -67,7 +67,7 @@ func CreateVariableCommand() *cobra.Command {
 		},
 	}, "quiet")
 
-	var getVariablePropertiesCmd = withLocalFlags(&cobra.Command{
+	var getVariablePropertiesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "properties <variable-name>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Print the properties of the generic variable",

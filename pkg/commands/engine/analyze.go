@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreategetAssociationsCmd() *cobra.Command {
+func CreategetAssociationsCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "assoc",
 		Args:    cobra.ExactArgs(0),
@@ -30,7 +30,7 @@ corectl associations`,
 	}
 }
 
-func CreategetTablesCmd() *cobra.Command {
+func CreategetTablesCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "tables",
 		Args:  cobra.ExactArgs(0),
@@ -48,7 +48,7 @@ corectl tables --app=my-app.qvf`,
 	}
 }
 
-func CreateGetMetaCmd() *cobra.Command {
+func CreateGetMetaCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "meta",
 		Args:  cobra.ExactArgs(0),
@@ -66,7 +66,7 @@ corectl meta --app my-app.qvf`,
 	}
 }
 
-func CreateGetValuesCmd() *cobra.Command {
+func CreateGetValuesCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "values <field name>",
 		Args:    cobra.ExactArgs(1),
@@ -81,8 +81,8 @@ func CreateGetValuesCmd() *cobra.Command {
 	}
 }
 
-func CreateGetFieldsCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateGetFieldsCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:     "fields",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print field list",
@@ -98,7 +98,7 @@ func CreateGetFieldsCmd() *cobra.Command {
 	}, "quiet")
 }
 
-func CreateGetKeysCmd() *cobra.Command {
+func CreateGetKeysCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "keys",
 		Args:    cobra.ExactArgs(0),
@@ -115,7 +115,7 @@ func CreateGetKeysCmd() *cobra.Command {
 	}
 }
 
-func CreateEvalCmd() *cobra.Command {
+func CreateEvalCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
 		Args:  cobra.MinimumNArgs(1),
@@ -132,8 +132,8 @@ corectl eval by "Region" // Returns the values for dimension "Region"`,
 		},
 	}
 }
-func CreateCatwalkCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateCatwalkCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:   "catwalk",
 		Args:  cobra.ExactArgs(0),
 		Short: "Open the specified app in catwalk",

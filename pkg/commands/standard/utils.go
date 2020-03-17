@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateVersionCmd(version, branch, commit string) *cobra.Command {
+func CreateVersionCommand(version, branch, commit string) *cobra.Command {
 	return &cobra.Command{
 		Use:     "version",
 		Args:    cobra.ExactArgs(0),
@@ -37,7 +37,7 @@ func CreateVersionCmd(version, branch, commit string) *cobra.Command {
 	}
 }
 
-func CreateStatusCmd() *cobra.Command {
+func CreateStatusCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "status",
 		Args:  cobra.ExactArgs(0),

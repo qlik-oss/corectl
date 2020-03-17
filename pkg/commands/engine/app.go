@@ -22,8 +22,8 @@ type ListItem struct {
 	Id   string `json:"resourceID"`
 }
 
-func CreateListAppsCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateListAppsCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all apps available in the current engine",
@@ -50,8 +50,8 @@ func CreateListAppsCmd() *cobra.Command {
 		},
 	}, "quiet")
 }
-func CreateRemoveAppCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateRemoveAppCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:     "rm <app-id>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Remove the specified app",
@@ -74,8 +74,8 @@ func CreateRemoveAppCmd() *cobra.Command {
 		},
 	}, "suppress")
 }
-func CreateImportAppCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateImportAppCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:     "import",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Import the specified app into the engine, returns the ID of the created app",
@@ -100,7 +100,7 @@ func CreateImportAppCmd() *cobra.Command {
 		},
 	}, "quiet")
 }
-func CreateAppCmd() *cobra.Command {
+func CreateAppCommand() *cobra.Command {
 	appCmd := &cobra.Command{
 		Use:   "app",
 		Short: "Explore and manage apps",
@@ -109,7 +109,7 @@ func CreateAppCmd() *cobra.Command {
 			"command_category": "sub",
 		},
 	}
-	appCmd.AddCommand(CreateListAppsCmd(), CreateRemoveAppCmd(), CreateImportAppCmd())
+	appCmd.AddCommand(CreateListAppsCommand(), CreateRemoveAppCommand(), CreateImportAppCommand())
 	return appCmd
 }
 

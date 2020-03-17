@@ -10,7 +10,7 @@ import (
 )
 
 func CreateScriptCommand() *cobra.Command {
-	var setScriptCmd = withLocalFlags(&cobra.Command{
+	var setScriptCmd = WithLocalFlags(&cobra.Command{
 		Use:     "set <path-to-script-file.qvs>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Set the script in the current app",

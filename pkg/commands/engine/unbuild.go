@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateUnbuildCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateUnbuildCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:   "unbuild",
 		Args:  cobra.ExactArgs(0),
 		Short: "Split up an existing app into separate json and yaml files",

@@ -52,7 +52,7 @@ corectl connection rm ID-1 ID-2`,
 		},
 	}
 
-	var listConnectionsCmd = withLocalFlags(&cobra.Command{
+	var listConnectionsCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all connections in the current app",

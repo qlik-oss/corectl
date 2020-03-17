@@ -9,7 +9,7 @@ import (
 )
 
 func CreateBookmarkCommand() *cobra.Command {
-	var setBookmarksCmd = withLocalFlags(&cobra.Command{
+	var setBookmarksCmd = WithLocalFlags(&cobra.Command{
 		Use:     "set <glob-pattern-path-to-bookmark-files.json>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Set or update the bookmarks in the current app",
@@ -30,7 +30,7 @@ func CreateBookmarkCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var removeBookmarkCmd = withLocalFlags(&cobra.Command{
+	var removeBookmarkCmd = WithLocalFlags(&cobra.Command{
 		Use:     "rm <bookmark-id>...",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Remove one or many bookmarks in the current app",
@@ -67,7 +67,7 @@ func CreateBookmarkCommand() *cobra.Command {
 		},
 	}
 
-	var getBookmarkPropertiesCmd = withLocalFlags(&cobra.Command{
+	var getBookmarkPropertiesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "properties <bookmark-id>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Print the properties of the generic bookmark",

@@ -10,7 +10,7 @@ import (
 )
 
 func CreateDimensionCommand() *cobra.Command {
-	var setDimensionsCmd = withLocalFlags(&cobra.Command{
+	var setDimensionsCmd = WithLocalFlags(&cobra.Command{
 		Use:     "set <glob-pattern-path-to-dimensions-files.json>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Set or update the dimensions in the current app",
@@ -30,7 +30,7 @@ func CreateDimensionCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var removeDimensionCmd = withLocalFlags(&cobra.Command{
+	var removeDimensionCmd = WithLocalFlags(&cobra.Command{
 		Use:     "rm <dimension-id>...",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Remove one or many dimensions in the current app",
@@ -53,7 +53,7 @@ func CreateDimensionCommand() *cobra.Command {
 		},
 	}, "no-save")
 
-	var listDimensionsCmd = withLocalFlags(&cobra.Command{
+	var listDimensionsCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all generic dimensions in the current app",
@@ -67,7 +67,7 @@ func CreateDimensionCommand() *cobra.Command {
 		},
 	}, "quiet")
 
-	var getDimensionPropertiesCmd = withLocalFlags(&cobra.Command{
+	var getDimensionPropertiesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "properties <dimension-id>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Print the properties of the generic dimension",

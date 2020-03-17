@@ -10,7 +10,7 @@ import (
 )
 
 func CreateObjectCommand() *cobra.Command {
-	var setObjectsCmd = withLocalFlags(&cobra.Command{
+	var setObjectsCmd = WithLocalFlags(&cobra.Command{
 		Use:   "set <glob-pattern-path-to-objects-files.json",
 		Args:  cobra.ExactArgs(1),
 		Short: "Set or update the objects in the current app",
@@ -31,7 +31,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		},
 	}, "no-save")
 
-	var removeObjectCmd = withLocalFlags(&cobra.Command{
+	var removeObjectCmd = WithLocalFlags(&cobra.Command{
 		Use:     "rm <object-id>...",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Remove one or many generic objects in the current app",
@@ -54,7 +54,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		},
 	}, "no-save")
 
-	var listObjectsCmd = withLocalFlags(&cobra.Command{
+	var listObjectsCmd = WithLocalFlags(&cobra.Command{
 		Use:     "ls",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Print a list of all generic objects in the current app",
@@ -68,7 +68,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		},
 	}, "quiet")
 
-	var getObjectPropertiesCmd = withLocalFlags(&cobra.Command{
+	var getObjectPropertiesCmd = WithLocalFlags(&cobra.Command{
 		Use:     "properties <object-id>",
 		Args:    cobra.ExactArgs(1),
 		Short:   "Print the properties of the generic object",

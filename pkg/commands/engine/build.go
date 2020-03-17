@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateBuildCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateBuildCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:   "build",
 		Args:  cobra.ExactArgs(0),
 		Short: "Reload and save the app after updating connections, dimensions, measures, objects and the script",
@@ -59,8 +59,8 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs`,
 	}, "script", "app-properties", "connections", "dimensions", "measures", "variables", "bookmarks", "objects", "no-reload", "silent", "no-save", "limit")
 }
 
-func CreateReloadCmd() *cobra.Command {
-	return withLocalFlags(&cobra.Command{
+func CreateReloadCommand() *cobra.Command {
+	return WithLocalFlags(&cobra.Command{
 		Use:     "reload",
 		Args:    cobra.ExactArgs(0),
 		Short:   "Reload and save the app",
