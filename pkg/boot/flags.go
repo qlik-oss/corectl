@@ -7,7 +7,7 @@ import (
 	"runtime"
 )
 
-func InjectGlobalFlags(command *cobra.Command) {
+func InjectGlobalFlags(command *cobra.Command, hideEngineSpecificFlags bool) {
 	globalFlags := command.PersistentFlags()
 	globalFlags.BoolP("verbose", "v", false, "Log extra information")
 	globalFlags.BoolP("traffic", "t", false, "Log JSON websocket traffic to stdout")
@@ -37,6 +37,11 @@ func InjectGlobalFlags(command *cobra.Command) {
 		globalFlags.SetAnnotation("config", cobra.BashCompFilenameExt, []string{"yaml", "yml"})
 	}
 
+	if hideEngineSpecificFlags {
+		globalFlags.MarkHidden("no-data")
+		globalFlags.MarkHidden("insecure")
+		globalFlags.MarkHidden("ttl")
+	}
 	// Add all global flags to the set of valid config properties.
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
 		dynconf.AddValidConfigFilePropertyName(flag.Name)

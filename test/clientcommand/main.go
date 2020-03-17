@@ -30,8 +30,9 @@ func createCommandTree() *cobra.Command {
 	subCommand.Flags().StringP("url", "u", "", "v1/tenants/me")
 	subCommand.Flags().StringToStringP("query", "q", nil, "\"x=firstvalue,y=secondvalue\"")
 
+	rootName := "clientcommand"
 	var rootCommand = &cobra.Command{
-		Use:   "clientcommand",
+		Use:   rootName,
 		Args:  cobra.ExactArgs(0),
 		Short: "test",
 		Long:  "test test ",
@@ -42,13 +43,13 @@ func createCommandTree() *cobra.Command {
 	}
 	rootCommand.AddCommand(subCommand)
 
-	rootCommand.AddCommand(standard.CompletionCommand())
-	rootCommand.AddCommand(standard.GenerateSpecCommand())
-	rootCommand.AddCommand(standard.GenerateDocsCommand())
-	rootCommand.AddCommand(standard.ContextCommand())
-	rootCommand.AddCommand(standard.StatusCommand())
+	rootCommand.AddCommand(standard.CreateCompletionCommand(rootName))
+	rootCommand.AddCommand(standard.CreateGenerateSpecCommand(rootName))
+	rootCommand.AddCommand(standard.CreateGenerateDocsCommand())
+	rootCommand.AddCommand(standard.CreateContextCommand())
+	rootCommand.AddCommand(standard.CreateStatusCommand())
 
-	boot.InjectGlobalFlags(rootCommand)
+	boot.InjectGlobalFlags(rootCommand, false)
 
 	patchRootCommandUsageTemplate(rootCommand)
 

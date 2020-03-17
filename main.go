@@ -11,6 +11,5 @@ var branch = ""
 
 func main() {
 
-	cmd.SetVersionInfo(version, branch, commit)
-	cmd.Execute()
+	cmd.Execute(version, branch, commit)
 }

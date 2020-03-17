@@ -1,4 +1,4 @@
-package cmd
+package standard
 
 import (
 	"encoding/json"
@@ -95,44 +95,48 @@ func returnFlags(flags *pflag.FlagSet) map[string]flagJSON {
 	return flagsJSON
 }
 
-var generateSpecCmd = &cobra.Command{
-	Use:    "generate-spec",
-	Short:  "Generate API spec based on cobra commands",
-	Long:   "Generate API spec docs based on cobra commands",
-	Hidden: true,
+func CreateGenerateSpecCommand(version string) *cobra.Command {
+	return &cobra.Command{
+		Use:    "generate-spec",
+		Short:  "Generate API spec based on cobra commands",
+		Long:   "Generate API spec docs based on cobra commands",
+		Hidden: true,
 
-	Run: func(ccmd *cobra.Command, args []string) {
-		fmt.Println("Generating specification")
-		var jsonData []byte
-		spec := spec{
-			Clispec: "0.1.0",
-			Name:    ccmd.Root().Use,
-			Info: info{
-				Title:       "Specification for corectl",
-				Description: ccmd.Root().Long,
-				Version:     strings.TrimPrefix(version, "v"),
-				License:     "MIT",
-			},
-			SubCommands: returnCommands(ccmd.Root().Commands()),
-			Flags:       returnFlags(ccmd.Root().LocalFlags()),
-			Stability:   returnStability(ccmd.Root().Annotations),
-		}
-		jsonData, err := json.MarshalIndent(spec, "", "  ")
-		if err != nil {
-			fmt.Println(err)
-		}
-		ioutil.WriteFile("./docs/spec.json", jsonData, 0644)
-	},
+		Run: func(ccmd *cobra.Command, args []string) {
+			fmt.Println("Generating specification")
+			var jsonData []byte
+			spec := spec{
+				Clispec: "0.1.0",
+				Name:    ccmd.Root().Use,
+				Info: info{
+					Title:       "Specification for corectl",
+					Description: ccmd.Root().Long,
+					Version:     strings.TrimPrefix(version, "v"),
+					License:     "MIT",
+				},
+				SubCommands: returnCommands(ccmd.Root().Commands()),
+				Flags:       returnFlags(ccmd.Root().LocalFlags()),
+				Stability:   returnStability(ccmd.Root().Annotations),
+			}
+			jsonData, err := json.MarshalIndent(spec, "", "  ")
+			if err != nil {
+				fmt.Println(err)
+			}
+			ioutil.WriteFile("./docs/spec.json", jsonData, 0644)
+		},
+	}
 }
 
-var generateDocsCmd = &cobra.Command{
-	Use:    "generate-docs",
-	Short:  "Generate markdown docs based on cobra commands",
-	Long:   "Generate markdown docs based on cobra commands",
-	Hidden: true,
+func CreateGenerateDocsCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:    "generate-docs",
+		Short:  "Generate markdown docs based on cobra commands",
+		Long:   "Generate markdown docs based on cobra commands",
+		Hidden: true,
 
-	Run: func(ccmd *cobra.Command, args []string) {
-		fmt.Println("Generating documentation")
-		doc.GenMarkdownTree(ccmd.Root(), "./docs")
-	},
+		Run: func(ccmd *cobra.Command, args []string) {
+			fmt.Println("Generating documentation")
+			doc.GenMarkdownTree(ccmd.Root(), "./docs")
+		},
+	}
 }

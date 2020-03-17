@@ -232,6 +232,7 @@ func TestVariableManagementCommands(t *testing.T) {
 
 func TestBookmarkManagementCommands(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Engine: *toolkit.EngineStdIP, App: t.Name()}
+	defer p.Reset()
 
 	// Build with two bookmarks
 	p.ExpectOK().Run("build")
@@ -255,6 +256,7 @@ func TestBookmarkManagementCommands(t *testing.T) {
 func TestOpeningWithoutData(t *testing.T) {
 	p := toolkit.Params{T: t, Engine: *toolkit.EngineStdIP, Config: "test/projects/using-entities/corectl.yml", App: t.Name()}
 	defer p.Reset()
+
 	p.ExpectOK().Run("build")
 
 	// Open app without data and verify key printouts

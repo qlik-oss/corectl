@@ -1,7 +1,6 @@
-package cmd
+package standard
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"github.com/qlik-oss/corectl/pkg/boot"
@@ -17,74 +16,68 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version = ""
-var commit = ""
-var branch = ""
+func CreateVersionCommand(version, branch, commit string) *cobra.Command {
+	return &cobra.Command{
+		Use:     "version",
+		Args:    cobra.ExactArgs(0),
+		Short:   "Print the version of corectl",
+		Example: "corectl version",
+		Annotations: map[string]string{
+			"command_category": "other",
+		},
 
-func SetVersionInfo(mainVersion, branchName, commitSha string) {
-	version = mainVersion
-	branch = branchName
-	commit = commitSha
+		Run: func(_ *cobra.Command, args []string) {
+
+			if !strings.Contains(version, "dev") {
+				checkLatestVersion(version)
+			} else {
+				fmt.Printf("version: %s\tbranch: %s\tcommit: %s\n", version, branch, commit)
+			}
+		},
+	}
 }
 
-var versionCmd = &cobra.Command{
-	Use:     "version",
-	Args:    cobra.ExactArgs(0),
-	Short:   "Print the version of corectl",
-	Example: "corectl version",
-	Annotations: map[string]string{
-		"command_category": "other",
-	},
-
-	Run: func(_ *cobra.Command, args []string) {
-
-		if !strings.Contains(version, "dev") {
-			checkLatestVersion()
-		} else {
-			fmt.Printf("version: %s\tbranch: %s\tcommit: %s\n", version, branch, commit)
-		}
-	},
-}
-
-var statusCmd = &cobra.Command{
-	Use:   "status",
-	Args:  cobra.ExactArgs(0),
-	Short: "Print status info about the connection to the engine and current app",
-	Long:  "Print status info about the connection to the engine and current app, and also the status of the data model",
-	Example: `corectl status
+func CreateStatusCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "status",
+		Args:  cobra.ExactArgs(0),
+		Short: "Print status info about the connection to the engine and current app",
+		Long:  "Print status info about the connection to the engine and current app, and also the status of the data model",
+		Example: `corectl status
 corectl status --app=my-app.qvf`,
-	Annotations: map[string]string{
-		"command_category": "other",
-	},
+		Annotations: map[string]string{
+			"command_category": "other",
+		},
 
-	Run: func(ccmd *cobra.Command, args []string) {
-		comm := boot.NewCommunicator(ccmd)
+		Run: func(ccmd *cobra.Command, args []string) {
+			comm := boot.NewCommunicator(ccmd)
 
-		if comm.IsSenseForKubernetes() {
-			err := comm.RestCaller().CallStd("GET", "v1/tenants/me", "", nil, nil, nil)
-			if err != nil {
-				log.Fatal(err)
-			}
-			if comm.AppId() != "" {
-				ctx, _, doc, params := comm.OpenAppSocket(false)
-				printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
+			if comm.IsSenseForKubernetes() {
+				err := comm.RestCaller().CallStd("GET", "v1/tenants/me", "", nil, nil, nil)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if comm.AppId() != "" {
+					ctx, _, doc, params := comm.OpenAppSocket(false)
+					printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
+				} else {
+					printer.PrintStatusRest(comm.RestBaseUrl().String())
+				}
 			} else {
-				printer.PrintStatusRest(comm.RestBaseUrl().String())
+				if comm.AppId() != "" {
+					ctx, _, doc, params := comm.OpenAppSocket(false)
+					printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
+				} else {
+					ctx, _, params := comm.OpenGlobalSocket()
+					printer.PrintStatus(ctx, nil, params.WebSocketEngineURL(), "")
+				}
 			}
-		} else {
-			if comm.AppId() != "" {
-				ctx, _, doc, params := comm.OpenAppSocket(false)
-				printer.PrintStatus(ctx, doc, params.WebSocketEngineURL(), params.AppId())
-			} else {
-				ctx, _, params := comm.OpenGlobalSocket()
-				printer.PrintStatus(ctx, nil, params.WebSocketEngineURL(), "")
-			}
-		}
-	},
+		},
+	}
 }
 
 // Function for checking current version against latest released version on github
-func checkLatestVersion() {
+func checkLatestVersion(version string) {
 	client := github.NewClient(nil)
 	rel, _, err := client.Repositories.GetLatestRelease(context.Background(), "qlik-oss", "corectl")
 	if err != nil {
@@ -146,30 +139,4 @@ func isLatestVersion(currentTag string, latestTag string) (string, bool) {
 		return latestVersion.String(), true
 	}
 	return "", false
-}
-
-func askForConfirmation(s string) bool {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Printf("%s [y/n]: ", s)
-		response, err := reader.ReadString('\n')
-		if err != nil {
-			log.Fatalln(err)
-		}
-		response = strings.ToLower(strings.TrimSpace(response))
-		if response == "y" || response == "yes" {
-			return true
-		} else if response == "n" || response == "no" {
-			return false
-		}
-	}
-}
-
-func Annotate(key, value string, cmds ...*cobra.Command) {
-	for _, cmd := range cmds {
-		if cmd.Annotations == nil {
-			cmd.Annotations = map[string]string{}
-		}
-		cmd.Annotations[key] = value
-	}
 }
