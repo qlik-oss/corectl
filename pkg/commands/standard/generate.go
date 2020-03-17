@@ -127,7 +127,7 @@ func CreateGenerateSpecCommand(version string) *cobra.Command {
 	}
 }
 
-func CreateGenarateDocsCommand() *cobra.Command {
+func CreateGenerateDocsCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:    "generate-docs",
 		Short:  "Generate markdown docs based on cobra commands",

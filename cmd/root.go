@@ -59,7 +59,6 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 	// Subcommands
 	subCommands := []*cobra.Command{
 		engine.CreateAppCommand(),
-		engine.CreateAppCommand(),
 		engine.CreateBookmarkCommand(),
 		engine.CreateConnectionCommand(),
 		engine.CreateDimensionCommand(),
@@ -83,7 +82,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 	rootCmd.AddCommand(otherCommands...)
 
 	// Hidden administrative commands
-	rootCmd.AddCommand(standard.CreateGenarateDocsCommand())
+	rootCmd.AddCommand(standard.CreateGenerateDocsCommand())
 	rootCmd.AddCommand(standard.CreateGenerateSpecCommand(version))
 
 	boot.InjectGlobalFlags(rootCmd, false)
