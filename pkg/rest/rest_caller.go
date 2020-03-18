@@ -174,7 +174,7 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	if log.Traffic {
 		t1 := time.Now()
 		interval := t1.Sub(t0)
-		log.Info("Time", interval)
+		log.Info("Time ", interval)
 	}
 	if err != nil {
 		return response, err
