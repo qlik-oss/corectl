@@ -23,7 +23,7 @@ func CreateInitCommand() *cobra.Command {
 		Long:  "Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			tenant, _ := cmd.Flags().GetString("domain")
+			tenant, _ := cmd.Flags().GetString("server")
 			apiKey, _ := cmd.Flags().GetString("api-key")
 			if len(args) == 1 {
 				setupContext(tenant, apiKey, args[0])
@@ -46,7 +46,6 @@ func CreateInitCommand() *cobra.Command {
 			fmt.Printf("Welcome %s, everything is now set up.\n", name)
 		},
 	}
-	cmd.Flags().String("domain", "", "URL to the QCS tenant")
 	cmd.Flags().String("api-key", "", "API key of the tenant")
 	return cmd
 }
@@ -65,8 +64,6 @@ func askForConfirmation(s string) bool {
 
 // setupContext sets up the configuration with tenant URL and API-key.
 func setupContext(tenant, apikey, explicitContextName string) {
-	contextHandler := dynconf.NewContextHandler()
-
 	if tenant == "" || apikey == "" {
 		fmt.Println("Acquiring access to Qlik Cloud Services or Qlik Sense Enterprise on Kubernetes")
 		fmt.Println("To complete the setup you have to have the 'developer' role and have")
@@ -90,7 +87,7 @@ func setupContext(tenant, apikey, explicitContextName string) {
 
 	if apikey == "" {
 
-		fmt.Printf("To generate a new API-key, go to %s/settings/api-keys\n", tenant)
+		fmt.Printf("To generate a new API-key, go to %s/settings/api-keys\n", tenantUrl)
 		fmt.Print("API-key: ")
 		keyBytes, err := terminal.ReadPassword(syscall.Stdin)
 		fmt.Println()
@@ -102,12 +99,11 @@ func setupContext(tenant, apikey, explicitContextName string) {
 	}
 	contextName := contextName(explicitContextName, tenantUrl)
 
-	contextHandler.Contexts[contextName] = dynconf.Context{
+	dynconf.CreateContext(contextName, map[string]interface{}{
 		"server":  tenantUrl,
 		"headers": map[string]string{"Authorization": "Bearer " + apikey},
-	}
-	contextHandler.Current = contextName
-	contextHandler.Save()
+	})
+	dynconf.UseContext(contextName)
 }
 
 func parseTenantURL(rawURL string) (string, error) {
