@@ -6,11 +6,9 @@ import (
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
 	"net/url"
 	"os"
 	"strings"
-	"syscall"
 )
 
 // createInitCommand creates a command used for configuring access to
@@ -89,13 +87,9 @@ func setupContext(tenant, apikey, explicitContextName string) {
 
 		fmt.Printf("To generate a new API-key, go to %s/settings/api-keys\n", tenantUrl)
 		fmt.Print("API-key: ")
-		keyBytes, err := terminal.ReadPassword(syscall.Stdin)
-		fmt.Println()
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "failed to read API-key from input:", err)
-			os.Exit(1)
-		}
-		apikey = strings.TrimSpace(string(keyBytes))
+		reader := bufio.NewReader(os.Stdin)
+		apikey, _ = reader.ReadString('\n')
+		apikey = strings.TrimSpace(apikey)
 	}
 	contextName := contextName(explicitContextName, tenantUrl)
 
