@@ -14,7 +14,6 @@ corectl context init <context name> [flags]
 
 ```
       --api-key string   API key of the tenant
-      --domain string    URL to the QCS tenant
   -h, --help             help for init
 ```
 

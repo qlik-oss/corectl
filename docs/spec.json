@@ -244,9 +244,6 @@
           "flags": {
             "api-key": {
               "description": "API key of the tenant"
-            },
-            "domain": {
-              "description": "URL to the QCS tenant"
             }
           }
         },
