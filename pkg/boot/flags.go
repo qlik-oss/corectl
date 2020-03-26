@@ -27,9 +27,11 @@ func InjectGlobalFlags(command *cobra.Command, hideEngineSpecificFlags bool) {
 	globalFlags.String("certificates", "", "path/to/folder containing client.pem, client_key.pem and root.pem certificates")
 
 	// Set annotation to run bash completion function
-	globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
-	globalFlags.SetAnnotation("server", cobra.BashCompCustom, []string{"__corectl_get_local_engines"})
-	globalFlags.SetAnnotation("context", cobra.BashCompCustom, []string{"__corectl_get_contexts"})
+	if !hideEngineSpecificFlags {
+		globalFlags.SetAnnotation("app", cobra.BashCompCustom, []string{"__corectl_get_apps"})
+		globalFlags.SetAnnotation("server", cobra.BashCompCustom, []string{"__corectl_get_local_engines"})
+		globalFlags.SetAnnotation("context", cobra.BashCompCustom, []string{"__corectl_get_contexts"})
+	}
 
 	if runtime.GOOS != "windows" {
 		// Do not add bash completion annotations for paths and files as they are not compatible with windows. On windows
@@ -41,6 +43,7 @@ func InjectGlobalFlags(command *cobra.Command, hideEngineSpecificFlags bool) {
 		globalFlags.MarkHidden("no-data")
 		globalFlags.MarkHidden("insecure")
 		globalFlags.MarkHidden("ttl")
+		globalFlags.MarkHidden("app")
 	}
 	// Add all global flags to the set of valid config properties.
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
