@@ -106,7 +106,7 @@ func buildOtherKnownJsonErrorMessages(data []byte) string {
 	return message
 }
 
-func buildNonJsonMessage(_ *http.Response, data []byte) string {
+func buildNonJsonMessage(data []byte) string {
 	return string(data)
 }
 
