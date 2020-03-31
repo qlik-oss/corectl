@@ -111,6 +111,8 @@ func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {
 		result, _ = flagset.GetInt(flag.Name)
 	case "bool":
 		result, _ = flagset.GetBool(flag.Name)
+	case "stringSlice":
+		result, _ = flagset.GetStringSlice(flag.Name)
 	case "stringToString":
 		result, _ = flagset.GetStringToString(flag.Name)
 	default:
