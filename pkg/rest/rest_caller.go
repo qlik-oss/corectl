@@ -48,6 +48,19 @@ type RestCaller struct {
 	RestCallerSettings
 }
 
+// Call builds and peforms the request defined by the parameters and parses the end result into the supplied result interface.
+// If the response status code is not 200 series an error will be returned.
+// The supplied http request may be modified and should not be reused.
+func (c *RestCaller) CallStd(method, path, contentType string, queryParams map[string]string, body io.ReadCloser, result interface{}) error {
+	url := c.CreateUrl(path, queryParams)
+	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
+	err = c.CallReq(req, result)
+	return err
+}
+
 // Call performs the specified request and parses the end result into the supplied result interface
 // If the response status code is not 200 series an error will be returned.
 // The supplied http request may be modified and should not be reused
@@ -104,6 +117,9 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 	}
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		return BuildErrorWithBody(res, data)
+	}
 	if err != nil {
 		return err
 	}
@@ -120,19 +136,6 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 			err = json.Unmarshal(data, result)
 		}
 	}
-	return err
-}
-
-// Call builds and peforms the request defined by the parameters and parses the end result into the supplied result interface.
-// If the response status code is not 200 series an error will be returned.
-// The supplied http request may be modified and should not be reused.
-func (c *RestCaller) CallStd(method, path, contentType string, queryParams map[string]string, body io.ReadCloser, result interface{}) error {
-	url := c.CreateUrl(path, queryParams)
-	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
-	if contentType != "" {
-		req.Header.Set("Content-Type", contentType)
-	}
-	err = c.CallReq(req, result)
 	return err
 }
 
@@ -178,9 +181,6 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	}
 	if err != nil {
 		return response, err
-	}
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		return nil, fmt.Errorf("got status %d", response.StatusCode)
 	}
 	return response, nil
 }
