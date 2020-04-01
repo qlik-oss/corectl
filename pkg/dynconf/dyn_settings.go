@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 )
 
@@ -77,8 +76,12 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 		contextParams = map[string]interface{}(context)
 	}
 
-	// Check for overlap in config and context
+	// Check for overlap in config and context.
 	for k := range contextParams {
+		// Headers from context will be merged with that of config, so no conflict.
+		if k == "headers" {
+			continue
+		}
 		if _, ok := configParams[k]; ok {
 			log.Warnf("Property '%s' exists in both current context and config, using property from config\n", k)
 		}
@@ -99,13 +102,13 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 	})
 
 	return &DynSettings{
-		contextName:        contextName,
-		configPath:         configPath,
-		configFilePath:     configFileName,
-		commandLineParams:  commandLineParams,
-		contextParams:      contextParams,
-		configParams:				configParams,
-		defaultParams:			defaultParams,
+		contextName:       contextName,
+		configPath:        configPath,
+		configFilePath:    configFileName,
+		commandLineParams: commandLineParams,
+		contextParams:     contextParams,
+		configParams:      configParams,
+		defaultParams:     defaultParams,
 	}
 }
 
@@ -136,13 +139,13 @@ func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {
 }
 
 type DynSettings struct {
-	contextName        string
-	configPath         string
-	configFilePath     string
-	commandLineParams  map[string]interface{}
-	configParams       map[string]interface{}
-	contextParams      map[string]interface{}
-	defaultParams      map[string]interface{}
+	contextName       string
+	configPath        string
+	configFilePath    string
+	commandLineParams map[string]interface{}
+	configParams      map[string]interface{}
+	contextParams     map[string]interface{}
+	defaultParams     map[string]interface{}
 }
 
 func (ds *DynSettings) OverrideSetting(name string, value interface{}) {
@@ -192,7 +195,7 @@ func (ds *DynSettings) GetInt(name string) int {
 	case int:
 		return value
 	default:
-		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected type of parameter %s: %T", name, value)
 		return 0
 	}
 }
@@ -232,7 +235,7 @@ func (ds *DynSettings) GetBool(name string) bool {
 			log.Fatalf("No such flag: %s", name)
 		}
 
-		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected type of parameter %s: %T", name, value)
 		return false
 	}
 }
@@ -266,7 +269,12 @@ func (ds *DynSettings) IsString(name string) bool {
 }
 
 func (ds *DynSettings) GetStringMap(name string) map[string]string {
-	switch value := ds.get(name).(type) {
+	value := ds.get(name)
+	return toStringMap(value)
+}
+
+func toStringMap(x interface{}) map[string]string {
+	switch value := x.(type) {
 	case map[string]string:
 		return value
 	case map[interface{}]interface{}:
@@ -283,7 +291,7 @@ func (ds *DynSettings) GetStringMap(name string) map[string]string {
 		if value == nil {
 			return nil
 		}
-		log.Fatalf("Unexpected format of map: %s", reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected format of map: %T", value)
 		return nil
 	}
 }
@@ -387,12 +395,12 @@ func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
 
 // GetHeaders merges the headers from the different parameter sources in order of precedence.
 // It also, converts the key to lower-case.
-func (ds *DynSettings) GetHeaders() http.Header { 
+func (ds *DynSettings) GetHeaders() http.Header {
 	result := http.Header{}
 	headers := make([]map[string]string, 3)
-	headers[0] = ds.GetStringMap("headers")
-	headers[1] = ds.GetStringMap("headers")
-	headers[2] = ds.GetStringMap("headers")
+	headers[0] = toStringMap(ds.commandLineParams["headers"])
+	headers[1] = toStringMap(ds.configParams["headers"])
+	headers[2] = toStringMap(ds.contextParams["headers"])
 	for _, header := range headers {
 		for k, v := range header {
 			if result.Get(k) == "" {
