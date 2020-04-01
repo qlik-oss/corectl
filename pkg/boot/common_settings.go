@@ -58,13 +58,8 @@ func (c *CommonSettings) Insecure() bool {
 }
 
 func (c *CommonSettings) Headers() http.Header {
-	headersMap := c.GetStringMap("headers")
+	headers := c.GetHeaders()
 
-	var headers http.Header
-	headers = make(http.Header, 1)
-	for key, value := range headersMap {
-		headers.Set(key, value)
-	}
 	//TODO headers.Set("User-Agent", fmt.Sprintf("corectl/%s (%s)", version, runtime.GOOS))
 	headers.Set("User-Agent", "corectl")
 	return headers

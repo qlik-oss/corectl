@@ -293,7 +293,13 @@ func (c Context) Headers() map[string]string {
 		if x, ok := h.(map[interface{}]interface{}); !ok {
 			log.Fatalln("context field 'headers' was not a map")
 		} else {
-			headers := convertToStringStringMap(x)
+			// Have to convert interface{} => interface{} to string => string somehow.
+			// ¯\_(ツ)_/¯
+			headers := map[string]string{}
+			for k, v := range x {
+				str := strings.ToLower(k.(string))
+				headers[str] = v.(string)
+			}
 			return headers
 		}
 	}
