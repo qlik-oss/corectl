@@ -69,7 +69,16 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 
 	commandFlagSet.Visit(func(flag *pflag.Flag) {
 		value := getFlagValue(commandFlagSet, flag)
-		(*allParams)[flag.Name] = value
+		if flag.Name == "headers" {
+			flagHeaders := convertToInterfaceMap(value)
+			if v, ok := (*allParams)[flag.Name]; ok {
+				headers := v.(map[interface{}]interface{})
+				mergeMap(flagHeaders, headers)
+			}
+			(*allParams)[flag.Name] = flagHeaders
+		} else {
+			(*allParams)[flag.Name] = value
+		}
 		(*commandLineParams)[flag.Name] = value
 	})
 
@@ -352,4 +361,26 @@ func (ds *DynSettings) GetTLSConfigFromPath(certificatesPath string) *tls.Config
 // Returns true if no value has been set in either the context, config file or command line for the supplied flag name
 func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
 	return ds.defaultValueIsUsed[name]
+}
+
+// mergeMap merges two maps. If key exists in both 'a' and 'b' value from 'a' will be used.
+func mergeMap(a, b map[interface{}]interface{}) {
+	for k, v := range b {
+		if _, ok := a[k]; !ok {
+			a[k] = v
+		}
+	}
+}
+
+// convertToInterfaceMap is convenience function that converts a string -> string to {} -> {} map.
+// If the argument passed is not a string -> string map the result will be nil.
+func convertToInterfaceMap(x interface{}) map[interface{}]interface{} {
+	if x, ok := x.(map[string]string); ok {
+		m := map[interface{}]interface{}{}
+		for k, v := range x {
+			m[k] = v
+		}
+		return m
+	}
+	return nil
 }
