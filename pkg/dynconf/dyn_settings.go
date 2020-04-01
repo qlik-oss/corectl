@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func ReadSettings(ccmd *cobra.Command) *DynSettings {
@@ -54,6 +55,9 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 		if err != nil {
 			log.Fatalf("invalid syntax in config file '%s': %s\n", configFileName, err)
 		}
+		if headers, ok := (*allParams)["headers"]; ok {
+			(*allParams)["headers"] = convertToStringStringMap(headers)
+		}
 	}
 
 	// Merge before validation and env substitution since it might not be needed due to context.
@@ -69,13 +73,15 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 
 	commandFlagSet.Visit(func(flag *pflag.Flag) {
 		value := getFlagValue(commandFlagSet, flag)
-		if flag.Name == "headers" {
-			flagHeaders := convertToInterfaceMap(value)
+		if flag.Name == "headers" { // This should probably be made more generic.
+			flagHeaders := value.(map[string]string)
 			if v, ok := (*allParams)[flag.Name]; ok {
-				headers := v.(map[interface{}]interface{})
-				mergeMap(flagHeaders, headers)
+				headers := convertToStringStringMap(v)
+				headers = mergeHeaders(flagHeaders, headers)
+				(*allParams)[flag.Name] = headers
+			} else {
+				(*allParams)[flag.Name] = flagHeaders
 			}
-			(*allParams)[flag.Name] = flagHeaders
 		} else {
 			(*allParams)[flag.Name] = value
 		}
@@ -363,24 +369,37 @@ func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
 	return ds.defaultValueIsUsed[name]
 }
 
-// mergeMap merges two maps. If key exists in both 'a' and 'b' value from 'a' will be used.
-func mergeMap(a, b map[interface{}]interface{}) {
+// mergeHeaders merges 'a' and 'b' into a one map.
+// If converts all keys to lower on merge.
+// NOTE: This means, since map order is random, multiple keys containing the same
+// letters (with different casing) will result in non-deterministic behaviour.
+func mergeHeaders(a, b map[string]string) map[string]string {
+	result := map[string]string{}
+	for k, v := range a {
+		key := strings.ToLower(k)
+		result[key] = v
+	}
 	for k, v := range b {
-		if _, ok := a[k]; !ok {
-			a[k] = v
+		key := strings.ToLower(k)
+		if _, ok := result[key]; !ok {
+			result[key] = v
 		}
 	}
+	return result
 }
 
-// convertToInterfaceMap is convenience function that converts a string -> string to {} -> {} map.
-// If the argument passed is not a string -> string map the result will be nil.
-func convertToInterfaceMap(x interface{}) map[interface{}]interface{} {
-	if x, ok := x.(map[string]string); ok {
-		m := map[interface{}]interface{}{}
-		for k, v := range x {
-			m[k] = v
-		}
+// convertToStringString converts the argument passed to a map[string]string
+// If the underlying type is map[interface{}]interface{} it is converted.
+// If it is a map[string]string, then the argument is returned as a map[string]string
+func convertToStringStringMap(x interface{}) map[string]string {
+	if m, ok := x.(map[string]string); ok {
 		return m
 	}
-	return nil
+	result := map[string]string{}
+	if m, ok := x.(map[interface{}]interface{}); ok {
+		for k, v := range m {
+			result[k.(string)] = v.(string)
+		}
+	}
+	return result
 }

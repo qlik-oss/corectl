@@ -191,15 +191,22 @@ func mergeContext(config *map[interface{}]interface{}, contextName string) {
 
 	for k, v := range context {
 		if _, ok := (*config)[k]; ok {
-			if k == "headers" {
-				cfgHeaders := (*config)[k].(map[interface{}]interface{})
-				ctxHeaders := v.(map[interface{}]interface{})
-				mergeMap(cfgHeaders, ctxHeaders)
+			if k == "headers" { // Handle headers separately.
+				continue
 			} else {
 				log.Warnf("Property '%s' exists in both current context and config, using property from config\n", k)
 			}
 		} else {
 			(*config)[k] = v
 		}
+	}
+
+	ctxHeaders := context.Headers()
+	if value, ok := (*config)["headers"]; ok {
+		cfgHeaders := convertToStringStringMap(value)
+		mergeHeaders(cfgHeaders, ctxHeaders)
+		(*config)["headers"] = cfgHeaders
+	} else {
+		(*config)["headers"] = ctxHeaders
 	}
 }
