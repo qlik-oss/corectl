@@ -297,8 +297,7 @@ func (c Context) Headers() map[string]string {
 			// ¯\_(ツ)_/¯
 			headers := map[string]string{}
 			for k, v := range x {
-				str := strings.ToLower(k.(string))
-				headers[str] = v.(string)
+				headers[k.(string)] = v.(string)
 			}
 			return headers
 		}
