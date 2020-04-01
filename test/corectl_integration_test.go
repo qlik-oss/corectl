@@ -316,6 +316,7 @@ func TestMergeHeaders(t *testing.T) {
 	p.ExpectOK().Run("status")
 	p.ExpectError().Run("--headers", "authorization=Bearer lol", "status")
 	p.ExpectError().Run("--headers", "Authorization=Bearer lol", "status")
+	p.ExpectOK().Run("--headers", "Accept=encoding/json", "status")
 	p.ExpectOK().Run("--headers", "authorization=Bearer lol", "context", "create", t.Name())
 	p.ExpectOK().Run("context", "use", t.Name())
 	p.ExpectOK().Run("status")
