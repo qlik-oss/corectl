@@ -93,9 +93,12 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 		commandLineParams[flag.Name] = value
 	})
 
-	// Read default values
+	// Read default values only if not set in any other parameter source.
 	commandFlagSet.VisitAll(func(flag *pflag.Flag) {
-		if _, ok := commandLineParams[flag.Name]; !ok {
+		_, fromCmd := commandLineParams[flag.Name]
+		_, fromCfg := configParams[flag.Name]
+		_, fromCtx := contextParams[flag.Name]
+		if !(fromCmd || fromCfg || fromCtx) {
 			value := getFlagValue(commandFlagSet, flag)
 			defaultParams[flag.Name] = value
 		}
@@ -387,7 +390,8 @@ func (ds *DynSettings) GetTLSConfigFromPath(certificatesPath string) *tls.Config
 
 }
 
-// Returns true if no value has been set in either the context, config file or command line for the supplied flag name
+// Returns true if no value has been set in either the context,
+// config file or command line for the supplied flag name
 func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
 	_, ok := ds.defaultParams[name]
 	return ok
