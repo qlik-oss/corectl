@@ -173,27 +173,3 @@ func validateProps(config map[interface{}]interface{}, configPath string) {
 		log.Fatalln(strings.Join(errorMessage, "\n"))
 	}
 }
-
-func mergeContext(config *map[interface{}]interface{}, contextName string) {
-	contextHandler := NewContextHandler()
-
-	if contextName == "" {
-		contextName = contextHandler.Current
-	}
-
-	context := contextHandler.Get(contextName)
-
-	if context == nil {
-		return
-	}
-
-	log.Verboseln("Merging config with context: " + contextName)
-
-	for k, v := range context {
-		if _, ok := (*config)[k]; ok {
-			log.Warnf("Property '%s' exists in both current context and config, using property from config\n", k)
-		} else {
-			(*config)[k] = v
-		}
-	}
-}

@@ -35,7 +35,7 @@ type Context map[string]interface{}
 
 const ContextDir = ".qlik"
 
-var contextFilePath = path.Join(userHomeDir(), ContextDir, "contexts.yml")
+var ContextFilePath = path.Join(userHomeDir(), ContextDir, "contexts.yml")
 
 // CreateContext creates a new context with the specified name and data.
 func CreateContext(contextName string, data map[string]interface{}) {
@@ -163,10 +163,10 @@ func LoginContext(tlsClientConfig *tls.Config, contextName string, userName stri
 // NewContextHandler helps with handeling contexts
 func NewContextHandler() *ContextHandler {
 	handler := &ContextHandler{}
-	if !fileExists(contextFilePath) {
+	if !fileExists(ContextFilePath) {
 		return handler
 	}
-	yamlFile, err := ioutil.ReadFile(contextFilePath)
+	yamlFile, err := ioutil.ReadFile(ContextFilePath)
 	if err != nil {
 		return handler
 	}
@@ -255,8 +255,8 @@ func (ch *ContextHandler) Remove(contextName string) (string, bool) {
 func (ch *ContextHandler) Save() {
 	out, _ := yaml.Marshal(*ch)
 
-	if err := ioutil.WriteFile(contextFilePath, out, 0644); err != nil {
-		log.Fatalf("could not write to '%s': %s\n", contextFilePath, err)
+	if err := ioutil.WriteFile(ContextFilePath, out, 0644); err != nil {
+		log.Fatalf("could not write to '%s': %s\n", ContextFilePath, err)
 	}
 }
 
@@ -325,7 +325,7 @@ func fileExists(path string) bool {
 
 // Create a contexts.yml if one does not exist
 func createContextFileIfNotExist() {
-	if !fileExists(contextFilePath) {
+	if !fileExists(ContextFilePath) {
 
 		// Create context folder in home directory
 		if _, err := os.Stat(path.Join(userHomeDir(), ContextDir)); os.IsNotExist(err) {
@@ -336,9 +336,9 @@ func createContextFileIfNotExist() {
 		}
 
 		// Create contexts.yml in context folder
-		_, err := os.Create(contextFilePath)
+		_, err := os.Create(ContextFilePath)
 		if err != nil {
-			log.Fatalf("could not create %s: %s\n", contextFilePath, err)
+			log.Fatalf("could not create %s: %s\n", ContextFilePath, err)
 		}
 
 		log.Verbosef("Created ~/%s/contexts.yml for storage of corectl contexts", ContextDir)

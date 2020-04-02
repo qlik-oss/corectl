@@ -27,6 +27,10 @@ test: start-deps
 	go test ./... -tags=integration -count=1 -race
 	docker-compose -f test/docker-compose.yml down
 
+test-fast: start-deps
+	go test ./... -tags=integration -count=1 -failfast
+	docker-compose -f test/docker-compose.yml down
+
 c.out:
 	./coverage.sh
 

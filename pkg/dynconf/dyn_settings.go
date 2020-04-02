@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 )
 
@@ -36,10 +36,12 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 	var configPath string
 	// Using {} -> {} map to allow the recursive function subEnvVars to be less complex
 	// However, this make validateProps a tiny bit more complex
-	var allParams = &map[interface{}]interface{}{}
-	var commandLineParams = &map[interface{}]interface{}{}
-	var defaultValueIsUsed = &map[interface{}]bool{}
+	var commandLineParams = map[string]interface{}{}
+	var configParams = map[string]interface{}{}
+	var contextParams = map[string]interface{}{}
+	var defaultParams = map[string]interface{}{}
 
+	// Read config file if specified.
 	if configFileName == "" {
 		configFileName = findConfigFile("corectl")
 	}
@@ -50,46 +52,66 @@ func readSettings(commandFlagSet *pflag.FlagSet, withContext bool) *DynSettings 
 		if err != nil {
 			log.Fatalf("could not find config file '%s'\n", configFileName)
 		}
-		err = yaml.Unmarshal(source, allParams)
+		tempConfig := &map[interface{}]interface{}{}
+		err = yaml.Unmarshal(source, tempConfig)
 		if err != nil {
+			log.Fatalf("invalid syntax in config file '%s': %s\n", configFileName, err)
+		}
+		validateProps(*tempConfig, configFileName)
+		if err = subEnvVars(tempConfig); err != nil {
+			log.Fatalf("bad substitution in '%s': %s\n", configFileName, err)
+		}
+		if configParams, err = convertMap(*tempConfig); err != nil {
 			log.Fatalf("invalid syntax in config file '%s': %s\n", configFileName, err)
 		}
 	}
 
-	// Merge before validation and env substitution since it might not be needed due to context.
+	// Read context, if it should be included.
 	if withContext {
-		mergeContext(allParams, contextName)
+		contextHandler := NewContextHandler()
+		if contextName == "" {
+			contextName = contextHandler.Current
+		}
+		context := contextHandler.Get(contextName)
+		contextParams = map[string]interface{}(context)
 	}
 
-	validateProps(*allParams, configFileName)
-	err = subEnvVars(allParams)
-	if err != nil {
-		log.Fatalf("bad substitution in '%s': %s\n", configFileName, err)
+	// Check for overlap in config and context.
+	for k := range contextParams {
+		// Headers from context will be merged with that of config, so no conflict.
+		if k == "headers" {
+			continue
+		}
+		if _, ok := configParams[k]; ok {
+			log.Warnf("Property '%s' exists in both current context and config, using property from config\n", k)
+		}
 	}
 
+	// Read command-line parameters
 	commandFlagSet.Visit(func(flag *pflag.Flag) {
 		value := getFlagValue(commandFlagSet, flag)
-		(*allParams)[flag.Name] = value
-		(*commandLineParams)[flag.Name] = value
+		commandLineParams[flag.Name] = value
 	})
 
+	// Read default values only if not set in any other parameter source.
 	commandFlagSet.VisitAll(func(flag *pflag.Flag) {
-		if (*allParams)[flag.Name] == nil {
+		_, fromCmd := commandLineParams[flag.Name]
+		_, fromCfg := configParams[flag.Name]
+		_, fromCtx := contextParams[flag.Name]
+		if !(fromCmd || fromCfg || fromCtx) {
 			value := getFlagValue(commandFlagSet, flag)
-			(*allParams)[flag.Name] = value
-			(*defaultValueIsUsed)[flag.Name] = true
-		} else {
-			(*defaultValueIsUsed)[flag.Name] = false
+			defaultParams[flag.Name] = value
 		}
 	})
 
 	return &DynSettings{
-		contextName:        contextName,
-		configPath:         configPath,
-		configFilePath:     configFileName,
-		allParams:          *allParams,
-		commandLineParams:  *commandLineParams,
-		defaultValueIsUsed: *defaultValueIsUsed,
+		contextName:       contextName,
+		configPath:        configPath,
+		configFilePath:    configFileName,
+		commandLineParams: commandLineParams,
+		contextParams:     contextParams,
+		configParams:      configParams,
+		defaultParams:     defaultParams,
 	}
 }
 
@@ -122,37 +144,53 @@ func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {
 }
 
 type DynSettings struct {
-	contextName        string
-	configPath         string
-	configFilePath     string
-	allParams          map[interface{}]interface{}
-	commandLineParams  map[interface{}]interface{}
-	defaultValueIsUsed map[interface{}]bool
+	contextName       string
+	configPath        string
+	configFilePath    string
+	commandLineParams map[string]interface{}
+	configParams      map[string]interface{}
+	contextParams     map[string]interface{}
+	defaultParams     map[string]interface{}
 }
 
 func (ds *DynSettings) OverrideSetting(name string, value interface{}) {
-	ds.allParams[name] = value
+	ds.commandLineParams[name] = value
 }
+
 func (ds *DynSettings) ConfigPath() string {
 	return ds.configPath
 }
+
 func (ds *DynSettings) ConfigFilePath() string {
 	return ds.configFilePath
 }
 
+func (ds *DynSettings) get(name string) interface{} {
+	if val, ok := ds.commandLineParams[name]; ok {
+		return val
+	}
+	if val, ok := ds.configParams[name]; ok {
+		return val
+	}
+	if val, ok := ds.contextParams[name]; ok {
+		return val
+	}
+	return ds.defaultParams[name]
+}
+
 func (ds *DynSettings) GetString(name string) string {
-	switch filevalue := ds.allParams[name].(type) {
+	switch value := ds.get(name).(type) {
 	case string:
-		return filevalue
+		return value
 	case int:
-		return strconv.Itoa(filevalue)
+		return strconv.Itoa(value)
 	default:
 		log.Fatalf("Unexpected type of parameter: %s", name)
 		return ""
 	}
 }
 func (ds *DynSettings) GetInt(name string) int {
-	switch value := ds.allParams[name].(type) {
+	switch value := ds.get(name).(type) {
 	case string:
 		res, err := strconv.Atoi(value)
 		if err != nil {
@@ -162,13 +200,13 @@ func (ds *DynSettings) GetInt(name string) int {
 	case int:
 		return value
 	default:
-		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected type of parameter %s: %T", name, value)
 		return 0
 	}
 }
 
 func (ds *DynSettings) GetBoolAllowNoFlag(name string) bool {
-	switch value := ds.allParams[name].(type) {
+	switch value := ds.get(name).(type) {
 	case string:
 		res, err := strconv.ParseBool(value)
 		if err != nil {
@@ -182,7 +220,7 @@ func (ds *DynSettings) GetBoolAllowNoFlag(name string) bool {
 	}
 }
 func (ds *DynSettings) GetBool(name string) bool {
-	switch value := ds.allParams[name].(type) {
+	switch value := ds.get(name).(type) {
 	case string:
 		res, err := strconv.ParseBool(value)
 		if err != nil {
@@ -202,16 +240,18 @@ func (ds *DynSettings) GetBool(name string) bool {
 			log.Fatalf("No such flag: %s", name)
 		}
 
-		log.Fatalf("Unexpected type of parameter %s: %s", name, reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected type of parameter %s: %T", name, value)
 		return false
 	}
 }
 
 func (ds *DynSettings) IsDefinedOnCommandLine(name string) bool {
-	return ds.commandLineParams[name] != nil
+	_, ok := ds.commandLineParams[name]
+	return ok
 }
+
 func (ds *DynSettings) GetStringArray(name string) []string {
-	switch array := ds.allParams[name].(type) {
+	switch array := ds.get(name).(type) {
 	case []interface{}:
 		result := make([]string, len(array))
 		for i, v := range array {
@@ -229,16 +269,17 @@ func (ds *DynSettings) GetStringArray(name string) []string {
 }
 
 func (ds *DynSettings) IsString(name string) bool {
-	switch ds.allParams[name].(type) {
-	case string:
-		return true
-	default:
-		return false
-	}
+	_, ok := ds.get(name).(string)
+	return ok
 }
 
 func (ds *DynSettings) GetStringMap(name string) map[string]string {
-	switch value := ds.allParams[name].(type) {
+	value := ds.get(name)
+	return toStringMap(value)
+}
+
+func toStringMap(x interface{}) map[string]string {
+	switch value := x.(type) {
 	case map[string]string:
 		return value
 	case map[interface{}]interface{}:
@@ -255,7 +296,7 @@ func (ds *DynSettings) GetStringMap(name string) map[string]string {
 		if value == nil {
 			return nil
 		}
-		log.Fatalf("Unexpected format of map: %s", reflect.TypeOf(value).Name())
+		log.Fatalf("Unexpected format of map: %T", value)
 		return nil
 	}
 }
@@ -351,7 +392,27 @@ func (ds *DynSettings) GetTLSConfigFromPath(certificatesPath string) *tls.Config
 
 }
 
-// Returns true if no value has been set in either the context, config file or command line for the supplied flag name
+// Returns true if no value has been set in either the context,
+// config file or command line for the supplied flag name
 func (ds *DynSettings) IsUsingDefaultValue(name string) bool {
-	return ds.defaultValueIsUsed[name]
+	_, ok := ds.defaultParams[name]
+	return ok
+}
+
+// GetHeaders merges the headers from the different parameter sources in order of precedence.
+// It also, converts the key to lower-case.
+func (ds *DynSettings) GetHeaders() http.Header {
+	result := http.Header{}
+	headers := make([]map[string]string, 3)
+	headers[0] = toStringMap(ds.commandLineParams["headers"])
+	headers[1] = toStringMap(ds.configParams["headers"])
+	headers[2] = toStringMap(ds.contextParams["headers"])
+	for _, header := range headers {
+		for k, v := range header {
+			if result.Get(k) == "" {
+				result.Add(k, v)
+			}
+		}
+	}
+	return result
 }

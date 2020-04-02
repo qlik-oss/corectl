@@ -121,7 +121,7 @@ func TestLogBuffer(t *testing.T) {
 	p := toolkit.Params{T: t, Config: "test/projects/quiet/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
 	p.ExpectOK().Run("context", "create", t.Name())
 	p.ExpectOK().Run("context", "use", t.Name())
-	// The quiest flag should mute the warnings
+	// The quiet flag should mute the warnings
 	p.ExpectEmptyOK().Run("app", "ls", "-q")
 	// We should have a warning saying something about context here
 	p.ExpectIncludes("context").Run("app", "ls")
@@ -309,6 +309,18 @@ func TestUsingJwt(t *testing.T) {
 	p2.ExpectErrorIncludes("headers", "authorization").Run("status")
 	p3.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
 	p4.ExpectOK().ExpectIncludes("Connected without app to").Run("status")
+}
+
+func TestMergeHeaders(t *testing.T) {
+	p := toolkit.Params{T: t, Server: *toolkit.EngineJwtIP, Config: "test/projects/using-jwts/corectl.yml"}
+	p.ExpectOK().Run("status")
+	p.ExpectError().Run("--headers", "authorization=Bearer lol", "status")
+	p.ExpectError().Run("--headers", "Authorization=Bearer lol", "status")
+	p.ExpectOK().Run("--headers", "Accept=encoding/json", "status")
+	p.ExpectOK().Run("--headers", "authorization=Bearer lol", "context", "create", t.Name())
+	p.ExpectOK().Run("context", "use", t.Name())
+	p.ExpectOK().Run("status")
+	p.ExpectOK().Run("context", "rm", t.Name())
 }
 
 func TestHelp(t *testing.T) {
