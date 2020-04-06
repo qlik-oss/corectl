@@ -11,10 +11,17 @@ import (
 )
 
 func NewCommunicator(ccmd *cobra.Command) *Communicator {
+	commonSettings := Boot(ccmd)
+	return &Communicator{CommonSettings: commonSettings}
+}
+
+// Boot reads all the configuration for a command and sets
+// the log verbosity for the logger.
+func Boot(ccmd *cobra.Command) *CommonSettings {
 	cfg := dynconf.ReadSettings(ccmd)
 	commonSettings := NewCommonSettings(cfg)
 	log.Init(commonSettings.PrintMode())
-	return &Communicator{CommonSettings: commonSettings}
+	return commonSettings
 }
 
 type Communicator struct {
