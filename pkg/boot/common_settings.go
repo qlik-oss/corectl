@@ -60,8 +60,9 @@ func (c *CommonSettings) Insecure() bool {
 func (c *CommonSettings) Headers() http.Header {
 	headers := c.GetHeaders()
 
-	//TODO headers.Set("User-Agent", fmt.Sprintf("corectl/%s (%s)", version, runtime.GOOS))
-	headers.Set("User-Agent", "corectl")
+	if agent := headers.Get("User-Agent"); agent == "" {
+		headers.Set("User-Agent", "corectl")
+	}
 	return headers
 }
 

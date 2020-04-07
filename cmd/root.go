@@ -20,6 +20,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 		Use:                    "corectl",
 		Short:                  "",
 		Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
+		Version:                version,
 		DisableAutoGenTag:      true,
 		BashCompletionFunction: bashCompletionFunc,
 
