@@ -421,7 +421,9 @@ func (ds *DynSettings) GetHeaders() http.Header {
 			}
 		}
 	}
-	result.Set("User-Agent", ds.GetUserAgent())
+	if agent := ds.GetUserAgent(); agent != "" {
+		result.Set("User-Agent", agent)
+	}
 	return result
 }
 
