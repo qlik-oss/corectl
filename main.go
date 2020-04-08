@@ -10,6 +10,5 @@ var commit = ""
 var branch = ""
 
 func main() {
-
 	cmd.Execute(version, branch, commit)
 }

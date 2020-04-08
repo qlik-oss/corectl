@@ -3,20 +3,24 @@ package dynconf
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strconv"
 
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"path/filepath"
-	"strconv"
 )
 
 func ReadSettings(ccmd *cobra.Command) *DynSettings {
 	result := readSettings(ccmd.Flags(), true)
+	root := ccmd.Root()
+	result.rootName = root.Use
+	result.version = root.Version
 	return result
 }
 func ReadSettingsWithoutContext(ccmd *cobra.Command) *DynSettings {
@@ -144,6 +148,9 @@ func getFlagValue(flagset *pflag.FlagSet, flag *pflag.Flag) interface{} {
 }
 
 type DynSettings struct {
+	rootName string
+	version  string
+
 	contextName       string
 	configPath        string
 	configFilePath    string
@@ -414,5 +421,24 @@ func (ds *DynSettings) GetHeaders() http.Header {
 			}
 		}
 	}
+	if agent := ds.GetUserAgent(); agent != "" {
+		result.Set("User-Agent", agent)
+	}
 	return result
+}
+
+// GetUserAgent returns a string representing the User-Agent, consisting of the root name
+// of the associated command, its version and the OS.
+// If no rootName is set, the returned value will be empty.
+func (ds *DynSettings) GetUserAgent() string {
+	var agent string
+	if ds.rootName == "" {
+		return ""
+	}
+	agent = ds.rootName
+	if ds.version != "" {
+		agent += "/" + ds.version
+	}
+	agent += " (" + runtime.GOOS + ")"
+	return agent
 }
