@@ -20,6 +20,7 @@ corectl context update rd-sense --server localhost:9076 --comment "R&D Qlik Sens
 ### Options
 
 ```
+      --api-key string   API-key to be used for QCS/QSEoK
       --comment string   Comment for the context
   -h, --help             help for update
 ```
