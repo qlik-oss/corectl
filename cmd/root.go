@@ -81,7 +81,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 	// Other
 	otherCommands := []*cobra.Command{
 		standard.CreateCompletionCommand("corectl"),
-		standard.CreateContextCommand(),
+		standard.CreateContextCommand("corectl"),
 		standard.CreateStatusCommand(),
 		standard.CreateVersionCommand(version, branch, commit),
 	}
