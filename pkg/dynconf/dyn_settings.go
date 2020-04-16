@@ -301,7 +301,7 @@ func toStringMap(x interface{}) map[string]string {
 		return result
 	default:
 		if value == nil {
-			return nil
+			return map[string]string{}
 		}
 		log.Fatalf("Unexpected format of map: %T", value)
 		return nil
@@ -412,8 +412,17 @@ func (ds *DynSettings) GetHeaders() http.Header {
 	result := http.Header{}
 	headers := make([]map[string]string, 3)
 	headers[0] = toStringMap(ds.commandLineParams["headers"])
+	if apiKey, ok := ds.commandLineParams["api-key"].(string); ok {
+		headers[0]["Authorization"] = "Bearer " + apiKey
+	}
 	headers[1] = toStringMap(ds.configParams["headers"])
+	if apiKey, ok := ds.configParams["api-key"].(string); ok {
+		headers[1]["Authorization"] = "Bearer " + apiKey
+	}
 	headers[2] = toStringMap(ds.contextParams["headers"])
+	if apiKey, ok := ds.contextParams["api-key"].(string); ok {
+		headers[2]["Authorization"] = "Bearer " + apiKey
+	}
 	for _, header := range headers {
 		for k, v := range header {
 			if result.Get(k) == "" {

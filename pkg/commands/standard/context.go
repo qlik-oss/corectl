@@ -55,7 +55,7 @@ The information stored will be server url, headers and certificates
 
 			dynconf.CreateContext(args[0], newSettings)
 		},
-	}, "comment")
+	}, "comment", "api-key")
 
 	var updateContextCmd = engine.WithLocalFlags(&cobra.Command{
 		Use:   "update <context name>",
@@ -69,16 +69,22 @@ The information stored will be server url, headers and certificates
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
-			//Check the validity of the certificates folder
+			// Check the validity of the certificates folder.
 			cfg := dynconf.ReadSettingsWithoutContext(ccmd)
 
-			headers := cfg.GetStringMap("headers")
+			headers := cfg.GetHeaders()
 			if len(headers) == 0 {
 				headers = nil
 			}
 
+			// Convert from http.Header to map[string]string
+			headerMap := map[string]string{}
+			for key := range headers {
+				headerMap[key] = headers.Get(key)
+			}
+
 			newSettings := map[string]interface{}{
-				"headers": headers,
+				"headers": headerMap,
 				"comment": cfg.GetString("comment"),
 			}
 
@@ -94,7 +100,7 @@ The information stored will be server url, headers and certificates
 
 			dynconf.UpdateContext(args[0], newSettings)
 		},
-	}, "comment")
+	}, "comment", "api-key")
 
 	var removeContextCmd = &cobra.Command{
 		Use:   "rm <context name>...",
