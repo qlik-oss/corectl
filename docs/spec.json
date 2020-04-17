@@ -234,6 +234,9 @@
         "create": {
           "description": "Create a context with the specified configuration\n\nThis command creates a context by using the supplied flags.\nThe information stored will be server url, headers and certificates\n(if present) along with comment and the context-name.",
           "flags": {
+            "api-key": {
+              "description": "API-key to be used for QCS/QSEoK"
+            },
             "comment": {
               "description": "Comment for the context"
             }
@@ -270,6 +273,9 @@
         "update": {
           "description": "Update a context with the specified configuration",
           "flags": {
+            "api-key": {
+              "description": "API-key to be used for QCS/QSEoK"
+            },
             "comment": {
               "description": "Comment for the context"
             }

@@ -1,6 +1,8 @@
 package standard
 
 import (
+	"fmt"
+
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/commands/engine"
 	"github.com/qlik-oss/corectl/pkg/commands/login"
@@ -9,7 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateContextCommand() *cobra.Command {
+func CreateContextCommand(binaryName string) *cobra.Command {
+	oneArgCompletion := contextCompletion(1)
+	manyArgCompletion := contextCompletion(-1)
+
 	var createContextCmd = engine.WithLocalFlags(&cobra.Command{
 		Use:   "create <context name>",
 		Args:  cobra.ExactArgs(1),
@@ -20,8 +25,8 @@ This command creates a context by using the supplied flags.
 The information stored will be server url, headers and certificates
 (if present) along with comment and the context-name.`,
 
-		Example: `corectl context create local-engine
-corectl context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`,
+		Example: fmt.Sprintf(`%[1]s context create local-engine
+%[1]s context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`, binaryName),
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
@@ -50,7 +55,7 @@ corectl context create rd-sense --server localhost:9076 --comment "R&D Qlik Sens
 
 			dynconf.CreateContext(args[0], newSettings)
 		},
-	}, "comment")
+	}, "comment", "api-key")
 
 	var updateContextCmd = engine.WithLocalFlags(&cobra.Command{
 		Use:   "update <context name>",
@@ -58,21 +63,28 @@ corectl context create rd-sense --server localhost:9076 --comment "R&D Qlik Sens
 		Short: "Update a context with the specified configuration",
 		Long:  "Update a context with the specified configuration",
 
-		Example: `corectl context update local-engine
-corectl context update rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`,
+		Example: fmt.Sprintf(`%[1]s context update local-engine
+%[1]s context update rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`, binaryName),
+		ValidArgsFunction: oneArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 
-			//Check the validity of the certificates folder
+			// Check the validity of the certificates folder.
 			cfg := dynconf.ReadSettingsWithoutContext(ccmd)
 
-			headers := cfg.GetStringMap("headers")
+			headers := cfg.GetHeaders()
 			if len(headers) == 0 {
 				headers = nil
 			}
 
+			// Convert from http.Header to map[string]string
+			headerMap := map[string]string{}
+			for key := range headers {
+				headerMap[key] = headers.Get(key)
+			}
+
 			newSettings := map[string]interface{}{
-				"headers": headers,
+				"headers": headerMap,
 				"comment": cfg.GetString("comment"),
 			}
 
@@ -88,15 +100,16 @@ corectl context update rd-sense --server localhost:9076 --comment "R&D Qlik Sens
 
 			dynconf.UpdateContext(args[0], newSettings)
 		},
-	}, "comment")
+	}, "comment", "api-key")
 
 	var removeContextCmd = &cobra.Command{
 		Use:   "rm <context name>...",
 		Args:  cobra.MinimumNArgs(1),
 		Short: "Remove one or more contexts",
 		Long:  "Remove one or more contexts",
-		Example: `corectl context rm local-engine
-corectl context rm ctx1 ctx2`,
+		Example: fmt.Sprintf(`%[1]s context rm local-engine
+%[1]s context rm ctx1 ctx2`, binaryName),
+		ValidArgsFunction: manyArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			var removedCurrent bool
@@ -117,8 +130,9 @@ corectl context rm ctx1 ctx2`,
 		Args:  cobra.RangeArgs(0, 1),
 		Short: "Get context, current context by default",
 		Long:  "Get context, current context by default",
-		Example: `corectl context get
-corectl context get local-engine`,
+		Example: fmt.Sprintf(`%[1]s context get
+%[1]s context get local-engine`, binaryName),
+		ValidArgsFunction: oneArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			handler := dynconf.NewContextHandler()
@@ -136,7 +150,7 @@ corectl context get local-engine`,
 		Args:    cobra.ExactArgs(0),
 		Short:   "List all contexts",
 		Long:    "List all contexts",
-		Example: "corectl context ls",
+		Example: binaryName + " context ls",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			handler := dynconf.NewContextHandler()
@@ -146,11 +160,12 @@ corectl context get local-engine`,
 	}
 
 	var useContextCmd = &cobra.Command{
-		Use:     "use <context-name>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Specify what context to use",
-		Long:    "Specify what context to use",
-		Example: "corectl context use local-engine",
+		Use:               "use <context-name>",
+		Args:              cobra.ExactArgs(1),
+		Short:             "Specify what context to use",
+		Long:              "Specify what context to use",
+		Example:           binaryName + " context use local-engine",
+		ValidArgsFunction: oneArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			name := dynconf.UseContext(args[0])
@@ -163,7 +178,7 @@ corectl context get local-engine`,
 		Args:    cobra.ExactArgs(0),
 		Short:   "Set the current context to none",
 		Long:    "Set the current context to none",
-		Example: "corectl context clear",
+		Example: binaryName + " context clear",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			previous := dynconf.ClearContext()
@@ -181,8 +196,9 @@ corectl context get local-engine`,
 
 This is only applicable when connecting to 'Qlik Sense Enterprise for Windows' through its proxy using HTTPS.
 If no 'context-name' is used as argument the 'current-context' defined in the config will be used instead.`,
-		Example: `corectl context login
-corectl context login context-name`,
+		Example: fmt.Sprintf(`%[1]s context login
+%[1]s context login context-name`, binaryName),
+		ValidArgsFunction: oneArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			contextName := ""
@@ -226,4 +242,27 @@ Contexts are stored locally in your ~/` + dynconf.ContextDir + `/contexts.yml fi
 		clearContextCmd, loginContextCmd, login.CreateInitCommand())
 
 	return contextCmd
+}
+
+type Completion func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective)
+
+func contextCompletion(n int) Completion {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		if n > 0 && n <= len(args) {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+		handler := dynconf.NewContextHandler()
+		for _, arg := range args {
+			if _, ok := handler.Contexts[arg]; ok {
+				delete(handler.Contexts, arg)
+			}
+		}
+		contexts := make([]string, len(handler.Contexts))
+		i := 0
+		for context := range handler.Contexts {
+			contexts[i] = context
+			i++
+		}
+		return contexts, cobra.ShellCompDirectiveNoFileComp
+	}
 }

@@ -46,7 +46,7 @@ func createCommandTree() *cobra.Command {
 	rootCommand.AddCommand(standard.CreateCompletionCommand(rootName))
 	rootCommand.AddCommand(standard.CreateGenerateSpecCommand(rootName))
 	rootCommand.AddCommand(standard.CreateGenerateDocsCommand())
-	rootCommand.AddCommand(standard.CreateContextCommand())
+	rootCommand.AddCommand(standard.CreateContextCommand(rootName))
 	rootCommand.AddCommand(standard.CreateStatusCommand())
 
 	boot.InjectGlobalFlags(rootCommand, false)

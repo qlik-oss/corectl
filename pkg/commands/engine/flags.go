@@ -33,7 +33,6 @@ func WithLocalFlags(ccmd *cobra.Command, localFlagNames ...string) *cobra.Comman
 }
 
 func initLocalFlags() {
-	//bound to viper
 	localFlags.Bool("no-save", false, "Do not save the app")
 	localFlags.Bool("silent", false, "Do not log reload output")
 	localFlags.Int("limit", 0, "Limit the number of rows to load")
@@ -46,9 +45,9 @@ func initLocalFlags() {
 	localFlags.BoolP("quiet", "q", false, "Only print IDs. Useful for scripting")
 	localFlags.String("user", "", "Username to be used when logging in to Qlik Sense Enterprise")
 	localFlags.String("password", "", "Password to be used when logging in to Qlik Sense Enterprise (use with caution)")
+	localFlags.String("api-key", "", "API-key to be used for QCS/QSEoK")
 
-	// not bound to viper
-	// Don't bind these to viper since paths are treated separately to support relative paths!
+	// Paths
 	localFlags.String("connections", "", "Path to a yml file containing the data connection definitions")
 	localFlags.String("dimensions", "", "A list of generic dimension json paths")
 	localFlags.String("variables", "", "A list of generic variable json paths")
