@@ -207,6 +207,15 @@ func logHeader(header http.Header, prefix string) {
 	}
 	sort.Strings(keys)
 	for _, key := range keys {
-		log.Verbosef("%s%s: %s", prefix, key, strings.Join(header[key], " "))
+		if key == "Authorization" {
+			value := header.Get(key)
+			if strings.HasPrefix("Bearer ", value) {
+				log.Verbosef("%s%s: %s", prefix, key, "Bearer **omitted**")
+			} else {
+				log.Verbosef("%s%s: %s", prefix, key, value)
+			}
+		} else {
+			log.Verbosef("%s%s: %s", prefix, key, header.Get(key))
+		}
 	}
 }
