@@ -44,6 +44,7 @@ func InjectGlobalFlags(command *cobra.Command, hideEngineSpecificFlags bool) {
 		globalFlags.MarkHidden("insecure")
 		globalFlags.MarkHidden("ttl")
 		globalFlags.MarkHidden("app")
+		globalFlags.MarkHidden("traffic")
 	}
 	// Add all global flags to the set of valid config properties.
 	globalFlags.VisitAll(func(flag *pflag.Flag) {
