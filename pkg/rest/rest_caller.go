@@ -183,8 +183,11 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	t1 := time.Now()
 
 	if buf != nil {
-		log.Verbose("PAYLOAD:")
-		log.Verbose(log.FormatAsJSON(buf.Bytes()))
+		str := log.FormatAsJSON(buf.Bytes())
+		if str != "" {
+			log.Verbose("PAYLOAD:")
+			log.Verbose(str)
+		}
 	}
 	if c.PrintMode().VerboseMode() {
 		logHeader(response.Header, "< ")
