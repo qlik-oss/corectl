@@ -212,7 +212,7 @@ func logHeader(header http.Header, prefix string) {
 	for _, key := range keys {
 		if key == "Authorization" {
 			value := header.Get(key)
-			if strings.HasPrefix("Bearer ", value) {
+			if strings.HasPrefix(value, "Bearer") {
 				log.Verbosef("%s%s: %s", prefix, key, "Bearer **omitted**")
 			} else {
 				log.Verbosef("%s%s: %s", prefix, key, value)
