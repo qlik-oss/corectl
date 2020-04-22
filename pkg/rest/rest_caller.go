@@ -10,6 +10,7 @@ import (
 	"net/http"
 	neturl "net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -24,6 +25,7 @@ type loggableBody struct {
 func (lb *loggableBody) String() string {
 	return string(lb.content)
 }
+
 func (c *RestCaller) CreateLoggableJsonBody(data []byte) io.ReadCloser {
 	buffer := ioutil.NopCloser(bytes.NewBuffer(data))
 	res := loggableBody{
@@ -68,7 +70,7 @@ func (c *RestCaller) Call(method, path string, query map[string]string, body []b
 	url := c.CreateUrl(path, query).String()
 	var req *http.Request
 	var err error
-	if len(body) == 0 {
+	if l := len(body); l == 0 {
 		req, err = http.NewRequest(method, url, nil)
 	} else {
 		buf := bytes.NewBuffer(body)
@@ -158,29 +160,62 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	for key := range c.Headers() {
 		req.Header.Set(key, c.Headers().Get(key))
 	}
+	log.Verbosef("%s %s", req.Method, req.URL)
+	if c.PrintMode().VerboseMode() {
+		logHeader(req.Header, "> ")
+	}
 
-	var t0 time.Time
-	if log.Traffic {
-		fmt.Fprintln(os.Stderr, req.Method+": "+req.URL.String())
-
-		if req.Body != nil {
-			loggableBody, ok := req.Body.(loggableBody)
-			if ok {
-				log.Info(log.FormatAsJSON(loggableBody.content))
-
+	// TODO support logging more than only JSON?
+	var buf *bytes.Buffer
+	if req.Body != nil {
+		if c.PrintMode().VerboseMode() {
+			contentType := req.Header.Get("Content-Type")
+			if contentType == "" || contentType == "application/json" {
+				// Replace req.Body with a TeeReader which writes to buf on reads so we can log it.
+				buf = bytes.NewBuffer([]byte{})
+				req.Body = ioutil.NopCloser(io.TeeReader(req.Body, buf))
 			}
 		}
-		t0 = time.Now()
 	}
 
+	t0 := time.Now()
 	response, err := client.Do(req)
-	if log.Traffic {
-		t1 := time.Now()
-		interval := t1.Sub(t0)
-		log.Info("Time ", interval)
+	t1 := time.Now()
+
+	if buf != nil {
+		log.Verbose("PAYLOAD:")
+		log.Verbose(log.FormatAsJSON(buf.Bytes()))
 	}
+	if c.PrintMode().VerboseMode() {
+		logHeader(response.Header, "< ")
+	}
+
+	log.Verbose("Time ", t1.Sub(t0))
 	if err != nil {
 		return response, err
 	}
 	return response, nil
+}
+
+// logHeader logs a header (verbose) with the specified prefix.
+func logHeader(header http.Header, prefix string) {
+	keys := make([]string, len(header))
+	i := 0
+	for k := range header {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		if key == "Authorization" {
+			value := header.Get(key)
+			if strings.HasPrefix("Bearer ", value) {
+				log.Verbosef("%s%s: %s", prefix, key, "Bearer **omitted**")
+			} else {
+				log.Verbosef("%s%s: %s", prefix, key, value)
+			}
+		} else {
+			log.Verbosef("%s%s: %s", prefix, key, header.Get(key))
+		}
+	}
 }
