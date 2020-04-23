@@ -34,6 +34,10 @@ func (c *Communicator) RestCaller() *rest.RestCaller {
 
 func (c *Communicator) OpenAppSocket(createAppIfMissing bool) (context.Context, *enigma.Global, *enigma.Doc, *CommonSettings) {
 	if c.IsSenseForKubernetes() {
+		app := c.App()
+		if app == "" {
+			log.Fatal("No app specified")
+		}
 		c.ExplicitlyTranslatedAppId = c.RestCaller().TranslateAppNameToId(c.App())
 	}
 	global := GetGlobal(context.Background(), c.CommonSettings)

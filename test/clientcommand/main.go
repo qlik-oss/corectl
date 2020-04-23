@@ -50,6 +50,7 @@ func createCommandTree() *cobra.Command {
 	rootCommand.AddCommand(standard.CreateStatusCommand())
 
 	boot.InjectGlobalFlags(rootCommand, false)
+	boot.InjectAppWebSocketFlags(rootCommand, false)
 
 	patchRootCommandUsageTemplate(rootCommand)
 

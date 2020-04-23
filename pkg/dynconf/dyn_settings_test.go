@@ -49,6 +49,7 @@ func TestMain(m *testing.M) {
 	setupContext(dir)
 	setupConfig(dir)
 	boot.InjectGlobalFlags(cmd, false)
+	boot.InjectAppWebSocketFlags(cmd, false)
 	cmd.Execute() // Execute to parse the flag settings.
 	code := m.Run()
 	err := os.RemoveAll(dir)
