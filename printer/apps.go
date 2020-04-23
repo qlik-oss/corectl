@@ -45,18 +45,18 @@ func PrintAppsRest(data []byte, mode log.PrintMode) {
 		docList := result.Data
 		if mode.BashMode() {
 			for _, app := range docList {
-				PrintToBashComp(app.DocId)
+				PrintToBashComp(app.ResourceId)
 			}
 		} else if mode.QuietMode() {
 			for _, app := range docList {
-				PrintToBashComp(app.DocId)
+				PrintToBashComp(app.ResourceId)
 			}
 		} else {
 			writer := tablewriter.NewWriter(os.Stdout)
 			writer.SetAutoFormatHeaders(false)
 			writer.SetHeader([]string{"Id", "Name"})
 			for _, doc := range docList {
-				writer.Append([]string{doc.DocId, doc.DocName})
+				writer.Append([]string{doc.ResourceId, doc.Name})
 			}
 			writer.Render()
 		}

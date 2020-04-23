@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/qlik-oss/corectl/pkg/log"
 )
@@ -67,19 +68,93 @@ func (c *RestCaller) ListApps() ([]byte, error) {
 	return result, nil
 }
 
-func (c *RestCaller) TranslateAppNameToId(name string) string {
+// TranslateAppNameToId translates a user provided app identifier into a app resourceId that can be used to open a websocket
+// by checking against the items service if it is a resourceId, itemId or an app name
+func (c *RestCaller) TranslateAppNameToId(userProvidedAppIdentifier string) string {
+
+	var resourceIdBasedOnExplicitResourceId string
+	var resourceIdBasedOnItemId string
+	var resourceIdBasedOnName string
+
+	// Check if we get a match in any of the three app identifier "formats" in parallel to reduce latency
+	wg := sync.WaitGroup{}
+	wg.Add(3)
+	go func() {
+		resourceIdBasedOnExplicitResourceId = c.translateResourceIdToResourceId(userProvidedAppIdentifier)
+		wg.Done()
+	}()
+	go func() {
+		resourceIdBasedOnItemId = c.translateItemIdToResourceId(userProvidedAppIdentifier)
+		wg.Done()
+	}()
+	go func() {
+		resourceIdBasedOnName = c.translateAppNameToResourceId(userProvidedAppIdentifier)
+		wg.Done()
+	}()
+	wg.Wait()
+
+	if resourceIdBasedOnExplicitResourceId != "" {
+		return resourceIdBasedOnExplicitResourceId
+	}
+	if resourceIdBasedOnItemId != "" {
+		return resourceIdBasedOnItemId
+	}
+	if resourceIdBasedOnName != "" {
+		return resourceIdBasedOnName
+	}
+	log.Fatalf("No such app found: %s", userProvidedAppIdentifier)
+	return ""
+}
+
+func (c *RestCaller) translateItemIdToResourceId(potentialItemId string) string {
+	var result RestDocListItem
+	err := c.CallStd("GET", fmt.Sprintf("v1/items/%s", potentialItemId), "", nil, nil, &result)
+	if err != nil {
+		return ""
+	}
+	fmt.Println(result)
+	return result.ResourceId
+}
+
+func (c *RestCaller) translateResourceIdToResourceId(potentialItemId string) string {
 	var result ListAppResponse
-	err := c.CallStd("GET", "v1/items", "", map[string]string{"sort": "-updatedAt", "limit": "30", "query": name}, nil, &result)
+	err := c.CallStd("GET", "v1/items", "", map[string]string{"resourceId": potentialItemId, "resourceType": "app"}, nil, &result)
 	if err != nil {
 		return ""
 	}
 	docList := result.Data
-	for _, x := range docList {
-		if x.DocName == name {
-			return x.DocId
-		}
+	if len(docList) > 1 {
+		log.Fatalf("Too many apps matching the provided name: %s", potentialItemId)
+		return ""
+	}
+	if len(docList) == 1 {
+		return docList[0].ResourceId
 	}
 	return ""
+}
+func (c *RestCaller) translateAppNameToResourceId(potentialAppName string) string {
+	var result ListAppResponse
+	err := c.CallStd("GET", "v1/items", "", map[string]string{"sort": "-updatedAt", "limit": "30", "name": potentialAppName}, nil, &result)
+	if err != nil {
+		return ""
+	}
+	docList := result.Data
+	if len(docList) > 29 { // There are possibly even more hits than we have in the response
+		log.Fatalf("Too many apps matching the provided name: %s", potentialAppName)
+		return ""
+	}
+
+	candidate := ""
+	for _, x := range docList {
+		if x.Name == potentialAppName {
+			if candidate != "" {
+				log.Fatalf("There are multiple apps matching the provided name: %s", potentialAppName)
+				return ""
+			}
+			candidate = x.ResourceId
+		}
+	}
+	return candidate
 }
 
 type ListAppResponse struct {
@@ -87,6 +162,6 @@ type ListAppResponse struct {
 }
 
 type RestDocListItem struct {
-	DocName string `json:"name"`
-	DocId   string `json:"resourceID"`
+	Name       string `json:"name"`
+	ResourceId string `json:"resourceID"`
 }
