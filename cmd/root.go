@@ -93,6 +93,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 	rootCmd.AddCommand(standard.CreateGenerateSpecCommand(version))
 
 	boot.InjectGlobalFlags(rootCmd, false)
+	boot.InjectAppWebSocketFlags(rootCmd, false)
 
 	//initGlobalFlags(rootCmd.PersistentFlags())
 	patchRootCommandUsageTemplate(rootCmd)

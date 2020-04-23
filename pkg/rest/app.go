@@ -76,6 +76,10 @@ func (c *RestCaller) TranslateAppNameToId(userProvidedAppIdentifier string) stri
 	var resourceIdBasedOnItemId string
 	var resourceIdBasedOnName string
 
+	if userProvidedAppIdentifier == "" {
+		return ""
+	}
+
 	// Check if we get a match in any of the three app identifier "formats" in parallel to reduce latency
 	wg := sync.WaitGroup{}
 	wg.Add(3)
