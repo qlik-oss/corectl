@@ -3,6 +3,8 @@ package standard
 import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"testing"
 )
@@ -24,7 +26,7 @@ func TestGetJsonBodyFromFile(t *testing.T) {
 		{"", "", map[string]string{"key:bool": "true"}, "{\"key\":true}", "application/json"},
 		{"", "", map[string]string{"nested.key": "value"}, "{\"nested\":{\"key\":\"value\"}}", "application/json"},
 	} {
-		body, mineType, err := getBodyFromFlags(testcase.fileName, testcase.bodyString, testcase.params)
+		body, mineType, err := getBodyFromFlags(relativeToTestCase(testcase.fileName), testcase.bodyString, testcase.params)
 		bodyBytes, _ := ioutil.ReadAll(body)
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if testcase.expectedBody != "<skip assert>" {
@@ -36,16 +38,10 @@ func TestGetJsonBodyFromFile(t *testing.T) {
 	}
 }
 
-func TestGetQvfBodyFromFile(t *testing.T) {
-	body, mineType, err := getBodyFromFlags("raw_test_body.qvf", "", make(map[string]string))
-	assert.Equal(t, "<qvf content placeholder>", body)
-	assert.Equal(t, "binary/octet-stream", mineType)
-	assert.Nil(t, err)
-}
-
-func TestGetImageBodyFromFile(t *testing.T) {
-	body, mineType, err := getBodyFromFlags("raw_test_body.png", "", make(map[string]string))
-	assert.Equal(t, "wef", body)
-	assert.Equal(t, "image/png", mineType)
-	assert.Nil(t, err)
+func relativeToTestCase(fileName string) string {
+	if fileName == "" {
+		return ""
+	}
+	_, testCaseFilename, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(testCaseFilename), fileName)
 }
