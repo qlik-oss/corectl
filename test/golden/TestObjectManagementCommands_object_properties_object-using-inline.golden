@@ -65,7 +65,25 @@
           "qCond": {},
           "qMsg": {}
         },
-        "qTrendLines": []
+        "qTrendLines": [],
+        "qMiniChartDef": {
+          "qSortBy": {
+            "qExpression": {}
+          },
+          "qOtherTotalSpec": {
+            "qOtherMode": "OTHER_OFF",
+            "qOtherCounted": {},
+            "qOtherLimit": {},
+            "qOtherLimitMode": "OTHER_GT_LIMIT",
+            "qForceBadValueKeeping": true,
+            "qApplyEvenWhenPossiblyWrongResult": true,
+            "qOtherSortMode": "OTHER_SORT_DESCENDING",
+            "qTotalMode": "TOTAL_OFF",
+            "qReferencedExpression": {}
+          },
+          "qMaxNumberPoints": -1,
+          "qAttributeExpressions": []
+        }
       }
     ],
     "qInterColumnSortOrder": [],
