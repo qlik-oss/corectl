@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -217,4 +218,24 @@ func Appendln(s string) string {
 		s += "\n"
 	}
 	return s
+}
+
+// WriteToFile writes all the contents of an io.Reader to a new file at the
+// specified path.
+func WriteToFile(path string, body io.Reader) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	p := make([]byte, 256)
+	n, err := body.Read(p)
+	for err == nil {
+		fmt.Fprint(file, string(p[:n]))
+		p = make([]byte, 256)
+		n, err = body.Read(p)
+	}
+	if err != io.EOF {
+		return err
+	}
+	return nil
 }

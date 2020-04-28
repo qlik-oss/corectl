@@ -170,3 +170,7 @@ func (c *CommonSettings) NoData() bool {
 func (c *CommonSettings) NoSave() bool {
 	return c.GetBoolAllowNoFlag("no-save")
 }
+
+func (c *CommonSettings) OutputPath() string {
+	return c.GetString("output")
+}

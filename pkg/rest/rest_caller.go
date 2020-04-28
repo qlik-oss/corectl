@@ -44,6 +44,7 @@ type RestCallerSettings interface {
 	RestAdaptedAppId() string
 	PrintMode() log.PrintMode
 	IsSenseForKubernetes() bool
+	OutputPath() string
 }
 
 type RestCaller struct {
@@ -119,11 +120,24 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 	}
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return BuildErrorWithBody(res, data)
 	}
-	if err != nil {
-		return err
+
+	if res.StatusCode == 201 {
+		loc := res.Header.Get("Location")
+		if loc != "" {
+			data, err = c.FollowRedirect(loc)
+			if err != nil {
+				if _, ok := err.(*ErrorWithBody); ok {
+					return err
+				}
+				return fmt.Errorf("failed to follow redirect: %w", err)
+			}
+		}
 	}
 
 	if result != nil {
@@ -139,6 +153,42 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 		}
 	}
 	return err
+}
+
+func (c *RestCaller) FollowRedirect(path string) ([]byte, error) {
+	// The path is relative to the host here.
+	url := c.CreateUrl("", nil)
+	url.Path = path
+	req, err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	res, err := c.CallRaw(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	var data []byte
+	// TODO Figure out a better way of handling mime types in general!
+	if strings.Contains(res.Header.Get("Content-Type"), "octet-stream") {
+		filePath := c.OutputPath()
+		if filePath == "" {
+			return nil, fmt.Errorf("output path not specified")
+		}
+		err := log.WriteToFile(filePath, res.Body)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		data, err = ioutil.ReadAll(res.Body)
+		if res.StatusCode != 200 {
+			return nil, BuildErrorWithBody(res, data)
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	return data, nil
 }
 
 // Call performs the request and returns the response.
