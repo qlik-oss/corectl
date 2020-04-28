@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestGetJsonBodyFromFile(t *testing.T) {
+func TestGetJsonBodyFromFlags(t *testing.T) {
 	for i, testcase := range []struct {
 		fileName         string
 		bodyString       string
@@ -19,7 +19,7 @@ func TestGetJsonBodyFromFile(t *testing.T) {
 	}{
 		{"raw_test_body.json", "", nil, "{\"test\": \"yes it is\"}\n", "application/json"},
 		{"raw_test_body.qvf", "", nil, "<qvf content placeholder>\n", "binary/octet-stream"},
-		{"raw_test_body.png", "", nil, "<skip assert>", "image/png"},
+		{"raw_test_body-image.png", "", nil, "<skip assert>", "image/png"},
 		{"", "inline-body-string", nil, "inline-body-string", "text/plain"},
 		{"", "{\"test\": \"yes it is\"}", nil, "{\"test\": \"yes it is\"}", "application/json"},
 		{"", "", map[string]string{"key": "value"}, "{\"key\":\"value\"}", "application/json"},
