@@ -84,6 +84,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 		standard.CreateContextCommand("corectl"),
 		standard.CreateStatusCommand(),
 		standard.CreateVersionCommand(version, branch, commit),
+		standard.CreateRawCommand(),
 	}
 	Annotate("command_category", "other", otherCommands...)
 	rootCmd.AddCommand(otherCommands...)
@@ -91,7 +92,6 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 	// Hidden administrative commands
 	rootCmd.AddCommand(standard.CreateGenerateDocsCommand())
 	rootCmd.AddCommand(standard.CreateGenerateSpecCommand(version))
-
 	boot.InjectGlobalFlags(rootCmd, false)
 	boot.InjectAppWebSocketFlags(rootCmd, false)
 
