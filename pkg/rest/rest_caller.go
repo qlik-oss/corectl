@@ -210,9 +210,6 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	t0 := time.Now()
 	response, err := client.Do(req)
 	t1 := time.Now()
-	if err != nil {
-		return nil, err
-	}
 	if buf != nil {
 		str := log.FormatAsJSON(buf.Bytes())
 		if str != "" {
