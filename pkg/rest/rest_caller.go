@@ -141,6 +141,35 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 	return err
 }
 
+// CallRawAndFollowRedirect is a shorthand for wrapping the response of CallRaw within a call to FollowRedirect
+func (c *RestCaller) CallRawAndFollowRedirect(req *http.Request) (*http.Response, error) {
+	return c.FollowRedirect(c.CallRaw(req))
+}
+
+// FollowRedirect takes the output of a previous call to CallReq and makes another request IF the first one
+// contains a location header and has a statusCode of 201 or 301-307. The server of the RestBaseUrl is used
+// to build the actual url
+func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Response, error) {
+	if err != nil {
+		return nil, err
+	}
+	location := res.Header.Get("Location")
+
+	if location != "" && (res.StatusCode == 201 || 301 <= res.StatusCode && res.StatusCode <= 307) {
+		redirectUrl := c.RestBaseUrl()
+		redirectUrl.Path = location
+		if res.Body != nil {
+			res.Body.Close() //Close body of original response
+		}
+		req, err := http.NewRequest("GET", redirectUrl.String(), nil)
+		if err != nil {
+			return nil, err
+		}
+		return c.CallRaw(req)
+	}
+	return res, nil
+}
+
 // Call performs the request and returns the response.
 // Note that the body of the response must be closed.
 func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
@@ -181,7 +210,9 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	t0 := time.Now()
 	response, err := client.Do(req)
 	t1 := time.Now()
-
+	if err != nil {
+		return nil, err
+	}
 	if buf != nil {
 		str := log.FormatAsJSON(buf.Bytes())
 		if str != "" {

@@ -80,7 +80,10 @@ func makeRawApiCall(restCaller *rest.RestCaller, method string, url string, quer
 	fullUrl := restCaller.CreateUrl(url, queryParams)
 	req, err := http.NewRequest(method, fullUrl.String(), body)
 	req.Header.Add("Content-Type", mimeType)
-	res, err := restCaller.CallRaw(req)
+	res, err := restCaller.CallRawAndFollowRedirect(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer res.Body.Close()
 	io.Copy(out, res.Body)
 	return res, err
