@@ -189,14 +189,14 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			fmt.Println(output, err)
+			fmt.Fprintln(output, err)
 			return err
 		}
 		errorWithBody := BuildErrorWithBody(res, data)
 		if raw {
-			fmt.Println(output, string(errorWithBody.Body()))
+			fmt.Fprintln(output, string(errorWithBody.Body()))
 		} else {
-			fmt.Println(output, errorWithBody.Error())
+			fmt.Fprintln(output, errorWithBody.Error())
 		}
 		return err
 	}
@@ -205,7 +205,7 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		//We have got a json response
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			fmt.Println(output, err)
+			fmt.Fprintln(output, err)
 			return err
 		}
 		if quiet { //Only print IDs
@@ -312,8 +312,7 @@ func filterIdsOnly(bytes []byte) []byte {
 	var result map[string]interface{}
 	err := json.Unmarshal(bytes, &result)
 	if err != nil {
-		msg := err.Error()
-		fmt.Println(msg)
+		log.Warn(err)
 		return nil
 	}
 	var ids string

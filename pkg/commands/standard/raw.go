@@ -26,8 +26,8 @@ func CreateRawCommand() *cobra.Command {
 	command := &cobra.Command{
 		Use:     "raw <get/put/patch/post/delete> v1/url",
 		Example: "corectl raw get v1/items --query name=ImportantApp",
-		Short:   "Send Http API Request to Qlik Sense Cloud",
-		Long:    "Send Http API Request to Qlik Sense Cloud. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
+		Short:   "Send Http API Request to Qlik Sense Cloud editions",
+		Long:    "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
 		Args:    cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			comm := boot.NewCommunicator(cmd)
@@ -174,12 +174,15 @@ func buildBodyFromParams(params map[string]string) (io.ReadCloser, error) {
 
 //detectFileMimeType detects the content-type of the file by checking against various formats
 func detectFileMimeType(filePath string) string {
-	isJsonFile := strings.HasSuffix(strings.ToLower(filePath), ".json")
+	isJsonFile := hasFileType(filePath, ".json")
 	if isJsonFile {
 		return applicationJson
 	}
-	isQvfFile := strings.HasSuffix(strings.ToLower(filePath), ".qvf")
-	if isQvfFile {
+	isQvfFile := hasFileType(filePath, ".qvf")
+	isQvwFile := hasFileType(filePath, ".qvw")
+	isQvdFile := hasFileType(filePath, ".qvd")
+	isQvxFile := hasFileType(filePath, ".qvx")
+	if isQvfFile || isQvwFile || isQvdFile || isQvxFile {
 		return binaryOctetStream
 	}
 
@@ -215,6 +218,10 @@ func detectFileMimeType(filePath string) string {
 		return binaryOctetStream
 	}
 	return mimeType
+}
+
+func hasFileType(filePath string, suffix string) bool {
+	return strings.HasSuffix(strings.ToLower(filePath), suffix)
 }
 
 //detectStringMimeType returns either application/json or text/plain
