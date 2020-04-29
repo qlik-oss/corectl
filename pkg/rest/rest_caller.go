@@ -209,7 +209,7 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 			return err
 		}
 		if quiet { //Only print IDs
-			fmt.Fprint(output, filterIdsOnly(data))
+			fmt.Fprint(output, string(filterIdsOnly(data)))
 		} else if !raw { //Print data payload neatly formatted
 			fmt.Fprint(output, log.FormatAsJSON(filterOutputForPrint(data)))
 		} else { // Print it all
