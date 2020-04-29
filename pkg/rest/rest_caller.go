@@ -141,6 +141,87 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 	return err
 }
 
+// CallRawAndFollowRedirect is a shorthand for wrapping the response of CallRaw within a call to FollowRedirect
+func (c *RestCaller) CallRawAndFollowRedirect(req *http.Request) (*http.Response, error) {
+	return c.FollowRedirect(c.CallRaw(req))
+}
+
+// FollowRedirect takes the output of a previous call to CallReq and makes another request IF the first one
+// contains a location header and has a statusCode of 201 or 301-307. The server of the RestBaseUrl is used
+// to build the actual url
+func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Response, error) {
+	if err != nil {
+		return nil, err
+	}
+	location := res.Header.Get("Location")
+
+	if location != "" && (res.StatusCode == 201 || 301 <= res.StatusCode && res.StatusCode <= 307) {
+		redirectUrl := c.RestBaseUrl()
+		redirectUrl.Path = location
+		if res.Body != nil {
+			res.Body.Close() //Close body of original response
+		}
+		req, err := http.NewRequest("GET", redirectUrl.String(), nil)
+		if err != nil {
+			return nil, err
+		}
+		return c.CallRaw(req)
+	}
+	return res, nil
+}
+
+//CallStreaming makes a rest call, follows redirects if present and streams the output to the supplied output
+func (c *RestCaller) CallStreaming(method string, path string, query map[string]string, mimeType string, body io.ReadCloser, output io.Writer, raw bool, quiet bool) error {
+	// Create the request
+	url := c.CreateUrl(path, query)
+	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
+	req.Header.Set("Content-Type", mimeType)
+
+	//Make the actual invocation
+	res, err := c.CallRawAndFollowRedirect(req)
+	if err != nil {
+		fmt.Println(output, err)
+		return err
+	}
+	defer res.Body.Close()
+
+	//Something when wrong it seems
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		data, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Fprintln(output, err)
+			return err
+		}
+		errorWithBody := BuildErrorWithBody(res, data)
+		if raw {
+			fmt.Fprintln(output, string(errorWithBody.Body()))
+		} else {
+			fmt.Fprintln(output, errorWithBody.Error())
+		}
+		return err
+	}
+
+	if isJsonResponse(res) {
+		//We have got a json response
+		data, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Fprintln(output, err)
+			return err
+		}
+		if quiet { //Only print IDs
+			fmt.Fprint(output, string(filterIdsOnly(data)))
+		} else if !raw { //Print data payload neatly formatted
+			fmt.Fprint(output, log.FormatAsJSON(filterOutputForPrint(data)))
+		} else { // Print it all
+			fmt.Fprint(output, string(data))
+		}
+	} else {
+		//We have got something else as response, just stream it to the output
+		io.Copy(output, res.Body)
+	}
+	return nil
+}
+
 // Call performs the request and returns the response.
 // Note that the body of the response must be closed.
 func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
@@ -181,7 +262,6 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	t0 := time.Now()
 	response, err := client.Do(req)
 	t1 := time.Now()
-
 	if buf != nil {
 		str := log.FormatAsJSON(buf.Bytes())
 		if str != "" {
@@ -219,6 +299,66 @@ func logHeader(header http.Header, prefix string) {
 			}
 		} else {
 			log.Verbosef("%s%s: %s", prefix, key, header.Get(key))
+		}
+	}
+}
+
+func isJsonResponse(res *http.Response) bool {
+	contentType := res.Header.Get("Content-Type")
+	return strings.HasPrefix(contentType, "application/json")
+}
+
+func filterIdsOnly(bytes []byte) []byte {
+	var result map[string]interface{}
+	err := json.Unmarshal(bytes, &result)
+	if err != nil {
+		log.Warn(err)
+		return nil
+	}
+	var ids string
+	if data, ok := result["data"].([]interface{}); ok {
+		for _, obj := range data {
+			if m, ok := obj.(map[string]interface{}); ok {
+				ids += fmt.Sprint(m["id"]) + "\n"
+			}
+		}
+	} else if id, ok := result["id"].(string); ok {
+		ids += id + "\n"
+	}
+	return []byte(ids)
+}
+
+func filterOutputForPrint(bytes []byte) []byte {
+	var result map[string]interface{}
+	err := json.Unmarshal(bytes, &result)
+	if err != nil {
+		return bytes
+	}
+	data := result["data"]
+	if data != nil {
+		if dataArray, ok := data.([]interface{}); ok {
+			for _, item := range dataArray {
+				removeLinks(item)
+			}
+		} else if dataMap, ok := data.(map[string]interface{}); ok {
+			removeLinks(dataMap)
+		}
+		return marshal(data)
+	}
+	removeLinks(result)
+	return marshal(result)
+}
+
+func marshal(tree interface{}) []byte {
+	return []byte(log.FormatAsJSON(tree))
+}
+
+func removeLinks(resultRaw interface{}) {
+	if result, ok := resultRaw.(map[string]interface{}); ok {
+		if links, ok := result["links"].(map[string]interface{}); ok {
+			if links["self"] != nil || links["next"] != nil || links["prev"] != nil || links["Self"] != nil || links["Next"] != nil || links["Prev"] != nil {
+				delete(result, "links")
+			}
 		}
 	}
 }

@@ -34,6 +34,7 @@ Other Commands:
   completion    Generate auto completion scripts
   context       Create, update and use contexts
   help          Help about any command
+  raw           Send Http API Request to Qlik Sense Cloud editions
   status        Print status info about the connection to the engine and current app
   version       Print the version of corectl
 

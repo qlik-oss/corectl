@@ -8,6 +8,7 @@ main
 .snapcraft/
 *-unbuild/
 *.qvf
+!pkg/commands/standard/raw_test_body.qvf
 !test/projects/import/test.qvf
 dist/
 coverage.html

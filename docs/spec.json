@@ -463,6 +463,28 @@
         }
       }
     },
+    "raw": {
+      "description": "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
+      "flags": {
+        "body": {
+          "description": "The content of the body as a string"
+        },
+        "body-file": {
+          "description": "A file path pointing to a file containing the body of the http request"
+        },
+        "body-values": {
+          "description": "A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. The key suffixes :bool or :number can be appended to the key to inject the value into the json structure as boolean or number respectively.",
+          "default": "[]"
+        },
+        "output-file": {
+          "description": "A file path pointing to where the response body shoule be written"
+        },
+        "query": {
+          "description": "Query parameters specified as key=value pairs separated by comma",
+          "default": "[]"
+        }
+      }
+    },
     "reload": {
       "description": "Reload and save the app",
       "flags": {
