@@ -30,6 +30,7 @@ func TestGetJsonBodyFromFlags(t *testing.T) {
 		{"", "", map[string]string{"nested..": "value"}, "", "application/json", "invalid key format: nested.."},
 		{"", "", map[string]string{"nested..": "value"}, "", "application/json", "invalid key format: nested.."},
 		{"", "", map[string]string{":bool": "value"}, "", "application/json", "invalid key format: :bool"},
+		{"", "", map[string]string{"key:notatype": "123"}, "", "application/json", "invalid key format: key:notatype"},
 	} {
 		body, mineType, err := getBodyFromFlags(relativeToTestCase(testcase.fileName), testcase.bodyString, testcase.params)
 		var bodyBytes []byte

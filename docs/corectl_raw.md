@@ -21,7 +21,7 @@ corectl raw get v1/items --query name=ImportantApp
 ```
       --body string                  The content of the body as a string
       --body-file string             A file path pointing to a file containing the body of the http request
-      --body-values stringToString   A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. The key suffixes :bool or :int can be appended to the key to inject the value into the json structure as boolean or integer respectively. (default [])
+      --body-values stringToString   A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. The key suffixes :bool or :number can be appended to the key to inject the value into the json structure as boolean or number respectively. (default [])
   -h, --help                         help for raw
       --output-file string           A file path pointing to where the response body shoule be written
       --query stringToString         Query parameters specified as key=value pairs separated by comma (default [])

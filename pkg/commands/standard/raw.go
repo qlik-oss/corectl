@@ -66,7 +66,7 @@ func CreateRawCommand() *cobra.Command {
 	}
 	command.PersistentFlags().StringToStringP("query", "", nil, "Query parameters specified as key=value pairs separated by comma")
 	command.PersistentFlags().StringToStringP("body-values", "", nil, "A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. "+
-		"The key suffixes :bool or :int can be appended to the key to inject the value into the json structure as boolean or integer respectively.")
+		"The key suffixes :bool or :number can be appended to the key to inject the value into the json structure as boolean or number respectively.")
 	command.PersistentFlags().String("body", "", "The content of the body as a string")
 	command.PersistentFlags().String("body-file", "", "A file path pointing to a file containing the body of the http request")
 	command.PersistentFlags().String("output-file", "", "A file path pointing to where the response body shoule be written")
@@ -158,8 +158,10 @@ func buildBodyFromParams(params map[string]string) (io.ReadCloser, error) {
 				return nil, err
 			}
 			jsonNode[lastKey] = boolValue
-		default:
+		case "string":
 			jsonNode[lastKey] = value
+		default:
+			return nil, errors.New("invalid key format: " + key_)
 		}
 
 	}
