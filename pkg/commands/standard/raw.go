@@ -116,10 +116,18 @@ func buildBodyFromParams(params map[string]string) (io.ReadCloser, error) {
 		keyNameAndType := strings.Split(key_, ":")
 		key := keyNameAndType[0]
 		valueType := "string"
-		if len(keyNameAndType) > 1 {
+		if len(keyNameAndType) > 2 {
+			return nil, errors.New("invalid key format: " + key_)
+		}
+		if len(keyNameAndType) == 2 {
 			valueType = keyNameAndType[1]
 		}
 		keyParts := strings.Split(key, ".")
+		for _, part := range keyParts {
+			if part == "" {
+				return nil, errors.New("invalid key format: " + key_)
+			}
+		}
 		jsonNode := rootJSonNode
 		for i := 0; i < len(keyParts)-1; i++ {
 			keyPart := keyParts[i]
@@ -131,12 +139,19 @@ func buildBodyFromParams(params map[string]string) (io.ReadCloser, error) {
 		}
 		lastKey := keyParts[len(keyParts)-1]
 		switch valueType {
-		case "int", "integer":
-			intValue, err := strconv.Atoi(value)
-			if err != nil {
-				return nil, err
+		case "int", "integer", "number":
+			intValue, intErr := strconv.Atoi(value)
+			if intErr != nil {
+				floatValue, floatErr := strconv.ParseFloat(value, 64)
+				if floatErr != nil {
+					if floatErr != nil {
+						return nil, floatErr
+					}
+				}
+				jsonNode[lastKey] = floatValue
 			}
 			jsonNode[lastKey] = intValue
+
 		case "bool", "boolean":
 			boolValue, err := strconv.ParseBool(value)
 			if err != nil {
@@ -155,7 +170,7 @@ func buildBodyFromParams(params map[string]string) (io.ReadCloser, error) {
 	return ioutil.NopCloser(bytes.NewReader(jsonBytes)), nil
 }
 
-//detectFileMimeType detects the content-type of the file be checking against various formats
+//detectFileMimeType detects the content-type of the file by checking against various formats
 func detectFileMimeType(filePath string) string {
 	isJsonFile := strings.HasSuffix(strings.ToLower(filePath), ".json")
 	if isJsonFile {
