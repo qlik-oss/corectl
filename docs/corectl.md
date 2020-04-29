@@ -45,7 +45,7 @@ corectl [flags]
 * [corectl measure](corectl_measure.md)	 - Explore and manage measures
 * [corectl meta](corectl_meta.md)	 - Print tables, fields and associations
 * [corectl object](corectl_object.md)	 - Explore and manage generic objects
-* [corectl raw](corectl_raw.md)	 - Send Http API Request to Qlik Sense Cloud
+* [corectl raw](corectl_raw.md)	 - Send Http API Request to Qlik Sense Cloud editions
 * [corectl reload](corectl_reload.md)	 - Reload and save the app
 * [corectl script](corectl_script.md)	 - Explore and manage the script
 * [corectl state](corectl_state.md)	 - Explore and manage alternate states

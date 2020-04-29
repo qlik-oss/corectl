@@ -1,10 +1,10 @@
 ## corectl raw
 
-Send Http API Request to Qlik Sense Cloud
+Send Http API Request to Qlik Sense Cloud editions
 
 ### Synopsis
 
-Send Http API Request to Qlik Sense Cloud. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)
+Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)
 
 ```
 corectl raw <get/put/patch/post/delete> v1/url [flags]
