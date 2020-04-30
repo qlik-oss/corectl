@@ -57,6 +57,7 @@ func getContentType(res *http.Response) string {
 		log.Verbosef("Empty response body")
 		return ""
 	}
+	// Some non-EOF error occured, return "application/octet-stream" which is default.
 	if err != nil {
 		return "application/octet-stream"
 	}

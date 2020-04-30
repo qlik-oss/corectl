@@ -156,7 +156,12 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	// Create the request
 	url := c.CreateUrl(path, query)
 	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
-	req.Header.Set("Content-Type", mimeType)
+
+	// Don't set content-type if the passed MIMEtype is invalid.
+	// An empty body does not need to have content-type set.
+	if mimeType != "" {
+		req.Header.Set("Content-Type", mimeType)
+	}
 
 	//Make the actual invocation
 	res, err := c.CallRawAndFollowRedirect(req)
