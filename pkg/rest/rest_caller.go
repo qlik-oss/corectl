@@ -197,11 +197,11 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		} else { // Print it all
 			fmt.Fprint(output, string(data))
 		}
-	case "text/plain", "text/html":
-		// We've got some sort of text, safe to stream it to the output
+	case "", "text/plain", "text/html":
+		// We've got some sort of text or an empty body, safe to write it to the output.
 		io.Copy(output, res.Body)
 	default:
-		//We have got something else which we should probably not print to terminal
+		// We have got something else which we should probably not print to terminal.
 		if file, ok := output.(*os.File); ok {
 			fi, _ := file.Stat()
 			// If the file mode contains ModeCharDevice it means it's a terminal.

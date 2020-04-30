@@ -41,6 +41,9 @@ func logHeader(header http.Header, prefix string) {
 // use http.DetectContentType on the first 512 bytes (max) to determine
 // the content-type. The response body will not be consumed, but it's pointer
 // will change.
+//
+// If the body is empty the content-type won't be changed, meaning it will be
+// either empty ("") or whatever it was set to in the header.
 func getContentType(res *http.Response) string {
 	if typ := res.Header.Get("Content-Type"); typ != "" {
 		typ = strings.Split(typ, ";")[0] // Strip charset utf-8 and such meta-data
@@ -48,6 +51,12 @@ func getContentType(res *http.Response) string {
 	}
 	p := make([]byte, 512)
 	n, err := res.Body.Read(p)
+
+	// Empty body, return empty content-type "".
+	if err == io.EOF || n == 0 {
+		log.Verbosef("Empty response body")
+		return ""
+	}
 	if err != nil {
 		return "application/octet-stream"
 	}
