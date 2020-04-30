@@ -331,7 +331,8 @@ func getContentType(res *http.Response) string {
 	typ := http.DetectContentType(p)
 	log.Verbosef("Detected Content-Type: %q", typ)
 	buf := ioutil.NopCloser(bytes.NewBuffer(p))
-	// Paste the body back together with a io.MultiReader.
+	// Concatenate the body back together with a MultiReadCloser (as we want to be able to close
+	// the body).
 	res.Body = MultiReadCloser(buf, res.Body)
 	return typ
 }
@@ -341,6 +342,8 @@ type multiReadCloser struct {
 	closers []io.Closer
 }
 
+// MultiReadCloser creates an io.ReadCloser which works as an io.MultiReader with
+// the addition of being able to close all contained io.ReadClosers.
 func MultiReadCloser(readClosers ...io.ReadCloser) io.ReadCloser {
 	readers := make([]io.Reader, len(readClosers))
 	for i, readCloser := range readClosers {
