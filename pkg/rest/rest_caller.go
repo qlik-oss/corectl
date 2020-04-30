@@ -201,7 +201,8 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		return err
 	}
 
-	if isJsonResponse(res) {
+	switch contentType := getContentType(res); contentType {
+	case "application/json":
 		//We have got a json response
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
@@ -215,8 +216,21 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		} else { // Print it all
 			fmt.Fprint(output, string(data))
 		}
-	} else {
-		//We have got something else as response, just stream it to the output
+	case "text/plain", "text/html":
+		// We've got some sort of text, safe to stream it to the output
+		io.Copy(output, res.Body)
+	default:
+		//We have got something else which we should probably not print to terminal
+		if file, ok := output.(*os.File); ok {
+			fi, _ := file.Stat()
+			if fi.Mode()&os.ModeCharDevice == os.ModeCharDevice {
+				fmt.Fprintf(output, `Error: Content of type %q cannot be written directly to the terminal
+       as it may contain special characters which can mess with your terminal.
+       Specify an output location instead, either by flag or by piping the output to a file.
+`, contentType)
+				return fmt.Errorf("%q cannot be written directly to the terminal", contentType)
+			}
+		}
 		io.Copy(output, res.Body)
 	}
 	return nil
@@ -301,6 +315,58 @@ func logHeader(header http.Header, prefix string) {
 			log.Verbosef("%s%s: %s", prefix, key, header.Get(key))
 		}
 	}
+}
+
+func getContentType(res *http.Response) string {
+	if typ := res.Header.Get("Content-Type"); typ != "" {
+		typ = strings.Split(typ, ";")[0] // Strip charset utf-8 and such meta-data
+		return typ
+	}
+	p := make([]byte, 512)
+	n, err := res.Body.Read(p)
+	if err != nil {
+		return "application/octet-stream"
+	}
+	p = p[:n]
+	typ := http.DetectContentType(p)
+	log.Verbosef("Detected Content-Type: %q", typ)
+	buf := ioutil.NopCloser(bytes.NewBuffer(p))
+	// Concatenate the body back together with a MultiReadCloser (as we want to be able to close
+	// the body).
+	res.Body = MultiReadCloser(buf, res.Body)
+	return typ
+}
+
+type multiReadCloser struct {
+	io.Reader
+	closers []io.Closer
+}
+
+// MultiReadCloser creates an io.ReadCloser which works as an io.MultiReader with
+// the addition of being able to close all contained io.ReadClosers.
+func MultiReadCloser(readClosers ...io.ReadCloser) io.ReadCloser {
+	readers := make([]io.Reader, len(readClosers))
+	for i, readCloser := range readClosers {
+		readers[i] = readCloser
+	}
+	closers := make([]io.Closer, len(readClosers))
+	for i, readCloser := range readClosers {
+		closers[i] = readCloser
+	}
+	return &multiReadCloser{io.MultiReader(readers...), closers}
+}
+
+func (r *multiReadCloser) Close() error {
+	var errors []string
+	for i, closer := range r.closers {
+		if err := closer.Close(); err != nil {
+			errors = append(errors, fmt.Sprintf("(%d %T): %s", i, closer, err.Error()))
+		}
+	}
+	if len(errors) != 0 {
+		return fmt.Errorf("failed to close: %s", strings.Join(errors, ", "))
+	}
+	return nil
 }
 
 func isJsonResponse(res *http.Response) bool {

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/log"
-	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/spf13/cobra"
 	"io"
 	"io/ioutil"
@@ -61,7 +60,10 @@ func CreateRawCommand() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			makeRawApiCall(restCaller, method, url, queryParams, body, mimeType, out)
+			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, false)
+			if err != nil {
+				os.Exit(1)
+			}
 		},
 	}
 	command.PersistentFlags().StringToStringP("query", "", nil, "Query parameters specified as key=value pairs separated by comma")
@@ -71,22 +73,6 @@ func CreateRawCommand() *cobra.Command {
 	command.PersistentFlags().String("body-file", "", "A file path pointing to a file containing the body of the http request")
 	command.PersistentFlags().String("output-file", "", "A file path pointing to where the response body shoule be written")
 	return command
-}
-
-//makeRawApiCall makes the actual call and writes the output to the supplied io.Writer
-func makeRawApiCall(restCaller *rest.RestCaller, method string, url string, queryParams map[string]string, body io.ReadCloser, mimeType string, out io.Writer) (*http.Response, error) {
-	defer body.Close()
-	//Make the request
-	fullUrl := restCaller.CreateUrl(url, queryParams)
-	req, err := http.NewRequest(method, fullUrl.String(), body)
-	req.Header.Add("Content-Type", mimeType)
-	res, err := restCaller.CallRawAndFollowRedirect(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-	io.Copy(out, res.Body)
-	return res, err
 }
 
 // getBodyFromFlags returns a ReadCloser that represents the body regardless of the parameters used
