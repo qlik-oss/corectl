@@ -36,6 +36,11 @@ func logHeader(header http.Header, prefix string) {
 	}
 }
 
+// getContentType returns the content type of a response.
+// If the Content-Type field in the header is not set the function wil
+// use http.DetectContentType on the first 512 bytes (max) to determine
+// the content-type. The response body will not be consumed, but it's pointer
+// will change.
 func getContentType(res *http.Response) string {
 	if typ := res.Header.Get("Content-Type"); typ != "" {
 		typ = strings.Split(typ, ";")[0] // Strip charset utf-8 and such meta-data
@@ -56,6 +61,8 @@ func getContentType(res *http.Response) string {
 	return typ
 }
 
+// multiReadCloser wraps a MultiReader and implements its own Close function
+// which calls the Close function of its contained io.ReadClosers.
 type multiReadCloser struct {
 	io.Reader
 	closers []io.Closer
@@ -75,6 +82,8 @@ func MultiReadCloser(readClosers ...io.ReadCloser) io.ReadCloser {
 	return &multiReadCloser{io.MultiReader(readers...), closers}
 }
 
+// Close closes all underlying io.ReadClosers. It does not throw the first error
+// encountered but a concatenation of all errors (or nil).
 func (r *multiReadCloser) Close() error {
 	var errors []string
 	for i, closer := range r.closers {
@@ -88,11 +97,7 @@ func (r *multiReadCloser) Close() error {
 	return nil
 }
 
-func isJsonResponse(res *http.Response) bool {
-	contentType := res.Header.Get("Content-Type")
-	return strings.HasPrefix(contentType, "application/json")
-}
-
+// filterIdsOnly extracts all "id" fields and prints them.
 func filterIdsOnly(bytes []byte) []byte {
 	var result map[string]interface{}
 	err := json.Unmarshal(bytes, &result)
@@ -113,6 +118,8 @@ func filterIdsOnly(bytes []byte) []byte {
 	return []byte(ids)
 }
 
+// filterOutpuForPrint removes information not deemed of interest in a CLI context,
+// such as links.
 func filterOutputForPrint(bytes []byte) []byte {
 	var result map[string]interface{}
 	err := json.Unmarshal(bytes, &result)
