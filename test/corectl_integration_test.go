@@ -49,9 +49,10 @@ func TestReload(t *testing.T) {
 }
 
 func TestContextManagement(t *testing.T) {
+	// Set --app to "" as it is present in the abac config.
 	flags := [][]string{
 		{"--server", *toolkit.EngineJwtIP, "--config", "test/projects/using-jwts/corectl.yml"},
-		{"--server", *toolkit.EngineAbacIP, "--config", "test/projects/abac/corectl.yml"},
+		{"--server", *toolkit.EngineAbacIP, "--config", "test/projects/abac/corectl.yml", "--app", ""},
 	}
 	contexts := []string{t.Name() + "_JWT", t.Name() + "_ABAC"}
 	// Empty params, should default to localhost:9076 when there is no context

@@ -202,7 +202,7 @@ func getContextSettings(ccmd *cobra.Command) map[string]interface{} {
 
 			// Filter only flags that are present on the command.
 			newSettings := map[string]interface{}{}
-			ccmd.PersistentFlags().VisitAll(func (flag *pflag.Flag) {
+			ccmd.Flags().VisitAll(func (flag *pflag.Flag) {
 				if v, ok := configMap[flag.Name]; ok {
 					newSettings[flag.Name] = v
 				}
