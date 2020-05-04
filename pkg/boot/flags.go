@@ -37,7 +37,6 @@ func InjectGlobalFlags(command *cobra.Command, hideEngineSpecificFlags bool) {
 
 	if hideEngineSpecificFlags {
 		globalFlags.MarkHidden("no-data")
-		globalFlags.MarkHidden("insecure")
 		globalFlags.MarkHidden("ttl")
 		globalFlags.MarkHidden("traffic")
 		globalFlags.MarkHidden("certificates")

@@ -166,7 +166,7 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	//Make the actual invocation
 	res, err := c.CallRawAndFollowRedirect(req)
 	if err != nil {
-		fmt.Println(output, err)
+		fmt.Fprintln(output, err)
 		return err
 	}
 	defer res.Body.Close()
