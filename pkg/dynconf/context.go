@@ -53,7 +53,7 @@ func CreateContext(contextName string, data map[string]interface{}) {
 
 	context := Context{}
 	log.Verboseln("Creating context: " + contextName)
-	updated := context.Update(&data)
+	updated := context.Update(data)
 	log.Verbosef("Set fields %v for context %s", updated, contextName)
 
 	if err := context.Validate(); err != nil {
@@ -80,7 +80,7 @@ func UpdateContext(contextName string, data map[string]interface{}) {
 	context := handler.Get(contextName)
 	log.Verboseln("Updating context: " + contextName)
 
-	updated := context.Update(&data)
+	updated := context.Update(data)
 
 	log.Verbosef("Updated fields %v of context %s\n", updated, contextName)
 
@@ -264,9 +264,9 @@ func (ch *ContextHandler) Save() {
 // This method ignores empty strings and nil values so it will
 // only update the context with new information provided.
 // It returns the names of the updated fields.
-func (c Context) Update(m *map[string]interface{}) []string {
+func (c Context) Update(m map[string]interface{}) []string {
 	updated := []string{}
-	for k, v := range *m {
+	for k, v := range m {
 		if k != "" && v != nil { // Might need reflection for the interface{}
 			c[k] = v
 			updated = append(updated, k)
@@ -278,9 +278,25 @@ func (c Context) Update(m *map[string]interface{}) []string {
 // Validate that at least one property is set for the context
 func (c Context) Validate() error {
 	if h, ok := c["headers"]; ok {
-		if x, ok := h.(map[string]string); !ok {
-			log.Fatalf("%T: %v", x, x)
-			return fmt.Errorf(`headers must be a map, e.g. "Authorization": "Bearer MyJWT"`)
+		switch headers := h.(type) {
+		case map[string]string:
+		case map[string]interface{}:
+			for _, v := range headers {
+				if _, ok := v.(string); !ok {
+					return fmt.Errorf("(context) found invalid value in headers: %v", v)
+				}
+			}
+		case map[interface{}]interface{}:
+			for k, v := range headers {
+				if _, ok := k.(string); !ok {
+					return fmt.Errorf("(context) found invalid key in headers: %v", k)
+				}
+				if _, ok := v.(string); !ok {
+					return fmt.Errorf("(context) found invalid value in headers: %v", v)
+				}
+			}
+		default:
+			return fmt.Errorf(`(context) headers must be a map, e.g. "Authorization": "Bearer MyJWT"`)
 		}
 	}
 	return nil
