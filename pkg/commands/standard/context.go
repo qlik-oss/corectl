@@ -196,25 +196,25 @@ Contexts are stored locally in your ~/` + dynconf.ContextDir + `/contexts.yml fi
 // getContextSettings gets all the settings from config and command-line that can be put into
 // a context. (Any setting corresponding to a flag that is present on the passed command.)
 func getContextSettings(ccmd *cobra.Command) map[string]interface{} {
-			// Get the whole current configuration, without context.
-			cfg := dynconf.ReadSettingsWithoutContext(ccmd)
-			configMap := cfg.GetConfigMap()
+	// Get the whole current configuration, without context.
+	cfg := dynconf.ReadSettingsWithoutContext(ccmd)
+	configMap := cfg.GetConfigMap()
 
-			// Filter only flags that are present on the command.
-			newSettings := map[string]interface{}{}
-			ccmd.Flags().VisitAll(func (flag *pflag.Flag) {
-				if v, ok := configMap[flag.Name]; ok {
-					newSettings[flag.Name] = v
-				}
-			})
-			// Ignore config for now as it would be a major change.
-			delete(newSettings, "config")
-			// Overwrite certPath with its absolute path, if present.
-			if certPath := cfg.GetAbsolutePath("certificates"); certPath != "" {
-				newSettings["certificates"] = certPath
-				cfg.GetTLSConfigFromPath("certificates")
-			}
-			return newSettings
+	// Filter only flags that are present on the command.
+	newSettings := map[string]interface{}{}
+	ccmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		if v, ok := configMap[flag.Name]; ok {
+			newSettings[flag.Name] = v
+		}
+	})
+	// Ignore config for now as it would be a major change.
+	delete(newSettings, "config")
+	// Overwrite certPath with its absolute path, if present.
+	if certPath := cfg.GetAbsolutePath("certificates"); certPath != "" {
+		newSettings["certificates"] = certPath
+		cfg.GetTLSConfigFromPath("certificates")
+	}
+	return newSettings
 }
 
 type Completion func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective)
