@@ -2,7 +2,7 @@
   {
     "qId": "a699ee97-152d-4470-9655-ae7c82d71491",
     "qType": "sheet",
-    "title": ""
+    "title": "My new sheet 2"
   },
   {
     "qId": "gCCkr",
@@ -12,6 +12,6 @@
   {
     "qId": "sZAVcpj",
     "qType": "auto-chart",
-    "title": ""
+    "title": "My new child object"
   }
 ]
