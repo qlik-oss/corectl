@@ -2,8 +2,9 @@ package internal
 
 import (
 	"encoding/json"
-	"github.com/qlik-oss/enigma-go"
 	"io/ioutil"
+
+	"github.com/qlik-oss/enigma-go"
 )
 
 type (
@@ -28,6 +29,11 @@ type (
 	// PropsWithTitle struct
 	PropsWithTitle struct {
 		*enigma.GenericObjectProperties
+		Meta QMetaDef `json:"qMetaDef"`
+	}
+
+	// QMetaDef struct
+	QMetaDef struct {
 		Title string `json:"title"`
 	}
 )
