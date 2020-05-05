@@ -33,9 +33,12 @@ type (
 	// PropsWithTitle struct
 	PropsWithTitle struct {
 		*enigma.GenericObjectProperties
-		QMetaDef struct {
-			Title string `json:"title"`
-		} `json:"qMetaDef"`
+		Meta QMetaDef `json:"qMetaDef"`
+	}
+
+	// QMetaDef struct
+	QMetaDef struct {
+		Title string `json:"title"`
 	}
 )
 
