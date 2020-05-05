@@ -57,7 +57,7 @@ func ListObjects(ctx context.Context, doc *enigma.Doc) []NamedItemWithType {
 				rawProps, _ := object.GetPropertiesRaw(ctx)
 				propsWithTitle := &PropsWithTitle{}
 				json.Unmarshal(rawProps, propsWithTitle)
-				waitChannel <- &NamedItemWithType{Title: propsWithTitle.Title, ID: item.Id, Type: item.Type}
+				waitChannel <- &NamedItemWithType{Title: propsWithTitle.QMetaDef.Title, ID: item.Id, Type: item.Type}
 			} else {
 				waitChannel <- nil
 			}
