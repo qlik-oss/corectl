@@ -2,12 +2,13 @@ package printer
 
 import (
 	"fmt"
-	"github.com/qlik-oss/corectl/pkg/dynconf"
-	"github.com/qlik-oss/corectl/pkg/log"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/qlik-oss/corectl/pkg/dynconf"
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 // PrintContext prints all information in a context
@@ -25,12 +26,22 @@ func PrintContext(name string, handler *dynconf.ContextHandler) {
 		return
 	}
 	fmt.Printf("Name: %s\n", name)
-	fmt.Printf("Comment: %s\n", context.GetString("comment"))
-	fmt.Printf("Server: %s\n", context.GetString("server"))
-	fmt.Printf("Certificates: %s\n", context.GetString("certificates"))
-	fmt.Println("Headers:")
-	for k, v := range context.Headers() {
-		fmt.Printf("    %s: %s\n", k, v)
+	keys := make([]string, len(context))
+	i := 0
+	for k := range context {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		if k == "headers" {
+			fmt.Println("Headers:")
+			for k, v := range context.Headers() {
+				fmt.Printf("    %s: %s\n", k, v)
+			}
+		} else {
+			fmt.Printf("%s: %v\n", strings.Title(k), context[k])
+		}
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/dynconf"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 func CreateContextCommand(binaryName string) *cobra.Command {
@@ -29,30 +30,7 @@ The information stored will be server url, headers and certificates
 %[1]s context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`, binaryName),
 
 		Run: func(ccmd *cobra.Command, args []string) {
-
-			//Check the validity of the certificates folder
-			cfg := dynconf.ReadSettingsWithoutContext(ccmd)
-
-			headers := cfg.GetStringMap("headers")
-			if len(headers) == 0 {
-				headers = nil
-			}
-
-			newSettings := map[string]interface{}{
-				"headers": headers,
-				"comment": cfg.GetString("comment"),
-			}
-
-			certPath := cfg.GetAbsolutePath("certificates")
-			if certPath != "" {
-				newSettings["certificates"] = certPath
-				cfg.GetTLSConfigFromPath("certificates")
-			}
-
-			if !cfg.IsUsingDefaultValue("server") {
-				newSettings["server"] = cfg.GetString("server")
-			}
-
+			newSettings := getContextSettings(ccmd)
 			dynconf.CreateContext(args[0], newSettings)
 		},
 	}, "comment", "api-key")
@@ -68,36 +46,7 @@ The information stored will be server url, headers and certificates
 		ValidArgsFunction: oneArgCompletion,
 
 		Run: func(ccmd *cobra.Command, args []string) {
-
-			// Check the validity of the certificates folder.
-			cfg := dynconf.ReadSettingsWithoutContext(ccmd)
-
-			headers := cfg.GetHeaders()
-			if len(headers) == 0 {
-				headers = nil
-			}
-
-			// Convert from http.Header to map[string]string
-			headerMap := map[string]string{}
-			for key := range headers {
-				headerMap[key] = headers.Get(key)
-			}
-
-			newSettings := map[string]interface{}{
-				"headers": headerMap,
-				"comment": cfg.GetString("comment"),
-			}
-
-			certPath := cfg.GetAbsolutePath("certificates")
-			if certPath != "" {
-				newSettings["certificates"] = certPath
-				cfg.GetTLSConfigFromPath("certificates")
-			}
-
-			if !cfg.IsUsingDefaultValue("server") {
-				newSettings["server"] = cfg.GetString("server")
-			}
-
+			newSettings := getContextSettings(ccmd)
 			dynconf.UpdateContext(args[0], newSettings)
 		},
 	}, "comment", "api-key")
@@ -242,6 +191,30 @@ Contexts are stored locally in your ~/` + dynconf.ContextDir + `/contexts.yml fi
 		clearContextCmd, loginContextCmd, login.CreateInitCommand())
 
 	return contextCmd
+}
+
+// getContextSettings gets all the settings from config and command-line that can be put into
+// a context. (Any setting corresponding to a flag that is present on the passed command.)
+func getContextSettings(ccmd *cobra.Command) map[string]interface{} {
+	// Get the whole current configuration, without context.
+	cfg := dynconf.ReadSettingsWithoutContext(ccmd)
+	configMap := cfg.GetConfigMap()
+
+	// Filter only flags that are present on the command.
+	newSettings := map[string]interface{}{}
+	ccmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		if v, ok := configMap[flag.Name]; ok {
+			newSettings[flag.Name] = v
+		}
+	})
+	// Ignore config for now as it would be a major change.
+	delete(newSettings, "config")
+	// Overwrite certPath with its absolute path, if present.
+	if certPath := cfg.GetAbsolutePath("certificates"); certPath != "" {
+		newSettings["certificates"] = certPath
+		cfg.GetTLSConfigFromPath("certificates")
+	}
+	return newSettings
 }
 
 type Completion func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective)

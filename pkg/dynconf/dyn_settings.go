@@ -368,7 +368,7 @@ func (ds *DynSettings) GetGlobFiles(name string) []string {
 	}
 }
 
-// ReadCertificates reads and loads the specified certificates
+// GetTLSConfigFromPath reads and loads the specified certificates
 func (ds *DynSettings) GetTLSConfigFromPath(certificatesPath string) *tls.Config {
 	tlsClientConfig := &tls.Config{}
 
@@ -450,4 +450,38 @@ func (ds *DynSettings) GetUserAgent() string {
 	}
 	agent += " (" + runtime.GOOS + ")"
 	return agent
+}
+
+// GetConfigMap returns the resulting config map for the current settings from
+// command line, config and context, skipping default.
+func (ds *DynSettings) GetConfigMap() map[string]interface{} {
+	configMap := map[string]interface{}{}
+	ignore := map[string]bool{"headers": true, "api-key": true, "config": true}
+	for k, v := range ds.commandLineParams {
+		if !ignore[k] {
+			configMap[k] = v
+		}
+	}
+	for k, v := range ds.configParams {
+		if _, present := configMap[k]; !ignore[k] && !present {
+			configMap[k] = v
+		}
+	}
+	for k, v := range ds.contextParams {
+		if _, present := configMap[k]; !ignore[k] && !present {
+			configMap[k] = v
+		}
+	}
+	if headers := ds.GetHeaders(); len(headers) > 0 {
+		headerMap := map[string]string{}
+		for key := range headers {
+			// We don't want to write User-Agent to configs and such.
+			if key != "User-Agent" {
+				headerMap[key] = headers.Get(key)
+			}
+		}
+		configMap["headers"] = headerMap
+	}
+	log.Infof("%#v", configMap)
+	return configMap
 }
