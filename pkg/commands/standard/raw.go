@@ -4,15 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/qlik-oss/corectl/pkg/boot"
-	"github.com/qlik-oss/corectl/pkg/log"
-	"github.com/spf13/cobra"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/log"
+	"github.com/spf13/cobra"
 )
 
 const maxJsonFileSize = 1024 * 1024
@@ -41,6 +43,12 @@ func CreateRawCommand() *cobra.Command {
 			bodyString := comm.GetString("body")
 			bodyParams := comm.GetStringMap("body-values")
 
+			//Compile the body
+			body, mimeType, err := getBodyFromFlags(bodyFile, bodyString, bodyParams)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			//Output the results to either a file or system out
 			var out io.Writer
 			if outputFilePath != "" {
@@ -54,14 +62,16 @@ func CreateRawCommand() *cobra.Command {
 				out = cmd.OutOrStdout()
 			}
 
-			//Compile the body
-			body, mimeType, err := getBodyFromFlags(bodyFile, bodyString, bodyParams)
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, false)
 			if err != nil {
+				// Cleanup if we're trying to write to a file.
+				if file, ok := out.(*os.File); ok {
+					// Close since os.Exit doesn't respect deferred functions.
+					_ = file.Close()
+					// Remove the empty file after a failed call.
+					_ = os.Remove(outputFilePath)
+				}
+				fmt.Fprintln(cmd.ErrOrStderr(), err)
 				os.Exit(1)
 			}
 		},
