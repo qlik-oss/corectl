@@ -175,16 +175,10 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			fmt.Fprintln(output, err)
 			return err
 		}
 		errorWithBody := BuildErrorWithBody(res, data)
-		if raw {
-			fmt.Fprintln(output, string(errorWithBody.Body()))
-		} else {
-			fmt.Fprintln(output, errorWithBody.Error())
-		}
-		return err
+		return errorWithBody
 	}
 
 	switch contentType := getContentType(res); contentType {
@@ -192,7 +186,6 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		//We have got a json response
 		data, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			fmt.Fprintln(output, err)
 			return err
 		}
 		if quiet { //Only print IDs
@@ -211,11 +204,11 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 			fi, _ := file.Stat()
 			// If the file mode contains ModeCharDevice it means it's a terminal.
 			if fi.Mode()&os.ModeCharDevice != 0 {
-				fmt.Fprintf(output, `Error: Content of type %q cannot be written directly to the terminal
+				err := fmt.Errorf(`Error: Content of type %q cannot be written directly to the terminal
        as it may contain special characters which can mess with your terminal.
        Specify an output location instead, either by flag or by piping the output to a file.
 `, contentType)
-				return fmt.Errorf("%q cannot be written directly to the terminal", contentType)
+				return err
 			}
 		}
 		io.Copy(output, res.Body)
