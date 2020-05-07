@@ -181,6 +181,8 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		return errorWithBody
 	}
 
+	log.Verbose(res.Status)
+
 	switch contentType := getContentType(res); contentType {
 	case "application/json":
 		//We have got a json response
@@ -267,7 +269,7 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 		logHeader(response.Header, "< ")
 	}
 
-	log.Verbose("Time ", t1.Sub(t0))
+	log.Verbosef("Response time: %dms", t1.Sub(t0).Milliseconds())
 	if err != nil {
 		return response, err
 	}
