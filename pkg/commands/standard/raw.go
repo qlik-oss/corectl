@@ -30,6 +30,7 @@ func CreateRawCommand() *cobra.Command {
 		Short:   "Send Http API Request to Qlik Sense Cloud editions",
 		Long:    "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
 		Args:    cobra.ExactArgs(2),
+		ValidArgsFunction: rawCompletion,
 		Run: func(cmd *cobra.Command, args []string) {
 			comm := boot.NewCommunicator(cmd)
 			restCaller := comm.RestCaller()
@@ -83,6 +84,19 @@ func CreateRawCommand() *cobra.Command {
 	command.PersistentFlags().String("body-file", "", "A file path pointing to a file containing the body of the http request")
 	command.PersistentFlags().String("output-file", "", "A file path pointing to where the response body shoule be written")
 	return command
+}
+
+// rawCompletion is the completion function for the raw command.
+// As the raw command is sort of a "free typing" command, we can only help the user a bit
+// on the way.
+func rawCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) < 1 {
+		return []string{"get", "put", "patch", "post", "delete"}, cobra.ShellCompDirectiveNoFileComp
+	}
+	if len(args) < 2 {
+		return []string{"v1/"}, cobra.ShellCompDirectiveNoSpace
+	}
+	return nil, cobra.ShellCompDirectiveNoFileComp
 }
 
 // getBodyFromFlags returns a ReadCloser that represents the body regardless of the parameters used
