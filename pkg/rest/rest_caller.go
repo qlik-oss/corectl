@@ -140,7 +140,8 @@ func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Respon
 	// ISSUE #141
 	// Ambiguous, what do?
 	// We got a payload, so should we still follow the redirect?
-	if length > 0 && location != "" {}
+	if length > 0 && location != "" {
+	}
 
 	if location != "" && (res.StatusCode == 201 || 301 <= res.StatusCode && res.StatusCode <= 307) {
 		// Location might not be relative but absolute.

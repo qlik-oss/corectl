@@ -482,6 +482,11 @@
         "query": {
           "description": "Query parameters specified as key=value pairs separated by comma",
           "default": "[]"
+        },
+        "quiet": {
+          "alias": "q",
+          "description": "Only print IDs. Useful for scripting",
+          "default": "false"
         }
       }
     },

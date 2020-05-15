@@ -25,6 +25,7 @@ corectl raw get v1/items --query name=ImportantApp
   -h, --help                         help for raw
       --output-file string           A file path pointing to where the response body shoule be written
       --query stringToString         Query parameters specified as key=value pairs separated by comma (default [])
+  -q, --quiet                        Only print IDs. Useful for scripting
 ```
 
 ### Options inherited from parent commands
