@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
+	"regexp"
+	"strings"
 
 	"github.com/qlik-oss/corectl/pkg/log"
 )
@@ -69,46 +70,53 @@ func (c *RestCaller) ListApps() ([]byte, error) {
 }
 
 // TranslateAppNameToId translates a user provided app identifier into a app resourceId that can be used to open a websocket
-// by checking against the items service if it is a resourceId, itemId or an app name
+// by checking if the provided identifier matches specific ID patterns. If it's not app ID,
+// the items service will be used to get the resource ID for the provided identifier.
 func (c *RestCaller) TranslateAppNameToId(userProvidedAppIdentifier string) string {
 
-	var resourceIdBasedOnExplicitResourceId string
-	var resourceIdBasedOnItemId string
-	var resourceIdBasedOnName string
+	var resourceID string
 
 	if userProvidedAppIdentifier == "" {
 		return ""
 	}
 
-	// Check if we get a match in any of the three app identifier "formats" in parallel to reduce latency
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-	go func() {
-		resourceIdBasedOnExplicitResourceId = c.translateResourceIdToResourceId(userProvidedAppIdentifier)
-		wg.Done()
-	}()
-	go func() {
-		resourceIdBasedOnItemId = c.translateItemIdToResourceId(userProvidedAppIdentifier)
-		wg.Done()
-	}()
-	go func() {
-		resourceIdBasedOnName = c.translateAppNameToResourceId(userProvidedAppIdentifier)
-		wg.Done()
-	}()
-	wg.Wait()
+	if isAppID(userProvidedAppIdentifier) {
+		resourceID = userProvidedAppIdentifier
+	} else if isItemID(userProvidedAppIdentifier) {
+		resourceID = c.translateItemIdToResourceId(userProvidedAppIdentifier)
+	} else {
+		resourceID = c.translateAppNameToResourceId(userProvidedAppIdentifier)
+	}
 
-	if resourceIdBasedOnExplicitResourceId != "" {
-		return resourceIdBasedOnExplicitResourceId
+	if resourceID == "" {
+		log.Fatalf("No such app found: %s", userProvidedAppIdentifier)
 	}
-	if resourceIdBasedOnItemId != "" {
-		return resourceIdBasedOnItemId
-	}
-	if resourceIdBasedOnName != "" {
-		return resourceIdBasedOnName
-	}
-	log.Fatalf("No such app found: %s", userProvidedAppIdentifier)
-	return ""
+
+	return resourceID
 }
+
+// isAppID returns true if the string 'x' is a lower-cased UUID, i.e. consisting of 5
+// hyphenated hexadecimal numbers of different lenghts.
+func isAppID(x string) bool {
+	re := regexp.MustCompile("^[a-f0-9]+$")
+	lengths := []int{8, 4, 4, 4, 12}
+	parts := strings.Split(x, "-")
+	for i, part := range parts {
+		if len(part) != lengths[i] {
+			return false
+		} else if !re.MatchString(part) {
+			return false
+		}
+	}
+	return true
+}
+
+// isItemID returns true if the string 'x' is a 24-digit (lowercase) hexadecimal number.
+func isItemID(x string) bool {
+	re := regexp.MustCompile("^[a-f0-9]{24}$")
+	return re.MatchString(x)
+}
+
 
 func (c *RestCaller) translateItemIdToResourceId(potentialItemId string) string {
 	var result RestDocListItem
@@ -136,6 +144,7 @@ func (c *RestCaller) translateResourceIdToResourceId(potentialItemId string) str
 	}
 	return ""
 }
+
 func (c *RestCaller) translateAppNameToResourceId(potentialAppName string) string {
 	var result ListAppResponse
 	err := c.CallStd("GET", "v1/items", "", map[string]string{"sort": "-updatedAt", "limit": "30", "name": potentialAppName}, nil, &result)
