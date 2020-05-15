@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/commands/engine"
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,7 @@ const applicationOctetStream = "application/octet-stream"
 const textPlain = "text/plain"
 
 func CreateRawCommand() *cobra.Command {
-	command := &cobra.Command{
+	command := engine.WithLocalFlags(&cobra.Command{
 		Use:     "raw <get/put/patch/post/delete> v1/url",
 		Example: "corectl raw get v1/items --query name=ImportantApp",
 		Short:   "Send Http API Request to Qlik Sense Cloud editions",
@@ -63,7 +64,7 @@ func CreateRawCommand() *cobra.Command {
 				out = cmd.OutOrStdout()
 			}
 
-			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, false)
+			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, comm.GetBool("quiet"))
 			if err != nil {
 				// Cleanup if we're trying to write to a file.
 				if file, ok := out.(*os.File); ok {
@@ -76,7 +77,7 @@ func CreateRawCommand() *cobra.Command {
 				os.Exit(1)
 			}
 		},
-	}
+	}, "quiet")
 	command.PersistentFlags().StringToStringP("query", "", nil, "Query parameters specified as key=value pairs separated by comma")
 	command.PersistentFlags().StringToStringP("body-values", "", nil, "A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. "+
 		"The key suffixes :bool or :number can be appended to the key to inject the value into the json structure as boolean or number respectively.")
