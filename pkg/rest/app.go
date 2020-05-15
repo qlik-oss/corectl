@@ -117,7 +117,6 @@ func isItemID(x string) bool {
 	return re.MatchString(x)
 }
 
-
 func (c *RestCaller) translateItemIdToResourceId(potentialItemId string) string {
 	var result RestDocListItem
 	err := c.CallStd("GET", fmt.Sprintf("v1/items/%s", potentialItemId), "", nil, nil, &result)
