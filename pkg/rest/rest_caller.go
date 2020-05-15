@@ -10,6 +10,7 @@ import (
 	"net/http"
 	neturl "net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -134,11 +135,23 @@ func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Respon
 	if err != nil {
 		return nil, err
 	}
+	length, _ := strconv.Atoi(res.Header.Get("Content-Length"))
 	location := res.Header.Get("Location")
+	// ISSUE #141
+	// Ambiguous, what do?
+	// We got a payload, so should we still follow the redirect?
+	if length > 0 && location != "" {
+	}
 
 	if location != "" && (res.StatusCode == 201 || 301 <= res.StatusCode && res.StatusCode <= 307) {
+		// Location might not be relative but absolute.
 		redirectUrl := c.RestBaseUrl()
-		redirectUrl.Path = location
+		locationUrl, _ := neturl.Parse(location)
+		if locationUrl.Scheme == "" {
+			redirectUrl.Path = locationUrl.Path
+		} else {
+			redirectUrl = locationUrl
+		}
 		if res.Body != nil {
 			res.Body.Close() //Close body of original response
 		}

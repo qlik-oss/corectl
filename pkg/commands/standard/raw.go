@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/commands/engine"
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/spf13/cobra"
 )
@@ -24,12 +25,13 @@ const applicationOctetStream = "application/octet-stream"
 const textPlain = "text/plain"
 
 func CreateRawCommand() *cobra.Command {
-	command := &cobra.Command{
-		Use:     "raw <get/put/patch/post/delete> v1/url",
-		Example: "corectl raw get v1/items --query name=ImportantApp",
-		Short:   "Send Http API Request to Qlik Sense Cloud editions",
-		Long:    "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
-		Args:    cobra.ExactArgs(2),
+	command := engine.WithLocalFlags(&cobra.Command{
+		Use:               "raw <get/put/patch/post/delete> v1/url",
+		Example:           "corectl raw get v1/items --query name=ImportantApp",
+		Short:             "Send Http API Request to Qlik Sense Cloud editions",
+		Long:              "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
+		Args:              cobra.ExactArgs(2),
+		ValidArgsFunction: rawCompletion,
 		Run: func(cmd *cobra.Command, args []string) {
 			comm := boot.NewCommunicator(cmd)
 			restCaller := comm.RestCaller()
@@ -62,7 +64,7 @@ func CreateRawCommand() *cobra.Command {
 				out = cmd.OutOrStdout()
 			}
 
-			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, false)
+			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, comm.GetBool("quiet"))
 			if err != nil {
 				// Cleanup if we're trying to write to a file.
 				if file, ok := out.(*os.File); ok {
@@ -75,7 +77,7 @@ func CreateRawCommand() *cobra.Command {
 				os.Exit(1)
 			}
 		},
-	}
+	}, "quiet")
 	command.PersistentFlags().StringToStringP("query", "", nil, "Query parameters specified as key=value pairs separated by comma")
 	command.PersistentFlags().StringToStringP("body-values", "", nil, "A set of key=value pairs that well be compiled into a json object. A dot (.) inside the key is used to traverse into nested objects. "+
 		"The key suffixes :bool or :number can be appended to the key to inject the value into the json structure as boolean or number respectively.")
@@ -83,6 +85,19 @@ func CreateRawCommand() *cobra.Command {
 	command.PersistentFlags().String("body-file", "", "A file path pointing to a file containing the body of the http request")
 	command.PersistentFlags().String("output-file", "", "A file path pointing to where the response body shoule be written")
 	return command
+}
+
+// rawCompletion is the completion function for the raw command.
+// As the raw command is sort of a "free typing" command, we can only help the user a bit
+// on the way.
+func rawCompletion(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) < 1 {
+		return []string{"get", "put", "patch", "post", "delete"}, cobra.ShellCompDirectiveNoFileComp
+	}
+	if len(args) < 2 {
+		return []string{"v1/"}, cobra.ShellCompDirectiveNoSpace
+	}
+	return nil, cobra.ShellCompDirectiveNoFileComp
 }
 
 // getBodyFromFlags returns a ReadCloser that represents the body regardless of the parameters used
