@@ -137,10 +137,12 @@ func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Respon
 	}
 	length, _ := strconv.Atoi(res.Header.Get("Content-Length"))
 	location := res.Header.Get("Location")
-	// ISSUE #141
-	// Ambiguous, what do?
-	// We got a payload, so should we still follow the redirect?
-	if length > 0 && location != "" {
+
+	// Don't follow redirect if we have a payload and the response is 201 Created.
+	// 301-307 responses MAY contain payloads as well but, as such responses are mainly
+	// for redirects the payload is probably of little significance.
+	if length != 0 && res.StatusCode == 201 {
+		return res, nil
 	}
 
 	if location != "" && (res.StatusCode == 201 || 301 <= res.StatusCode && res.StatusCode <= 307) {
