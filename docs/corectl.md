@@ -2,7 +2,7 @@
 title: "corectl"
 description: "corectl"
 categories: Libraries & Tools
-type: Commands
+type: Tools
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
