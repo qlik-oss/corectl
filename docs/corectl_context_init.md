@@ -1,3 +1,11 @@
+---
+title: "corectl context init"
+description: "corectl context init"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context init
 
 Set up access to Qlik Sense Cloud
@@ -36,5 +44,5 @@ corectl context init <context name> [flags]
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

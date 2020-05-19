@@ -1,3 +1,11 @@
+---
+title: "corectl context clear"
+description: "corectl context clear"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context clear
 
 Set the current context to none
@@ -41,5 +49,5 @@ corectl context clear
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

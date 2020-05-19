@@ -1,3 +1,11 @@
+---
+title: "corectl dimension set"
+description: "corectl dimension set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl dimension set
 
 Set or update the dimensions in the current app
@@ -42,5 +50,5 @@ corectl dimension set ./my-dimensions-glob-path.json
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
 

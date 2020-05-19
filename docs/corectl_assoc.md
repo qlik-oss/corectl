@@ -1,3 +1,11 @@
+---
+title: "corectl assoc"
+description: "corectl assoc"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl assoc
 
 Print table associations
@@ -42,5 +50,5 @@ corectl associations
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

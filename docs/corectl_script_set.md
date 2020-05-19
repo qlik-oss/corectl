@@ -1,3 +1,11 @@
+---
+title: "corectl script set"
+description: "corectl script set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl script set
 
 Set the script in the current app
@@ -42,5 +50,5 @@ corectl script set ./my-script-file.qvs
 
 ### SEE ALSO
 
-* [corectl script](corectl_script.md)	 - Explore and manage the script
+* [corectl script](/commands/corectl_script)	 - Explore and manage the script
 

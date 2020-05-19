@@ -1,3 +1,11 @@
+---
+title: "corectl values"
+description: "corectl values"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl values
 
 Print the top values of a field
@@ -41,5 +49,5 @@ corectl values FIELD
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

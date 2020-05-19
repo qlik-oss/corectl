@@ -1,3 +1,11 @@
+---
+title: "corectl dimension ls"
+description: "corectl dimension ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl dimension ls
 
 Print a list of all generic dimensions in the current app
@@ -42,5 +50,5 @@ corectl dimension ls
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
 

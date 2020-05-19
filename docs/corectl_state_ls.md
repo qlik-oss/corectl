@@ -1,3 +1,11 @@
+---
+title: "corectl state ls"
+description: "corectl state ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl state ls
 
 Print a list of all alternate states in the current app
@@ -42,5 +50,5 @@ corectl state ls
 
 ### SEE ALSO
 
-* [corectl state](corectl_state.md)	 - Explore and manage alternate states
+* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
 

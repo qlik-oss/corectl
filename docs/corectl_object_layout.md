@@ -1,3 +1,11 @@
+---
+title: "corectl object layout"
+description: "corectl object layout"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object layout
 
 Evaluate the hypercube layout of the generic object
@@ -41,5 +49,5 @@ corectl object layout OBJECT-ID
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

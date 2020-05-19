@@ -1,3 +1,11 @@
+---
+title: "corectl variable set"
+description: "corectl variable set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable set
 
 Set or update the variables in the current app
@@ -42,5 +50,5 @@ corectl variable set ./my-variables-glob-path.json
 
 ### SEE ALSO
 
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
 

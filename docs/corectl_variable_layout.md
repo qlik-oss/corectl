@@ -1,3 +1,11 @@
+---
+title: "corectl variable layout"
+description: "corectl variable layout"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable layout
 
 Evaluate the layout of an generic variable
@@ -41,5 +49,5 @@ corectl variable layout VARIABLE-NAME
 
 ### SEE ALSO
 
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
 

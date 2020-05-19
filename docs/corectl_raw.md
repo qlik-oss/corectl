@@ -1,3 +1,11 @@
+---
+title: "corectl raw"
+description: "corectl raw"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl raw
 
 Send Http API Request to Qlik Sense Cloud editions
@@ -47,5 +55,5 @@ corectl raw get v1/items --query name=ImportantApp
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

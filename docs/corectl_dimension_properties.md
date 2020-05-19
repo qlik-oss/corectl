@@ -1,3 +1,11 @@
+---
+title: "corectl dimension properties"
+description: "corectl dimension properties"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl dimension properties
 
 Print the properties of the generic dimension
@@ -42,5 +50,5 @@ corectl dimension properties DIMENSION-ID
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
 

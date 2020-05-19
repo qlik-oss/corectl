@@ -1,3 +1,11 @@
+---
+title: "corectl app rm"
+description: "corectl app rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl app rm
 
 Remove the specified app
@@ -42,5 +50,5 @@ corectl app rm APP-ID
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl app](/commands/corectl_app)	 - Explore and manage apps
 

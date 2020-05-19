@@ -1,3 +1,11 @@
+---
+title: "corectl bookmark"
+description: "corectl bookmark"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl bookmark
 
 Explore and manage bookmarks
@@ -31,9 +39,9 @@ Explore and manage bookmarks
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl bookmark layout](corectl_bookmark_layout.md)	 - Evaluate the layout of an generic bookmark
-* [corectl bookmark ls](corectl_bookmark_ls.md)	 - Print a list of all generic bookmarks in the current app
-* [corectl bookmark properties](corectl_bookmark_properties.md)	 - Print the properties of the generic bookmark
-* [corectl bookmark rm](corectl_bookmark_rm.md)	 - Remove one or many bookmarks in the current app
+* [corectl](/commands/corectl)	 - 
+* [corectl bookmark layout](/commands/corectl_bookmark_layout)	 - Evaluate the layout of an generic bookmark
+* [corectl bookmark ls](/commands/corectl_bookmark_ls)	 - Print a list of all generic bookmarks in the current app
+* [corectl bookmark properties](/commands/corectl_bookmark_properties)	 - Print the properties of the generic bookmark
+* [corectl bookmark rm](/commands/corectl_bookmark_rm)	 - Remove one or many bookmarks in the current app
 

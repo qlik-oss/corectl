@@ -1,10 +1,18 @@
+---
+title: "corectl eval"
+description: "corectl eval"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl eval
 
 Evaluate a list of measures and dimensions
 
 ### Synopsis
 
-Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.
+Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the measure by dimension notation. If dimensions are omitted then the eval will be evaluated over all dimensions.
 
 ```
 corectl eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...] [flags]
@@ -44,5 +52,5 @@ corectl eval by "Region" // Returns the values for dimension "Region"
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

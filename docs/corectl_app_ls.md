@@ -1,3 +1,11 @@
+---
+title: "corectl app ls"
+description: "corectl app ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl app ls
 
 Print a list of all apps available in the current engine
@@ -42,5 +50,5 @@ corectl app ls
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl app](/commands/corectl_app)	 - Explore and manage apps
 

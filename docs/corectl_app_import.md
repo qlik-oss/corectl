@@ -1,3 +1,11 @@
+---
+title: "corectl app import"
+description: "corectl app import"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl app import
 
 Import the specified app into the engine, returns the ID of the created app
@@ -42,5 +50,5 @@ corectl import <path-to-app.qvf>
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
+* [corectl app](/commands/corectl_app)	 - Explore and manage apps
 

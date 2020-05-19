@@ -1,3 +1,11 @@
+---
+title: "corectl state"
+description: "corectl state"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl state
 
 Explore and manage alternate states
@@ -31,8 +39,8 @@ Explore and manage alternate states
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl state add](corectl_state_add.md)	 - Add an alternate states in the current app
-* [corectl state ls](corectl_state_ls.md)	 - Print a list of all alternate states in the current app
-* [corectl state rm](corectl_state_rm.md)	 - Removes an alternate state in the current app
+* [corectl](/commands/corectl)	 - 
+* [corectl state add](/commands/corectl_state_add)	 - Add an alternate states in the current app
+* [corectl state ls](/commands/corectl_state_ls)	 - Print a list of all alternate states in the current app
+* [corectl state rm](/commands/corectl_state_rm)	 - Removes an alternate state in the current app
 

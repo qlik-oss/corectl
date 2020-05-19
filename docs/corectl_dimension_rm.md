@@ -1,3 +1,11 @@
+---
+title: "corectl dimension rm"
+description: "corectl dimension rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl dimension rm
 
 Remove one or many dimensions in the current app
@@ -42,5 +50,5 @@ corectl dimension rm ID-1
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
 

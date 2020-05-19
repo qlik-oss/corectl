@@ -1,3 +1,11 @@
+---
+title: "corectl reload"
+description: "corectl reload"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl reload
 
 Reload and save the app
@@ -44,5 +52,5 @@ corectl reload
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

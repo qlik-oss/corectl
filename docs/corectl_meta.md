@@ -1,3 +1,11 @@
+---
+title: "corectl meta"
+description: "corectl meta"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl meta
 
 Print tables, fields and associations
@@ -42,5 +50,5 @@ corectl meta --app my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

@@ -1,3 +1,11 @@
+---
+title: "corectl bookmark rm"
+description: "corectl bookmark rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl bookmark rm
 
 Remove one or many bookmarks in the current app
@@ -42,5 +50,5 @@ corectl dimension rm ID-1
 
 ### SEE ALSO
 
-* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
+* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
 

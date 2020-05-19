@@ -1,3 +1,11 @@
+---
+title: "corectl measure properties"
+description: "corectl measure properties"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl measure properties
 
 Print the properties of the generic measure
@@ -42,5 +50,5 @@ corectl measure properties MEASURE-ID
 
 ### SEE ALSO
 
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
 

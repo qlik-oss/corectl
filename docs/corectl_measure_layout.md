@@ -1,3 +1,11 @@
+---
+title: "corectl measure layout"
+description: "corectl measure layout"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl measure layout
 
 Evaluate the layout of an generic measure
@@ -41,5 +49,5 @@ corectl measure layout MEASURE-ID
 
 ### SEE ALSO
 
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
 

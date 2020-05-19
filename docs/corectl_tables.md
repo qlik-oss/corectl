@@ -1,3 +1,11 @@
+---
+title: "corectl tables"
+description: "corectl tables"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl tables
 
 Print tables
@@ -42,5 +50,5 @@ corectl tables --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

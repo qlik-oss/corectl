@@ -1,3 +1,11 @@
+---
+title: "corectl measure ls"
+description: "corectl measure ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl measure ls
 
 Print a list of all generic measures in the current app
@@ -42,5 +50,5 @@ corectl measure ls
 
 ### SEE ALSO
 
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
 

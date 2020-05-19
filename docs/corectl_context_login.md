@@ -1,3 +1,11 @@
+---
+title: "corectl context login"
+description: "corectl context login"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context login
 
 Login and set cookie for the named context
@@ -47,5 +55,5 @@ corectl context login context-name
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

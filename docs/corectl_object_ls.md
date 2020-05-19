@@ -1,3 +1,11 @@
+---
+title: "corectl object ls"
+description: "corectl object ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object ls
 
 Print a list of all generic objects in the current app
@@ -42,5 +50,5 @@ corectl object ls
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

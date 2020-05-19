@@ -1,3 +1,11 @@
+---
+title: "corectl variable properties"
+description: "corectl variable properties"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable properties
 
 Print the properties of the generic variable
@@ -42,5 +50,5 @@ corectl variable properties VARIABLE-NAME
 
 ### SEE ALSO
 
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
 

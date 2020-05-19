@@ -1,3 +1,11 @@
+---
+title: "corectl context use"
+description: "corectl context use"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context use
 
 Specify what context to use
@@ -41,5 +49,5 @@ corectl context use local-engine
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

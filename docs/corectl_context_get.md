@@ -1,3 +1,11 @@
+---
+title: "corectl context get"
+description: "corectl context get"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context get
 
 Get context, current context by default
@@ -42,5 +50,5 @@ corectl context get local-engine
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

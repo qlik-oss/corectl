@@ -1,3 +1,11 @@
+---
+title: "corectl build"
+description: "corectl build"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl build
 
 Reload and save the app after updating connections, dimensions, measures, objects and the script
@@ -54,5 +62,5 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

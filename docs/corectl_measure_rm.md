@@ -1,3 +1,11 @@
+---
+title: "corectl measure rm"
+description: "corectl measure rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl measure rm
 
 Remove one or many generic measures in the current app
@@ -42,5 +50,5 @@ corectl measure rm ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
 

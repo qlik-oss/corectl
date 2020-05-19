@@ -1,3 +1,11 @@
+---
+title: "corectl object data"
+description: "corectl object data"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object data
 
 Evaluate the hypercube data of a generic object
@@ -41,5 +49,5 @@ corectl object data OBJECT-ID
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

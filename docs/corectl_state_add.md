@@ -1,3 +1,11 @@
+---
+title: "corectl state add"
+description: "corectl state add"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl state add
 
 Add an alternate states in the current app
@@ -41,5 +49,5 @@ corectl state add NAME-1
 
 ### SEE ALSO
 
-* [corectl state](corectl_state.md)	 - Explore and manage alternate states
+* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
 

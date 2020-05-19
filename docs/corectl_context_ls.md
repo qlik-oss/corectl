@@ -1,3 +1,11 @@
+---
+title: "corectl context ls"
+description: "corectl context ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context ls
 
 List all contexts
@@ -41,5 +49,5 @@ corectl context ls
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

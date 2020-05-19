@@ -1,3 +1,11 @@
+---
+title: "corectl bookmark layout"
+description: "corectl bookmark layout"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl bookmark layout
 
 Evaluate the layout of an generic bookmark
@@ -41,5 +49,5 @@ corectl bBookmark layout BOOKMARK-ID
 
 ### SEE ALSO
 
-* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
+* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
 

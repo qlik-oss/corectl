@@ -1,3 +1,11 @@
+---
+title: "corectl"
+description: "corectl"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl
 
 
@@ -30,29 +38,29 @@ corectl [flags]
 
 ### SEE ALSO
 
-* [corectl app](corectl_app.md)	 - Explore and manage apps
-* [corectl assoc](corectl_assoc.md)	 - Print table associations
-* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
-* [corectl build](corectl_build.md)	 - Reload and save the app after updating connections, dimensions, measures, objects and the script
-* [corectl catwalk](corectl_catwalk.md)	 - Open the specified app in catwalk
-* [corectl completion](corectl_completion.md)	 - Generate auto completion scripts
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
-* [corectl eval](corectl_eval.md)	 - Evaluate a list of measures and dimensions
-* [corectl fields](corectl_fields.md)	 - Print field list
-* [corectl keys](corectl_keys.md)	 - Print key-only field list
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
-* [corectl meta](corectl_meta.md)	 - Print tables, fields and associations
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
-* [corectl raw](corectl_raw.md)	 - Send Http API Request to Qlik Sense Cloud editions
-* [corectl reload](corectl_reload.md)	 - Reload and save the app
-* [corectl script](corectl_script.md)	 - Explore and manage the script
-* [corectl state](corectl_state.md)	 - Explore and manage alternate states
-* [corectl status](corectl_status.md)	 - Print status info about the connection to the engine and current app
-* [corectl tables](corectl_tables.md)	 - Print tables
-* [corectl unbuild](corectl_unbuild.md)	 - Split up an existing app into separate json and yaml files
-* [corectl values](corectl_values.md)	 - Print the top values of a field
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
-* [corectl version](corectl_version.md)	 - Print the version of corectl
+* [corectl app](/commands/corectl_app)	 - Explore and manage apps
+* [corectl assoc](/commands/corectl_assoc)	 - Print table associations
+* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
+* [corectl build](/commands/corectl_build)	 - Reload and save the app after updating connections, dimensions, measures, objects and the script
+* [corectl catwalk](/commands/corectl_catwalk)	 - Open the specified app in catwalk
+* [corectl completion](/commands/corectl_completion)	 - Generate auto completion scripts
+* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
+* [corectl eval](/commands/corectl_eval)	 - Evaluate a list of measures and dimensions
+* [corectl fields](/commands/corectl_fields)	 - Print field list
+* [corectl keys](/commands/corectl_keys)	 - Print key-only field list
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
+* [corectl meta](/commands/corectl_meta)	 - Print tables, fields and associations
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
+* [corectl raw](/commands/corectl_raw)	 - Send Http API Request to Qlik Sense Cloud editions
+* [corectl reload](/commands/corectl_reload)	 - Reload and save the app
+* [corectl script](/commands/corectl_script)	 - Explore and manage the script
+* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
+* [corectl status](/commands/corectl_status)	 - Print status info about the connection to the engine and current app
+* [corectl tables](/commands/corectl_tables)	 - Print tables
+* [corectl unbuild](/commands/corectl_unbuild)	 - Split up an existing app into separate json and yaml files
+* [corectl values](/commands/corectl_values)	 - Print the top values of a field
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
+* [corectl version](/commands/corectl_version)	 - Print the version of corectl
 

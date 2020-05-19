@@ -1,3 +1,11 @@
+---
+title: "corectl unbuild"
+description: "corectl unbuild"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl unbuild
 
 Split up an existing app into separate json and yaml files
@@ -47,5 +55,5 @@ corectl unbuild --app APP-ID
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

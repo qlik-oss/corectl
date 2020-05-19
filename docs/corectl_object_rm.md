@@ -1,3 +1,11 @@
+---
+title: "corectl object rm"
+description: "corectl object rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object rm
 
 Remove one or many generic objects in the current app
@@ -42,5 +50,5 @@ corectl object rm ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

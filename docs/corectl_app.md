@@ -1,3 +1,11 @@
+---
+title: "corectl app"
+description: "corectl app"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl app
 
 Explore and manage apps
@@ -31,8 +39,8 @@ Explore and manage apps
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl app import](corectl_app_import.md)	 - Import the specified app into the engine, returns the ID of the created app
-* [corectl app ls](corectl_app_ls.md)	 - Print a list of all apps available in the current engine
-* [corectl app rm](corectl_app_rm.md)	 - Remove the specified app
+* [corectl](/commands/corectl)	 - 
+* [corectl app import](/commands/corectl_app_import)	 - Import the specified app into the engine, returns the ID of the created app
+* [corectl app ls](/commands/corectl_app_ls)	 - Print a list of all apps available in the current engine
+* [corectl app rm](/commands/corectl_app_rm)	 - Remove the specified app
 

@@ -1,3 +1,11 @@
+---
+title: "corectl measure set"
+description: "corectl measure set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl measure set
 
 Set or update the measures in the current app
@@ -42,5 +50,5 @@ corectl measure set ./my-measures-glob-path.json
 
 ### SEE ALSO
 
-* [corectl measure](corectl_measure.md)	 - Explore and manage measures
+* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
 

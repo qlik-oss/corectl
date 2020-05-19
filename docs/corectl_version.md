@@ -1,3 +1,11 @@
+---
+title: "corectl version"
+description: "corectl version"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl version
 
 Print the version of corectl
@@ -41,5 +49,5 @@ corectl version
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

@@ -1,3 +1,11 @@
+---
+title: "corectl object properties"
+description: "corectl object properties"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object properties
 
 Print the properties of the generic object
@@ -43,5 +51,5 @@ corectl object properties OBJECT-ID
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

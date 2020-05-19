@@ -1,3 +1,11 @@
+---
+title: "corectl variable"
+description: "corectl variable"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable
 
 Explore and manage variables
@@ -31,10 +39,10 @@ Explore and manage variables
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl variable layout](corectl_variable_layout.md)	 - Evaluate the layout of an generic variable
-* [corectl variable ls](corectl_variable_ls.md)	 - Print a list of all generic variables in the current app
-* [corectl variable properties](corectl_variable_properties.md)	 - Print the properties of the generic variable
-* [corectl variable rm](corectl_variable_rm.md)	 - Remove one or many variables in the current app
-* [corectl variable set](corectl_variable_set.md)	 - Set or update the variables in the current app
+* [corectl](/commands/corectl)	 - 
+* [corectl variable layout](/commands/corectl_variable_layout)	 - Evaluate the layout of an generic variable
+* [corectl variable ls](/commands/corectl_variable_ls)	 - Print a list of all generic variables in the current app
+* [corectl variable properties](/commands/corectl_variable_properties)	 - Print the properties of the generic variable
+* [corectl variable rm](/commands/corectl_variable_rm)	 - Remove one or many variables in the current app
+* [corectl variable set](/commands/corectl_variable_set)	 - Set or update the variables in the current app
 

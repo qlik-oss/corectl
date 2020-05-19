@@ -1,3 +1,11 @@
+---
+title: "corectl status"
+description: "corectl status"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl status
 
 Print status info about the connection to the engine and current app
@@ -42,5 +50,5 @@ corectl status --app=my-app.qvf
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

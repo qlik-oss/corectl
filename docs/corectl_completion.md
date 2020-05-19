@@ -1,3 +1,11 @@
+---
+title: "corectl completion"
+description: "corectl completion"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl completion
 
 Generate auto completion scripts
@@ -49,5 +57,5 @@ corectl completion <shell> [flags]
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

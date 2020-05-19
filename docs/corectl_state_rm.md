@@ -1,3 +1,11 @@
+---
+title: "corectl state rm"
+description: "corectl state rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl state rm
 
 Removes an alternate state in the current app
@@ -41,5 +49,5 @@ corectl state rm NAME-1
 
 ### SEE ALSO
 
-* [corectl state](corectl_state.md)	 - Explore and manage alternate states
+* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
 

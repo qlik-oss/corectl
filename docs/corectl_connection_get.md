@@ -1,3 +1,11 @@
+---
+title: "corectl connection get"
+description: "corectl connection get"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl connection get
 
 Show the properties for a specific connection
@@ -41,5 +49,5 @@ corectl connection get CONNECTION-ID
 
 ### SEE ALSO
 
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
 

@@ -1,3 +1,11 @@
+---
+title: "corectl connection set"
+description: "corectl connection set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl connection set
 
 Set or update the connections in the current app
@@ -41,5 +49,5 @@ corectl connection set ./my-connections.yml
 
 ### SEE ALSO
 
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
 

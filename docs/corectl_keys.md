@@ -1,3 +1,11 @@
+---
+title: "corectl keys"
+description: "corectl keys"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl keys
 
 Print key-only field list
@@ -41,5 +49,5 @@ corectl keys
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

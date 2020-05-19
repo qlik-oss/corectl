@@ -1,3 +1,11 @@
+---
+title: "corectl context rm"
+description: "corectl context rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context rm
 
 Remove one or more contexts
@@ -42,5 +50,5 @@ corectl context rm ctx1 ctx2
 
 ### SEE ALSO
 
-* [corectl context](corectl_context.md)	 - Create, update and use contexts
+* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
 

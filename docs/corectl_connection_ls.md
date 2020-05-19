@@ -1,3 +1,11 @@
+---
+title: "corectl connection ls"
+description: "corectl connection ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl connection ls
 
 Print a list of all connections in the current app
@@ -42,5 +50,5 @@ corectl connection ls
 
 ### SEE ALSO
 
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
 

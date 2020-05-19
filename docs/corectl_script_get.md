@@ -1,3 +1,11 @@
+---
+title: "corectl script get"
+description: "corectl script get"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl script get
 
 Print the reload script
@@ -41,5 +49,5 @@ corectl script get
 
 ### SEE ALSO
 
-* [corectl script](corectl_script.md)	 - Explore and manage the script
+* [corectl script](/commands/corectl_script)	 - Explore and manage the script
 

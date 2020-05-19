@@ -1,3 +1,11 @@
+---
+title: "corectl variable ls"
+description: "corectl variable ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable ls
 
 Print a list of all generic variables in the current app
@@ -42,5 +50,5 @@ corectl variable ls
 
 ### SEE ALSO
 
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
 

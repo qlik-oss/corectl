@@ -1,3 +1,11 @@
+---
+title: "corectl catwalk"
+description: "corectl catwalk"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl catwalk
 
 Open the specified app in catwalk
@@ -43,5 +51,5 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

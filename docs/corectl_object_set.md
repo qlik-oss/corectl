@@ -1,3 +1,11 @@
+---
+title: "corectl object set"
+description: "corectl object set"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl object set
 
 Set or update the objects in the current app
@@ -43,5 +51,5 @@ corectl object set ./my-objects-glob-path.json
 
 ### SEE ALSO
 
-* [corectl object](corectl_object.md)	 - Explore and manage generic objects
+* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
 

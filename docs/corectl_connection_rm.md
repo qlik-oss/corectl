@@ -1,3 +1,11 @@
+---
+title: "corectl connection rm"
+description: "corectl connection rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl connection rm
 
 Remove the specified connection(s)
@@ -43,5 +51,5 @@ corectl connection rm ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl connection](corectl_connection.md)	 - Explore and manage connections
+* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
 

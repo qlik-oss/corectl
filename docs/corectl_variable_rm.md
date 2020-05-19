@@ -1,3 +1,11 @@
+---
+title: "corectl variable rm"
+description: "corectl variable rm"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl variable rm
 
 Remove one or many variables in the current app
@@ -42,5 +50,5 @@ corectl variable rm NAME-1
 
 ### SEE ALSO
 
-* [corectl variable](corectl_variable.md)	 - Explore and manage variables
+* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
 

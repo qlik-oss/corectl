@@ -1,3 +1,11 @@
+---
+title: "corectl fields"
+description: "corectl fields"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl fields
 
 Print field list
@@ -42,5 +50,5 @@ corectl fields
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
+* [corectl](/commands/corectl)	 - 
 

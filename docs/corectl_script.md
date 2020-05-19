@@ -1,3 +1,11 @@
+---
+title: "corectl script"
+description: "corectl script"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl script
 
 Explore and manage the script
@@ -31,7 +39,7 @@ Explore and manage the script
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl script get](corectl_script_get.md)	 - Print the reload script
-* [corectl script set](corectl_script_set.md)	 - Set the script in the current app
+* [corectl](/commands/corectl)	 - 
+* [corectl script get](/commands/corectl_script_get)	 - Print the reload script
+* [corectl script set](/commands/corectl_script_set)	 - Set the script in the current app
 

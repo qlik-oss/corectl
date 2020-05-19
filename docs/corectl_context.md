@@ -1,3 +1,11 @@
+---
+title: "corectl context"
+description: "corectl context"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl context
 
 Create, update and use contexts
@@ -45,14 +53,14 @@ Contexts are stored locally in your ~/.qlik/contexts.yml file.
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl context clear](corectl_context_clear.md)	 - Set the current context to none
-* [corectl context create](corectl_context_create.md)	 - Create a context with the specified configuration
-* [corectl context get](corectl_context_get.md)	 - Get context, current context by default
-* [corectl context init](corectl_context_init.md)	 - Set up access to Qlik Sense Cloud
-* [corectl context login](corectl_context_login.md)	 - Login and set cookie for the named context
-* [corectl context ls](corectl_context_ls.md)	 - List all contexts
-* [corectl context rm](corectl_context_rm.md)	 - Remove one or more contexts
-* [corectl context update](corectl_context_update.md)	 - Update a context with the specified configuration
-* [corectl context use](corectl_context_use.md)	 - Specify what context to use
+* [corectl](/commands/corectl)	 - 
+* [corectl context clear](/commands/corectl_context_clear)	 - Set the current context to none
+* [corectl context create](/commands/corectl_context_create)	 - Create a context with the specified configuration
+* [corectl context get](/commands/corectl_context_get)	 - Get context, current context by default
+* [corectl context init](/commands/corectl_context_init)	 - Set up access to Qlik Sense Cloud
+* [corectl context login](/commands/corectl_context_login)	 - Login and set cookie for the named context
+* [corectl context ls](/commands/corectl_context_ls)	 - List all contexts
+* [corectl context rm](/commands/corectl_context_rm)	 - Remove one or more contexts
+* [corectl context update](/commands/corectl_context_update)	 - Update a context with the specified configuration
+* [corectl context use](/commands/corectl_context_use)	 - Specify what context to use
 

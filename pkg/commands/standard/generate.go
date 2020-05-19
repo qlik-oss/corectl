@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -127,6 +129,16 @@ func CreateGenerateSpecCommand(version string) *cobra.Command {
 	}
 }
 
+const fmTemplate = `---
+title: "%s"
+description: "%s"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
+`
+
 func CreateGenerateDocsCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:    "generate-docs",
@@ -136,7 +148,18 @@ func CreateGenerateDocsCommand() *cobra.Command {
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			fmt.Println("Generating documentation")
-			doc.GenMarkdownTree(ccmd.Root(), "./docs")
+			filePrepender := func(filename string) string {
+				name := filepath.Base(filename)
+				base := strings.TrimSuffix(name, path.Ext(name))
+				return fmt.Sprintf(fmTemplate, strings.Replace(base, "_", " ", -1), strings.Replace(base, "_", " ", -1))
+			}
+
+			linkHandler := func(name string) string {
+				base := strings.TrimSuffix(name, path.Ext(name))
+				return "/commands/" + strings.ToLower(base)
+			}
+
+			doc.GenMarkdownTreeCustom(ccmd.Root(), "./docs", filePrepender, linkHandler)
 		},
 	}
 }

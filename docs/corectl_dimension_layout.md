@@ -1,3 +1,11 @@
+---
+title: "corectl dimension layout"
+description: "corectl dimension layout"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl dimension layout
 
 Evaluate the layout of an generic dimension
@@ -41,5 +49,5 @@ corectl dimension layout DIMENSION-ID
 
 ### SEE ALSO
 
-* [corectl dimension](corectl_dimension.md)	 - Explore and manage dimensions
+* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
 

@@ -1,3 +1,11 @@
+---
+title: "corectl bookmark ls"
+description: "corectl bookmark ls"
+categories: Libraries & Tools
+type: Tools
+tags: qlik-cli
+products: Qlik Cloud, QSEoK
+---
 ## corectl bookmark ls
 
 Print a list of all generic bookmarks in the current app
@@ -41,5 +49,5 @@ corectl bookmark ls
 
 ### SEE ALSO
 
-* [corectl bookmark](corectl_bookmark.md)	 - Explore and manage bookmarks
+* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
 
