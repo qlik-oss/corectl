@@ -133,7 +133,7 @@ const fmTemplate = `---
 title: "%s"
 description: "%s"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
