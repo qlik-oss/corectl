@@ -2,7 +2,7 @@
 title: "corectl app ls"
 description: "corectl app ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl app ls
 
 ### SEE ALSO
 
-* [corectl app](/commands/corectl_app)	 - Explore and manage apps
+* [corectl app](/libraries-and-tools/corectl-app)	 - Explore and manage apps
 

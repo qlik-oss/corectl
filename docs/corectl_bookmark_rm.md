@@ -2,7 +2,7 @@
 title: "corectl bookmark rm"
 description: "corectl bookmark rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl dimension rm ID-1
 
 ### SEE ALSO
 
-* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
+* [corectl bookmark](/libraries-and-tools/corectl-bookmark)	 - Explore and manage bookmarks
 

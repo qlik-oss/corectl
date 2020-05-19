@@ -2,7 +2,7 @@
 title: "corectl script get"
 description: "corectl script get"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl script get
 
 ### SEE ALSO
 
-* [corectl script](/commands/corectl_script)	 - Explore and manage the script
+* [corectl script](/libraries-and-tools/corectl-script)	 - Explore and manage the script
 

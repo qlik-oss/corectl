@@ -2,7 +2,7 @@
 title: "corectl measure ls"
 description: "corectl measure ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl measure ls
 
 ### SEE ALSO
 
-* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
+* [corectl measure](/libraries-and-tools/corectl-measure)	 - Explore and manage measures
 

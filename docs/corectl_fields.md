@@ -2,7 +2,7 @@
 title: "corectl fields"
 description: "corectl fields"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl fields
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

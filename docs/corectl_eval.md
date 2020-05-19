@@ -2,7 +2,7 @@
 title: "corectl eval"
 description: "corectl eval"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -52,5 +52,5 @@ corectl eval by "Region" // Returns the values for dimension "Region"
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

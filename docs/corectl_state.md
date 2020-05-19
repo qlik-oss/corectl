@@ -2,7 +2,7 @@
 title: "corectl state"
 description: "corectl state"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,8 +39,8 @@ Explore and manage alternate states
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl state add](/commands/corectl_state_add)	 - Add an alternate states in the current app
-* [corectl state ls](/commands/corectl_state_ls)	 - Print a list of all alternate states in the current app
-* [corectl state rm](/commands/corectl_state_rm)	 - Removes an alternate state in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl state add](/libraries-and-tools/corectl-state-add)	 - Add an alternate states in the current app
+* [corectl state ls](/libraries-and-tools/corectl-state-ls)	 - Print a list of all alternate states in the current app
+* [corectl state rm](/libraries-and-tools/corectl-state-rm)	 - Removes an alternate state in the current app
 

@@ -2,7 +2,7 @@
 title: "corectl keys"
 description: "corectl keys"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl keys
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

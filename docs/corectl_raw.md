@@ -2,7 +2,7 @@
 title: "corectl raw"
 description: "corectl raw"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -55,5 +55,5 @@ corectl raw get v1/items --query name=ImportantApp
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

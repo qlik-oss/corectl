@@ -2,7 +2,7 @@
 title: "corectl variable rm"
 description: "corectl variable rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl variable rm NAME-1
 
 ### SEE ALSO
 
-* [corectl variable](/commands/corectl_variable)	 - Explore and manage variables
+* [corectl variable](/libraries-and-tools/corectl-variable)	 - Explore and manage variables
 

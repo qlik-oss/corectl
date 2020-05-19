@@ -2,7 +2,7 @@
 title: "corectl dimension"
 description: "corectl dimension"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,10 +39,10 @@ Explore and manage dimensions
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl dimension layout](/commands/corectl_dimension_layout)	 - Evaluate the layout of an generic dimension
-* [corectl dimension ls](/commands/corectl_dimension_ls)	 - Print a list of all generic dimensions in the current app
-* [corectl dimension properties](/commands/corectl_dimension_properties)	 - Print the properties of the generic dimension
-* [corectl dimension rm](/commands/corectl_dimension_rm)	 - Remove one or many dimensions in the current app
-* [corectl dimension set](/commands/corectl_dimension_set)	 - Set or update the dimensions in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl dimension layout](/libraries-and-tools/corectl-dimension-layout)	 - Evaluate the layout of an generic dimension
+* [corectl dimension ls](/libraries-and-tools/corectl-dimension-ls)	 - Print a list of all generic dimensions in the current app
+* [corectl dimension properties](/libraries-and-tools/corectl-dimension-properties)	 - Print the properties of the generic dimension
+* [corectl dimension rm](/libraries-and-tools/corectl-dimension-rm)	 - Remove one or many dimensions in the current app
+* [corectl dimension set](/libraries-and-tools/corectl-dimension-set)	 - Set or update the dimensions in the current app
 

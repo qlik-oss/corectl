@@ -2,7 +2,7 @@
 title: "corectl measure rm"
 description: "corectl measure rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl measure rm ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
+* [corectl measure](/libraries-and-tools/corectl-measure)	 - Explore and manage measures
 

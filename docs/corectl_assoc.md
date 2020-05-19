@@ -2,7 +2,7 @@
 title: "corectl assoc"
 description: "corectl assoc"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl associations
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

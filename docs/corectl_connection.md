@@ -2,7 +2,7 @@
 title: "corectl connection"
 description: "corectl connection"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,9 +39,9 @@ Explore and manage connections
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl connection get](/commands/corectl_connection_get)	 - Show the properties for a specific connection
-* [corectl connection ls](/commands/corectl_connection_ls)	 - Print a list of all connections in the current app
-* [corectl connection rm](/commands/corectl_connection_rm)	 - Remove the specified connection(s)
-* [corectl connection set](/commands/corectl_connection_set)	 - Set or update the connections in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl connection get](/libraries-and-tools/corectl-connection-get)	 - Show the properties for a specific connection
+* [corectl connection ls](/libraries-and-tools/corectl-connection-ls)	 - Print a list of all connections in the current app
+* [corectl connection rm](/libraries-and-tools/corectl-connection-rm)	 - Remove the specified connection(s)
+* [corectl connection set](/libraries-and-tools/corectl-connection-set)	 - Set or update the connections in the current app
 

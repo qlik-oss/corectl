@@ -2,7 +2,7 @@
 title: "corectl measure"
 description: "corectl measure"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,10 +39,10 @@ Explore and manage measures
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl measure layout](/commands/corectl_measure_layout)	 - Evaluate the layout of an generic measure
-* [corectl measure ls](/commands/corectl_measure_ls)	 - Print a list of all generic measures in the current app
-* [corectl measure properties](/commands/corectl_measure_properties)	 - Print the properties of the generic measure
-* [corectl measure rm](/commands/corectl_measure_rm)	 - Remove one or many generic measures in the current app
-* [corectl measure set](/commands/corectl_measure_set)	 - Set or update the measures in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl measure layout](/libraries-and-tools/corectl-measure-layout)	 - Evaluate the layout of an generic measure
+* [corectl measure ls](/libraries-and-tools/corectl-measure-ls)	 - Print a list of all generic measures in the current app
+* [corectl measure properties](/libraries-and-tools/corectl-measure-properties)	 - Print the properties of the generic measure
+* [corectl measure rm](/libraries-and-tools/corectl-measure-rm)	 - Remove one or many generic measures in the current app
+* [corectl measure set](/libraries-and-tools/corectl-measure-set)	 - Set or update the measures in the current app
 

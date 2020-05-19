@@ -2,7 +2,7 @@
 title: "corectl dimension rm"
 description: "corectl dimension rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl dimension rm ID-1
 
 ### SEE ALSO
 
-* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
+* [corectl dimension](/libraries-and-tools/corectl-dimension)	 - Explore and manage dimensions
 

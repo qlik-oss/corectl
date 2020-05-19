@@ -2,7 +2,7 @@
 title: "corectl state ls"
 description: "corectl state ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl state ls
 
 ### SEE ALSO
 
-* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
+* [corectl state](/libraries-and-tools/corectl-state)	 - Explore and manage alternate states
 

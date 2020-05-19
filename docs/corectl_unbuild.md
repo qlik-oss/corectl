@@ -2,7 +2,7 @@
 title: "corectl unbuild"
 description: "corectl unbuild"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -55,5 +55,5 @@ corectl unbuild --app APP-ID
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

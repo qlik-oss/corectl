@@ -2,7 +2,7 @@
 title: "corectl bookmark properties"
 description: "corectl bookmark properties"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl bookmark properties BOOKMARK-ID
 
 ### SEE ALSO
 
-* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
+* [corectl bookmark](/libraries-and-tools/corectl-bookmark)	 - Explore and manage bookmarks
 

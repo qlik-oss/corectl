@@ -2,7 +2,7 @@
 title: "corectl measure set"
 description: "corectl measure set"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl measure set ./my-measures-glob-path.json
 
 ### SEE ALSO
 
-* [corectl measure](/commands/corectl_measure)	 - Explore and manage measures
+* [corectl measure](/libraries-and-tools/corectl-measure)	 - Explore and manage measures
 

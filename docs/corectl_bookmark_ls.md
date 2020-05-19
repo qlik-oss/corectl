@@ -2,7 +2,7 @@
 title: "corectl bookmark ls"
 description: "corectl bookmark ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl bookmark ls
 
 ### SEE ALSO
 
-* [corectl bookmark](/commands/corectl_bookmark)	 - Explore and manage bookmarks
+* [corectl bookmark](/libraries-and-tools/corectl-bookmark)	 - Explore and manage bookmarks
 

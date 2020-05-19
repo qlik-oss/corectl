@@ -2,7 +2,7 @@
 title: "corectl completion"
 description: "corectl completion"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -57,5 +57,5 @@ corectl completion <shell> [flags]
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

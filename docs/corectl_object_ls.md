@@ -2,7 +2,7 @@
 title: "corectl object ls"
 description: "corectl object ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl object ls
 
 ### SEE ALSO
 
-* [corectl object](/commands/corectl_object)	 - Explore and manage generic objects
+* [corectl object](/libraries-and-tools/corectl-object)	 - Explore and manage generic objects
 

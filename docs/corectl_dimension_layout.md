@@ -2,7 +2,7 @@
 title: "corectl dimension layout"
 description: "corectl dimension layout"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl dimension layout DIMENSION-ID
 
 ### SEE ALSO
 
-* [corectl dimension](/commands/corectl_dimension)	 - Explore and manage dimensions
+* [corectl dimension](/libraries-and-tools/corectl-dimension)	 - Explore and manage dimensions
 

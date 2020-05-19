@@ -2,7 +2,7 @@
 title: "corectl connection ls"
 description: "corectl connection ls"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl connection ls
 
 ### SEE ALSO
 
-* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
+* [corectl connection](/libraries-and-tools/corectl-connection)	 - Explore and manage connections
 

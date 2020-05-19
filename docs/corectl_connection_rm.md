@@ -2,7 +2,7 @@
 title: "corectl connection rm"
 description: "corectl connection rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -51,5 +51,5 @@ corectl connection rm ID-1 ID-2
 
 ### SEE ALSO
 
-* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
+* [corectl connection](/libraries-and-tools/corectl-connection)	 - Explore and manage connections
 

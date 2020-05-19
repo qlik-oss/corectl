@@ -2,7 +2,7 @@
 title: "corectl state rm"
 description: "corectl state rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl state rm NAME-1
 
 ### SEE ALSO
 
-* [corectl state](/commands/corectl_state)	 - Explore and manage alternate states
+* [corectl state](/libraries-and-tools/corectl-state)	 - Explore and manage alternate states
 

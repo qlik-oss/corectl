@@ -2,7 +2,7 @@
 title: "corectl context login"
 description: "corectl context login"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -55,5 +55,5 @@ corectl context login context-name
 
 ### SEE ALSO
 
-* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
+* [corectl context](/libraries-and-tools/corectl-context)	 - Create, update and use contexts
 

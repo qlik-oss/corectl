@@ -2,7 +2,7 @@
 title: "corectl object"
 description: "corectl object"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,11 +39,11 @@ Explore and manage generic objects
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl object data](/commands/corectl_object_data)	 - Evaluate the hypercube data of a generic object
-* [corectl object layout](/commands/corectl_object_layout)	 - Evaluate the hypercube layout of the generic object
-* [corectl object ls](/commands/corectl_object_ls)	 - Print a list of all generic objects in the current app
-* [corectl object properties](/commands/corectl_object_properties)	 - Print the properties of the generic object
-* [corectl object rm](/commands/corectl_object_rm)	 - Remove one or many generic objects in the current app
-* [corectl object set](/commands/corectl_object_set)	 - Set or update the objects in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl object data](/libraries-and-tools/corectl-object-data)	 - Evaluate the hypercube data of a generic object
+* [corectl object layout](/libraries-and-tools/corectl-object-layout)	 - Evaluate the hypercube layout of the generic object
+* [corectl object ls](/libraries-and-tools/corectl-object-ls)	 - Print a list of all generic objects in the current app
+* [corectl object properties](/libraries-and-tools/corectl-object-properties)	 - Print the properties of the generic object
+* [corectl object rm](/libraries-and-tools/corectl-object-rm)	 - Remove one or many generic objects in the current app
+* [corectl object set](/libraries-and-tools/corectl-object-set)	 - Set or update the objects in the current app
 

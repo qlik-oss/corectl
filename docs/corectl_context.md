@@ -2,7 +2,7 @@
 title: "corectl context"
 description: "corectl context"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -53,14 +53,14 @@ Contexts are stored locally in your ~/.qlik/contexts.yml file.
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl context clear](/commands/corectl_context_clear)	 - Set the current context to none
-* [corectl context create](/commands/corectl_context_create)	 - Create a context with the specified configuration
-* [corectl context get](/commands/corectl_context_get)	 - Get context, current context by default
-* [corectl context init](/commands/corectl_context_init)	 - Set up access to Qlik Sense Cloud
-* [corectl context login](/commands/corectl_context_login)	 - Login and set cookie for the named context
-* [corectl context ls](/commands/corectl_context_ls)	 - List all contexts
-* [corectl context rm](/commands/corectl_context_rm)	 - Remove one or more contexts
-* [corectl context update](/commands/corectl_context_update)	 - Update a context with the specified configuration
-* [corectl context use](/commands/corectl_context_use)	 - Specify what context to use
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl context clear](/libraries-and-tools/corectl-context-clear)	 - Set the current context to none
+* [corectl context create](/libraries-and-tools/corectl-context-create)	 - Create a context with the specified configuration
+* [corectl context get](/libraries-and-tools/corectl-context-get)	 - Get context, current context by default
+* [corectl context init](/libraries-and-tools/corectl-context-init)	 - Set up access to Qlik Sense Cloud
+* [corectl context login](/libraries-and-tools/corectl-context-login)	 - Login and set cookie for the named context
+* [corectl context ls](/libraries-and-tools/corectl-context-ls)	 - List all contexts
+* [corectl context rm](/libraries-and-tools/corectl-context-rm)	 - Remove one or more contexts
+* [corectl context update](/libraries-and-tools/corectl-context-update)	 - Update a context with the specified configuration
+* [corectl context use](/libraries-and-tools/corectl-context-use)	 - Specify what context to use
 

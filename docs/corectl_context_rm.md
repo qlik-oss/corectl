@@ -2,7 +2,7 @@
 title: "corectl context rm"
 description: "corectl context rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl context rm ctx1 ctx2
 
 ### SEE ALSO
 
-* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
+* [corectl context](/libraries-and-tools/corectl-context)	 - Create, update and use contexts
 

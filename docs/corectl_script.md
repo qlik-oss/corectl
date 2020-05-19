@@ -2,7 +2,7 @@
 title: "corectl script"
 description: "corectl script"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -39,7 +39,7 @@ Explore and manage the script
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
-* [corectl script get](/commands/corectl_script_get)	 - Print the reload script
-* [corectl script set](/commands/corectl_script_set)	 - Set the script in the current app
+* [corectl](/libraries-and-tools/corectl)	 - 
+* [corectl script get](/libraries-and-tools/corectl-script-get)	 - Print the reload script
+* [corectl script set](/libraries-and-tools/corectl-script-set)	 - Set the script in the current app
 

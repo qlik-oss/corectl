@@ -2,7 +2,7 @@
 title: "corectl catwalk"
 description: "corectl catwalk"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -51,5 +51,5 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

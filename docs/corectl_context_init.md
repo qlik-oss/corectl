@@ -2,7 +2,7 @@
 title: "corectl context init"
 description: "corectl context init"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -44,5 +44,5 @@ corectl context init <context name> [flags]
 
 ### SEE ALSO
 
-* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
+* [corectl context](/libraries-and-tools/corectl-context)	 - Create, update and use contexts
 

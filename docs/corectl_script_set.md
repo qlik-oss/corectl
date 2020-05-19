@@ -2,7 +2,7 @@
 title: "corectl script set"
 description: "corectl script set"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl script set ./my-script-file.qvs
 
 ### SEE ALSO
 
-* [corectl script](/commands/corectl_script)	 - Explore and manage the script
+* [corectl script](/libraries-and-tools/corectl-script)	 - Explore and manage the script
 

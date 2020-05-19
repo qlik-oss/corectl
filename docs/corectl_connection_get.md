@@ -2,7 +2,7 @@
 title: "corectl connection get"
 description: "corectl connection get"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -49,5 +49,5 @@ corectl connection get CONNECTION-ID
 
 ### SEE ALSO
 
-* [corectl connection](/commands/corectl_connection)	 - Explore and manage connections
+* [corectl connection](/libraries-and-tools/corectl-connection)	 - Explore and manage connections
 

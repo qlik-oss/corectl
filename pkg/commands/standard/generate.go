@@ -156,7 +156,7 @@ func CreateGenerateDocsCommand() *cobra.Command {
 
 			linkHandler := func(name string) string {
 				base := strings.TrimSuffix(name, path.Ext(name))
-				return "/commands/" + strings.ToLower(base)
+				return "/libraries-and-tools/" + strings.ToLower(strings.Replace(base, "_", "-", -1))
 			}
 
 			doc.GenMarkdownTreeCustom(ccmd.Root(), "./docs", filePrepender, linkHandler)

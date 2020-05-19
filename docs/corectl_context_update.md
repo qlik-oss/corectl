@@ -2,7 +2,7 @@
 title: "corectl context update"
 description: "corectl context update"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -52,5 +52,5 @@ corectl context update rd-sense --server localhost:9076 --comment "R&D Qlik Sens
 
 ### SEE ALSO
 
-* [corectl context](/commands/corectl_context)	 - Create, update and use contexts
+* [corectl context](/libraries-and-tools/corectl-context)	 - Create, update and use contexts
 

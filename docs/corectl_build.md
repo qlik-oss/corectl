@@ -2,7 +2,7 @@
 title: "corectl build"
 description: "corectl build"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -62,5 +62,5 @@ corectl build --connections ./myconnections.yml --script ./myscript.qvs
 
 ### SEE ALSO
 
-* [corectl](/commands/corectl)	 - 
+* [corectl](/libraries-and-tools/corectl)	 - 
 

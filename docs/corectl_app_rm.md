@@ -2,7 +2,7 @@
 title: "corectl app rm"
 description: "corectl app rm"
 categories: Libraries & Tools
-type: Tools
+type: Commands
 tags: qlik-cli
 products: Qlik Cloud, QSEoK
 ---
@@ -50,5 +50,5 @@ corectl app rm APP-ID
 
 ### SEE ALSO
 
-* [corectl app](/commands/corectl_app)	 - Explore and manage apps
+* [corectl app](/libraries-and-tools/corectl-app)	 - Explore and manage apps
 
