@@ -13,7 +13,7 @@ corectl bookmark layout <bookmark-id> [flags]
 ### Examples
 
 ```
-corectl bBookmark layout BOOKMARK-ID
+corectl bookmark layout BOOKMARK-ID
 ```
 
 ### Options
