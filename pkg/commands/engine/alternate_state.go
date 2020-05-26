@@ -6,6 +6,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func CreateAlternateStateCommand() *cobra.Command {
@@ -44,11 +45,12 @@ func CreateAlternateStateCommand() *cobra.Command {
 	}
 
 	var removeAlternateStateCmd = &cobra.Command{
-		Use:     "rm <alternate-state-name>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Removes an alternate state in the current app",
-		Long:    "Removes an alternate state in the current app",
-		Example: "corectl state rm NAME-1",
+		Use:               "rm <alternate-state-name>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidAlternateStatesForCompletion,
+		Short:             "Removes an alternate state in the current app",
+		Long:              "Removes an alternate state in the current app",
+		Example:           "corectl state rm NAME-1",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			stateName := args[0]
@@ -76,4 +78,16 @@ func CreateAlternateStateCommand() *cobra.Command {
 
 	alternateStateCmd.AddCommand(listAlternateStatesCmd, addAlternateStateCmd, removeAlternateStateCmd)
 	return alternateStateCmd
+}
+
+func listValidAlternateStatesForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListAlternateStates(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		if strings.HasPrefix(item, toComplete) {
+			result = append(result, item)
+		}
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

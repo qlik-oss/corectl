@@ -6,6 +6,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func CreateBookmarkCommand() *cobra.Command {
@@ -31,11 +32,12 @@ func CreateBookmarkCommand() *cobra.Command {
 	}, "no-save")
 
 	var removeBookmarkCmd = WithLocalFlags(&cobra.Command{
-		Use:     "rm <bookmark-id>...",
-		Args:    cobra.MinimumNArgs(1),
-		Short:   "Remove one or many bookmarks in the current app",
-		Long:    "Remove one or many bookmarks in the current app",
-		Example: "corectl dimension rm ID-1",
+		Use:               "rm <bookmark-id>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidBookmarksForCompletion,
+		Short:             "Remove one or many bookmarks in the current app",
+		Long:              "Remove one or many bookmarks in the current app",
+		Example:           "corectl dimension rm ID-1",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -68,11 +70,12 @@ func CreateBookmarkCommand() *cobra.Command {
 	}
 
 	var getBookmarkPropertiesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "properties <bookmark-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the properties of the generic bookmark",
-		Long:    "Print the properties of the generic bookmark",
-		Example: "corectl bookmark properties BOOKMARK-ID",
+		Use:               "properties <bookmark-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidBookmarksForCompletion,
+		Short:             "Print the properties of the generic bookmark",
+		Long:              "Print the properties of the generic bookmark",
+		Example:           "corectl bookmark properties BOOKMARK-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -81,11 +84,12 @@ func CreateBookmarkCommand() *cobra.Command {
 	}, "minimum")
 
 	var getBookmarkLayoutCmd = &cobra.Command{
-		Use:     "layout <bookmark-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the layout of an generic bookmark",
-		Long:    "Evaluate the layout of an generic bookmark",
-		Example: "corectl bBookmark layout BOOKMARK-ID",
+		Use:               "layout <bookmark-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidBookmarksForCompletion,
+		Short:             "Evaluate the layout of an generic bookmark",
+		Long:              "Evaluate the layout of an generic bookmark",
+		Example:           "corectl bookmark layout BOOKMARK-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -105,4 +109,16 @@ func CreateBookmarkCommand() *cobra.Command {
 
 	bookmarkCmd.AddCommand(setBookmarksCmd, removeBookmarkCmd, listBookmarksCmd, getBookmarkPropertiesCmd, getBookmarkLayoutCmd)
 	return bookmarkCmd
+}
+
+func listValidBookmarksForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListBookmarks(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		if strings.HasPrefix(item.ID, toComplete) {
+			result = append(result, item.ID)
+		}
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

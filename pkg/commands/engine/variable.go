@@ -7,15 +7,17 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func CreateVariableCommand() *cobra.Command {
 	var setVariablesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "set <glob-pattern-path-to-variables-files.json>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Set or update the variables in the current app",
-		Long:    "Set or update the variables in the current app",
-		Example: "corectl variable set ./my-variables-glob-path.json",
+		Use:               "set <glob-pattern-path-to-variables-files.json>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidVariablesForCompletion,
+		Short:             "Set or update the variables in the current app",
+		Long:              "Set or update the variables in the current app",
+		Example:           "corectl variable set ./my-variables-glob-path.json",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			commandLineVariables := args[0]
@@ -31,11 +33,12 @@ func CreateVariableCommand() *cobra.Command {
 	}, "no-save")
 
 	var removeVariableCmd = WithLocalFlags(&cobra.Command{
-		Use:     "rm <variable-name>...",
-		Args:    cobra.MinimumNArgs(1),
-		Short:   "Remove one or many variables in the current app",
-		Long:    "Remove one or many variables in the current app",
-		Example: "corectl variable rm NAME-1",
+		Use:               "rm <variable-name>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidVariablesForCompletion,
+		Short:             "Remove one or many variables in the current app",
+		Long:              "Remove one or many variables in the current app",
+		Example:           "corectl variable rm NAME-1",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -68,11 +71,12 @@ func CreateVariableCommand() *cobra.Command {
 	}, "quiet")
 
 	var getVariablePropertiesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "properties <variable-name>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the properties of the generic variable",
-		Long:    "Print the properties of the generic variable",
-		Example: "corectl variable properties VARIABLE-NAME",
+		Use:               "properties <variable-name>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidVariablesForCompletion,
+		Short:             "Print the properties of the generic variable",
+		Long:              "Print the properties of the generic variable",
+		Example:           "corectl variable properties VARIABLE-NAME",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -81,11 +85,12 @@ func CreateVariableCommand() *cobra.Command {
 	}, "minimum")
 
 	var getVariableLayoutCmd = &cobra.Command{
-		Use:     "layout <variable-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the layout of an generic variable",
-		Long:    "Evaluate the layout of an generic variable",
-		Example: "corectl variable layout VARIABLE-NAME",
+		Use:               "layout <variable-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidVariablesForCompletion,
+		Short:             "Evaluate the layout of an generic variable",
+		Long:              "Evaluate the layout of an generic variable",
+		Example:           "corectl variable layout VARIABLE-NAME",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -105,4 +110,16 @@ func CreateVariableCommand() *cobra.Command {
 
 	variableCmd.AddCommand(setVariablesCmd, removeVariableCmd, listVariablesCmd, getVariablePropertiesCmd, getVariableLayoutCmd)
 	return variableCmd
+}
+
+func listValidVariablesForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListVariables(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		if strings.HasPrefix(item.ID, toComplete) {
+			result = append(result, item.ID)
+		}
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func CreateObjectCommand() *cobra.Command {
@@ -32,11 +33,12 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	}, "no-save")
 
 	var removeObjectCmd = WithLocalFlags(&cobra.Command{
-		Use:     "rm <object-id>...",
-		Args:    cobra.MinimumNArgs(1),
-		Short:   "Remove one or many generic objects in the current app",
-		Long:    "Remove one or many generic objects in the current app",
-		Example: "corectl object rm ID-1 ID-2",
+		Use:               "rm <object-id>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidObjectsForCompletion,
+		Short:             "Remove one or many generic objects in the current app",
+		Long:              "Remove one or many generic objects in the current app",
+		Example:           "corectl object rm ID-1 ID-2",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -69,11 +71,12 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	}, "quiet")
 
 	var getObjectPropertiesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "properties <object-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the properties of the generic object",
-		Long:    "Print the properties of the generic object in JSON format",
-		Example: "corectl object properties OBJECT-ID",
+		Use:               "properties <object-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidObjectsForCompletion,
+		Short:             "Print the properties of the generic object",
+		Long:              "Print the properties of the generic object in JSON format",
+		Example:           "corectl object properties OBJECT-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -82,11 +85,12 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	}, "minimum", "full")
 
 	var getObjectLayoutCmd = &cobra.Command{
-		Use:     "layout <object-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the hypercube layout of the generic object",
-		Long:    "Evaluate the hypercube layout of the generic object",
-		Example: "corectl object layout OBJECT-ID",
+		Use:               "layout <object-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidObjectsForCompletion,
+		Short:             "Evaluate the hypercube layout of the generic object",
+		Long:              "Evaluate the hypercube layout of the generic object",
+		Example:           "corectl object layout OBJECT-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -95,11 +99,12 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 	}
 
 	var getObjectDataCmd = &cobra.Command{
-		Use:     "data <object-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the hypercube data of a generic object",
-		Long:    "Evaluate the hypercube data of a generic object",
-		Example: "corectl object data OBJECT-ID",
+		Use:               "data <object-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidObjectsForCompletion,
+		Short:             "Evaluate the hypercube data of a generic object",
+		Long:              "Evaluate the hypercube data of a generic object",
+		Example:           "corectl object data OBJECT-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -118,4 +123,16 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 
 	objectCmd.AddCommand(listObjectsCmd, setObjectsCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, removeObjectCmd)
 	return objectCmd
+}
+
+func listValidObjectsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListObjects(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		if strings.HasPrefix(item.ID, toComplete) {
+			result = append(result, item.ID)
+		}
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

@@ -51,11 +51,12 @@ func CreateListAppsCommand() *cobra.Command {
 }
 func CreateRemoveAppCommand() *cobra.Command {
 	return WithLocalFlags(&cobra.Command{
-		Use:     "rm <app-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Remove the specified app",
-		Long:    "Remove the specified app",
-		Example: "corectl app rm APP-ID",
+		Use:               "rm <app-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: boot.ListValidAppsForCompletion,
+		Short:             "Remove the specified app",
+		Long:              "Remove the specified app",
+		Example:           "corectl app rm APP-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			app := args[0]
