@@ -118,11 +118,10 @@ func CreateGetKeysCommand() *cobra.Command {
 
 func CreateEvalCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:               "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
-		Args:              cobra.MinimumNArgs(1),
-		ValidArgsFunction: listFieldsForCompletion,
-		Short:             "Evaluate a list of measures and dimensions",
-		Long:              `Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
+		Use:   "eval <measure 1> [<measure 2...>] by <dimension 1> [<dimension 2...]",
+		Args:  cobra.MinimumNArgs(1),
+		Short: "Evaluate a list of measures and dimensions",
+		Long:  `Evaluate a list of measures and dimensions. To evaluate a measure for a specific dimension use the <measure> by <dimension> notation. If dimensions are omitted then the eval will be evaluated over all dimensions.`,
 		Example: `corectl eval "Count(a)" // returns the number of values in field "a"
 corectl eval "1+1" // returns the calculated value for 1+1
 corectl eval "Avg(Sales)" by "Region" // returns the average of measure "Sales" for dimension "Region"
@@ -169,14 +168,15 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 }
 
 func listFieldsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 	comm := boot.NewCommunicator(ccmd)
 	ctx, _, doc, _ := comm.OpenAppSocket(false)
 	data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
 	result := make([]string, 0)
 	for _, item := range data.Fields {
-		if strings.HasPrefix(item.Name, toComplete) {
-			result = append(result, item.Name)
-		}
+		result = append(result, item.Name)
 	}
 	return result, cobra.ShellCompDirectiveNoFileComp
 }

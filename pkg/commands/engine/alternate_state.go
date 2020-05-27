@@ -6,7 +6,6 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func CreateAlternateStateCommand() *cobra.Command {
@@ -81,13 +80,10 @@ func CreateAlternateStateCommand() *cobra.Command {
 }
 
 func listValidAlternateStatesForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 	items := internal.ListAlternateStates(ctx, doc)
-	result := make([]string, 0)
-	for _, item := range items {
-		if strings.HasPrefix(item, toComplete) {
-			result = append(result, item)
-		}
-	}
-	return result, cobra.ShellCompDirectiveNoFileComp
+	return items, cobra.ShellCompDirectiveNoFileComp
 }

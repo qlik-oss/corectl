@@ -7,7 +7,6 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func CreateMeasureCommand() *cobra.Command {
@@ -111,13 +110,14 @@ func CreateMeasureCommand() *cobra.Command {
 }
 
 func listValidMeasuresForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 	items := internal.ListMeasures(ctx, doc)
 	result := make([]string, 0)
 	for _, item := range items {
-		if strings.HasPrefix(item.ID, toComplete) {
-			result = append(result, item.ID)
-		}
+		result = append(result, item.ID)
 	}
 	return result, cobra.ShellCompDirectiveNoFileComp
 }

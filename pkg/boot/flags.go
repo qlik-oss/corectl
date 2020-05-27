@@ -98,6 +98,6 @@ func ListValidAppsForCompletion(cmd *cobra.Command, args []string, toComplete st
 				completions = append(completions, x.DocId)
 			}
 		}
-		return completions, 0
+		return completions, cobra.ShellCompDirectiveNoFileComp
 	}
 }

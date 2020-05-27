@@ -6,7 +6,6 @@ import (
 	"github.com/qlik-oss/corectl/pkg/log"
 	"github.com/qlik-oss/corectl/printer"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func CreateConnectionCommand() *cobra.Command {
@@ -103,6 +102,9 @@ corectl connection rm ID-1 ID-2`,
 }
 
 func listValidConnectionsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
 	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 	items, err := doc.GetConnections(ctx)
 	if err != nil {
@@ -110,9 +112,7 @@ func listValidConnectionsForCompletion(ccmd *cobra.Command, args []string, toCom
 	}
 	result := make([]string, 0)
 	for _, item := range items {
-		if strings.HasPrefix(item.Id, toComplete) {
-			result = append(result, item.Id)
-		}
+		result = append(result, item.Id)
 	}
 	return result, cobra.ShellCompDirectiveNoFileComp
 }
