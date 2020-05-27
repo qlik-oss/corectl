@@ -44,11 +44,12 @@ func CreateAlternateStateCommand() *cobra.Command {
 	}
 
 	var removeAlternateStateCmd = &cobra.Command{
-		Use:     "rm <alternate-state-name>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Removes an alternate state in the current app",
-		Long:    "Removes an alternate state in the current app",
-		Example: "corectl state rm NAME-1",
+		Use:               "rm <alternate-state-name>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidAlternateStatesForCompletion,
+		Short:             "Removes an alternate state in the current app",
+		Long:              "Removes an alternate state in the current app",
+		Example:           "corectl state rm NAME-1",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			stateName := args[0]
@@ -76,4 +77,13 @@ func CreateAlternateStateCommand() *cobra.Command {
 
 	alternateStateCmd.AddCommand(listAlternateStatesCmd, addAlternateStateCmd, removeAlternateStateCmd)
 	return alternateStateCmd
+}
+
+func listValidAlternateStatesForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListAlternateStates(ctx, doc)
+	return items, cobra.ShellCompDirectiveNoFileComp
 }

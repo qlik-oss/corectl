@@ -31,12 +31,12 @@ func CreateDimensionCommand() *cobra.Command {
 	}, "no-save")
 
 	var removeDimensionCmd = WithLocalFlags(&cobra.Command{
-		Use:     "rm <dimension-id>...",
-		Args:    cobra.MinimumNArgs(1),
-		Short:   "Remove one or many dimensions in the current app",
-		Long:    "Remove one or many dimensions in the current app",
-		Example: "corectl dimension rm ID-1",
-
+		Use:               "rm <dimension-id>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidDimensionsForCompletion,
+		Short:             "Remove one or many dimensions in the current app",
+		Long:              "Remove one or many dimensions in the current app",
+		Example:           "corectl dimension rm ID-1",
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
 			for _, entity := range args {
@@ -68,11 +68,12 @@ func CreateDimensionCommand() *cobra.Command {
 	}, "quiet")
 
 	var getDimensionPropertiesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "properties <dimension-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the properties of the generic dimension",
-		Long:    "Print the properties of the generic dimension",
-		Example: "corectl dimension properties DIMENSION-ID",
+		Use:               "properties <dimension-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidDimensionsForCompletion,
+		Short:             "Print the properties of the generic dimension",
+		Long:              "Print the properties of the generic dimension",
+		Example:           "corectl dimension properties DIMENSION-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -81,11 +82,12 @@ func CreateDimensionCommand() *cobra.Command {
 	}, "minimum")
 
 	var getDimensionLayoutCmd = &cobra.Command{
-		Use:     "layout <dimension-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the layout of an generic dimension",
-		Long:    "Evaluate the layout of an generic dimension",
-		Example: "corectl dimension layout DIMENSION-ID",
+		Use:               "layout <dimension-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidDimensionsForCompletion,
+		Short:             "Evaluate the layout of an generic dimension",
+		Long:              "Evaluate the layout of an generic dimension",
+		Example:           "corectl dimension layout DIMENSION-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -104,4 +106,17 @@ func CreateDimensionCommand() *cobra.Command {
 
 	dimensionCmd.AddCommand(listDimensionsCmd, setDimensionsCmd, getDimensionPropertiesCmd, getDimensionLayoutCmd, removeDimensionCmd)
 	return dimensionCmd
+}
+
+func listValidDimensionsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListDimensions(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		result = append(result, item.ID)
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

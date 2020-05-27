@@ -30,10 +30,11 @@ func CreateConnectionCommand() *cobra.Command {
 	}
 
 	var removeConnectionCmd = &cobra.Command{
-		Use:   "rm <connection-id>...",
-		Args:  cobra.MinimumNArgs(1),
-		Short: "Remove the specified connection(s)",
-		Long:  "Remove one or many connections from the app",
+		Use:               "rm <connection-id>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidConnectionsForCompletion,
+		Short:             "Remove the specified connection(s)",
+		Long:              "Remove one or many connections from the app",
 		Example: `corectl connection rm
 corectl connection rm ID-1
 corectl connection rm ID-1 ID-2`,
@@ -70,11 +71,12 @@ corectl connection rm ID-1 ID-2`,
 	}, "quiet")
 
 	var getConnectionCmd = &cobra.Command{
-		Use:     "get <connection-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Show the properties for a specific connection",
-		Long:    "Show the properties for a specific connection",
-		Example: "corectl connection get CONNECTION-ID",
+		Use:               "get <connection-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidConnectionsForCompletion,
+		Short:             "Show the properties for a specific connection",
+		Long:              "Show the properties for a specific connection",
+		Example:           "corectl connection get CONNECTION-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -97,4 +99,20 @@ corectl connection rm ID-1 ID-2`,
 
 	connectionCmd.AddCommand(setConnectionsCmd, getConnectionCmd, listConnectionsCmd, removeConnectionCmd)
 	return connectionCmd
+}
+
+func listValidConnectionsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items, err := doc.GetConnections(ctx)
+	if err != nil {
+		return []string{}, cobra.ShellCompDirectiveError
+	}
+	result := make([]string, 0)
+	for _, item := range items {
+		result = append(result, item.Id)
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

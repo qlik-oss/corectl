@@ -31,11 +31,12 @@ func CreateMeasureCommand() *cobra.Command {
 	}, "no-save")
 
 	var removeMeasureCmd = WithLocalFlags(&cobra.Command{
-		Use:     "rm <measure-id>...",
-		Args:    cobra.MinimumNArgs(1),
-		Short:   "Remove one or many generic measures in the current app",
-		Long:    "Remove one or many generic measures in the current app",
-		Example: "corectl measure rm ID-1 ID-2",
+		Use:               "rm <measure-id>...",
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: listValidMeasuresForCompletion,
+		Short:             "Remove one or many generic measures in the current app",
+		Long:              "Remove one or many generic measures in the current app",
+		Example:           "corectl measure rm ID-1 ID-2",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -68,11 +69,12 @@ func CreateMeasureCommand() *cobra.Command {
 	}, "quiet")
 
 	var getMeasurePropertiesCmd = WithLocalFlags(&cobra.Command{
-		Use:     "properties <measure-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the properties of the generic measure",
-		Long:    "Print the properties of the generic measure",
-		Example: "corectl measure properties MEASURE-ID",
+		Use:               "properties <measure-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidMeasuresForCompletion,
+		Short:             "Print the properties of the generic measure",
+		Long:              "Print the properties of the generic measure",
+		Example:           "corectl measure properties MEASURE-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, params := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -81,11 +83,12 @@ func CreateMeasureCommand() *cobra.Command {
 	}, "minimum")
 
 	var getMeasureLayoutCmd = &cobra.Command{
-		Use:     "layout <measure-id>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Evaluate the layout of an generic measure",
-		Long:    "Evaluate the layout of an generic measure and prints in JSON format",
-		Example: "corectl measure layout MEASURE-ID",
+		Use:               "layout <measure-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listValidMeasuresForCompletion,
+		Short:             "Evaluate the layout of an generic measure",
+		Long:              "Evaluate the layout of an generic measure and prints in JSON format",
+		Example:           "corectl measure layout MEASURE-ID",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -104,4 +107,17 @@ func CreateMeasureCommand() *cobra.Command {
 
 	measureCmd.AddCommand(listMeasuresCmd, setMeasuresCmd, getMeasurePropertiesCmd, getMeasureLayoutCmd, removeMeasureCmd)
 	return measureCmd
+}
+
+func listValidMeasuresForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
+	items := internal.ListMeasures(ctx, doc)
+	result := make([]string, 0)
+	for _, item := range items {
+		result = append(result, item.ID)
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }

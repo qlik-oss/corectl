@@ -68,11 +68,12 @@ corectl meta --app my-app.qvf`,
 
 func CreateGetValuesCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:     "values <field name>",
-		Args:    cobra.ExactArgs(1),
-		Short:   "Print the top values of a field",
-		Long:    "Print the top values for a specific field in your data model",
-		Example: "corectl values FIELD",
+		Use:               "values <field name>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: listFieldsForCompletion,
+		Short:             "Print the top values of a field",
+		Long:              "Print the top values for a specific field in your data model",
+		Example:           "corectl values FIELD",
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(false)
@@ -164,4 +165,18 @@ corectl catwalk --app my-app.qvf --catwalk-url http://localhost:8080`,
 			}
 		},
 	}, "catwalk-url")
+}
+
+func listFieldsForCompletion(ccmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	if len(args) > 0 {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+	comm := boot.NewCommunicator(ccmd)
+	ctx, _, doc, _ := comm.OpenAppSocket(false)
+	data := internal.GetModelMetadata(ctx, doc, comm.RestCaller(), false)
+	result := make([]string, 0)
+	for _, item := range data.Fields {
+		result = append(result, item.Name)
+	}
+	return result, cobra.ShellCompDirectiveNoFileComp
 }
