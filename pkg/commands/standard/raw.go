@@ -64,6 +64,9 @@ func CreateRawCommand() *cobra.Command {
 				out = cmd.OutOrStdout()
 			}
 
+			// Setting the "flag" to add raw to the User-Agent
+			comm.DynSettings.SetRawReq()
+
 			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, comm.GetBool("quiet"))
 			if err != nil {
 				// Cleanup if we're trying to write to a file.
