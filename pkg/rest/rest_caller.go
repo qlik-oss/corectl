@@ -287,4 +287,3 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	}
 	return response, nil
 }
-
