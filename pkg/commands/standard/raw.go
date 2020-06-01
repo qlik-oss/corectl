@@ -65,11 +65,16 @@ func CreateRawCommand() *cobra.Command {
 				out = cmd.OutOrStdout()
 			}
 
+			// Setting the "flag" to add raw to the User-Agent
+			comm.DynSettings.SetUserAgentComment("raw")
+
 			var filter rest.Filter
 			if comm.GetBool("quiet") {
 				filter = rest.QuietFilter
 			}
+
 			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, filter)
+
 			if err != nil {
 				// Cleanup if we're trying to write to a file.
 				if file, ok := out.(*os.File); ok {
