@@ -65,7 +65,7 @@ func CreateRawCommand() *cobra.Command {
 			}
 
 			// Setting the "flag" to add raw to the User-Agent
-			comm.DynSettings.SetRawReq()
+			comm.DynSettings.SetUserAgentComment("raw")
 
 			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, comm.GetBool("quiet"))
 			if err != nil {

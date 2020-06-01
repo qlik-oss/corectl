@@ -151,7 +151,7 @@ type DynSettings struct {
 	rootName string
 	version  string
 
-	isRaw             bool
+	userAgentComment  string
 	contextName       string
 	configPath        string
 	configFilePath    string
@@ -451,8 +451,8 @@ func (ds *DynSettings) GetUserAgent() string {
 	}
 	agent += " (" + runtime.GOOS + ")"
 
-	if ds.isRaw {
-		agent += " raw"
+	if ds.userAgentComment != "" {
+		agent += " " + ds.userAgentComment
 	}
 
 	return agent
@@ -492,7 +492,8 @@ func (ds *DynSettings) GetConfigMap() map[string]interface{} {
 	return configMap
 }
 
-// SetRawReq will toogle the raw comment in User-Agent header for the possibility to track usage of raw commands
-func (ds *DynSettings) SetRawReq() {
-	ds.isRaw = true
+// SetUserAgentComment will append a comment to the User-Agent header
+// Useful for differentiating raw API calls
+func (ds *DynSettings) SetUserAgentComment(value string) {
+	ds.userAgentComment = value
 }
