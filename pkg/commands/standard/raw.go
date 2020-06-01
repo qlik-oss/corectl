@@ -15,6 +15,7 @@ import (
 	"github.com/qlik-oss/corectl/pkg/boot"
 	"github.com/qlik-oss/corectl/pkg/commands/engine"
 	"github.com/qlik-oss/corectl/pkg/log"
+	"github.com/qlik-oss/corectl/pkg/rest"
 	"github.com/spf13/cobra"
 )
 
@@ -67,7 +68,13 @@ func CreateRawCommand() *cobra.Command {
 			// Setting the "flag" to add raw to the User-Agent
 			comm.DynSettings.SetUserAgentComment("raw")
 
-			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, false, comm.GetBool("quiet"))
+			var filter rest.Filter
+			if comm.GetBool("quiet") {
+				filter = rest.QuietFilter
+			}
+
+			err = restCaller.CallStreaming(method, url, queryParams, mimeType, body, out, filter)
+
 			if err != nil {
 				// Cleanup if we're trying to write to a file.
 				if file, ok := out.(*os.File); ok {
