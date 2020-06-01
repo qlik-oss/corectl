@@ -167,7 +167,7 @@ func (c *RestCaller) FollowRedirect(res *http.Response, err error) (*http.Respon
 }
 
 //CallStreaming makes a rest call, follows redirects if present and streams the output to the supplied output
-func (c *RestCaller) CallStreaming(method string, path string, query map[string]string, mimeType string, body io.ReadCloser, output io.Writer, raw bool, quiet bool) error {
+func (c *RestCaller) CallStreaming(method string, path string, query map[string]string, mimeType string, body io.ReadCloser, output io.Writer, filter Filter) error {
 	// Create the request
 	url := c.CreateUrl(path, query)
 	req, err := http.NewRequest(strings.ToUpper(method), url.String(), body)
@@ -205,13 +205,10 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 		if err != nil {
 			return err
 		}
-		if quiet { //Only print IDs
-			fmt.Fprint(output, string(filterIdsOnly(data)))
-		} else if !raw { //Print data payload neatly formatted
-			fmt.Fprint(output, log.FormatAsJSON(filterOutputForPrint(data)))
-		} else { // Print it all
-			fmt.Fprint(output, string(data))
+		if filter == nil {
+			filter = StandardFilter
 		}
+		fmt.Fprint(output, string(filter(data)))
 	case "", "text/plain", "text/html":
 		// We've got some sort of text or an empty body, safe to write it to the output.
 		io.Copy(output, res.Body)
@@ -290,3 +287,4 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	}
 	return response, nil
 }
+
