@@ -107,8 +107,10 @@ func (r *multiReadCloser) Close() error {
 	return nil
 }
 
-// filterIdsOnly extracts all "id" fields and prints them.
-func filterIdsOnly(bytes []byte) []byte {
+type Filter func([]byte) []byte
+
+// QuietFilter extracts all "id" fields and prints them.
+func QuietFilter(bytes []byte) []byte {
 	var result map[string]interface{}
 	err := json.Unmarshal(bytes, &result)
 	if err != nil {
@@ -128,9 +130,14 @@ func filterIdsOnly(bytes []byte) []byte {
 	return []byte(ids)
 }
 
-// filterOutpuForPrint removes information not deemed of interest in a CLI context,
+// RawFilter just returns its input.
+func RawFilter(bytes []byte) []byte {
+	return bytes
+}
+
+// StandardFilter removes information not deemed of interest in a CLI context,
 // such as links.
-func filterOutputForPrint(bytes []byte) []byte {
+func StandardFilter(bytes []byte) []byte {
 	var result map[string]interface{}
 	err := json.Unmarshal(bytes, &result)
 	if err != nil {

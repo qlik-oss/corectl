@@ -595,3 +595,10 @@ func TestCertificatesPathNegative(t *testing.T) {
 		p.ExpectErrorIncludes("could not load client certificate").Run("context", "create", "cert-test")
 	}
 }
+
+func TestRaw(t *testing.T) {
+	p := toolkit.Params{T: t, Server: *toolkit.EngineStdIP}
+	defer p.Reset()
+
+	p.ExpectIncludes(") raw").Run("raw", "get", "v1/apps/privileges", "-v")
+}

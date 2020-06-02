@@ -151,6 +151,7 @@ type DynSettings struct {
 	rootName string
 	version  string
 
+	userAgentComment  string
 	contextName       string
 	configPath        string
 	configFilePath    string
@@ -449,6 +450,11 @@ func (ds *DynSettings) GetUserAgent() string {
 		agent += "/" + ds.version
 	}
 	agent += " (" + runtime.GOOS + ")"
+
+	if ds.userAgentComment != "" {
+		agent += " " + ds.userAgentComment
+	}
+
 	return agent
 }
 
@@ -484,4 +490,10 @@ func (ds *DynSettings) GetConfigMap() map[string]interface{} {
 	}
 	log.Infof("%#v", configMap)
 	return configMap
+}
+
+// SetUserAgentComment will append a comment to the User-Agent header
+// Useful for differentiating raw API calls
+func (ds *DynSettings) SetUserAgentComment(value string) {
+	ds.userAgentComment = value
 }
