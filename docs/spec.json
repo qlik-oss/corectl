@@ -246,7 +246,7 @@
           "description": "Get context, current context by default"
         },
         "init": {
-          "description": "Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
+          "description": "Set up access to Qlik Sense SaaS by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
           "flags": {
             "api-key": {
               "description": "API key of the tenant"
