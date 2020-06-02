@@ -17,8 +17,8 @@ func CreateInitCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "init <context name>",
 		Args:  cobra.RangeArgs(0, 1),
-		Short: "Set up access to Qlik Sense Cloud",
-		Long:  "Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
+		Short: "Set up access to Qlik Sense SaaS",
+		Long:  "Set up access to Qlik Sense SaaS by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
 		Run: func(cmd *cobra.Command, args []string) {
 
 			tenant, _ := cmd.Flags().GetString("server")
@@ -63,7 +63,7 @@ func askForConfirmation(s string) bool {
 // setupContext sets up the configuration with tenant URL and API-key.
 func setupContext(tenant, apikey, explicitContextName string) {
 	if tenant == "" || apikey == "" {
-		fmt.Println("Acquiring access to Qlik Cloud Services or Qlik Sense Enterprise on Kubernetes")
+		fmt.Println("Acquiring access to Qlik Sense SaaS")
 		fmt.Println("To complete the setup you have to have the 'developer' role and have")
 		fmt.Println("API-keys enabled. If you're unsure, you can ask your tenant-admin.")
 		fmt.Println()
