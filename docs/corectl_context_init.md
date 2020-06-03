@@ -1,10 +1,10 @@
 ## corectl context init
 
-Set up access to Qlik Sense Cloud
+Set up access to Qlik Sense SaaS
 
 ### Synopsis
 
-Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name
+Set up access to Qlik Sense SaaS by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name
 
 ```
 corectl context init <context name> [flags]
