@@ -536,7 +536,7 @@ func TestImportApp(t *testing.T) {
 func TestUnbuild(t *testing.T) {
 	os.Setenv("CONN_TYPE", "folder")
 	p := toolkit.Params{T: t, Config: "test/projects/using-entities/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name()}
-	p2 := toolkit.Params{T: t, Config: "test/golden/unbuild/corectl.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-rebuild"}
+	p2 := toolkit.Params{T: t, Config: "test/golden/unbuild/config.yml", Server: *toolkit.EngineStdIP, App: t.Name() + "-rebuild"}
 	defer p.Reset()
 
 	p.ExpectOK().Run("build")

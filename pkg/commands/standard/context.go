@@ -26,8 +26,8 @@ This command creates a context by using the supplied flags.
 The information stored will be server url, headers and certificates
 (if present) along with comment and the context-name.`,
 
-		Example: fmt.Sprintf(`%[1]s context create local-engine
-%[1]s context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"`, binaryName),
+		Example: fmt.Sprintf(`%[1]s context create me@cloud --server https://my-tenant.eu.qlikcloud.com --api-key MY-API-KEY
+%[1]s context create local --server localhost:9076 --comment "Local engine"`, binaryName),
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			newSettings := getContextSettings(ccmd)

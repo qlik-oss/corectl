@@ -17,8 +17,8 @@ corectl context create <context name> [flags]
 ### Examples
 
 ```
-corectl context create local-engine
-corectl context create rd-sense --server localhost:9076 --comment "R&D Qlik Sense deployment"
+corectl context create me@cloud --server https://my-tenant.eu.qlikcloud.com --api-key MY-API-KEY
+corectl context create local --server localhost:9076 --comment "Local engine"
 ```
 
 ### Options

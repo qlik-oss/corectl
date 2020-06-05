@@ -170,7 +170,7 @@ func exportMainConfigFile(rootFolder string) {
 		"objects: objects/*.json\n" +
 		"variables: variables.json\n" +
 		"app-properties: app-properties.json\n"
-	ioutil.WriteFile(rootFolder+"/corectl.yml", []byte(config), os.ModePerm)
+	ioutil.WriteFile(rootFolder+"/config.yml", []byte(config), os.ModePerm)
 }
 
 func writeDimensions(dimensionArray []JSONWithOrder, folder string) {
