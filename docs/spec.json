@@ -6,7 +6,7 @@
     "version": "1.5.3-dev",
     "license": "MIT"
   },
-  "clispec": "0.1.0",
+  "clispec": "1.0.0",
   "x-qlik-visibility": "public",
   "x-qlik-stability": "stable",
   "flags": {
