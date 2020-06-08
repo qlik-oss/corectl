@@ -26,7 +26,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 
 		Annotations: map[string]string{
 			"x-qlik-visibility": "public",
-			"x-qlik-stability": "stable",
+			"x-qlik-stability":  "stable",
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
