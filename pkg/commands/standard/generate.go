@@ -119,7 +119,7 @@ func CreateGenerateSpecCommand(version string) *cobra.Command {
 			fmt.Println("Generating specification")
 			var jsonData []byte
 			spec := spec{
-				Clispec: "0.1.0",
+				Clispec: "1.0.0",
 				Name:    ccmd.Root().Use,
 				Info: info{
 					Title:       "Specification for corectl",
