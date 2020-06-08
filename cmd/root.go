@@ -25,6 +25,7 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 		BashCompletionFunction: bashCompletionFunc,
 
 		Annotations: map[string]string{
+			"x-qlik-visibility": "public",
 			"x-qlik-stability": "stable",
 		},
 

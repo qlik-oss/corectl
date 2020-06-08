@@ -7,6 +7,7 @@
     "license": "MIT"
   },
   "clispec": "0.1.0",
+  "x-qlik-visibility": "public",
   "x-qlik-stability": "stable",
   "flags": {
     "app": {
@@ -135,6 +136,7 @@
         },
         "set": {
           "description": "Set or update the bookmarks in the current app",
+          "x-qlik-visibility": "private",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
@@ -345,10 +347,12 @@
       }
     },
     "generate-docs": {
-      "description": "Generate markdown docs based on cobra commands"
+      "description": "Generate markdown docs based on cobra commands",
+      "x-qlik-visibility": "private"
     },
     "generate-spec": {
       "description": "Generate API spec docs based on cobra commands",
+      "x-qlik-visibility": "private",
       "flags": {
         "help": {
           "alias": "h",
