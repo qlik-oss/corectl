@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"sort"
 	"strings"
@@ -33,6 +34,63 @@ func logHeader(header http.Header, prefix string) {
 		} else {
 			log.Verbosef("%s%s: %s", prefix, key, header.Get(key))
 		}
+	}
+}
+
+func logJSONPayload(buf *bytes.Buffer) {
+	str := log.FormatAsJSON(buf.Bytes())
+	if str == "" {
+		str = buf.String()
+	}
+	if str != "" {
+		log.Verbose("PAYLOAD:")
+		log.Verbose(str)
+	}
+}
+
+func logMultipartPayload(buf *bytes.Buffer, boundary string) {
+	log.Verbose("PAYLOAD (MULTIPART):")
+	r := multipart.NewReader(buf, boundary)
+	var part *multipart.Part
+	var err error
+	for err == nil {
+		part, err = r.NextPart()
+		if err != nil {
+			break
+		}
+		b, err := ioutil.ReadAll(part)
+		if err != nil {
+			break
+		}
+		log.Verbose("------")
+		k := "Content-Disposition"
+		if v := part.Header.Get(k); v != "" {
+			log.Verbosef("> %s: %s", k, v)
+		}
+		k = "Content-Type"
+		var contentType string
+		if v := part.Header.Get(k); v != "" {
+			contentType = v
+			log.Verbosef("> %s: %s", k, contentType)
+		}
+		var str string
+		switch contentType {
+		case "", "application/json":
+			str = log.FormatAsJSON(b)
+			if str == "" {
+				str = string(b)
+			}
+		case "application/octet-stream":
+			str = fmt.Sprintf("Binary data: %d bytes", len(b))
+		default:
+			str = string(b)
+		}
+		log.Verbose("PART:")
+		log.Verbose(str)
+	}
+	log.Verbose("------")
+	if err != io.EOF {
+		log.Error("malformed multipart request: ", err)
 	}
 }
 
