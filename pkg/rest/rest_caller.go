@@ -181,7 +181,6 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	//Make the actual invocation
 	res, err := c.CallRawAndFollowRedirect(req)
 	if err != nil {
-		fmt.Fprintln(output, err)
 		return err
 	}
 	defer res.Body.Close()
@@ -280,13 +279,13 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 			log.Verbose(str)
 		}
 	}
+	if err != nil {
+		return nil, err
+	}
 	if c.PrintMode().VerboseMode() {
 		logHeader(response.Header, "< ")
 	}
 
 	log.Verbosef("Response time: %dms", t1.Sub(t0).Milliseconds())
-	if err != nil {
-		return response, err
-	}
 	return response, nil
 }
