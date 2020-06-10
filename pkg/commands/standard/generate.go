@@ -15,6 +15,7 @@ type (
 	commandJSON struct {
 		Alias       string                 `json:"alias,omitempty"`
 		Long        string                 `json:"description,omitempty"`
+		Visibility  string                 `json:"x-qlik-visibility,omitempty"`
 		Stability   string                 `json:"x-qlik-stability,omitempty"`
 		Deprecated  string                 `json:"deprecated,omitempty"`
 		Flags       map[string]flagJSON    `json:"flags,omitempty"`
@@ -39,6 +40,7 @@ type (
 		Name        string                 `json:"name,omitempty"`
 		Info        info                   `json:"info,omitempty"`
 		Clispec     string                 `json:"clispec,omitempty"`
+		Visibility  string                 `json:"x-qlik-visibility,omitempty"`
 		Stability   string                 `json:"x-qlik-stability,omitempty"`
 		Flags       map[string]flagJSON    `json:"flags,omitempty"`
 		SubCommands map[string]commandJSON `json:"commands,omitempty"`
@@ -52,6 +54,7 @@ func returnCmdspec(ccmd *cobra.Command) commandJSON {
 		Deprecated:  ccmd.Deprecated,
 		SubCommands: returnCommands(ccmd.Commands()),
 		Flags:       returnFlags(ccmd.LocalFlags()),
+		Visibility:  returnVisibility(ccmd.Annotations, ccmd.Hidden),
 		Stability:   returnStability(ccmd.Annotations),
 	}
 	return ccmdJSON
@@ -66,6 +69,16 @@ func returnAlias(aliases []string) string {
 
 func returnStability(annotations map[string]string) string {
 	return annotations["x-qlik-stability"]
+}
+
+func returnVisibility(annotations map[string]string, hidden bool) string {
+	visibility, ok := annotations["x-qlik-visibility"]
+	if !ok {
+		if hidden {
+			visibility = "private"
+		}
+	}
+	return visibility
 }
 
 func returnCommands(commands []*cobra.Command) map[string]commandJSON {
@@ -116,6 +129,7 @@ func CreateGenerateSpecCommand(version string) *cobra.Command {
 				},
 				SubCommands: returnCommands(ccmd.Root().Commands()),
 				Flags:       returnFlags(ccmd.Root().LocalFlags()),
+				Visibility:  returnVisibility(ccmd.Root().Annotations, ccmd.Root().Hidden),
 				Stability:   returnStability(ccmd.Root().Annotations),
 			}
 			jsonData, err := json.MarshalIndent(spec, "", "  ")

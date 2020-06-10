@@ -7,6 +7,7 @@
     "license": "MIT"
   },
   "clispec": "0.1.0",
+  "x-qlik-visibility": "public",
   "x-qlik-stability": "stable",
   "flags": {
     "app": {
@@ -135,6 +136,7 @@
         },
         "set": {
           "description": "Set or update the bookmarks in the current app",
+          "x-qlik-visibility": "private",
           "flags": {
             "no-save": {
               "description": "Do not save the app",
@@ -246,7 +248,7 @@
           "description": "Get context, current context by default"
         },
         "init": {
-          "description": "Set up access to Qlik Sense on Cloud Services/Kubernetes by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
+          "description": "Set up access to Qlik Sense SaaS by entering the domain name and the api key of the Qlik Sense instance. If no context name is supplied the domain name is used as context name",
           "flags": {
             "api-key": {
               "description": "API key of the tenant"
@@ -345,10 +347,12 @@
       }
     },
     "generate-docs": {
-      "description": "Generate markdown docs based on cobra commands"
+      "description": "Generate markdown docs based on cobra commands",
+      "x-qlik-visibility": "private"
     },
     "generate-spec": {
       "description": "Generate API spec docs based on cobra commands",
+      "x-qlik-visibility": "private",
       "flags": {
         "help": {
           "alias": "h",
@@ -464,7 +468,7 @@
       }
     },
     "raw": {
-      "description": "Send Http API Request to Qlik Sense Cloud editions. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
+      "description": "Send Http API Request to Qlik Sense Saas. Query parameters are specified using the --query flag, a body can be specified using one of the body flags (body, body-file or body-values)",
       "flags": {
         "body": {
           "description": "The content of the body as a string"

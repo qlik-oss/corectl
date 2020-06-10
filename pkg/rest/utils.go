@@ -132,7 +132,7 @@ func QuietFilter(bytes []byte) []byte {
 
 // RawFilter just returns its input.
 func RawFilter(bytes []byte) []byte {
-	return bytes
+	return []byte(log.FormatAsJSON(bytes))
 }
 
 // StandardFilter removes information not deemed of interest in a CLI context,
