@@ -65,7 +65,7 @@ func (c *CommonSettings) Headers() http.Header {
 		headers.Set("User-Agent", "corectl")
 	}
 
-	headers.Set("Referer", c.GetContextName())
+	headers.Set("Referer", c.Server())
 
 	return headers
 }

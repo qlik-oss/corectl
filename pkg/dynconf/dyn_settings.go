@@ -497,9 +497,3 @@ func (ds *DynSettings) GetConfigMap() map[string]interface{} {
 func (ds *DynSettings) SetUserAgentComment(value string) {
 	ds.userAgentComment = value
 }
-
-// GetContextName will return the name of the current context
-// Used for setting 'Referer' header
-func (ds *DynSettings) GetContextName() string {
-	return ds.contextName
-}
