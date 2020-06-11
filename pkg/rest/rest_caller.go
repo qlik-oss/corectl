@@ -181,7 +181,6 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	//Make the actual invocation
 	res, err := c.CallRawAndFollowRedirect(req)
 	if err != nil {
-		fmt.Fprintln(output, err)
 		return err
 	}
 	defer res.Body.Close()
@@ -255,11 +254,14 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	}
 
 	// TODO support logging more than only JSON?
+	var contentType string
 	var buf *bytes.Buffer
 	if req.Body != nil {
 		if c.PrintMode().VerboseMode() {
-			contentType := req.Header.Get("Content-Type")
-			if contentType == "" || contentType == "application/json" {
+			contentType = req.Header.Get("Content-Type")
+			contentType = strings.Split(contentType, "; ")[0]
+			switch contentType {
+			case "", "application/json", "multipart/form-data":
 				// Replace req.Body with a TeeReader which writes to buf on reads so we can log it.
 				buf = bytes.NewBuffer([]byte{})
 				req.Body = ioutil.NopCloser(io.TeeReader(req.Body, buf))
@@ -271,19 +273,22 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	response, err := client.Do(req)
 	t1 := time.Now()
 	if buf != nil {
-		str := log.FormatAsJSON(buf.Bytes())
-		if str != "" {
-			log.Verbose("PAYLOAD:")
-			log.Verbose(str)
+		switch contentType {
+		case "", "aplication/json":
+			logJSONPayload(buf)
+		case "multipart/form-data":
+			boundary := strings.Split(req.Header.Get("Content-Type"), "; ")[1]
+			boundary = strings.TrimPrefix(boundary, "boundary=")
+			logMultipartPayload(buf, boundary)
 		}
+	}
+	if err != nil {
+		return nil, err
 	}
 	if c.PrintMode().VerboseMode() {
 		logHeader(response.Header, "< ")
 	}
 
 	log.Verbosef("Response time: %dms", t1.Sub(t0).Milliseconds())
-	if err != nil {
-		return response, err
-	}
 	return response, nil
 }
