@@ -2,11 +2,12 @@ package boot
 
 import (
 	"crypto/tls"
-	"github.com/qlik-oss/corectl/pkg/dynconf"
-	"github.com/qlik-oss/corectl/pkg/log"
 	"net/http"
 	neturl "net/url"
 	"strings"
+
+	"github.com/qlik-oss/corectl/pkg/dynconf"
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 func NewCommonSettings(cfg *dynconf.DynSettings) *CommonSettings {
@@ -63,6 +64,9 @@ func (c *CommonSettings) Headers() http.Header {
 	if agent := headers.Get("User-Agent"); agent == "" {
 		headers.Set("User-Agent", "corectl")
 	}
+
+	headers.Set("Referer", c.Server())
+
 	return headers
 }
 
