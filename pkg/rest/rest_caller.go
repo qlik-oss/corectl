@@ -274,7 +274,7 @@ func (c *RestCaller) CallRaw(req *http.Request) (*http.Response, error) {
 	t1 := time.Now()
 	if buf != nil {
 		switch contentType {
-		case "", "aplication/json":
+		case "", "application/json":
 			logJSONPayload(buf)
 		case "multipart/form-data":
 			boundary := strings.Split(req.Header.Get("Content-Type"), "; ")[1]
