@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"context"
-	"github.com/qlik-oss/corectl/pkg/boot"
-	"github.com/qlik-oss/corectl/pkg/commands/engine"
-	"github.com/qlik-oss/corectl/pkg/commands/standard"
 	"os"
 	"strings"
 
+	"github.com/qlik-oss/corectl/pkg/boot"
+	"github.com/qlik-oss/corectl/pkg/commands/engine"
+	"github.com/qlik-oss/corectl/pkg/commands/standard"
 	"github.com/spf13/cobra"
 )
 
@@ -20,25 +20,19 @@ func CreateRootCommand(version, branch, commit string) *cobra.Command {
 		Use:                    "corectl",
 		Short:                  "",
 		Long:                   `corectl contains various commands to interact with the Qlik Associative Engine. See respective command for more information`,
-		Version:                version,
 		DisableAutoGenTag:      true,
 		BashCompletionFunction: bashCompletionFunc,
 
 		Annotations: map[string]string{
 			"x-qlik-visibility": "public",
 			"x-qlik-stability":  "stable",
+			"version":           version,
 		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			ccmd.HelpFunc()(ccmd, args)
 		},
 	}
-	// Including the version in the root command is very convenient.
-	// But, specifying version adds a --version flag to the command.
-	// This is all perfectly nice, but, we don't want a version command
-	// and a version flag, so let's hide the flag for now.
-	rootCmd.PersistentFlags().Bool("version", false, "")
-	rootCmd.PersistentFlags().MarkHidden("version")
 
 	//App Building Commands
 	appBuildCommands := []*cobra.Command{
