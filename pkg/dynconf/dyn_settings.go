@@ -20,9 +20,10 @@ func ReadSettings(ccmd *cobra.Command) *DynSettings {
 	result := readSettings(ccmd.Flags(), true)
 	root := ccmd.Root()
 	result.rootName = root.Use
-	result.version = root.Version
+	result.version = root.Annotations["version"]
 	return result
 }
+
 func ReadSettingsWithoutContext(ccmd *cobra.Command) *DynSettings {
 	return readSettings(ccmd.Flags(), false)
 }

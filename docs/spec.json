@@ -61,9 +61,6 @@
       "alias": "v",
       "description": "Log extra information",
       "default": "false"
-    },
-    "version": {
-      "default": "false"
     }
   },
   "commands": {
