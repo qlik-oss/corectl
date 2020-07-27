@@ -8,6 +8,11 @@
     "qGrouping": "N",
     "qExpressions": [],
     "qActiveExpression": 0,
+    "qNumFormat": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
     "title": "Sum of numbers",
     "title": "Sum of numbers"
   },

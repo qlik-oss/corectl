@@ -45,11 +45,6 @@
           "qTags": [],
           "qGrouping": "N",
           "qDef": "count(numbers)",
-          "qNumFormat": {
-            "qType": "U",
-            "qnDec": 10,
-            "qUseThou": 0
-          },
           "qAccumulate": 0,
           "qActiveExpression": 0,
           "qExpressions": []
