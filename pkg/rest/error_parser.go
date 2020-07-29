@@ -1,13 +1,22 @@
 package rest
 
 import (
+	"fmt"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 )
 
-//ErrorWithBody is the errors returned from rest calls. It contains a human readable message plus the raw body
+//restError is the errors returned from rest calls. It contains a human readable message plus the raw body
 type (
-	ErrorWithBody struct {
+	Error interface {
+		error
+		Body() []byte
+		StatusCode() int
+	}
+
+	restError struct {
+		status int
 		message string
 		body    []byte
 	}
@@ -29,30 +38,44 @@ type (
 	}
 )
 
-func (e *ErrorWithBody) Error() string {
-	return e.message
+func (e *restError) Error() string {
+	msg := fmt.Sprintf("%d %s", e.status, http.StatusText(e.status))
+	if e.message != "" {
+		msg += ": " + e.message
+	}
+	return msg
 }
 
-func (e *ErrorWithBody) Body() []byte {
+func (e *restError) Body() []byte {
 	return e.body
 }
 
-// BuildErrorWithBody creates an error that has both a readable message and the original body
-func BuildErrorWithBody(res *http.Response, data []byte) *ErrorWithBody {
-	message := buildStandardErrorMessage(data)
-	if message == "" {
-		message = buildNonArrayErrorMessage(data)
+func (e *restError) StatusCode() int {
+	return e.status
+}
+
+// NewError creates an error that has both a readable message and the original body
+func NewError(res *http.Response) Error {
+	var message string
+	data, err := ioutil.ReadAll(res.Body)
+	if err == nil {
+		message = buildStandardErrorMessage(data)
+		if message == "" {
+			message = buildNonArrayErrorMessage(data)
+		}
+		if message == "" {
+			message = buildOtherKnownJsonErrorMessages(data)
+		}
+		if message == "" {
+			message = buildNonJsonMessage(data)
+		}
 	}
-	if message == "" {
-		message = buildOtherKnownJsonErrorMessages(data)
+	restErr := &restError{
+		status: res.StatusCode,
+		body: data,
+		message: message,
 	}
-	if message == "" {
-		message = buildNonJsonMessage(data)
-	}
-	if message != "" {
-		return &ErrorWithBody{message: res.Status + ": " + message, body: data}
-	}
-	return &ErrorWithBody{message: res.Status, body: data}
+	return restErr
 }
 
 func buildStandardErrorMessage(data []byte) string {

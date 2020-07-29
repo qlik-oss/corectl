@@ -100,10 +100,10 @@ func (c *RestCaller) CallReq(req *http.Request, result interface{}) error {
 		return err
 	}
 	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return BuildErrorWithBody(res, data)
+		return NewError(res)
 	}
+	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}
@@ -187,12 +187,7 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 
 	//Something when wrong it seems
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		data, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		errorWithBody := BuildErrorWithBody(res, data)
-		return errorWithBody
+		return NewError(res)
 	}
 
 	log.Verbose(res.Status)
