@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -16,7 +16,7 @@ type (
 	}
 
 	restError struct {
-		status int
+		status  int
 		message string
 		body    []byte
 	}
@@ -71,8 +71,8 @@ func NewError(res *http.Response) Error {
 		}
 	}
 	restErr := &restError{
-		status: res.StatusCode,
-		body: data,
+		status:  res.StatusCode,
+		body:    data,
 		message: message,
 	}
 	return restErr
