@@ -16,6 +16,7 @@
     },
     "bash": {
       "description": "Bash flag used to adapt output to bash completion format",
+      "x-qlik-visibility": "private",
       "default": "false"
     },
     "certificates": {
