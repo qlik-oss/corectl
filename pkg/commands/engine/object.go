@@ -117,14 +117,17 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		Short:   "Publish a generic object, like to make a sheet public",
 		Long:    "Publish a generic object, like to make a sheet public",
 		Example: "corectl object publish OBJECT-ID -a APP-ID",
+		Annotations: map[string]string{
+			"x-qlik-stability": "experimental",
+		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			commandLineObjects := args[0]
-			if commandLineObjects == "" {
+			objectID := args[0]
+			if objectID == "" {
 				log.Fatalln("no objects specified")
 			}
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(true)
-			internal.Publish(ctx, doc, args[0])
+			internal.Publish(ctx, doc, objectID)
 		},
 	}
 
@@ -134,14 +137,17 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		Short:   "Unpublish a generic object, like to make a sheet private",
 		Long:    "Unpublish a generic object, like to make a sheet private",
 		Example: "corectl object unpublish OBJECT-ID -a APP-ID",
+		Annotations: map[string]string{
+			"x-qlik-stability": "experimental",
+		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
-			commandLineObjects := args[0]
-			if commandLineObjects == "" {
+			objectID := args[0]
+			if objectID == "" {
 				log.Fatalln("no objects specified")
 			}
 			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(true)
-			internal.UnPublish(ctx, doc, args[0])
+			internal.UnPublish(ctx, doc, objectID)
 		},
 	}
 
