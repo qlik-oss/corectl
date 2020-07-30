@@ -83,7 +83,7 @@ func CreateRawCommand() *cobra.Command {
 					// Remove the empty file after a failed call.
 					_ = os.Remove(outputFilePath)
 				}
-				fmt.Fprintln(cmd.ErrOrStderr(), err)
+				fmt.Fprintln(cmd.ErrOrStderr(), log.Appendln(err.Error()))
 				os.Exit(1)
 			}
 		},
