@@ -25,6 +25,8 @@ type (
 	flagJSON struct {
 		Shorthand  string `json:"alias,omitempty"`
 		Usage      string `json:"description,omitempty"`
+		Visibility string `json:"x-qlik-visibility,omitempty"`
+		Stability  string `json:"x-qlik-stability,omitempty"`
 		DefValue   string `json:"default,omitempty"`
 		Deprecated string `json:"deprecated,omitempty"`
 	}
@@ -81,6 +83,24 @@ func returnVisibility(annotations map[string]string, hidden bool) string {
 	return visibility
 }
 
+func returnFlagStability(annotations map[string][]string) string {
+	stability := annotations["x-qlik-stability"]
+	if len(stability) > 0 {
+		return stability[0]
+	}
+	return ""
+}
+
+func returnFlagVisibility(annotations map[string][]string, hidden bool) string {
+	visibility := annotations["x-qlik-visibility"]
+	if len(visibility) > 0 {
+		return visibility[0]
+	} else if hidden {
+		return "private"
+	}
+	return ""
+}
+
 func returnCommands(commands []*cobra.Command) map[string]commandJSON {
 	commadJSON := make(map[string]commandJSON)
 
@@ -99,6 +119,8 @@ func returnFlags(flags *pflag.FlagSet) map[string]flagJSON {
 			Usage:      f.Usage,
 			DefValue:   f.DefValue,
 			Deprecated: f.Deprecated,
+			Visibility: returnFlagVisibility(f.Annotations, f.Hidden),
+			Stability:  returnFlagStability(f.Annotations),
 		}
 		flagsJSON[f.Name] = fJSON
 	}
