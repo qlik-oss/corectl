@@ -117,9 +117,6 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		Short:   "Publish a generic object, like to make a sheet public",
 		Long:    "Publish a generic object, like to make a sheet public",
 		Example: "corectl object publish OBJECT-ID -a APP-ID",
-		Annotations: map[string]string{
-			"x-qlik-stability": "experimental",
-		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := args[0]
@@ -137,9 +134,6 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		Short:   "Unpublish a generic object, like to make a sheet private",
 		Long:    "Unpublish a generic object, like to make a sheet private",
 		Example: "corectl object unpublish OBJECT-ID -a APP-ID",
-		Annotations: map[string]string{
-			"x-qlik-stability": "experimental",
-		},
 
 		Run: func(ccmd *cobra.Command, args []string) {
 			objectID := args[0]
