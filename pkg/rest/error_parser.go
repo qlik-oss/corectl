@@ -2,23 +2,23 @@ package rest
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
+
+	"github.com/qlik-oss/corectl/pkg/log"
 )
 
 //restError is the errors returned from rest calls. It contains a human readable message plus the raw body
 type (
 	Error interface {
 		error
-		Body() []byte
 		StatusCode() int
 	}
 
 	restError struct {
 		status  int
 		message string
-		body    []byte
 	}
 
 	StandardErrorItem struct {
@@ -39,15 +39,10 @@ type (
 )
 
 func (e *restError) Error() string {
-	msg := fmt.Sprintf("%d %s", e.status, http.StatusText(e.status))
-	if e.message != "" {
-		msg += ": " + e.message
+	if e.message == "" {
+		return "empty response"
 	}
-	return msg
-}
-
-func (e *restError) Body() []byte {
-	return e.body
+	return e.message
 }
 
 func (e *restError) StatusCode() int {
@@ -57,22 +52,23 @@ func (e *restError) StatusCode() int {
 // NewError creates an error that has both a readable message and the original body
 func NewError(res *http.Response) Error {
 	var message string
-	data, err := ioutil.ReadAll(res.Body)
-	if err == nil {
-		message = buildStandardErrorMessage(data)
-		if message == "" {
-			message = buildNonArrayErrorMessage(data)
-		}
-		if message == "" {
-			message = buildOtherKnownJsonErrorMessages(data)
-		}
-		if message == "" {
-			message = buildNonJsonMessage(data)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		message = "failed to read response body: " + err.Error()
+	} else {
+		contentType := res.Header.Get("Content-Type")
+		contentType = strings.Split(contentType, "; ")[0]
+		switch contentType {
+		case "", "application/json":
+			message = string(log.FormatAsJSON(body))
+		case "text/html":
+			fallthrough
+		default:
+			message = string(body)
 		}
 	}
 	restErr := &restError{
 		status:  res.StatusCode,
-		body:    data,
 		message: message,
 	}
 	return restErr

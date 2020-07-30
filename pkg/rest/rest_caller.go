@@ -185,12 +185,12 @@ func (c *RestCaller) CallStreaming(method string, path string, query map[string]
 	}
 	defer res.Body.Close()
 
+	log.Info(res.Status)
+
 	//Something when wrong it seems
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return NewError(res)
 	}
-
-	log.Verbose(res.Status)
 
 	switch contentType := getContentType(res); contentType {
 	case "application/json":
