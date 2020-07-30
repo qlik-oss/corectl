@@ -1,15 +1,25 @@
-## corectl object
+## corectl object publish
 
-Explore and manage generic objects
+Publish a generic object, like to make a sheet public
 
 ### Synopsis
 
-Explore and manage generic objects
+Publish a generic object, like to make a sheet public
+
+```
+corectl object publish <object-id> [flags]
+```
+
+### Examples
+
+```
+corectl object publish OBJECT-ID -a APP-ID
+```
 
 ### Options
 
 ```
-  -h, --help   help for object
+  -h, --help   help for publish
 ```
 
 ### Options inherited from parent commands
@@ -31,13 +41,5 @@ Explore and manage generic objects
 
 ### SEE ALSO
 
-* [corectl](corectl.md)	 - 
-* [corectl object data](corectl_object_data.md)	 - Evaluate the hypercube data of a generic object
-* [corectl object layout](corectl_object_layout.md)	 - Evaluate the hypercube layout of the generic object
-* [corectl object ls](corectl_object_ls.md)	 - Print a list of all generic objects in the current app
-* [corectl object properties](corectl_object_properties.md)	 - Print the properties of the generic object
-* [corectl object publish](corectl_object_publish.md)	 - Publish a generic object, like to make a sheet public
-* [corectl object rm](corectl_object_rm.md)	 - Remove one or many generic objects in the current app
-* [corectl object set](corectl_object_set.md)	 - Set or update the objects in the current app
-* [corectl object unpublish](corectl_object_unpublish.md)	 - Unpublish a generic object, like to make a sheet private
+* [corectl object](corectl_object.md)	 - Explore and manage generic objects
 

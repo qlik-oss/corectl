@@ -444,6 +444,9 @@
             }
           }
         },
+        "publish": {
+          "description": "Publish a generic object, like to make a sheet public"
+        },
         "rm": {
           "description": "Remove one or many generic objects in the current app",
           "flags": {
@@ -461,6 +464,9 @@
               "default": "false"
             }
           }
+        },
+        "unpublish": {
+          "description": "Unpublish a generic object, like to make a sheet private"
         }
       }
     },
