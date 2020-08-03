@@ -37,11 +37,7 @@
       {
         "qDef": {
           "qGrouping": "N",
-          "qDef": "count(numbers)",
-          "qNumFormat": {
-            "qType": "U",
-            "qnDec": 10
-          }
+          "qDef": "count(numbers)"
         },
         "qSortBy": {
           "qSortByFrequency": 1,
