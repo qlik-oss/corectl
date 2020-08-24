@@ -17,6 +17,16 @@ type Object struct {
 	Properties *enigma.GenericObjectProperties `json:"qProperty,omitempty"`
 }
 
+// Layout is a struct describing the qMeta portion of a generic object
+type Layout struct {
+	Meta *ObjectMeta `json:"qMeta"`
+}
+
+// ObjectMeta is a struct describing the published property added to generic objects
+type ObjectMeta struct {
+	Published bool `json:"published"`
+}
+
 func (o Object) validate() error {
 	if o.Info != nil {
 		if o.Info.Id == "" {
@@ -161,6 +171,55 @@ func setObject(ctx context.Context, doc *enigma.Doc, info *enigma.NxInfo, props 
 		}
 		if err != nil {
 			return fmt.Errorf("failed to create %s %s: %s", "object", objectID, err)
+		}
+	}
+	return nil
+}
+
+// Publish a generic object from private to public
+func Publish(ctx context.Context, doc *enigma.Doc, objectID string) error {
+	object, err := doc.GetObject(ctx, objectID)
+	if err != nil {
+		return err
+	}
+	if object.Handle != 0 {
+		var layout Layout
+		raw, err := object.GetLayoutRaw(ctx)
+		err = json.Unmarshal(raw, &layout)
+		if layout.Meta.Published {
+			log.Infoln(objectID + " is already published.")
+			return fmt.Errorf("cannot publish a published object: " + objectID)
+		}
+
+		log.Infoln("Publishing object " + objectID)
+		err = object.Publish(ctx)
+		if err != nil {
+			return fmt.Errorf("unable to publish %s with %s: %s", "object", objectID, err)
+		}
+
+	}
+	return nil
+}
+
+// UnPublish a generic object from public to private
+func UnPublish(ctx context.Context, doc *enigma.Doc, objectID string) error {
+	object, err := doc.GetObject(ctx, objectID)
+	if err != nil {
+		return err
+	}
+	if object.Handle != 0 {
+		var layout Layout
+		raw, err := object.GetLayoutRaw(ctx)
+		err = json.Unmarshal(raw, &layout)
+		if !layout.Meta.Published {
+			log.Infoln(objectID + " is not published.")
+			return fmt.Errorf("cannot unpublish an unpublished object: " + objectID)
+		}
+
+		log.Infoln("Unpublishing object " + objectID)
+		err = object.UnPublish(ctx)
+		if err != nil {
+			return fmt.Errorf("unable to unpublish %s with %s: %s", "object", objectID, err)
 		}
 	}
 	return nil

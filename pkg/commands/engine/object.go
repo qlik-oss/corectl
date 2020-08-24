@@ -111,6 +111,40 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		},
 	}
 
+	var publishObjectCmd = &cobra.Command{
+		Use:     "publish <object-id>",
+		Args:    cobra.ExactArgs(1),
+		Short:   "Publish a generic object, like to make a sheet public",
+		Long:    "Publish a generic object, like to make a sheet public",
+		Example: "corectl object publish OBJECT-ID -a APP-ID",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			objectID := args[0]
+			if objectID == "" {
+				log.Fatalln("no objects specified")
+			}
+			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(true)
+			internal.Publish(ctx, doc, objectID)
+		},
+	}
+
+	var unPublishObjectCmd = &cobra.Command{
+		Use:     "unpublish <object-id>",
+		Args:    cobra.ExactArgs(1),
+		Short:   "Unpublish a generic object, like to make a sheet private",
+		Long:    "Unpublish a generic object, like to make a sheet private",
+		Example: "corectl object unpublish OBJECT-ID -a APP-ID",
+
+		Run: func(ccmd *cobra.Command, args []string) {
+			objectID := args[0]
+			if objectID == "" {
+				log.Fatalln("no objects specified")
+			}
+			ctx, _, doc, _ := boot.NewCommunicator(ccmd).OpenAppSocket(true)
+			internal.UnPublish(ctx, doc, objectID)
+		},
+	}
+
 	var objectCmd = &cobra.Command{
 		Use:   "object",
 		Short: "Explore and manage generic objects",
@@ -120,7 +154,7 @@ The JSON objects can be in either the GenericObjectProperties format or the Gene
 		},
 	}
 
-	objectCmd.AddCommand(listObjectsCmd, setObjectsCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, removeObjectCmd)
+	objectCmd.AddCommand(listObjectsCmd, setObjectsCmd, getObjectPropertiesCmd, getObjectLayoutCmd, getObjectDataCmd, removeObjectCmd, publishObjectCmd, unPublishObjectCmd)
 	return objectCmd
 }
 
