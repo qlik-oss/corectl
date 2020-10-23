@@ -2,10 +2,6 @@
 
 Print the version of corectl
 
-### Synopsis
-
-Print the version of corectl
-
 ```
 corectl version [flags]
 ```

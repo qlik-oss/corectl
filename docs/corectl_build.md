@@ -2,10 +2,6 @@
 
 Reload and save the app after updating connections, dimensions, measures, objects and the script
 
-### Synopsis
-
-Reload and save the app after updating connections, dimensions, measures, objects and the script
-
 ```
 corectl build [flags]
 ```
