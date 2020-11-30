@@ -127,7 +127,7 @@ func addTableFieldCellCrossReferences(fields []*FieldModel, tables []*TableModel
 
 // GetModelMetadata retrives all available metadata about the app
 func GetModelMetadata(ctx context.Context, doc *enigma.Doc, appID string, engine *neturl.URL, headers http.Header, tlsClientConfig *tls.Config, keyOnly bool) *ModelMetadata {
-	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	tables, sourceKeys, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)
 	}
@@ -238,7 +238,7 @@ type FieldSourceTableInfo struct {
 
 // Exits if there is no data model
 func ensureModelExists(ctx context.Context, doc *enigma.Doc) {
-	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false, false)
 	if err != nil {
 		log.Fatalf("could not retrieve tables and keys: %s\n", err)
 	}
