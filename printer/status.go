@@ -28,7 +28,7 @@ func PrintStatus(state *internal.State, engine string) {
 
 // Returns the number of tables in the data model
 func dataModelTableCount(ctx context.Context, doc *enigma.Doc) int {
-	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false)
+	tables, _, err := doc.GetTablesAndKeys(ctx, &enigma.Size{}, &enigma.Size{}, 0, false, false, false)
 	if err != nil {
 		return 0
 	}
