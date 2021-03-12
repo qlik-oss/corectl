@@ -69,25 +69,6 @@ jobs:
             # Execute tests
             docker exec $TEST_CONTAINER /bin/bash -c 'cd /corectl && go test ./test/corectl_integration_test.go --engineStd $TEST_HOST:9076 --engineJwt $TEST_HOST:9176 --engineAbac $TEST_HOST:9276 --engineBadLicenseServer $TEST_HOST:9376 '
 
-  validate:
-    working_directory: ~/corectl
-    docker:
-      - image: circleci/node:8.17.0
-    steps:
-      - checkout
-      - run:
-          name: Install aws-cli
-          command: sudo apt-get update && sudo apt-get install -y awscli
-      - run:
-          name: Download api schema
-          command: aws s3 cp s3://${S3BUCKET}/schema.json ./docs/schema.json --region ${S3BUCKET_REGION}
-      - run:
-          name: Install ajv-cli
-          command: sudo npm install -g ajv-cli@3.3.0
-      - run:
-          name: Validate api spec towards schema
-          command: ajv -s ./docs/schema.json -d ./docs/spec.json --json-pointers=true --all-errors=true
-
   publish:
     working_directory: ~/corectl
     docker:
@@ -122,15 +103,9 @@ workflows:
             tags:
               only:
                 - /v.*/
-      - validate:
-          filters:
-            tags:
-              only:
-                - /v.*/
       - publish:
           requires:
             - build
-            - validate
           filters:
             branches:
               ignore: /.*/
