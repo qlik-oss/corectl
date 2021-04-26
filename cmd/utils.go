@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/google/go-github/v27/github"
+	"github.com/google/go-github/v35/github"
 	ver "github.com/hashicorp/go-version"
 	"github.com/qlik-oss/corectl/internal"
 	"github.com/qlik-oss/corectl/internal/log"
