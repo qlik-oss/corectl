@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   qix-engine:
-    image: qlikcore/engine:12.961.0   # Docker image and version
+    image: qlikcore/engine:12.1016.0   # Docker image and version
     ports:
       - 9076:9076 # Port exposing the engine on localhost
     command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps # Commands that is passed to the engine container

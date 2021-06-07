@@ -2,7 +2,7 @@ version: "3.3"
 services:
   qix-engine-std:
     container_name: qix-engine-std
-    image: qlikcore/engine:12.961.0
+    image: qlikcore/engine:12.1016.0
     ports:
       - 9076:9076
     command: -S AcceptEULA=${ACCEPT_EULA}  -S DocumentDirectory=/apps -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="testconnector,corectl-test-connector:50051"
@@ -11,7 +11,7 @@ services:
       - ./data:/data
   qix-engine-jwt:
     container_name: qix-engine-jwt
-    image: qlikcore/engine:12.961.0
+    image: qlikcore/engine:12.1016.0
     ports:
       - 9176:9076
     command:       -S AcceptEULA=${ACCEPT_EULA} -S DocumentDirectory=/apps -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="testconnector,corectl-test-connector:50051"      -S ValidateJsonWebTokens=2      -S JsonWebTokenSecret=passw0rd -S
@@ -20,7 +20,7 @@ services:
       - ./data:/data
   qix-engine-abac:
     container_name: qix-engine-abac
-    image: qlikcore/engine:12.961.0
+    image: qlikcore/engine:12.1016.0
     ports:
       - 9276:9076
     command: |
@@ -32,7 +32,7 @@ services:
       - ./rules:/rules
   qix-engine-bad-license-server:
     container_name: qix-engine-bad-license-server
-    image: qlikcore/engine:12.961.0
+    image: qlikcore/engine:12.1016.0
     ports:
       - 9376:9076
     command: |
