@@ -2,7 +2,7 @@ module github.com/qlik-oss/corectl
 
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
-	github.com/google/go-github/v35 v35.1.0
+	github.com/google/go-github/v35 v35.3.0
 	github.com/hashicorp/go-version v1.3.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20210606212950-a7b7a6107d32
@@ -10,7 +10,7 @@ require (
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.7.1
+	github.com/spf13/viper v1.8.0
 	github.com/stretchr/testify v1.7.0
 	github.com/texttheater/golang-levenshtein v1.0.1
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
