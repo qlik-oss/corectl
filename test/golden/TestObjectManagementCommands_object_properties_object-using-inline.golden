@@ -103,6 +103,7 @@
     },
     "qColumnOrder": [],
     "qExpansionState": [],
+    "qDynamicScript": [],
     "customProperty": "should be filtered by the minimum flag"
   }
 }

@@ -113,7 +113,8 @@
             "qMsg": {}
           },
           "qColumnOrder": [],
-          "qExpansionState": []
+          "qExpansionState": [],
+          "qDynamicScript": []
         },
         "showTitles": true,
         "title": "",
@@ -207,6 +208,7 @@
                 0
               ],
               "qExpansionState": [],
+              "qDynamicScript": [],
               "columnOrder": [
                 0
               ],
@@ -303,7 +305,8 @@
             "qMsg": {}
           },
           "qColumnOrder": [],
-          "qExpansionState": []
+          "qExpansionState": [],
+          "qDynamicScript": []
         },
         "showTitles": false,
         "title": "",
@@ -394,6 +397,7 @@
                 0
               ],
               "qExpansionState": [],
+              "qDynamicScript": [],
               "columnOrder": [
                 0
               ],
