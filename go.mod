@@ -13,7 +13,7 @@ require (
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/texttheater/golang-levenshtein v1.0.1
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+	golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e
 	gopkg.in/yaml.v2 v2.4.0
 )
 
