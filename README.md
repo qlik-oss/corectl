@@ -4,6 +4,15 @@
 
 <img src="./corectl.svg" alt="corectl" width="200"/>
 
+*Corectl has been archived in favour of the new tool [Qlik-CLI](https://qlik.dev/libraries-and-tools/qlik-cli)!*
+
+Qlik-CLI contains all functionality of corectl while also adding a plentora of new features related to the Qlik SaaS
+platform.
+
+Old releases of corectl will be kept, but no further development will be done in this tool.
+
+---
+
 Corectl is a command line tool to perform reloads, fetch metadata and evaluate expressions in Qlik Core apps.
 
 ---
