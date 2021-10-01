@@ -5,7 +5,7 @@ require (
 	github.com/google/go-github/v35 v35.3.0
 	github.com/hashicorp/go-version v1.3.0
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/qlik-oss/enigma-go v1.2.0
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/cobra v1.2.1
